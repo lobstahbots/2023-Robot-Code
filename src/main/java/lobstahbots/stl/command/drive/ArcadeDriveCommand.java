@@ -7,6 +7,7 @@ package frc.robot.commands.drive;
 import java.util.function.Supplier;
 
 import frc.robot.subsystems.DriveBase;
+import lobstahbots.stl.command.DriveCommand;
 
 /**
  * Drives a {@link DriveBase} using arcade drive controls.
