@@ -14,11 +14,11 @@ import frc.robot.Constants.DriveConstants.DriveMotorCANIDs;
 import frc.robot.Constants.IOConstants;
 import frc.robot.Constants.IOConstants.DriverAxes;
 import frc.robot.Constants.IOConstants.DriverButtons;
-import frc.robot.commands.drive.StopDriveCommand;
 import frc.robot.commands.drive.StraightDriveCommand;
-import frc.robot.commands.drive.TankDriveCommand;
 import frc.robot.subsystems.DriveBase;
 import lobstahbots.stl.command.TimedCommand;
+import lobstahbots.stl.command.drive.StopDriveCommand;
+import lobstahbots.stl.command.drive.TankDriveCommand;
 import lobstahbots.stl.io.LobstahBotsController;
 
 /**
