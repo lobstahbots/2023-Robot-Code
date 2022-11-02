@@ -71,7 +71,6 @@ public class DriveBase extends SubsystemBase {
             DriveConstants.TRIGGER_THRESHOLD,
             DriveConstants.TRIGGER_THRESHOLD_TIME));
 
-
     setBrakingMode(NeutralMode.Brake);
 
     differentialDrive =

@@ -9,13 +9,11 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import frc.robot.Constants.AutonConstants;
-
 import frc.robot.Constants.DriveConstants;
 import frc.robot.Constants.DriveConstants.DriveMotorCANIDs;
 import frc.robot.Constants.IOConstants;
 import frc.robot.Constants.IOConstants.DriverAxes;
 import frc.robot.Constants.IOConstants.DriverButtons;
-
 import frc.robot.commands.drive.StopDriveCommand;
 import frc.robot.commands.drive.StraightDriveCommand;
 import frc.robot.commands.drive.TankDriveCommand;
@@ -36,9 +34,7 @@ public class RobotContainer {
       DriveMotorCANIDs.RIGHT_BACK);
 
   private final LobstahBotsController driverJoystick = new LobstahBotsController(IOConstants.DRIVER_JOYSTICK_INDEX);
-
-  private final JoystickButton slowdownButton1 = driverJoystick.button(DriverButtons.SLOWDOWN1);
-  private final JoystickButton slowdownButton2 = driverJoystick.button(DriverButtons.SLOWDOWN2);
+  private final LobstahBotsController operatorJoystick = new LobstahBotsController(IOConstants.OPERATOR_JOYSTICK_INDEX);
 
 
   /**
@@ -53,18 +49,6 @@ public class RobotContainer {
    * Use this method to define your button->command mappings.
    */
   private void configureButtonBindings() {
-
-    slowdownButton1.whileHeld(new TankDriveCommand(
-        driveBase,
-        () -> DriveConstants.SLOWDOWN_PERCENT1 * -driverJoystick.getRawAxis(DriverAxes.LEFT),
-        () -> DriveConstants.SLOWDOWN_PERCENT1 * -driverJoystick.getRawAxis(DriverAxes.RIGHT),
-        true));
-
-    slowdownButton2.whileHeld(new TankDriveCommand(
-        driveBase,
-        () -> DriveConstants.SLOWDOWN_PERCENT2 * -driverJoystick.getRawAxis(DriverAxes.LEFT),
-        () -> DriveConstants.SLOWDOWN_PERCENT2 * -driverJoystick.getRawAxis(DriverAxes.RIGHT),
-        true));
 
   }
 
