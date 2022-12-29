@@ -6,7 +6,8 @@ import edu.wpi.first.math.filter.SlewRateLimiter;
 import edu.wpi.first.wpilibj.motorcontrol.MotorController;
 
 /**
- * A wrapper that adds a slew rate limit to a motor controller.
+ * A wrapper that adds a slew rate limit to a motor controller. TODO: Add support for different positive and negative
+ * rate limits.
  */
 public class DampenedMotorController implements MotorController {
   private final MotorController controller;
@@ -46,7 +47,7 @@ public class DampenedMotorController implements MotorController {
    * @param rateLimit The maximum rate of change in output percentage per second.
    */
   public void setRateLimit(double rateLimit) {
-    dampener = new SlewRateLimiter(rateLimit, lastSpeed);
+    dampener = new SlewRateLimiter(rateLimit, -rateLimit, lastSpeed);
   }
 
   /**
