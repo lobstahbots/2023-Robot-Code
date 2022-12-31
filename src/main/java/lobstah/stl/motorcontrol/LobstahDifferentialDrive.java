@@ -19,7 +19,7 @@ public class LobstahDifferentialDrive extends DifferentialDrive {
   }
 
   /**
-   * Creates a new OverclockedDifferentialDrive with an (effectively) infinite rate limit.
+   * Creates a new LobstahDifferentialDrive with an (effectively) infinite rate limit.
    *
    * @param left The left motor controller.
    * @param right The right motor controller.
@@ -29,7 +29,7 @@ public class LobstahDifferentialDrive extends DifferentialDrive {
   }
 
   /**
-   * Creates a new OverclockedDifferentialDrive with the given rate limit.
+   * Creates a new LobstahDifferentialDrive with the given rate limit.
    *
    * @param left The left motor controller.
    * @param right The right motor controller.
