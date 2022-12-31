@@ -6,8 +6,7 @@ import edu.wpi.first.math.filter.SlewRateLimiter;
 import edu.wpi.first.wpilibj.motorcontrol.MotorController;
 
 /**
- * A wrapper that adds a slew rate limit to a motor controller. TODO: Add support for different positive and negative
- * rate limits.
+ * A wrapper that adds a slew rate limit to a motor controller.
  */
 public class DampenedMotorController implements MotorController {
   private final MotorController controller;
@@ -17,19 +16,33 @@ public class DampenedMotorController implements MotorController {
    * This stores the last calculated speed from the dampener because the SlewRateLimiter doesn't have a way of
    * retrieving this value.
    * 
-   * TODO: Put up a merge request to WPILib that adds this functionality to SlewRateLimiter.
+   * TODO: https://github.com/wpilibsuite/allwpilib/pull/4883
    */
-  private double lastSpeed = 0;
+  private double lastSpeed;
+
+  /**
+   * Creates a new DampenedMotorController with the given rate limits.
+   *
+   * @param controller The motor controller to wrap.
+   * @param positiveRateLimit The rate-of-change limit in the positive direction, in decimaL percent per second. This is
+   *          expected to be positive.
+   * @param negativeRateLimit The rate-of-change limit in the negative direction, in decimal percent per second. This is
+   *          expected to be negative.
+   */
+  public DampenedMotorController(MotorController controller, double positiveRateLimit, double negativeRateLimit) {
+    this.controller = controller;
+    this.lastSpeed = controller.get();
+    this.dampener = new SlewRateLimiter(positiveRateLimit, negativeRateLimit, lastSpeed);
+  }
 
   /**
    * Creates a new DampenedMotorController with the given rate limit.
    *
    * @param controller The motor controller to wrap.
-   * @param rateLimit The maximum rate of change in output percentage per second.
+   * @param rateLimit The rate-of-change limit in decimal percent per second. This is expected to be positive.
    */
   public DampenedMotorController(MotorController controller, double rateLimit) {
-    this.controller = controller;
-    this.dampener = new SlewRateLimiter(rateLimit);
+    this(controller, rateLimit, -rateLimit);
   }
 
   /**
@@ -43,6 +56,8 @@ public class DampenedMotorController implements MotorController {
 
   /**
    * Sets a new rate limit for the motor controller.
+   * 
+   * TODO: Add support for different positive and negative rate limits.
    * 
    * @param rateLimit The maximum rate of change in output percentage per second.
    */
