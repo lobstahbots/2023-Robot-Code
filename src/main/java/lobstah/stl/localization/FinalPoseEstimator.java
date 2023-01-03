@@ -2,7 +2,7 @@
 // Open Source Software; you can modify and/or share it under the terms of
 // the WPILib BSD license file in the root directory of this project.
 
-package overclocked.stl.localization;
+package lobstah.stl.localization;
 
 /**
  * A Pose Estimator that combines the Vision Pose Estimate, the Odometry Pose Estimate, and the combined Vision-Odometry
