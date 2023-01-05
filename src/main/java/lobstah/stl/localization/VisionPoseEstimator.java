@@ -5,16 +5,6 @@
 package lobstah.stl.localization;
 
 /** A Pose Estimate based on the estimates of the three Vision Pose Estimators. */
-public abstract class VisionPoseEstimator implements CombinedPoseEstimator {
-  private AIPoseProvider AIEstimator;
-  private AprilTagPoseProvider tagEstimator;
-  private VisionTapePoseProvider tapeEstimator;
-
-  public VisionPoseEstimator(AIPoseProvider AIEstimator, AprilTagPoseProvider tagEstimator,
-      VisionTapePoseProvider tapeEstimator) {
-    this.AIEstimator = AIEstimator;
-    this.tagEstimator = tagEstimator;
-    this.tapeEstimator = tapeEstimator;
-  }
+public interface VisionPoseEstimator extends CombinedPoseEstimator {
 
 }

@@ -5,13 +5,4 @@
 package lobstah.stl.localization;
 
 /** A Pose Estimator that combines the Vision Pose Estimate and the Odometry Pose Estimate */
-public abstract class VisionOdometryPoseEstimator implements CombinedPoseEstimator {
-  private VisionPoseEstimator visionPoseEstimate;
-  private OdometryPoseEstimator_I odometryPoseEstimate;
-
-  public VisionOdometryPoseEstimator(VisionPoseEstimator visionPoseEstimate,
-      OdometryPoseEstimator_A odometryPoseEstimate) {
-    this.visionPoseEstimate = visionPoseEstimate;
-    this.odometryPoseEstimate = odometryPoseEstimate;
-  }
-}
+public interface VisionOdometryPoseEstimator extends CombinedPoseEstimator {}

@@ -7,13 +7,12 @@ package frc.robot.location;
 import edu.wpi.first.math.geometry.Pose2d;
 import lobstah.stl.localization.ConfidencePose;
 import lobstah.stl.localization.VisionOdometryPoseEstimator;
-import lobstah.stl.localization.VisionPoseEstimator;
 
 public class VisionOdometryPose implements VisionOdometryPoseEstimator {
-  private final VisionPoseEstimator visionPoseEstimator;
+  private final VisionEstimator visionPoseEstimator;
   private final OdometryPoseEstimator odometryPoseEstimator;
 
-  public VisionOdometryPose(VisionPoseEstimator visionPoseEstimator, OdometryPoseEstimator odometryPoseEstimator) {
+  public VisionOdometryPose(VisionEstimator visionPoseEstimator, OdometryPoseEstimator odometryPoseEstimator) {
     this.odometryPoseEstimator = odometryPoseEstimator;
     this.visionPoseEstimator = visionPoseEstimator;
     // TODO: Add DifferentialDrivePoseEstimator to combine odometry with vision tracking
@@ -24,7 +23,7 @@ public class VisionOdometryPose implements VisionOdometryPoseEstimator {
   }
 
   public double calculateCombinedConfidence() {
-    return (odometryPoseEstimator.calculateConfidence() + visionPoseEstimator.calculateCombinedConfidence()) / 2;
+    return (odometryPoseEstimator.calculateConfidence() + visionPoseEstimator.calculateConfidence()) / 2;
   }
 
   public ConfidencePose combinePosesWithConfidence() {
