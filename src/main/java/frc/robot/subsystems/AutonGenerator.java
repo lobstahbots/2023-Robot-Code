@@ -4,6 +4,8 @@
 
 package frc.robot.subsystems;
 
+import java.util.ArrayList;
+
 import com.pathplanner.lib.PathConstraints;
 import com.pathplanner.lib.PathPlanner;
 import com.pathplanner.lib.PathPlannerTrajectory;
@@ -69,7 +71,9 @@ public class AutonGenerator extends SubsystemBase {
    * @param finalPosition Which game element the path ends at.
    */
   public Command getPathFollowCommand(int initialPosition, int crossingPosition, int finalPosition) {
-    return new PathFollowCommand(this.driveBase, this.getPath(initialPosition, crossingPosition, finalPosition), true);
+    ArrayList<PathPlannerTrajectory> pathGroup = this.getPath(initialPosition, crossingPosition, finalPosition);
+    return new PathFollowCommand(this.driveBase, pathGroup.get(0), true, false)
+        .andThen(new PathFollowCommand(this.driveBase, pathGroup.get(1), false, true));
   }
 
   /**
@@ -80,10 +84,20 @@ public class AutonGenerator extends SubsystemBase {
    * @param crossingPosition Where the robot crosses out of the Community.
    * @param finalPosition Which game element the path ends at.
    */
-  public PathPlannerTrajectory getPath(int initialPosition, int crossingPosition, int finalPosition) {
-    PathPlannerTrajectory path = PathPlanner.loadPath("New Path",
+  public ArrayList<PathPlannerTrajectory> getPath(int initialPosition, int crossingPosition, int finalPosition) {
+    ArrayList<PathPlannerTrajectory> pathGroup = new ArrayList<>();
+    String firstPathName = String.valueOf(initialPosition) + "-" + String.valueOf(crossingPosition);
+    String secondPathName = "_" + String.valueOf(crossingPosition) + "-" + String.valueOf(finalPosition);
+
+    PathPlannerTrajectory firstPath = PathPlanner.loadPath(firstPathName,
         new PathConstraints(PathConstants.MAX_DRIVE_SPEED, PathConstants.MAX_ACCELERATION));
-    return path;
+    PathPlannerTrajectory secondPath = PathPlanner.loadPath(secondPathName,
+        new PathConstraints(PathConstants.MAX_DRIVE_SPEED, PathConstants.MAX_ACCELERATION));
+
+    pathGroup.add(firstPath);
+    pathGroup.add(secondPath);
+
+    return pathGroup;
   }
 
 }

@@ -4,24 +4,17 @@
 
 package frc.robot;
 
-import com.pathplanner.lib.PathConstraints;
-import com.pathplanner.lib.PathPlanner;
-import com.pathplanner.lib.PathPlannerTrajectory;
 import com.pathplanner.lib.server.PathPlannerServer;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
-import frc.robot.Constants.AutonConstants;
 import frc.robot.Constants.DriveConstants.DriveMotorCANIDs;
 import frc.robot.Constants.IOConstants;
-import frc.robot.Constants.PathConstants;
 import frc.robot.Constants.IOConstants.DriverAxes;
 import frc.robot.commands.drive.StopDriveCommand;
-import frc.robot.commands.drive.StraightDriveCommand;
 import frc.robot.commands.drive.TankDriveCommand;
 import frc.robot.subsystems.DriveBase;
 import frc.robot.subsystems.AutonGenerator;
-import lobstah.stl.command.TimedCommand;
 import lobstah.stl.io.LobstahGamepad;
 
 /**
@@ -100,6 +93,22 @@ public class RobotContainer {
    * setTeleopDefaultCommands().
    */
   public void setAutonDefaultCommands() {
+    driveBase.setDefaultCommand(new StopDriveCommand(driveBase));
+  }
+
+  /**
+   * Robot.java should run this method when test mode starts. This method should be used to set the default commands for
+   * subsystems while in test mode.
+   */
+  public void setTestDefaultCommands() {
+    driveBase.setDefaultCommand(new StopDriveCommand(driveBase));
+  }
+
+  /**
+   * Robot.java should run this method when robot simulation starts. This method should be used to set the default
+   * commands for subsystems while running a simulation.
+   */
+  public void setSimDefaultCommands() {
     driveBase.setDefaultCommand(new StopDriveCommand(driveBase));
   }
 
