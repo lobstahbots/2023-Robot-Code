@@ -4,6 +4,7 @@
 
 package frc.robot.subsystems;
 
+import java.io.FileNotFoundException;
 import java.util.ArrayList;
 
 import com.pathplanner.lib.PathConstraints;
@@ -88,16 +89,15 @@ public class AutonGenerator extends SubsystemBase {
     ArrayList<PathPlannerTrajectory> pathGroup = new ArrayList<>();
     String firstPathName = String.valueOf(initialPosition) + "-" + String.valueOf(crossingPosition);
     String secondPathName = "_" + String.valueOf(crossingPosition) + "-" + String.valueOf(finalPosition);
-
     PathPlannerTrajectory firstPath = PathPlanner.loadPath(firstPathName,
         new PathConstraints(PathConstants.MAX_DRIVE_SPEED, PathConstants.MAX_ACCELERATION));
     PathPlannerTrajectory secondPath = PathPlanner.loadPath(secondPathName,
         new PathConstraints(PathConstants.MAX_DRIVE_SPEED, PathConstants.MAX_ACCELERATION));
-
     pathGroup.add(firstPath);
     pathGroup.add(secondPath);
 
     return pathGroup;
+
   }
 
 }
