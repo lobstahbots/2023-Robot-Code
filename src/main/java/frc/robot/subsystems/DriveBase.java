@@ -147,7 +147,8 @@ public class DriveBase extends SubsystemBase {
   /**
    * Resets the odometry to the specified pose.
    *
-   * @param pose The pose to which to set the odometry.
+   * @param translation2d The translation from the origin to use when creating a {@link Pose2d} to reset the odometry.
+   * @param rotation The gyro angle to use when creating a {@link Pose2d} to reset the odometry.
    */
   public void resetOdometry(Translation2d translation2d, Rotation2d rotation) {
     gyro.reset();
@@ -163,10 +164,16 @@ public class DriveBase extends SubsystemBase {
     rightBackMotor.setSelectedSensorPosition(0);
   }
 
+  /**
+   * Gets the distance of the left encoder in meters.
+   */
   public double getLeftEncoderDistanceMeters() {
     return LobstahMath.nativeUnitsToDistanceMeters(leftFrontMotor.getSelectedSensorPosition()) / 2;
   }
 
+  /**
+   * Gets the distance of the right encoder in meters.
+   */
   public double getRightEncoderDistanceMeters() {
     return LobstahMath.nativeUnitsToDistanceMeters(rightBackMotor.getSelectedSensorPosition()) / 2;
   }

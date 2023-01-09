@@ -20,6 +20,7 @@ import frc.robot.commands.drive.StopDriveCommand;
 import frc.robot.commands.drive.StraightDriveCommand;
 import frc.robot.commands.drive.TankDriveCommand;
 import frc.robot.subsystems.DriveBase;
+import frc.robot.subsystems.AutonGenerator;
 import lobstah.stl.command.TimedCommand;
 import lobstah.stl.io.LobstahGamepad;
 
@@ -35,13 +36,10 @@ public class RobotContainer {
       DriveMotorCANIDs.RIGHT_FRONT,
       DriveMotorCANIDs.RIGHT_BACK);
 
+  private final AutonGenerator autonGenerator = new AutonGenerator(driveBase);
+
   private final LobstahGamepad driverJoystick = new LobstahGamepad(IOConstants.DRIVER_JOYSTICK_INDEX);
   private final LobstahGamepad operatorJoystick = new LobstahGamepad(IOConstants.OPERATOR_JOYSTICK_INDEX);
-
-  PathPlannerTrajectory newPath =
-      PathPlanner.loadPath("New Path",
-          new PathConstraints(PathConstants.MAX_DRIVE_SPEED, PathConstants.MAX_ACCELERATION));
-
 
   /**
    * The container for the robot. Contains subsystems, OI devices, and commands.
@@ -57,25 +55,19 @@ public class RobotContainer {
    */
   private void configureButtonBindings() {}
 
-  // A simple auto routine that drives in a straight line.
-  private final Command driveAuton =
-      new TimedCommand(
-          AutonConstants.SIMPLE_AUTON_RUNTIME,
-          new StraightDriveCommand(
-              driveBase,
-              AutonConstants.SIMPLE_AUTON_SPEED, false));
-
-  // An auto routine that does nothing.
-  private final Command doNothingAuton = null;
-
   private final SendableChooser<Command> autonChooser = new SendableChooser<>();
+  private final SendableChooser<Integer> initialPosition = new SendableChooser<>();
 
   /**
    * Use this method to run tasks that configure sendables and other smartdashboard items.
    */
   private void configureSmartDash() {
-    autonChooser.addOption("Drive Auton", driveAuton);
-    autonChooser.addOption("Do Nothing Auton", doNothingAuton);
+    autonChooser.addOption("Simple Auton", autonGenerator.getSimpleAutonCommand());
+    autonChooser.addOption("Do Nothing Auton", autonGenerator.getDoNothingCommand());
+    initialPosition.addOption("Furthest Left", 0);
+    initialPosition.setDefaultOption("Furthest Left", 0);
+    autonChooser.addOption("Path Follow Auton",
+        autonGenerator.getPathFollowCommand(initialPosition.getSelected(), 1, 1));
     SmartDashboard.putData(autonChooser);
   }
 
