@@ -4,7 +4,6 @@
 
 package frc.robot.subsystems;
 
-import java.io.FileNotFoundException;
 import java.util.ArrayList;
 
 import com.pathplanner.lib.PathConstraints;
@@ -36,6 +35,7 @@ public class AutonGenerator extends SubsystemBase {
     this.driveBase = driveBase;
     this.doNothingCommand = new StopDriveCommand(driveBase);
   }
+
 
   /**
    * Returns a default autonomous command to do nothing.

@@ -50,10 +50,6 @@ public final class Constants {
     public static final double KP = 0.00000094597;
     public static final double KI = 0;
     public static final double KD = 0;
-
-
-    public static final DifferentialDriveKinematics KINEMATICS =
-        new DifferentialDriveKinematics(Units.inchesToMeters(RobotConstants.TRACK_WIDTH));
   }
 
   /**
@@ -89,6 +85,8 @@ public final class Constants {
   public static final class DriveConstants {
 
     public static final double ACCELERATION_RATE_LIMIT = 2.1;
+    public static final DifferentialDriveKinematics KINEMATICS =
+        new DifferentialDriveKinematics(Units.inchesToMeters(RobotConstants.TRACK_WIDTH));
 
     public static final class DriveMotorCANIDs {
       public static final int RIGHT_FRONT = 44;

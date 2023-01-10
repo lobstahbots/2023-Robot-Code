@@ -11,7 +11,8 @@ import com.kauailabs.navx.frc.AHRS;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
-import edu.wpi.first.math.kinematics.DifferentialDriveOdometry;
+import edu.wpi.first.math.Pair;
+import edu.wpi.first.math.estimator.DifferentialDrivePoseEstimator;
 import edu.wpi.first.math.kinematics.DifferentialDriveWheelSpeeds;
 import edu.wpi.first.wpilibj.motorcontrol.MotorControllerGroup;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -34,9 +35,11 @@ public class DriveBase extends SubsystemBase {
   private NeutralMode motorNeutralMode;
 
   private final LobstahDifferentialDrive differentialDrive;
-
-  private final DifferentialDriveOdometry odometry;
+  private final DifferentialDrivePoseEstimator poseEstimator;
+  private final PhotonVision photonVision;
   private final AHRS gyro = new AHRS();
+
+  private Pose2d prevEstimatedRobotPose;
 
   /**
    * Constructs a DriveBase with a {@link TalonFX} at each of the given CAN IDs.
@@ -89,8 +92,11 @@ public class DriveBase extends SubsystemBase {
             DriveConstants.ACCELERATION_RATE_LIMIT);
 
     resetEncoders();
+    poseEstimator =
+        new DifferentialDrivePoseEstimator(DriveConstants.KINEMATICS, gyro.getRotation2d(), 0, 0, new Pose2d());
 
-    odometry = new DifferentialDriveOdometry(gyro.getRotation2d(), 0, 0);
+    this.photonVision = new PhotonVision();
+    this.prevEstimatedRobotPose = new Pose2d();
 
     CommandScheduler.getInstance().registerSubsystem(this);
   }
@@ -129,8 +135,8 @@ public class DriveBase extends SubsystemBase {
    * @return The pose.
    */
   public Pose2d getPose() {
-    odometry.update(getHeading(), getLeftEncoderDistanceMeters(), getRightEncoderDistanceMeters());
-    return odometry.getPoseMeters();
+    poseEstimator.update(getHeading(), getLeftEncoderDistanceMeters(), getRightEncoderDistanceMeters());
+    return poseEstimator.getEstimatedPosition();
   }
 
   /**
@@ -152,7 +158,7 @@ public class DriveBase extends SubsystemBase {
    */
   public void resetOdometry(Translation2d translation2d, Rotation2d rotation) {
     gyro.reset();
-    odometry.resetPosition(new Rotation2d(), 0, 0, new Pose2d(translation2d, rotation));
+    poseEstimator.resetPosition(new Rotation2d(), 0, 0, new Pose2d(translation2d, rotation));
     resetEncoders();
   }
 
@@ -254,10 +260,19 @@ public class DriveBase extends SubsystemBase {
   }
 
   @Override
+  /**
+   * Updates the Pose Estimator with measurements from Photonvision and odometry.
+   */
   public void periodic() {
-    odometry.update(getHeading(), getLeftEncoderDistanceMeters(), getRightEncoderDistanceMeters());
+    poseEstimator.update(getHeading(), getLeftEncoderDistanceMeters(), getRightEncoderDistanceMeters());
+    Pair<Pose2d, Double> visionEstimatedPose = photonVision.getEstimatedGlobalPose();
+    if (visionEstimatedPose.getFirst() != null) {
+      poseEstimator.addVisionMeasurement(visionEstimatedPose.getFirst(), visionEstimatedPose.getSecond());
+    }
     SmartDashboard.putNumber("Gyro Value", this.getHeading().getDegrees());
     SmartDashboard.putString("Pose", this.getPose().toString());
+    SmartDashboard.putNumber("Number of Targets", this.photonVision.getTargets().size());
+    SmartDashboard.putNumberArray("Visible AprilTag IDs", (Double[]) this.photonVision.getFiducialIDs().toArray());
   }
 
 }

@@ -9,6 +9,7 @@ import com.pathplanner.lib.commands.PPRamseteCommand;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.controller.RamseteController;
 import edu.wpi.first.math.controller.SimpleMotorFeedforward;
+import frc.robot.Constants.DriveConstants;
 import frc.robot.Constants.PathConstants;
 import frc.robot.subsystems.DriveBase;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
@@ -36,7 +37,7 @@ public class PathFollowCommand extends SequentialCommandGroup {
         driveBase::getPose, // Pose supplier
         ramsete,
         new SimpleMotorFeedforward(PathConstants.KS, PathConstants.KV, PathConstants.KA),
-        PathConstants.KINEMATICS, // DifferentialDriveKinematics
+        DriveConstants.KINEMATICS, // DifferentialDriveKinematics
         driveBase::getWheelSpeeds, // DifferentialDriveWheelSpeeds supplier
         leftController, // Left controller. Tune these values for your robot. Leaving them 0 will only use
                         // feedforwards.
