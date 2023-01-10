@@ -62,16 +62,16 @@ public class RobotContainer {
     initialPosition.addOption("Furthest Down", 0);
     initialPosition.addOption("Middle", 1);
     initialPosition.addOption("Furthest Up", 2);
-    initialPosition.setDefaultOption("Furthest Down", 0);
+    initialPosition.setDefaultOption("Select Option", -1);
     crossingPosition.addOption("Below Platform", 0);
     crossingPosition.addOption("Middle", 1);
     crossingPosition.addOption("Above Platform", 2);
-    crossingPosition.setDefaultOption("Below Platform", 0);
+    crossingPosition.setDefaultOption("Select Option", -1);
     endingPosition.addOption("Towards Player Station", 3);
     endingPosition.addOption("Slightly Up", 2);
     endingPosition.addOption("Slightly Down", 1);
     endingPosition.addOption("Bottom Corner", 0);
-    endingPosition.setDefaultOption("Bottom Corner", 0);
+    endingPosition.setDefaultOption("Select Option", -1);
     autonChooser.addOption("Path Follow Auton",
         autonGenerator.getPathFollowCommand(initialPosition.getSelected(), 1, endingPosition.getSelected()));
     SmartDashboard.putData("Auton Chooser", autonChooser);
