@@ -80,7 +80,7 @@ public class DriveBase extends SubsystemBase {
     rightBackMotor.configSelectedFeedbackSensor(FeedbackDevice.IntegratedSensor);
 
 
-    setBrakingMode(NeutralMode.Coast);
+    setBrakingMode(NeutralMode.Brake);
 
     differentialDrive =
         new LobstahDifferentialDrive(

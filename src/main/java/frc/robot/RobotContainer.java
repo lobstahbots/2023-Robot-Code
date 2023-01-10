@@ -56,7 +56,7 @@ public class RobotContainer {
   /**
    * Use this method to run tasks that configure sendables and other smartdashboard items.
    */
-  private void configureSmartDash() {
+  public void configureSmartDash() {
     autonChooser.addOption("Simple Auton", autonGenerator.getSimpleAutonCommand());
     autonChooser.addOption("Do Nothing Auton", autonGenerator.getDoNothingCommand());
     initialPosition.addOption("Furthest Down", 0);
@@ -74,7 +74,10 @@ public class RobotContainer {
     endingPosition.setDefaultOption("Bottom Corner", 0);
     autonChooser.addOption("Path Follow Auton",
         autonGenerator.getPathFollowCommand(initialPosition.getSelected(), 1, endingPosition.getSelected()));
-    SmartDashboard.putData(autonChooser);
+    SmartDashboard.putData("Auton Chooser", autonChooser);
+    SmartDashboard.putData("Initial Position Chooser", initialPosition);
+    SmartDashboard.putData("Crossing Position Chooser", crossingPosition);
+    SmartDashboard.putData("Ending Position Chooser", endingPosition);
   }
 
   /**
