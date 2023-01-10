@@ -73,7 +73,8 @@ public class RobotContainer {
     endingPosition.addOption("Bottom Corner", 0);
     endingPosition.setDefaultOption("Select Option", -1);
     autonChooser.addOption("Path Follow Auton",
-        autonGenerator.getPathFollowCommand(initialPosition.getSelected(), 1, endingPosition.getSelected()));
+        autonGenerator.getPathFollowCommand(initialPosition.getSelected(), crossingPosition.getSelected(),
+            endingPosition.getSelected()));
     SmartDashboard.putData("Auton Chooser", autonChooser);
     SmartDashboard.putData("Initial Position Chooser", initialPosition);
     SmartDashboard.putData("Crossing Position Chooser", crossingPosition);

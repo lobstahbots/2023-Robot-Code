@@ -4,6 +4,7 @@
 
 package frc.robot;
 
+import edu.wpi.first.math.geometry.Transform3d;
 import edu.wpi.first.math.kinematics.DifferentialDriveKinematics;
 import edu.wpi.first.math.util.Units;
 
@@ -61,6 +62,10 @@ public final class Constants {
   public static final class AutonConstants {
     public static final double SIMPLE_AUTON_SPEED = 0.7;
     public static final double SIMPLE_AUTON_RUNTIME = 3.0;
+  }
+
+  public static final class VisionConstants {
+    public static final Transform3d CAMERA_TO_ROBOT = new Transform3d();
   }
 
   /**
