@@ -1,5 +1,5 @@
 
-package lobstah.stl.io;
+package lobstah.stl.ui;
 
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
