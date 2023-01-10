@@ -9,13 +9,13 @@ import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.Constants.DriveConstants.DriveMotorCANIDs;
-import frc.robot.Constants.IOConstants;
-import frc.robot.Constants.IOConstants.DriverAxes;
+import frc.robot.Constants.UIConstants;
+import frc.robot.Constants.UIConstants.DriverAxes;
 import frc.robot.commands.drive.StopDriveCommand;
 import frc.robot.commands.drive.TankDriveCommand;
 import frc.robot.subsystems.DriveBase;
+import lobstah.stl.ui.LobstahGamepad;
 import frc.robot.subsystems.AutonGenerator;
-import lobstah.stl.io.LobstahGamepad;
 
 /**
  * This class is where the bulk of the robot should be declared. Since Command-based is a "declarative" paradigm, very
@@ -31,8 +31,8 @@ public class RobotContainer {
 
   private final AutonGenerator autonGenerator = new AutonGenerator(driveBase);
 
-  private final LobstahGamepad driverJoystick = new LobstahGamepad(IOConstants.DRIVER_JOYSTICK_INDEX);
-  private final LobstahGamepad operatorJoystick = new LobstahGamepad(IOConstants.OPERATOR_JOYSTICK_INDEX);
+  private final LobstahGamepad driverJoystick = new LobstahGamepad(UIConstants.DRIVER_JOYSTICK_INDEX);
+  private final LobstahGamepad operatorJoystick = new LobstahGamepad(UIConstants.OPERATOR_JOYSTICK_INDEX);
 
   /**
    * The container for the robot. Contains subsystems, OI devices, and commands.
@@ -84,7 +84,7 @@ public class RobotContainer {
             driveBase,
             () -> -driverJoystick.getRawAxis(DriverAxes.LEFT),
             () -> -driverJoystick.getRawAxis(DriverAxes.RIGHT),
-            IOConstants.SQUARED_INPUTS));
+            UIConstants.SQUARED_INPUTS));
   }
 
   /**

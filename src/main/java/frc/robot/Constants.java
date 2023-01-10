@@ -64,9 +64,9 @@ public final class Constants {
   }
 
   /**
-   * Stores constants related to driver controls, SmartDashboard and other IO (Input/Output).
+   * Stores constants related to driver controls, SmartDashboard and other user interface elements.
    */
-  public static final class IOConstants {
+  public static final class UIConstants {
     public static final int DRIVER_JOYSTICK_INDEX = 0;
     public static final int OPERATOR_JOYSTICK_INDEX = 1;
 
