@@ -5,14 +5,23 @@
 package frc.robot;
 
 import com.pathplanner.lib.server.PathPlannerServer;
+import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.InstantCommand;
+import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import frc.robot.Constants.DriveConstants.DriveMotorCANIDs;
+import frc.robot.Constants.FieldConstants;
 import frc.robot.Constants.UIConstants;
 import frc.robot.Constants.UIConstants.DriverAxes;
+import frc.robot.commands.drive.AimCommand;
+import frc.robot.commands.drive.GeneratePathCommand;
 import frc.robot.commands.drive.StopDriveCommand;
 import frc.robot.commands.drive.TankDriveCommand;
+import frc.robot.commands.drive.TargetCommand;
+import frc.robot.commands.drive.TurnCommand;
 import frc.robot.subsystems.DriveBase;
 import lobstah.stl.ui.LobstahGamepad;
 import frc.robot.subsystems.AutonGenerator;
@@ -34,6 +43,9 @@ public class RobotContainer {
   private final LobstahGamepad driverJoystick = new LobstahGamepad(UIConstants.DRIVER_JOYSTICK_INDEX);
   private final LobstahGamepad operatorJoystick = new LobstahGamepad(UIConstants.OPERATOR_JOYSTICK_INDEX);
 
+  private final JoystickButton button = driverJoystick.button(1);
+  private final JoystickButton resetButton = driverJoystick.button(2);
+
   /**
    * The container for the robot. Contains subsystems, OI devices, and commands.
    */
@@ -46,7 +58,12 @@ public class RobotContainer {
   /**
    * Use this method to define your button->command mappings.
    */
-  private void configureButtonBindings() {}
+  private void configureButtonBindings() {
+    button.whileTrue(new AimCommand(driveBase, FieldConstants.SCORING_WAYPOINTS[3]));
+    resetButton.whileTrue(new InstantCommand(() -> {
+      driveBase.resetOdometry(new Translation2d(3, 1.6), new Rotation2d(0));
+    }));
+  }
 
   private final SendableChooser<Command> autonChooser = new SendableChooser<>();
   private final SendableChooser<Integer> initialPosition = new SendableChooser<>();

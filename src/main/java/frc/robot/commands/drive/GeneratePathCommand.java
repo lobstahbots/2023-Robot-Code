@@ -25,7 +25,7 @@ public class GeneratePathCommand extends DriveCommand {
 
   public void execute() {
     PathPlannerTrajectory trajectory = driveBase.generatePath(this.targetPose);
-    CommandScheduler.getInstance().schedule(new PathFollowCommand(this.driveBase, trajectory, true, true));
+    CommandScheduler.getInstance().schedule(new PathFollowCommand(this.driveBase, trajectory, false, true));
   }
 
   public boolean isFinished() {

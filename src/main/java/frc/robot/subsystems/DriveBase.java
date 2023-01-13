@@ -27,6 +27,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.DriveConstants;
+import frc.robot.Constants.FieldConstants;
 import frc.robot.Constants.PathConstants;
 import lobstah.stl.math.LobstahMath;
 import lobstah.stl.motorcontrol.LobstahDifferentialDrive;
@@ -228,11 +229,19 @@ public class DriveBase extends SubsystemBase {
   /**
    * Returns the heading of the robot.
    *
-   * @return the robot's heading in degrees, from -180 to 180
+   * @return the robot's heading in radians as a Rotation2d.
    */
   public Rotation2d getHeading() {
     return new Rotation2d(Math.toRadians(gyro.getYaw()));
   }
+
+  public Rotation2d getAngle() {
+    return new Rotation2d(-Math.toRadians(gyro.getAngle() % 360));
+  }
+
+  // public Rotation2d getAngle() {
+  // return new Rotation2d()
+  // }
 
   /**
    * Returns the turn rate of the robot.
@@ -320,10 +329,8 @@ public class DriveBase extends SubsystemBase {
     if (visionEstimatedPose.getFirst() != null) {
       poseEstimator.addVisionMeasurement(visionEstimatedPose.getFirst().toPose2d(), visionEstimatedPose.getSecond());
     }
-    SmartDashboard.putNumber("Gyro Value", this.getHeading().getDegrees());
+    SmartDashboard.putNumber("Gyro Value", this.getAngle().getDegrees());
     SmartDashboard.putString("Pose", this.getPose().toString());
     SmartDashboard.putNumber("Number of Targets", this.photonVision.getTargets().size());
-    SmartDashboard.putNumberArray("Visible AprilTag IDs", (Double[]) this.photonVision.getFiducialIDs().toArray());
   }
-
 }

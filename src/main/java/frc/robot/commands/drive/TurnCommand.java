@@ -26,8 +26,7 @@ public class TurnCommand extends DriveCommand {
 
   @Override
   public void execute() {
-    double error = targetHeading - driveBase.getHeading().getDegrees();
-
+    double error = targetHeading - driveBase.getAngle().getDegrees();
     driveBase.tankDrive(DriveConstants.TURN_KP * error, -DriveConstants.TURN_KP * error, false);
   }
 

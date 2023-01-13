@@ -102,9 +102,9 @@
               "_showGlyph": false
             }
           },
-          "11,0": {
+          "8,5": {
             "size": [
-              1,
+              4,
               1
             ],
             "content": {
@@ -115,10 +115,10 @@
               "_showGlyph": false
             }
           },
-          "12,0": {
+          "8,2": {
             "size": [
-              1,
-              1
+              4,
+              3
             ],
             "content": {
               "_type": "Text View",
@@ -128,10 +128,10 @@
               "_showGlyph": false
             }
           },
-          "0,1": {
+          "1,2": {
             "size": [
-              2,
-              1
+              5,
+              3
             ],
             "content": {
               "_type": "Field",
@@ -145,9 +145,9 @@
               "Colors/traj": "#FFFFFFFF"
             }
           },
-          "2,1": {
+          "0,1": {
             "size": [
-              1,
+              2,
               1
             ],
             "content": {
@@ -158,9 +158,9 @@
               "_showGlyph": false
             }
           },
-          "3,1": {
+          "2,1": {
             "size": [
-              1,
+              2,
               1
             ],
             "content": {
@@ -173,13 +173,52 @@
           },
           "4,1": {
             "size": [
-              1,
+              2,
               1
             ],
             "content": {
               "_type": "Text View",
               "_source0": "network_table:///SmartDashboard/PPRamseteCommand_rotationError",
               "_title": "PPRamseteCommand_rotationError",
+              "_glyph": 148,
+              "_showGlyph": false
+            }
+          },
+          "12,0": {
+            "size": [
+              1,
+              1
+            ],
+            "content": {
+              "_type": "Text View",
+              "_source0": "network_table:///SmartDashboard/Number of Targets",
+              "_title": "Number of Targets",
+              "_glyph": 148,
+              "_showGlyph": false
+            }
+          },
+          "9,1": {
+            "size": [
+              2,
+              1
+            ],
+            "content": {
+              "_type": "Text View",
+              "_source0": "network_table:///SmartDashboard/Distance TO POse",
+              "_title": "Distance TO POse",
+              "_glyph": 148,
+              "_showGlyph": false
+            }
+          },
+          "11,0": {
+            "size": [
+              1,
+              1
+            ],
+            "content": {
+              "_type": "Text View",
+              "_source0": "network_table:///SmartDashboard/Index",
+              "_title": "Index",
               "_glyph": 148,
               "_showGlyph": false
             }
