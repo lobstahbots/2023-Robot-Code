@@ -100,13 +100,13 @@ public class PhotonVision extends SubsystemBase {
   /**
    * Estimates the global field pose based on previous pose and an {@link RobotPoseEstimator}.
    */
-  public Pair<Pose2d, Double> getEstimatedGlobalPose() {
+  public Pair<Pose3d, Double> getEstimatedGlobalPose() {
     double currentTime = Timer.getFPGATimestamp();
     Optional<Pair<Pose3d, Double>> result = robotPoseEstimator.update();
     if (result.isPresent()) {
-      return new Pair<Pose2d, Double>(result.get().getFirst().toPose2d(), currentTime - result.get().getSecond());
+      return new Pair<Pose3d, Double>(result.get().getFirst(), currentTime - result.get().getSecond());
     } else {
-      return new Pair<Pose2d, Double>(null, 0.0);
+      return new Pair<Pose3d, Double>(null, 0.0);
     }
   }
 

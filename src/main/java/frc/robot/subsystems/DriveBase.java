@@ -1,6 +1,8 @@
 
 package frc.robot.subsystems;
 
+import java.util.ArrayList;
+
 import com.ctre.phoenix.motorcontrol.FeedbackDevice;
 import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.ctre.phoenix.motorcontrol.SupplyCurrentLimitConfiguration;
@@ -8,8 +10,14 @@ import com.ctre.phoenix.motorcontrol.TalonFXInvertType;
 import com.ctre.phoenix.motorcontrol.can.TalonFX;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonFX;
 import com.kauailabs.navx.frc.AHRS;
+import com.pathplanner.lib.PathConstraints;
+import com.pathplanner.lib.PathPlanner;
+import com.pathplanner.lib.PathPlannerTrajectory;
+import com.pathplanner.lib.PathPoint;
 import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.geometry.Transform2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.Pair;
 import edu.wpi.first.math.estimator.DifferentialDrivePoseEstimator;
@@ -19,6 +27,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.DriveConstants;
+import frc.robot.Constants.PathConstants;
 import lobstah.stl.math.LobstahMath;
 import lobstah.stl.motorcontrol.LobstahDifferentialDrive;
 
@@ -136,6 +145,10 @@ public class DriveBase extends SubsystemBase {
    */
   public Pose2d getPose() {
     poseEstimator.update(getHeading(), getLeftEncoderDistanceMeters(), getRightEncoderDistanceMeters());
+    Pair<Pose3d, Double> visionEstimatedPose = photonVision.getEstimatedGlobalPose();
+    if (visionEstimatedPose.getFirst() != null) {
+      poseEstimator.addVisionMeasurement(visionEstimatedPose.getFirst().toPose2d(), visionEstimatedPose.getSecond());
+    }
     return poseEstimator.getEstimatedPosition();
   }
 
@@ -231,6 +244,44 @@ public class DriveBase extends SubsystemBase {
   }
 
   /**
+   * Returns the Transform2d from the pose of the robot to the target Pose.
+   */
+  public Transform2d getDistanceToPose(Pose2d targetPose) {
+    return this.getPose().minus(targetPose);
+  }
+
+  /**
+   * Returns the x component of the Transform2d from the pose of the robot to the target Pose.
+   * 
+   * @return The distance in meters from the robot to the target in the x direction.
+   */
+  public double getXDistanceToPose(Pose2d targetPose) {
+    return this.getDistanceToPose(targetPose).getX();
+  }
+
+  /**
+   * Returns the y component of the Transform2d from the pose of the robot to the target Pose.
+   * 
+   * @return The distance in meters from the robot to the target in the y direction.
+   */
+  public double getYDistanceToPose(Pose2d targetPose) {
+    return this.getDistanceToPose(targetPose).getY();
+  }
+
+  /**
+   * Generates a trajectory from the robot's position to the given target Pose.
+   * 
+   * @return A PathPlannerTrajectory to follow to the target position.
+   */
+  public PathPlannerTrajectory generatePath(Pose2d targetPose) {
+    ArrayList<PathPoint> waypoints = new ArrayList<>();
+    waypoints.add(new PathPoint(this.getPose().getTranslation(), this.getPose().getRotation()));
+    waypoints.add(new PathPoint(targetPose.getTranslation(), targetPose.getRotation()));
+    return PathPlanner
+        .generatePath(new PathConstraints(PathConstants.MAX_DRIVE_SPEED, PathConstants.MAX_ACCELERATION), waypoints);
+  }
+
+  /**
    * Sets the motor speeds to 0.
    */
   public void stopDrive() {
@@ -265,9 +316,9 @@ public class DriveBase extends SubsystemBase {
    */
   public void periodic() {
     poseEstimator.update(getHeading(), getLeftEncoderDistanceMeters(), getRightEncoderDistanceMeters());
-    Pair<Pose2d, Double> visionEstimatedPose = photonVision.getEstimatedGlobalPose();
+    Pair<Pose3d, Double> visionEstimatedPose = photonVision.getEstimatedGlobalPose();
     if (visionEstimatedPose.getFirst() != null) {
-      poseEstimator.addVisionMeasurement(visionEstimatedPose.getFirst(), visionEstimatedPose.getSecond());
+      poseEstimator.addVisionMeasurement(visionEstimatedPose.getFirst().toPose2d(), visionEstimatedPose.getSecond());
     }
     SmartDashboard.putNumber("Gyro Value", this.getHeading().getDegrees());
     SmartDashboard.putString("Pose", this.getPose().toString());

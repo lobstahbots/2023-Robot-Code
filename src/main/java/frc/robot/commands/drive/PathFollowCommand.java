@@ -15,18 +15,19 @@ import frc.robot.subsystems.DriveBase;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 
-// NOTE: Consider using this command inline, rather than writing a subclass. For more
-// information, see:
-// https://docs.wpilib.org/en/stable/docs/software/commandbased/convenience-features.html
+/**
+ * Makes an {@link DriveBase} follow a given PathPlannerTrajectory using a Ramsete Controller.
+ */
 public class PathFollowCommand extends SequentialCommandGroup {
-  /** Creates a new PathCommand. */
   private final RamseteController ramsete;
   private final PIDController leftController;
   private final PIDController rightController;
   private final PPRamseteCommand ramseteCommand;
   private final DriveBase driveBase;
 
-  /** Creates a new PathFollowCommand. */
+  /**
+   * Drives an {@link DriveBase} through the provided PathPlannerTrajectory using a Ramsete Controller.
+   */
   public PathFollowCommand(DriveBase drivebase, PathPlannerTrajectory traj, boolean isFirstPath, boolean isLastPath) {
     this.driveBase = drivebase;
     this.ramsete = new RamseteController();
@@ -34,21 +35,17 @@ public class PathFollowCommand extends SequentialCommandGroup {
     this.rightController = new PIDController(PathConstants.KP, PathConstants.KI, PathConstants.KD);
     ramseteCommand = new PPRamseteCommand(
         traj,
-        driveBase::getPose, // Pose supplier
+        driveBase::getPose,
         ramsete,
         new SimpleMotorFeedforward(PathConstants.KS, PathConstants.KV, PathConstants.KA),
-        DriveConstants.KINEMATICS, // DifferentialDriveKinematics
-        driveBase::getWheelSpeeds, // DifferentialDriveWheelSpeeds supplier
-        leftController, // Left controller. Tune these values for your robot. Leaving them 0 will only use
-                        // feedforwards.
-        rightController, // Right controller (usually the same values as left controller)
+        DriveConstants.KINEMATICS,
+        driveBase::getWheelSpeeds,
+        leftController,
+        rightController,
         (leftVolts, rightVolts) -> {
           driveBase.tankDriveVolts(leftVolts, rightVolts);
-        }, // Voltage biconsumer
-        driveBase // Requires this drive subsystem
-    );
+        }, driveBase);
     addCommands(new InstantCommand(() -> {
-      // Reset odometry for the first path you run during auto
       if (isFirstPath) {
         driveBase.resetOdometry(traj.getInitialPose().getTranslation(), traj.getInitialPose().getRotation());
       }

@@ -4,6 +4,8 @@
 
 package frc.robot;
 
+import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Transform3d;
 import edu.wpi.first.math.kinematics.DifferentialDriveKinematics;
 import edu.wpi.first.math.util.Units;
@@ -52,6 +54,18 @@ public final class Constants {
     public static final double KD = 0;
   }
 
+  public static final class FieldConstants {
+    public static final Pose2d[] GRID_LAYOUT = new Pose2d[] {
+        new Pose2d(1.57, 0.43, new Rotation2d(0)), new Pose2d(1.57, 1, new Rotation2d(0)),
+        new Pose2d(1.57, 1.6, new Rotation2d(0)), new Pose2d(1.57, 2.2, new Rotation2d(0)),
+        new Pose2d(1.57, 2.7, new Rotation2d(0)), new Pose2d(1.57, 3.3, new Rotation2d(0)),
+        new Pose2d(1.57, 3.85, new Rotation2d(0)), new Pose2d(1.57, 4.4, new Rotation2d(0)),
+        new Pose2d(1.57, 5, new Rotation2d(0))
+    };
+    public static final double MAX_AUTO_DISTANCE_METERS = 10;
+    public static final double SCORING_ZONE_DEADBAND = 1;
+  }
+
   /**
    * Stores constants related to autonomous routines.
    */
@@ -87,6 +101,8 @@ public final class Constants {
     public static final double ACCELERATION_RATE_LIMIT = 2.1;
     public static final DifferentialDriveKinematics KINEMATICS =
         new DifferentialDriveKinematics(Units.inchesToMeters(RobotConstants.TRACK_WIDTH));
+    public static final double TURN_KP = 0.05;
+    public static final double TURN_DEADBAND = 1;
 
     public static final class DriveMotorCANIDs {
       public static final int RIGHT_FRONT = 44;
