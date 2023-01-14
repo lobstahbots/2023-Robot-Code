@@ -61,7 +61,7 @@ public class RobotContainer {
   private void configureButtonBindings() {
     button.whileTrue(new AimCommand(driveBase, FieldConstants.SCORING_WAYPOINTS[3]));
     resetButton.whileTrue(new InstantCommand(() -> {
-      driveBase.resetOdometry(new Translation2d(3, 1.6), new Rotation2d(0));
+      driveBase.resetOdometry(new Translation2d(3, 3), new Rotation2d(0));
     }));
   }
 

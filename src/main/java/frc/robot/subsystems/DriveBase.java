@@ -265,7 +265,7 @@ public class DriveBase extends SubsystemBase {
    * @return The distance in meters from the robot to the target in the x direction.
    */
   public double getXDistanceToPose(Pose2d targetPose) {
-    return this.getDistanceToPose(targetPose).getX();
+    return this.getPose().getX() - targetPose.getX();
   }
 
   /**
@@ -273,8 +273,8 @@ public class DriveBase extends SubsystemBase {
    * 
    * @return The distance in meters from the robot to the target in the y direction.
    */
-  public double getYDistanceToPose(Pose2d targetPose) {
-    return this.getDistanceToPose(targetPose).getY();
+  public double getYDistanceToPose(Pose2d startingPose, Pose2d targetPose) {
+    return startingPose.getY() - targetPose.getY();
   }
 
   /**
@@ -282,12 +282,15 @@ public class DriveBase extends SubsystemBase {
    * 
    * @return A PathPlannerTrajectory to follow to the target position.
    */
-  public PathPlannerTrajectory generatePath(Pose2d targetPose) {
-    ArrayList<PathPoint> waypoints = new ArrayList<>();
-    waypoints.add(new PathPoint(this.getPose().getTranslation(), this.getPose().getRotation()));
-    waypoints.add(new PathPoint(targetPose.getTranslation(), targetPose.getRotation()));
+  public PathPlannerTrajectory generatePath(Pose2d targetPose, ArrayList<Pose2d> waypoints) {
+    ArrayList<PathPoint> pathPoints = new ArrayList<>();
+    pathPoints.add(new PathPoint(this.getPose().getTranslation(), this.getPose().getRotation()));
+    for (Pose2d waypoint : waypoints) {
+      pathPoints.add(new PathPoint(waypoint.getTranslation(), waypoint.getRotation()));
+    }
+    pathPoints.add(new PathPoint(targetPose.getTranslation(), targetPose.getRotation()));
     return PathPlanner
-        .generatePath(new PathConstraints(PathConstants.MAX_DRIVE_SPEED, PathConstants.MAX_ACCELERATION), waypoints);
+        .generatePath(new PathConstraints(PathConstants.MAX_DRIVE_SPEED, PathConstants.MAX_ACCELERATION), pathPoints);
   }
 
   /**

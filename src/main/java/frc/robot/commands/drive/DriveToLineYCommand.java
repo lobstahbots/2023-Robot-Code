@@ -27,7 +27,7 @@ public class DriveToLineYCommand extends DriveCommand {
 
   @Override
   public void execute() {
-    if (driveBase.getYDistanceToPose(targetPose) > FieldConstants.SCORING_ZONE_DEADBAND) {
+    if (driveBase.getYDistanceToPose(this.driveBase.getPose(), targetPose) > FieldConstants.SCORING_ZONE_DEADBAND) {
       driveBase.tankDrive(AutonConstants.SIMPLE_AUTON_SPEED, AutonConstants.SIMPLE_AUTON_SPEED, false);
     } else if (driveBase.getHeading().minus(targetPose.getRotation()).getDegrees() > DriveConstants.TURN_DEADBAND) {
       CommandScheduler.getInstance().schedule(new TurnCommand(driveBase, targetPose.getRotation().getDegrees()));

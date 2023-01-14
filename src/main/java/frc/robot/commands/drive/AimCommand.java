@@ -4,7 +4,12 @@
 
 package frc.robot.commands.drive;
 
+import java.util.ArrayList;
+
+import com.pathplanner.lib.PathPoint;
 import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
@@ -27,23 +32,49 @@ public class AimCommand extends DriveCommand {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    SmartDashboard.putNumber("Distance TO POse", driveBase.getYDistanceToPose(targetPose));
-    if (driveBase.getYDistanceToPose(targetPose) < 0) {
+    SmartDashboard.putNumber("Distance TO POse", driveBase.getYDistanceToPose(driveBase.getPose(), targetPose));
+    int finalWayPoint = 0;
+    for (int i = 0; i < FieldConstants.TRAVELING_WAYPOINTS.length; i++) {
+      if (Math
+          .abs(driveBase.getYDistanceToPose(targetPose, FieldConstants.TRAVELING_WAYPOINTS[i])) < Math
+              .abs(driveBase
+                  .getYDistanceToPose(targetPose, FieldConstants.TRAVELING_WAYPOINTS[finalWayPoint]))) {
+        finalWayPoint = i;
+      }
+    }
+    if (driveBase.getYDistanceToPose(driveBase.getPose(), targetPose) < 0) {
       int index = 0;
-      while (driveBase.getYDistanceToPose(FieldConstants.TRAVELING_RIGHT_WAYPOINTS[index]) < 0) {
+      while (driveBase.getYDistanceToPose(driveBase.getPose(), FieldConstants.TRAVELING_WAYPOINTS[index]) > 0) {
         index++;
       }
       SmartDashboard.putNumber("Index", index);
+      SmartDashboard.putNumber("Final Way Point", finalWayPoint);
+      ArrayList<Pose2d> waypoints = new ArrayList<>();
+      for (int i = finalWayPoint; i >= index; i--) {
+        waypoints.add(new Pose2d(FieldConstants.TRAVELING_WAYPOINTS[i].getX(),
+            FieldConstants.TRAVELING_WAYPOINTS[i].getY(), Rotation2d.fromDegrees(90)));
+        SmartDashboard.putString("Index" + String.valueOf(i), new Pose2d(FieldConstants.TRAVELING_WAYPOINTS[i].getX(),
+            FieldConstants.TRAVELING_WAYPOINTS[i].getY(), Rotation2d.fromDegrees(90)).toString());
+      }
+
       // CommandScheduler.getInstance()
-      // .schedule(new GeneratePathCommand(driveBase, FieldConstants.TRAVELING_RIGHT_WAYPOINTS[index]));
+      // .schedule(new GeneratePathCommand(driveBase, FieldConstants.TRAVELING_WAYPOINTS[finalWayPoint], waypoints));
     } else {
-      int index = FieldConstants.TRAVELING_LEFT_WAYPOINTS.length - 1;
-      while (driveBase.getYDistanceToPose(FieldConstants.TRAVELING_LEFT_WAYPOINTS[index]) > 0) {
+      int index = FieldConstants.TRAVELING_WAYPOINTS.length - 1;
+      while (driveBase.getYDistanceToPose(driveBase.getPose(), FieldConstants.TRAVELING_WAYPOINTS[index]) < 0) {
         index--;
       }
       SmartDashboard.putNumber("Index", index);
+      SmartDashboard.putNumber("Final Way Point", finalWayPoint);
+      ArrayList<Pose2d> waypoints = new ArrayList<>();
+      for (int i = index; i < finalWayPoint; i++) {
+        waypoints.add(new Pose2d(FieldConstants.TRAVELING_WAYPOINTS[i].getX(),
+            FieldConstants.TRAVELING_WAYPOINTS[i].getY(), Rotation2d.fromDegrees(-90)));
+        SmartDashboard.putString("Index" + String.valueOf(i), new Pose2d(FieldConstants.TRAVELING_WAYPOINTS[i].getX(),
+            FieldConstants.TRAVELING_WAYPOINTS[i].getY(), Rotation2d.fromDegrees(-90)).toString());
+      }
       // CommandScheduler.getInstance()
-      // .schedule(new GeneratePathCommand(driveBase, FieldConstants.TRAVELING_LEFT_WAYPOINTS[index]));
+      // .schedule(new GeneratePathCommand(driveBase, FieldConstants.TRAVELING_WAYPOINTS[index]));
     }
   }
 

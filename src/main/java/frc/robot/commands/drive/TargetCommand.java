@@ -28,10 +28,11 @@ public class TargetCommand extends SequentialCommandGroup {
       this.cancel();
     }
 
-    if (this.driveBase.getYDistanceToPose(this.targetPose) < FieldConstants.SCORING_ZONE_DEADBAND) {
+    if (this.driveBase.getYDistanceToPose(this.driveBase.getPose(),
+        this.targetPose) < FieldConstants.SCORING_ZONE_DEADBAND) {
       CommandScheduler.getInstance().schedule(new GeneratePathCommand(driveBase, targetPose));
     } else {
-      if (this.driveBase.getYDistanceToPose(this.targetPose) < 0) {
+      if (this.driveBase.getYDistanceToPose(this.driveBase.getPose(), this.targetPose) < 0) {
         addCommands(new TurnCommand(driveBase, 90), new DriveToLineYCommand(driveBase, targetPose));
       } else {
 
