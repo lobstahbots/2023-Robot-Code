@@ -19,7 +19,7 @@ public class GeneratePathCommand extends DriveCommand {
   private final ArrayList<Pose2d> waypoints;
 
   /**
-   * Generates and drives the {@link DriveBase} along a PathPlannerTrajectory to a target Pose2d.
+   * Generates and drives an {@link DriveBase} along a PathPlannerTrajectory to a target Pose2d.
    */
   public GeneratePathCommand(DriveBase driveBase, Pose2d targetPose) {
     super(driveBase);
@@ -28,7 +28,8 @@ public class GeneratePathCommand extends DriveCommand {
   }
 
   /**
-   * Generates and drives the {@link DriveBase} along a PathPlannerTrajectory to a target Pose2d.
+   * Generates and drives an {@link DriveBase} along a PathPlannerTrajectory through a set of provided waypoints to a
+   * target Pose2d.
    */
   public GeneratePathCommand(DriveBase driveBase, Pose2d targetPose, ArrayList<Pose2d> waypoints) {
     super(driveBase);

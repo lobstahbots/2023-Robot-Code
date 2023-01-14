@@ -54,6 +54,9 @@ public final class Constants {
     public static final double KD = 0;
   }
 
+  /**
+   * Stores constants related to this year's playing field.
+   */
   public static final class FieldConstants {
     public static final Pose2d[] SCORING_WAYPOINTS = new Pose2d[] {
         new Pose2d(1.57, 0.43, new Rotation2d(180)), new Pose2d(1.57, 1, new Rotation2d(180)),

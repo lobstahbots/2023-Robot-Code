@@ -16,12 +16,9 @@ import frc.robot.Constants.DriveConstants.DriveMotorCANIDs;
 import frc.robot.Constants.FieldConstants;
 import frc.robot.Constants.UIConstants;
 import frc.robot.Constants.UIConstants.DriverAxes;
-import frc.robot.commands.drive.AimCommand;
-import frc.robot.commands.drive.GeneratePathCommand;
+import frc.robot.commands.drive.TargetCommand;
 import frc.robot.commands.drive.StopDriveCommand;
 import frc.robot.commands.drive.TankDriveCommand;
-import frc.robot.commands.drive.TargetCommand;
-import frc.robot.commands.drive.TurnCommand;
 import frc.robot.subsystems.DriveBase;
 import lobstah.stl.ui.LobstahGamepad;
 import frc.robot.subsystems.AutonGenerator;
@@ -59,7 +56,7 @@ public class RobotContainer {
    * Use this method to define your button->command mappings.
    */
   private void configureButtonBindings() {
-    button.whileTrue(new AimCommand(driveBase, FieldConstants.SCORING_WAYPOINTS[3]));
+    button.whileTrue(new TargetCommand(driveBase, FieldConstants.SCORING_WAYPOINTS[3]));
     resetButton.whileTrue(new InstantCommand(() -> {
       driveBase.resetOdometry(new Translation2d(3, 3), new Rotation2d(0));
     }));

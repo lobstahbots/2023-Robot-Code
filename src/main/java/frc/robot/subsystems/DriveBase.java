@@ -27,7 +27,6 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.DriveConstants;
-import frc.robot.Constants.FieldConstants;
 import frc.robot.Constants.PathConstants;
 import lobstah.stl.math.LobstahMath;
 import lobstah.stl.motorcontrol.LobstahDifferentialDrive;
@@ -48,8 +47,6 @@ public class DriveBase extends SubsystemBase {
   private final DifferentialDrivePoseEstimator poseEstimator;
   private final PhotonVision photonVision;
   private final AHRS gyro = new AHRS();
-
-  private Pose2d prevEstimatedRobotPose;
 
   /**
    * Constructs a DriveBase with a {@link TalonFX} at each of the given CAN IDs.
@@ -106,7 +103,6 @@ public class DriveBase extends SubsystemBase {
         new DifferentialDrivePoseEstimator(DriveConstants.KINEMATICS, gyro.getRotation2d(), 0, 0, new Pose2d());
 
     this.photonVision = new PhotonVision();
-    this.prevEstimatedRobotPose = new Pose2d();
 
     CommandScheduler.getInstance().registerSubsystem(this);
   }
@@ -229,19 +225,20 @@ public class DriveBase extends SubsystemBase {
   /**
    * Returns the heading of the robot.
    *
-   * @return the robot's heading in radians as a Rotation2d.
+   * @return the robot's heading in radians as a Rotation2d (from 180 to -180 degrees).
    */
   public Rotation2d getHeading() {
     return new Rotation2d(Math.toRadians(gyro.getYaw()));
   }
 
+  /**
+   * Returns the angle of the robot.
+   *
+   * @return the robot's heading in radians as a Rotation2d (from 0 to 360 degrees).
+   */
   public Rotation2d getAngle() {
     return new Rotation2d(-Math.toRadians(gyro.getAngle() % 360));
   }
-
-  // public Rotation2d getAngle() {
-  // return new Rotation2d()
-  // }
 
   /**
    * Returns the turn rate of the robot.
@@ -278,7 +275,7 @@ public class DriveBase extends SubsystemBase {
   }
 
   /**
-   * Generates a trajectory from the robot's position to the given target Pose.
+   * Generates a trajectory through a list of provided waypoints from the robot's position to the given target Pose.
    * 
    * @return A PathPlannerTrajectory to follow to the target position.
    */
@@ -324,7 +321,8 @@ public class DriveBase extends SubsystemBase {
 
   @Override
   /**
-   * Updates the Pose Estimator with measurements from Photonvision and odometry.
+   * Updates the Pose Estimator with measurements from Photonvision and odometry and writes relevant values to the
+   * Shuffleboard.
    */
   public void periodic() {
     poseEstimator.update(getHeading(), getLeftEncoderDistanceMeters(), getRightEncoderDistanceMeters());

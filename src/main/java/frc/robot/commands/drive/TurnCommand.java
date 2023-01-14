@@ -14,10 +14,10 @@ public class TurnCommand extends DriveCommand {
   private final double targetHeading;
 
   /**
-   * Turns the driveBase to the target heading gyro value.
+   * Turns the {@link DriveBase} to the target heading gyro value.
    *
    * @param driveBase The {@link DriveBase} to turn
-   * @param targetHeading The desired angle in degrees. Negative for left, positive for right.
+   * @param targetHeading The desired angle tp turn to in degrees. Negative for left, positive for right.
    */
   public TurnCommand(DriveBase driveBase, double targetHeading) {
     super(driveBase);

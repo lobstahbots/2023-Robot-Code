@@ -87,4 +87,18 @@ public class LobstahMath {
     return positionMeters;
   }
 
+  /**
+   * Calculates turning output based on current and desired angle, for gyro values clamped between 180 and -180 degrees.
+   * 
+   * @param currentAngle The current gyro heading in degrees, 180 to -180.
+   * @param desiredAngle The desired gyro heading in degrees, 180 to -180.
+   */
+  public static double calculateTurningOutput(double currentAngle, double desiredAngle) {
+    double output = currentAngle - desiredAngle;
+    output %= 360;
+    if (Math.abs(output) > 180)
+      output -= Math.signum(output) * 360;
+    return output;
+  }
+
 }
