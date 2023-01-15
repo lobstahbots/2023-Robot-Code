@@ -5,6 +5,7 @@
 package frc.robot;
 
 import com.pathplanner.lib.server.PathPlannerServer;
+import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
@@ -56,7 +57,7 @@ public class RobotContainer {
    * Use this method to define your button->command mappings.
    */
   private void configureButtonBindings() {
-    button.whileTrue(new TargetCommand(driveBase, FieldConstants.SCORING_WAYPOINTS[3]));
+    button.whileTrue(new TargetCommand(driveBase, FieldConstants.SCORING_WAYPOINTS[4]));
     resetButton.whileTrue(new InstantCommand(() -> {
       driveBase.resetOdometry(new Translation2d(3, 3), new Rotation2d(0));
     }));
@@ -71,24 +72,24 @@ public class RobotContainer {
    * Use this method to run tasks that configure sendables and other smartdashboard items.
    */
   public void configureSmartDash() {
-    autonChooser.addOption("Simple Auton", autonGenerator.getSimpleAutonCommand());
-    autonChooser.addOption("Do Nothing Auton", autonGenerator.getDoNothingCommand());
     initialPosition.addOption("Furthest Down", 0);
     initialPosition.addOption("Middle", 1);
     initialPosition.addOption("Furthest Up", 2);
-    initialPosition.setDefaultOption("Select Option", -1);
+    initialPosition.setDefaultOption("Furthest Up", 1);
     crossingPosition.addOption("Below Platform", 0);
     crossingPosition.addOption("Middle", 1);
     crossingPosition.addOption("Above Platform", 2);
-    crossingPosition.setDefaultOption("Select Option", -1);
+    crossingPosition.setDefaultOption("Middle", 1);
     endingPosition.addOption("Towards Player Station", 3);
     endingPosition.addOption("Slightly Up", 2);
     endingPosition.addOption("Slightly Down", 1);
     endingPosition.addOption("Bottom Corner", 0);
-    endingPosition.setDefaultOption("Select Option", -1);
+    endingPosition.setDefaultOption("Slightly Up", 2);
     autonChooser.addOption("Path Follow Auton",
         autonGenerator.getPathFollowCommand(initialPosition.getSelected(), crossingPosition.getSelected(),
             endingPosition.getSelected()));
+    autonChooser.addOption("Simple Auton", autonGenerator.getSimpleAutonCommand());
+    autonChooser.addOption("Do Nothing Auton", autonGenerator.getDoNothingCommand());
     SmartDashboard.putData("Auton Chooser", autonChooser);
     SmartDashboard.putData("Initial Position Chooser", initialPosition);
     SmartDashboard.putData("Crossing Position Chooser", crossingPosition);

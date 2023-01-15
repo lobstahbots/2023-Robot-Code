@@ -8,7 +8,6 @@ import java.util.ArrayList;
 
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import frc.robot.Constants.FieldConstants;
 import frc.robot.subsystems.DriveBase;
@@ -48,37 +47,29 @@ public class TargetCommand extends DriveCommand {
       while (driveBase.getYDistanceToPose(driveBase.getPose(), FieldConstants.TRAVELING_WAYPOINTS[index]) > 0) {
         index++;
       }
-      SmartDashboard.putNumber("Index", index);
-      SmartDashboard.putNumber("Final Way Point", finalWaypointIndex);
+      index++;
       ArrayList<Pose2d> waypoints = new ArrayList<>();
-      for (int i = finalWaypointIndex; i >= index; i--) {
+      for (int i = index; i < finalWaypointIndex; i++) {
         waypoints.add(new Pose2d(FieldConstants.TRAVELING_WAYPOINTS[i].getX(),
             FieldConstants.TRAVELING_WAYPOINTS[i].getY(), Rotation2d.fromDegrees(90)));
-        SmartDashboard.putString("Index" + String.valueOf(i), new Pose2d(FieldConstants.TRAVELING_WAYPOINTS[i].getX(),
-            FieldConstants.TRAVELING_WAYPOINTS[i].getY(), Rotation2d.fromDegrees(90)).toString());
       }
+      CommandScheduler.getInstance()
+          .schedule(new GeneratePathCommand(driveBase, targetPose, waypoints));
 
-      // CommandScheduler.getInstance()
-      // .schedule(new GeneratePathCommand(driveBase, FieldConstants.TRAVELING_WAYPOINTS[finalWaypointIndex],
-      // waypoints).andThen(new TurnCommand(driveBase, 180))
-      // .andThen(new GeneratePathCommand(driveBase, targetPose)));
     } else {
       int index = FieldConstants.TRAVELING_WAYPOINTS.length - 1;
       while (driveBase.getYDistanceToPose(driveBase.getPose(), FieldConstants.TRAVELING_WAYPOINTS[index]) < 0) {
         index--;
       }
-      SmartDashboard.putNumber("Index", index);
-      SmartDashboard.putNumber("Final Way Point", finalWaypointIndex);
+      index--;
       ArrayList<Pose2d> waypoints = new ArrayList<>();
-      for (int i = index; i < finalWaypointIndex; i++) {
+      for (int i = index; i >= finalWaypointIndex; i--) {
         waypoints.add(new Pose2d(FieldConstants.TRAVELING_WAYPOINTS[i].getX(),
             FieldConstants.TRAVELING_WAYPOINTS[i].getY(), Rotation2d.fromDegrees(-90)));
-        SmartDashboard.putString("Index" + String.valueOf(i), new Pose2d(FieldConstants.TRAVELING_WAYPOINTS[i].getX(),
-            FieldConstants.TRAVELING_WAYPOINTS[i].getY(), Rotation2d.fromDegrees(-90)).toString());
       }
-      // CommandScheduler.getInstance()
-      // .schedule(new GeneratePathCommand(driveBase, FieldConstants.TRAVELING_WAYPOINTS[finalWaypointIndex],
-      // waypoints));
+      CommandScheduler.getInstance()
+          .schedule(new GeneratePathCommand(driveBase, targetPose,
+              waypoints));
     }
   }
 

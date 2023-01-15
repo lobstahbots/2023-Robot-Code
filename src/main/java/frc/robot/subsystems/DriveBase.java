@@ -332,6 +332,6 @@ public class DriveBase extends SubsystemBase {
     }
     SmartDashboard.putNumber("Gyro Value", this.getAngle().getDegrees());
     SmartDashboard.putString("Pose", this.getPose().toString());
-    SmartDashboard.putNumber("Number of Targets", this.photonVision.getTargets().size());
+    SmartDashboard.putNumber("Number of Tags Visible", this.photonVision.getTargets().size());
   }
 }
