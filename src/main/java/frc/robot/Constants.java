@@ -101,6 +101,8 @@ public final class Constants {
 
     public static final boolean SQUARED_INPUTS = true;
 
+    public static final int SLOWDOWN_BUTTON_INDEX = 2;
+
     public static final class DriverAxes {
       public static final int LEFT = 1;
       public static final int RIGHT = 5;
@@ -117,6 +119,7 @@ public final class Constants {
         new DifferentialDriveKinematics(Units.inchesToMeters(RobotConstants.TRACK_WIDTH));
     public static final double TURN_KP = 0.01;
     public static final double TURN_DEADBAND = 1;
+    public static final double SLOWDOWN_PERCENT = 0.5;
 
     public static final class DriveMotorCANIDs {
       public static final int RIGHT_FRONT = 44;
@@ -125,8 +128,11 @@ public final class Constants {
       public static final int LEFT_BACK = 41;
     }
 
-    public static final int CURRENT_LIMIT = 60;
-    public static final int TRIGGER_THRESHOLD = 80;
-    public static final double TRIGGER_THRESHOLD_TIME = 0.5;
+    public static final int STATOR_CURRENT_LIMIT = 50;
+    public static final int SUPPLY_CURRENT_LIMIT = 80;
+    public static final int STATOR_TRIGGER_THRESHOLD = 60;
+    public static final double STATOR_TRIGGER_THRESHOLD_TIME = 0.1;
+    public static final int SUPPLY_TRIGGER_THRESHOLD = 90;
+    public static final double SUPPLY_TRIGGER_THRESHOLD_TIME = 0.5;
   }
 }

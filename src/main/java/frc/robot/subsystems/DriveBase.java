@@ -5,6 +5,7 @@ import java.util.ArrayList;
 
 import com.ctre.phoenix.motorcontrol.FeedbackDevice;
 import com.ctre.phoenix.motorcontrol.NeutralMode;
+import com.ctre.phoenix.motorcontrol.StatorCurrentLimitConfiguration;
 import com.ctre.phoenix.motorcontrol.SupplyCurrentLimitConfiguration;
 import com.ctre.phoenix.motorcontrol.TalonFXInvertType;
 import com.ctre.phoenix.motorcontrol.can.TalonFX;
@@ -68,21 +69,39 @@ public class DriveBase extends SubsystemBase {
     rightBackMotor.setInverted(TalonFXInvertType.Clockwise);
 
     leftFrontMotor.configSupplyCurrentLimit(
-        new SupplyCurrentLimitConfiguration(true, DriveConstants.CURRENT_LIMIT,
-            DriveConstants.TRIGGER_THRESHOLD,
-            DriveConstants.TRIGGER_THRESHOLD_TIME));
+        new SupplyCurrentLimitConfiguration(true, DriveConstants.SUPPLY_CURRENT_LIMIT,
+            DriveConstants.SUPPLY_TRIGGER_THRESHOLD,
+            DriveConstants.SUPPLY_TRIGGER_THRESHOLD_TIME));
     leftBackMotor.configSupplyCurrentLimit(
-        new SupplyCurrentLimitConfiguration(true, DriveConstants.CURRENT_LIMIT,
-            DriveConstants.TRIGGER_THRESHOLD,
-            DriveConstants.TRIGGER_THRESHOLD_TIME));
+        new SupplyCurrentLimitConfiguration(true, DriveConstants.SUPPLY_CURRENT_LIMIT,
+            DriveConstants.SUPPLY_TRIGGER_THRESHOLD,
+            DriveConstants.SUPPLY_TRIGGER_THRESHOLD_TIME));
     rightFrontMotor.configSupplyCurrentLimit(
-        new SupplyCurrentLimitConfiguration(true, DriveConstants.CURRENT_LIMIT,
-            DriveConstants.TRIGGER_THRESHOLD,
-            DriveConstants.TRIGGER_THRESHOLD_TIME));
+        new SupplyCurrentLimitConfiguration(true, DriveConstants.SUPPLY_CURRENT_LIMIT,
+            DriveConstants.SUPPLY_TRIGGER_THRESHOLD,
+            DriveConstants.SUPPLY_TRIGGER_THRESHOLD_TIME));
     rightBackMotor.configSupplyCurrentLimit(
-        new SupplyCurrentLimitConfiguration(true, DriveConstants.CURRENT_LIMIT,
-            DriveConstants.TRIGGER_THRESHOLD,
-            DriveConstants.TRIGGER_THRESHOLD_TIME));
+        new SupplyCurrentLimitConfiguration(true, DriveConstants.SUPPLY_CURRENT_LIMIT,
+            DriveConstants.SUPPLY_TRIGGER_THRESHOLD,
+            DriveConstants.SUPPLY_TRIGGER_THRESHOLD_TIME));
+
+    leftFrontMotor.configStatorCurrentLimit(
+        new StatorCurrentLimitConfiguration(true, DriveConstants.STATOR_CURRENT_LIMIT,
+            DriveConstants.STATOR_TRIGGER_THRESHOLD,
+            DriveConstants.STATOR_TRIGGER_THRESHOLD_TIME));
+    leftBackMotor.configStatorCurrentLimit(
+        new StatorCurrentLimitConfiguration(true, DriveConstants.STATOR_CURRENT_LIMIT,
+            DriveConstants.STATOR_TRIGGER_THRESHOLD,
+            DriveConstants.STATOR_TRIGGER_THRESHOLD_TIME));
+    rightFrontMotor.configStatorCurrentLimit(
+        new StatorCurrentLimitConfiguration(true, DriveConstants.STATOR_CURRENT_LIMIT,
+            DriveConstants.STATOR_TRIGGER_THRESHOLD,
+            DriveConstants.STATOR_TRIGGER_THRESHOLD_TIME));
+    rightBackMotor.configStatorCurrentLimit(
+        new StatorCurrentLimitConfiguration(true, DriveConstants.STATOR_CURRENT_LIMIT,
+            DriveConstants.STATOR_TRIGGER_THRESHOLD,
+            DriveConstants.STATOR_TRIGGER_THRESHOLD_TIME));
+
 
     leftFrontMotor.configSelectedFeedbackSensor(FeedbackDevice.IntegratedSensor);
     leftBackMotor.configSelectedFeedbackSensor(FeedbackDevice.IntegratedSensor);
@@ -330,7 +349,7 @@ public class DriveBase extends SubsystemBase {
     if (visionEstimatedPose.getFirst() != null) {
       poseEstimator.addVisionMeasurement(visionEstimatedPose.getFirst().toPose2d(), visionEstimatedPose.getSecond());
     }
-    SmartDashboard.putNumber("Gyro Value", this.getAngle().getDegrees());
+    SmartDashboard.putNumber("Gyro", this.getAngle().getDegrees());
     SmartDashboard.putString("Pose", this.getPose().toString());
     SmartDashboard.putNumber("Number of Tags Visible", this.photonVision.getTargets().size());
   }

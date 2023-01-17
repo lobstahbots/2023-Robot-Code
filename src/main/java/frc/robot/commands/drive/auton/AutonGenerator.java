@@ -2,7 +2,7 @@
 // Open Source Software; you can modify and/or share it under the terms of
 // the WPILib BSD license file in the root directory of this project.
 
-package frc.robot.subsystems;
+package frc.robot.commands.drive.auton;
 
 import java.util.ArrayList;
 
@@ -16,12 +16,13 @@ import frc.robot.Constants.PathConstants;
 import frc.robot.commands.drive.PathFollowCommand;
 import frc.robot.commands.drive.StopDriveCommand;
 import frc.robot.commands.drive.StraightDriveCommand;
+import frc.robot.subsystems.DriveBase;
 import lobstah.stl.command.TimedCommand;
 
 /**
- * A subsystem that generates autonomous routines for the robot.
+ * A class that generates autonomous routines for the robot.
  */
-public class AutonGenerator extends SubsystemBase {
+public class AutonGenerator {
 
   private final DriveBase driveBase;
   private final Command doNothingCommand;

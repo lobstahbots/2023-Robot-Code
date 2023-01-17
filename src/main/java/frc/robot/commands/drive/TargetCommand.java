@@ -5,6 +5,7 @@
 package frc.robot.commands.drive;
 
 import java.util.ArrayList;
+import java.util.function.Supplier;
 
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
@@ -16,14 +17,20 @@ import frc.robot.subsystems.DriveBase;
  * Drives a {@link DriveBase} through predetermined waypoints to a target to score.
  */
 public class TargetCommand extends DriveCommand {
-  private final Pose2d targetPose;
+  private Pose2d targetPose;
+  private final Supplier<Pose2d> targetSupplier;
 
   /**
    * Drives a {@link DriveBase} through a trajectory of waypoints to reach a scoring target.
    */
-  public TargetCommand(DriveBase driveBase, Pose2d targetPose) {
+  public TargetCommand(DriveBase driveBase, Supplier<Pose2d> targetSupplier) {
     super(driveBase);
-    this.targetPose = targetPose;
+    this.targetSupplier = targetSupplier;
+  }
+
+  @Override
+  public void initialize() {
+    this.targetPose = targetSupplier.get();
   }
 
   @Override

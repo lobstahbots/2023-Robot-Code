@@ -11,19 +11,6 @@
         "vgap": 16.0,
         "titleType": 0,
         "tiles": {
-          "7,3": {
-            "size": [
-              2,
-              1
-            ],
-            "content": {
-              "_type": "Text View",
-              "_source0": "network_table:///SmartDashboard/Gyro Value",
-              "_title": "Gyro Value",
-              "_glyph": 148,
-              "_showGlyph": false
-            }
-          },
           "3,3": {
             "size": [
               4,
@@ -54,7 +41,7 @@
               "Colors/traj": "#FFFFFFFF"
             }
           },
-          "0,3": {
+          "3,5": {
             "size": [
               2,
               1
@@ -69,7 +56,7 @@
           },
           "0,0": {
             "size": [
-              2,
+              3,
               3
             ],
             "content": {
@@ -77,19 +64,12 @@
               "_title": "List Layout",
               "_glyph": 149,
               "_showGlyph": false,
-              "Layout/Label position": "BOTTOM",
+              "Layout/Label position": "TOP",
               "_children": [
                 {
                   "_type": "ComboBox Chooser",
-                  "_source0": "network_table:///SmartDashboard/Ending Position Chooser",
-                  "_title": "Ending Position Chooser",
-                  "_glyph": 148,
-                  "_showGlyph": false
-                },
-                {
-                  "_type": "ComboBox Chooser",
-                  "_source0": "network_table:///SmartDashboard/Crossing Position Chooser",
-                  "_title": "Crossing Position Chooser",
+                  "_source0": "network_table:///SmartDashboard/Auton Chooser",
+                  "_title": "Auton Chooser",
                   "_glyph": 148,
                   "_showGlyph": false
                 },
@@ -102,51 +82,100 @@
                 },
                 {
                   "_type": "ComboBox Chooser",
-                  "_source0": "network_table:///SmartDashboard/Auton Chooser",
-                  "_title": "Auton Chooser",
+                  "_source0": "network_table:///SmartDashboard/Crossing Position Chooser",
+                  "_title": "Crossing Position Chooser",
+                  "_glyph": 148,
+                  "_showGlyph": false
+                },
+                {
+                  "_type": "ComboBox Chooser",
+                  "_source0": "network_table:///SmartDashboard/Ending Position Chooser",
+                  "_title": "Ending Position Chooser",
                   "_glyph": 148,
                   "_showGlyph": false
                 }
               ]
             }
           },
+          "11,0": {
+            "size": [
+              1,
+              1
+            ],
+            "content": {
+              "_type": "Text View",
+              "_source0": "network_table:///SmartDashboard/limelight_PipelineName",
+              "_title": "limelight_PipelineName",
+              "_glyph": 148,
+              "_showGlyph": false
+            }
+          },
+          "12,0": {
+            "size": [
+              1,
+              1
+            ],
+            "content": {
+              "_type": "Text View",
+              "_source0": "network_table:///SmartDashboard/limelight_Stream",
+              "_title": "limelight_Stream",
+              "_glyph": 148,
+              "_showGlyph": false
+            }
+          },
+          "0,3": {
+            "size": [
+              3,
+              1
+            ],
+            "content": {
+              "_type": "Split Button Chooser",
+              "_source0": "network_table:///SmartDashboard/Teleop Target",
+              "_title": "Teleop Target",
+              "_glyph": 148,
+              "_showGlyph": false
+            }
+          },
+          "12,1": {
+            "size": [
+              1,
+              1
+            ],
+            "content": {
+              "_type": "Text View",
+              "_source0": "network_table:///SmartDashboard/limelight_Interface",
+              "_title": "limelight_Interface",
+              "_glyph": 148,
+              "_showGlyph": false
+            }
+          },
+          "3,4": {
+            "size": [
+              2,
+              1
+            ],
+            "content": {
+              "_type": "Text View",
+              "_source0": "network_table:///SmartDashboard/Number of Tags Visible",
+              "_title": "Number of Tags Visible",
+              "_glyph": 148,
+              "_showGlyph": false
+            }
+          },
           "8,0": {
             "size": [
               2,
-              1
+              2
             ],
             "content": {
-              "_type": "Text View",
-              "_source0": "network_table:///SmartDashboard/PPRamseteCommand_xError",
-              "_title": "PPRamseteCommand_xError",
+              "_type": "Simple Dial",
+              "_source0": "network_table:///SmartDashboard/Gyro",
+              "_title": "Gyro",
               "_glyph": 148,
-              "_showGlyph": false
-            }
-          },
-          "8,1": {
-            "size": [
-              2,
-              1
-            ],
-            "content": {
-              "_type": "Text View",
-              "_source0": "network_table:///SmartDashboard/PPRamseteCommand_yError",
-              "_title": "PPRamseteCommand_yError",
-              "_glyph": 148,
-              "_showGlyph": false
-            }
-          },
-          "8,2": {
-            "size": [
-              2,
-              1
-            ],
-            "content": {
-              "_type": "Text View",
-              "_source0": "network_table:///SmartDashboard/PPRamseteCommand_rotationError",
-              "_title": "PPRamseteCommand_rotationError",
-              "_glyph": 148,
-              "_showGlyph": false
+              "_showGlyph": false,
+              "Range/Min": -360.0,
+              "Range/Max": 360.0,
+              "Visuals/Show value": true
             }
           }
         }
