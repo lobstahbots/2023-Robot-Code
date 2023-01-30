@@ -5,7 +5,6 @@
 package frc.robot.subsystems;
 
 import org.photonvision.PhotonCamera;
-import org.photonvision.PhotonUtils;
 import org.photonvision.RobotPoseEstimator;
 import org.photonvision.RobotPoseEstimator.PoseStrategy;
 import org.photonvision.targeting.PhotonPipelineResult;
@@ -18,6 +17,7 @@ import edu.wpi.first.apriltag.AprilTagFieldLayout;
 import edu.wpi.first.math.Pair;
 import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Transform3d;
+import edu.wpi.first.wpilibj.Filesystem;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.VisionConstants;
@@ -26,7 +26,8 @@ import frc.robot.Constants.VisionConstants;
  * A subsystem that controls the PhotonVision tracking on the robot.
  */
 public class PhotonVision extends SubsystemBase {
-  private PhotonCamera camera;
+  private PhotonCamera frontCamera;
+  private PhotonCamera rearCamera;
   private AprilTagFieldLayout aprilTagFieldLayout;
   private RobotPoseEstimator robotPoseEstimator;
 
@@ -34,31 +35,48 @@ public class PhotonVision extends SubsystemBase {
 
   /** Constructs a new Photonvision. */
   public PhotonVision() {
-    this.camera = new PhotonCamera("photonvision");
-    camList.add(new Pair<PhotonCamera, Transform3d>(camera, VisionConstants.CAMERA_TO_ROBOT));
-    this.robotPoseEstimator =
-        new RobotPoseEstimator(aprilTagFieldLayout, PoseStrategy.LOWEST_AMBIGUITY, camList);
+    this.rearCamera = new PhotonCamera("photonvision_rear");
+    this.frontCamera = new PhotonCamera("photonvision_front");
 
+    camList.add(new Pair<PhotonCamera, Transform3d>(frontCamera, VisionConstants.FRONT_CAMERA_TO_ROBOT));
+    camList.add(new Pair<PhotonCamera, Transform3d>(rearCamera, VisionConstants.REAR_CAMERA_TO_ROBOT));
 
     try {
-      this.aprilTagFieldLayout = new AprilTagFieldLayout("AprilTagLayout/2023-chargedup.json");
+      this.aprilTagFieldLayout =
+          new AprilTagFieldLayout(Filesystem.getDeployDirectory() + "/AprilTagLayout/2023-chargedup.json");
     } catch (IOException io) {
     }
 
+    this.robotPoseEstimator =
+        new RobotPoseEstimator(aprilTagFieldLayout, PoseStrategy.LOWEST_AMBIGUITY, camList);
   }
 
   /**
-   * Returns the latest camera result.
+   * Returns the latest camera result from the front camera.
    */
-  public PhotonPipelineResult getLatestResult() {
-    return camera.getLatestResult();
+  public PhotonPipelineResult getFrontLatestResult() {
+    return frontCamera.getLatestResult();
   }
 
   /**
-   * Returns a List of the visible AprilTags.
+   * Returns the latest camera result from the rear camera.
    */
-  public List<PhotonTrackedTarget> getTargets() {
-    return this.getLatestResult().getTargets();
+  public PhotonPipelineResult getRearLatestResult() {
+    return rearCamera.getLatestResult();
+  }
+
+  /**
+   * Returns a List of the visible AprilTags from the front camera.
+   */
+  public List<PhotonTrackedTarget> getFrontTargets() {
+    return this.getFrontLatestResult().getTargets();
+  }
+
+  /**
+   * Returns a List of the visible AprilTags from the rear camera.
+   */
+  public List<PhotonTrackedTarget> getRearTargets() {
+    return this.getRearLatestResult().getTargets();
   }
 
   /**
@@ -66,7 +84,10 @@ public class PhotonVision extends SubsystemBase {
    */
   public List<Integer> getFiducialIDs() {
     List<Integer> ids = new ArrayList<>();
-    for (PhotonTrackedTarget target : this.getTargets()) {
+    for (PhotonTrackedTarget target : this.getFrontTargets()) {
+      ids.add(target.getFiducialId());
+    }
+    for (PhotonTrackedTarget target : this.getRearTargets()) {
       ids.add(target.getFiducialId());
     }
     return ids;
@@ -76,7 +97,13 @@ public class PhotonVision extends SubsystemBase {
    * Returns the best visible target.
    */
   public PhotonTrackedTarget getBestTarget() {
-    return this.getLatestResult().getBestTarget();
+    PhotonTrackedTarget rear = this.getRearLatestResult().getBestTarget();
+    PhotonTrackedTarget front = this.getFrontLatestResult().getBestTarget();
+    if (rear.getPoseAmbiguity() < front.getPoseAmbiguity()) {
+      return rear;
+    } else {
+      return front;
+    }
   }
 
   /**
@@ -87,25 +114,15 @@ public class PhotonVision extends SubsystemBase {
   }
 
   /**
-   * Estimates the field pose based on a {@link Transform3d} to an AprilTag.
-   */
-  public Pose3d getFieldPose() {
-    PhotonTrackedTarget target = this.getBestTarget();
-    Optional<Pose3d> tagPose = aprilTagFieldLayout.getTagPose(target.getFiducialId());
-    return PhotonUtils.estimateFieldToRobotAprilTag(target.getBestCameraToTarget(),
-        tagPose.get(), VisionConstants.CAMERA_TO_ROBOT);
-  }
-
-  /**
    * Estimates the global field pose based on previous pose and an {@link RobotPoseEstimator}.
    */
-  public Pair<Pose3d, Double> getEstimatedGlobalPose() {
+  public Optional<Pair<Pose3d, Double>> getEstimatedGlobalPose() {
     double currentTime = Timer.getFPGATimestamp();
     Optional<Pair<Pose3d, Double>> result = robotPoseEstimator.update();
     if (result.isPresent()) {
-      return new Pair<Pose3d, Double>(result.get().getFirst(), currentTime - result.get().getSecond());
+      return Optional.of(new Pair<Pose3d, Double>(result.get().getFirst(), currentTime - result.get().getSecond()));
     } else {
-      return new Pair<Pose3d, Double>(null, 0.0);
+      return Optional.empty();
     }
   }
 

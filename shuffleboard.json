@@ -37,21 +37,7 @@
               "_showGlyph": false,
               "Game/Game": "A2022_Rapid_React",
               "Visuals/Robot Icon Size": 50.0,
-              "Visuals/Show Outside Circles": false,
-              "Colors/traj": "#FFFFFFFF"
-            }
-          },
-          "3,5": {
-            "size": [
-              2,
-              1
-            ],
-            "content": {
-              "_type": "Text View",
-              "_source0": "network_table:///SmartDashboard/Number of Targets",
-              "_title": "Number of Targets",
-              "_glyph": 148,
-              "_showGlyph": false
+              "Visuals/Show Outside Circles": false
             }
           },
           "0,0": {
@@ -97,32 +83,6 @@
               ]
             }
           },
-          "11,0": {
-            "size": [
-              1,
-              1
-            ],
-            "content": {
-              "_type": "Text View",
-              "_source0": "network_table:///SmartDashboard/limelight_PipelineName",
-              "_title": "limelight_PipelineName",
-              "_glyph": 148,
-              "_showGlyph": false
-            }
-          },
-          "12,0": {
-            "size": [
-              1,
-              1
-            ],
-            "content": {
-              "_type": "Text View",
-              "_source0": "network_table:///SmartDashboard/limelight_Stream",
-              "_title": "limelight_Stream",
-              "_glyph": 148,
-              "_showGlyph": false
-            }
-          },
           "0,3": {
             "size": [
               3,
@@ -132,32 +92,6 @@
               "_type": "Split Button Chooser",
               "_source0": "network_table:///SmartDashboard/Teleop Target",
               "_title": "Teleop Target",
-              "_glyph": 148,
-              "_showGlyph": false
-            }
-          },
-          "12,1": {
-            "size": [
-              1,
-              1
-            ],
-            "content": {
-              "_type": "Text View",
-              "_source0": "network_table:///SmartDashboard/limelight_Interface",
-              "_title": "limelight_Interface",
-              "_glyph": 148,
-              "_showGlyph": false
-            }
-          },
-          "3,4": {
-            "size": [
-              2,
-              1
-            ],
-            "content": {
-              "_type": "Text View",
-              "_source0": "network_table:///SmartDashboard/Number of Tags Visible",
-              "_title": "Number of Tags Visible",
               "_glyph": 148,
               "_showGlyph": false
             }
@@ -177,6 +111,87 @@
               "Range/Max": 360.0,
               "Visuals/Show value": true
             }
+          },
+          "0,4": {
+            "size": [
+              4,
+              1
+            ],
+            "content": {
+              "_type": "Text View",
+              "_source0": "network_table:///SmartDashboard/PhotonVision Pose",
+              "_title": "PhotonVision Pose",
+              "_glyph": 148,
+              "_showGlyph": false
+            }
+          },
+          "10,3": {
+            "size": [
+              2,
+              1
+            ],
+            "content": {
+              "_type": "Text View",
+              "_source0": "network_table:///SmartDashboard/Number of Tags Visible In Front",
+              "_title": "Number of Tags Visible In Front",
+              "_glyph": 148,
+              "_showGlyph": false
+            }
+          },
+          "10,2": {
+            "size": [
+              2,
+              1
+            ],
+            "content": {
+              "_type": "Text View",
+              "_source0": "network_table:///SmartDashboard/Number of Tags Visible In Rear",
+              "_title": "Number of Tags Visible In Rear",
+              "_glyph": 148,
+              "_showGlyph": false
+            }
+          },
+          "7,3": {
+            "size": [
+              3,
+              2
+            ],
+            "content": {
+              "_type": "Camera Stream",
+              "_source0": "camera_server://photonvision-front_Port_1182_MJPEG_Server",
+              "_title": "photonvision-front_Port_1182_MJPEG_Server",
+              "_glyph": 148,
+              "_showGlyph": false,
+              "Crosshair/Show crosshair": true,
+              "Crosshair/Crosshair color": "#FFFFFFFF",
+              "Controls/Show controls": true,
+              "Controls/Rotation": "NONE",
+              "compression": -1.0,
+              "fps": -1,
+              "imageWidth": -1,
+              "imageHeight": -1
+            }
+          },
+          "10,0": {
+            "size": [
+              3,
+              2
+            ],
+            "content": {
+              "_type": "Camera Stream",
+              "_source0": "camera_server://photonvision-rear_Port_1182_MJPEG_Server",
+              "_title": "photonvision-rear_Port_1182_MJPEG_Server",
+              "_glyph": 148,
+              "_showGlyph": false,
+              "Crosshair/Show crosshair": true,
+              "Crosshair/Crosshair color": "#FFFFFFFF",
+              "Controls/Show controls": true,
+              "Controls/Rotation": "NONE",
+              "compression": -1.0,
+              "fps": -1,
+              "imageWidth": -1,
+              "imageHeight": -1
+            }
           }
         }
       }
@@ -191,14 +206,57 @@
         "hgap": 16.0,
         "vgap": 16.0,
         "titleType": 0,
-        "tiles": {}
+        "tiles": {
+          "0,0": {
+            "size": [
+              3,
+              2
+            ],
+            "content": {
+              "_type": "Differential Drivebase",
+              "_source0": "network_table:///LiveWindow/Ungrouped/DifferentialDrive[1]",
+              "_title": "Ungrouped/DifferentialDrive[1]",
+              "_glyph": 148,
+              "_showGlyph": false,
+              "Wheels/Number of wheels": 4,
+              "Wheels/Wheel diameter": 80.0,
+              "Visuals/Show velocity vectors": true
+            }
+          },
+          "3,0": {
+            "size": [
+              2,
+              4
+            ],
+            "content": {
+              "_type": "Subsystem Layout",
+              "_source0": "network_table:///LiveWindow/Ungrouped",
+              "_title": "Ungrouped",
+              "_glyph": 149,
+              "_showGlyph": false,
+              "Layout/Label position": "BOTTOM",
+              "_children": [
+                {
+                  "_type": "Differential Drivebase",
+                  "_source0": "network_table:///LiveWindow/Ungrouped/DifferentialDrive[1]",
+                  "_title": "DifferentialDrive[1]",
+                  "_glyph": 148,
+                  "_showGlyph": false,
+                  "Wheels/Number of wheels": 4,
+                  "Wheels/Wheel diameter": 80.0,
+                  "Visuals/Show velocity vectors": true
+                }
+              ]
+            }
+          }
+        }
       }
     }
   ],
   "windowGeometry": {
-    "x": -8.0,
-    "y": -8.0,
-    "width": 1936.0,
-    "height": 1066.0
+    "x": -7.0,
+    "y": 2.0,
+    "width": 1932.0,
+    "height": 1055.0
   }
 }

@@ -2,6 +2,7 @@
 package frc.robot.subsystems;
 
 import java.util.ArrayList;
+import java.util.Optional;
 
 import com.ctre.phoenix.motorcontrol.FeedbackDevice;
 import com.ctre.phoenix.motorcontrol.NeutralMode;
@@ -161,10 +162,10 @@ public class DriveBase extends SubsystemBase {
    */
   public Pose2d getPose() {
     poseEstimator.update(getHeading(), getLeftEncoderDistanceMeters(), getRightEncoderDistanceMeters());
-    Pair<Pose3d, Double> visionEstimatedPose = photonVision.getEstimatedGlobalPose();
-    if (visionEstimatedPose.getFirst() != null) {
-      poseEstimator.addVisionMeasurement(visionEstimatedPose.getFirst().toPose2d(), visionEstimatedPose.getSecond());
-    }
+    // Pair<Pose3d, Double> visionEstimatedPose = photonVision.getEstimatedGlobalPose();
+    // if (visionEstimatedPose.getFirst() != null) {
+    // poseEstimator.addVisionMeasurement(visionEstimatedPose.getFirst().toPose2d(), visionEstimatedPose.getSecond());
+    // }
     return poseEstimator.getEstimatedPosition();
   }
 
@@ -345,12 +346,20 @@ public class DriveBase extends SubsystemBase {
    */
   public void periodic() {
     poseEstimator.update(getHeading(), getLeftEncoderDistanceMeters(), getRightEncoderDistanceMeters());
-    Pair<Pose3d, Double> visionEstimatedPose = photonVision.getEstimatedGlobalPose();
-    if (visionEstimatedPose.getFirst() != null) {
-      poseEstimator.addVisionMeasurement(visionEstimatedPose.getFirst().toPose2d(), visionEstimatedPose.getSecond());
+    try {
+      Optional<Pair<Pose3d, Double>> visionEstimatedPose = photonVision.getEstimatedGlobalPose();
+      if (visionEstimatedPose.isPresent()) {
+        SmartDashboard.putString("PhotonVision Pose", visionEstimatedPose.get().getFirst().toPose2d().toString());
+        poseEstimator.addVisionMeasurement(visionEstimatedPose.get().getFirst().toPose2d(),
+            visionEstimatedPose.get().getSecond());
+      }
+    } catch (NullPointerException npe) {
+
     }
+
     SmartDashboard.putNumber("Gyro", this.getAngle().getDegrees());
     SmartDashboard.putString("Pose", this.getPose().toString());
-    SmartDashboard.putNumber("Number of Tags Visible", this.photonVision.getTargets().size());
+    SmartDashboard.putNumber("Number of Tags Visible In Front", this.photonVision.getFrontTargets().size());
+    SmartDashboard.putNumber("Number of Tags Visible In Rear", this.photonVision.getRearTargets().size());
   }
 }
