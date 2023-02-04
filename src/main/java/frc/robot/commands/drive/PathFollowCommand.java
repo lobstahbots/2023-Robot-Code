@@ -44,7 +44,10 @@ public class PathFollowCommand extends SequentialCommandGroup {
         rightController,
         (leftVolts, rightVolts) -> {
           driveBase.tankDriveVolts(leftVolts, rightVolts);
-        }, driveBase);
+        },
+        true,
+        driveBase
+      );
     addCommands(new InstantCommand(() -> {
       if (isFirstPath) {
         driveBase.resetOdometry(traj.getInitialPose().getTranslation(), traj.getInitialPose().getRotation());
