@@ -5,6 +5,7 @@
 package frc.robot.commands.drive;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import com.pathplanner.lib.PathPlannerTrajectory;
 import edu.wpi.first.math.geometry.Pose2d;
@@ -15,30 +16,28 @@ import frc.robot.subsystems.DriveBase;
  * Makes an {@link DriveBase} follow a path to a target Pose2d.
  */
 public class GeneratePathCommand extends DriveCommand {
-  private final Pose2d targetPose;
-  private final ArrayList<Pose2d> waypoints;
+  private final List<Pose2d> waypoints;
 
   /**
    * Generates and drives an {@link DriveBase} along a PathPlannerTrajectory to a target Pose2d.
    */
   public GeneratePathCommand(DriveBase driveBase, Pose2d targetPose) {
     super(driveBase);
-    this.targetPose = targetPose;
     this.waypoints = new ArrayList<Pose2d>();
+    this.waypoints.add(targetPose);
   }
 
   /**
    * Generates and drives an {@link DriveBase} along a PathPlannerTrajectory through a set of provided waypoints to a
    * target Pose2d.
    */
-  public GeneratePathCommand(DriveBase driveBase, Pose2d targetPose, ArrayList<Pose2d> waypoints) {
+  public GeneratePathCommand(DriveBase driveBase, List<Pose2d> waypoints) {
     super(driveBase);
-    this.targetPose = targetPose;
     this.waypoints = waypoints;
   }
 
   public void execute() {
-    PathPlannerTrajectory trajectory = driveBase.generatePath(this.targetPose, this.waypoints);
+    PathPlannerTrajectory trajectory = driveBase.generatePath(this.waypoints);
     CommandScheduler.getInstance().schedule(new PathFollowCommand(this.driveBase, trajectory, false, true));
   }
 

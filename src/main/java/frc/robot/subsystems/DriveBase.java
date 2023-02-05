@@ -2,6 +2,7 @@
 package frc.robot.subsystems;
 
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 
 import com.ctre.phoenix.motorcontrol.FeedbackDevice;
@@ -279,13 +280,12 @@ public class DriveBase extends SubsystemBase {
    * 
    * @return A PathPlannerTrajectory to follow to the target position.
    */
-  public PathPlannerTrajectory generatePath(Pose2d targetPose, ArrayList<Pose2d> waypoints) {
+  public PathPlannerTrajectory generatePath(List<Pose2d> waypoints) {
     ArrayList<PathPoint> pathPoints = new ArrayList<>();
     pathPoints.add(new PathPoint(this.getPose().getTranslation(), this.getPose().getRotation()));
     for (Pose2d waypoint : waypoints) {
       pathPoints.add(new PathPoint(waypoint.getTranslation(), waypoint.getRotation()));
     }
-    pathPoints.add(new PathPoint(targetPose.getTranslation(), targetPose.getRotation()));
     return PathPlanner
         .generatePath(new PathConstraints(PathConstants.MAX_DRIVE_SPEED, PathConstants.MAX_ACCELERATION), pathPoints);
   }
