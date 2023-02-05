@@ -10,6 +10,8 @@ import com.pathplanner.lib.PathConstraints;
 import com.pathplanner.lib.PathPlanner;
 import com.pathplanner.lib.PathPlannerTrajectory;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.InstantCommand;
+import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import frc.robot.Constants.AutonConstants;
 import frc.robot.Constants.PathConstants;
 import frc.robot.commands.drive.PathFollowCommand;
@@ -24,7 +26,6 @@ import lobstah.stl.command.TimedCommand;
 public class AutonGenerator {
 
   private final DriveBase driveBase;
-  private final Command doNothingCommand;
 
   /**
    * Constructs an AutonGenerator with a {@link DriveBase}.
@@ -33,15 +34,6 @@ public class AutonGenerator {
    */
   public AutonGenerator(DriveBase driveBase) {
     this.driveBase = driveBase;
-    this.doNothingCommand = new StopDriveCommand(driveBase);
-  }
-
-
-  /**
-   * Returns a default autonomous command to do nothing.
-   */
-  public Command getDefaultCommand() {
-    return this.getDoNothingCommand();
   }
 
   /**
@@ -58,13 +50,6 @@ public class AutonGenerator {
   }
 
   /**
-   * Returns an autonomous command to do nothing.
-   */
-  public Command getDoNothingCommand() {
-    return this.doNothingCommand;
-  }
-
-  /**
    * Returns a command to follow a path.
    * 
    * @param initialPosition The starting position of the robot
@@ -73,8 +58,13 @@ public class AutonGenerator {
    */
   public Command getPathFollowCommand(int initialPosition, int crossingPosition, int finalPosition) {
     ArrayList<PathPlannerTrajectory> pathGroup = this.getPath(initialPosition, crossingPosition, finalPosition);
-    return new PathFollowCommand(this.driveBase, pathGroup.get(0), true, false)
-        .andThen(new PathFollowCommand(this.driveBase, pathGroup.get(1), false, true));
+    return new SequentialCommandGroup(
+        new InstantCommand(() -> {
+          driveBase.resetOdometry(pathGroup.get(0).getInitialPose().getTranslation(),
+              pathGroup.get(0).getInitialPose().getRotation());
+        }),
+        new PathFollowCommand(this.driveBase, pathGroup.get(0)),
+        new PathFollowCommand(this.driveBase, pathGroup.get(1)));
   }
 
   /**
