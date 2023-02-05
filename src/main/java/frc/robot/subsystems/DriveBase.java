@@ -110,7 +110,7 @@ public class DriveBase extends SubsystemBase {
     rightBackMotor.configSelectedFeedbackSensor(FeedbackDevice.IntegratedSensor);
 
 
-    setBrakingMode(NeutralMode.Brake);
+    setNeutralMode(NeutralMode.Brake);
 
     differentialDrive =
         new LobstahDifferentialDrive(
@@ -130,24 +130,26 @@ public class DriveBase extends SubsystemBase {
   /**
    * Toggles the {@link NeutralMode} between Coast and Brake.
    */
-  public void toggleBrakingMode() {
+  public void toggleNeutralMode() {
     switch (motorNeutralMode) {
       case Brake:
-        setBrakingMode(NeutralMode.Coast);
+        setNeutralMode(NeutralMode.Coast);
         return;
       case Coast:
+        setNeutralMode(NeutralMode.Brake);
+        return;
       default:
-        setBrakingMode(NeutralMode.Brake);
+        setNeutralMode(NeutralMode.Brake);
         return;
     }
   }
 
   /**
-   * Sets the braking mode to the given {@link NeutralMode}.
+   * Sets the neutral mode to the given {@link NeutralMode}.
    *
    * @param mode The {@link NeutralMode} to set the motors to
    */
-  public void setBrakingMode(NeutralMode mode) {
+  public void setNeutralMode(NeutralMode mode) {
     leftFrontMotor.setNeutralMode(mode);
     leftBackMotor.setNeutralMode(mode);
     rightFrontMotor.setNeutralMode(mode);

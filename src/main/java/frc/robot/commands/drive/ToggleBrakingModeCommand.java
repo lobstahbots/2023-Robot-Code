@@ -24,7 +24,7 @@ public class ToggleBrakingModeCommand extends CommandBase {
 
   @Override
   public void initialize() {
-    driveBase.toggleBrakingMode();
+    driveBase.toggleNeutralMode();
   }
 
   @Override
