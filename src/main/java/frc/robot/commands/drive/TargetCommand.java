@@ -38,10 +38,8 @@ public class TargetCommand extends DriveCommand {
     /* Finding the waypoint closest to the target. */
     int finalWaypointIndex = 0;
     for (int i = 0; i < FieldConstants.TRAVELING_WAYPOINTS.length; i++) {
-      if (Math
-          .abs(driveBase.getYDistanceToPose(targetPose, FieldConstants.TRAVELING_WAYPOINTS[i])) < Math
-              .abs(driveBase
-                  .getYDistanceToPose(targetPose, FieldConstants.TRAVELING_WAYPOINTS[finalWaypointIndex]))) {
+      if (Math.abs(targetPose.getY() - FieldConstants.TRAVELING_WAYPOINTS[i].getY()) < Math
+          .abs(targetPose.getY() - FieldConstants.TRAVELING_WAYPOINTS[finalWaypointIndex].getY())) {
         finalWaypointIndex = i;
       }
     }
@@ -49,9 +47,9 @@ public class TargetCommand extends DriveCommand {
      * Finding the starting waypoint (closest to robot) and generating a path to the final waypoint. Logic is slightly
      * different depending on direction the robot is traveling.
      */
-    if (driveBase.getYDistanceToPose(driveBase.getPose(), targetPose) < 0) {
+    if (driveBase.getDistanceToPose(targetPose).getY() < 0) {
       int index = 0;
-      while (driveBase.getYDistanceToPose(driveBase.getPose(), FieldConstants.TRAVELING_WAYPOINTS[index]) > 0) {
+      while (driveBase.getDistanceToPose(FieldConstants.TRAVELING_WAYPOINTS[index]).getY() > 0) {
         index++;
       }
       index++;
@@ -65,7 +63,7 @@ public class TargetCommand extends DriveCommand {
 
     } else {
       int index = FieldConstants.TRAVELING_WAYPOINTS.length - 1;
-      while (driveBase.getYDistanceToPose(driveBase.getPose(), FieldConstants.TRAVELING_WAYPOINTS[index]) < 0) {
+      while (driveBase.getDistanceToPose(FieldConstants.TRAVELING_WAYPOINTS[index]).getY() < 0) {
         index--;
       }
       index--;

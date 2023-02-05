@@ -279,15 +279,6 @@ public class DriveBase extends SubsystemBase {
   }
 
   /**
-   * Returns the y component of the Transform2d from the pose of the robot to the target Pose.
-   * 
-   * @return The distance in meters from the robot to the target in the y direction.
-   */
-  public double getYDistanceToPose(Pose2d startingPose, Pose2d targetPose) {
-    return startingPose.getY() - targetPose.getY();
-  }
-
-  /**
    * Generates a trajectory through a list of provided waypoints from the robot's position to the given target Pose.
    * 
    * @return A PathPlannerTrajectory to follow to the target position.
