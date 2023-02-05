@@ -26,7 +26,6 @@ import lobstah.stl.command.TimedCommand;
 public class AutonGenerator {
 
   private final DriveBase driveBase;
-  private final Command doNothingCommand;
 
   /**
    * Constructs an AutonGenerator with a {@link DriveBase}.
@@ -35,15 +34,6 @@ public class AutonGenerator {
    */
   public AutonGenerator(DriveBase driveBase) {
     this.driveBase = driveBase;
-    this.doNothingCommand = new StopDriveCommand(driveBase);
-  }
-
-
-  /**
-   * Returns a default autonomous command to do nothing.
-   */
-  public Command getDefaultCommand() {
-    return this.getDoNothingCommand();
   }
 
   /**
@@ -57,13 +47,6 @@ public class AutonGenerator {
                 driveBase,
                 AutonConstants.SIMPLE_AUTON_SPEED, false));
     return simpleAutonCommand;
-  }
-
-  /**
-   * Returns an autonomous command to do nothing.
-   */
-  public Command getDoNothingCommand() {
-    return this.doNothingCommand;
   }
 
   /**

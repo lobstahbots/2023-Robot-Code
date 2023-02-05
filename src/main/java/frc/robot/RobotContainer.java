@@ -89,7 +89,7 @@ public class RobotContainer {
         autonGenerator.getPathFollowCommand(initialPosition.getSelected(), crossingPosition.getSelected(),
             endingPosition.getSelected()));
     autonChooser.addOption("Simple Auton", autonGenerator.getSimpleAutonCommand());
-    autonChooser.addOption("Do Nothing Auton", autonGenerator.getDoNothingCommand());
+    autonChooser.addOption("Do Nothing Auton", null);
     targetPosition.addOption("0", 0);
     targetPosition.addOption("1", 1);
     targetPosition.addOption("2", 2);
