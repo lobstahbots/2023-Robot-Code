@@ -192,6 +192,19 @@
               "imageWidth": -1,
               "imageHeight": -1
             }
+          },
+          "8,2": {
+            "size": [
+              1,
+              1
+            ],
+            "content": {
+              "_type": "ComboBox Chooser",
+              "_source0": "network_table:///SmartDashboard/Auto choices",
+              "_title": "Auto choices",
+              "_glyph": 148,
+              "_showGlyph": false
+            }
           }
         }
       }

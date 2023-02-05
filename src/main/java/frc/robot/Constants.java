@@ -111,6 +111,29 @@ public final class Constants {
     }
   }
 
+  public static final class ArmConstants {
+    public static final int ENCODER_CHANNEL_A = 1;
+    public static final int ENCODER_CHANNEL_B = 2;
+    public static final int LEFT_MOTOR_ID = 1;
+    public static final int RIGHT_MOTOR_ID = 0;
+    public static final double kSVolts = 0;
+    public static final double kGVolts = 0;
+    public static final double kAVoltSecondSquaredPerRad = 0;
+    public static final double kVVoltSecondPerRad = 0;
+    public static final double kP = 0;
+    public static double kMaxVelocityRadPerSecond = 0;
+    public static double kMaxAccelerationRadPerSecSquared = 0;
+    public static double kEncoderDistancePerPulse = 0;
+    public static double kArmOffsetRads = 0;
+  }
+
+  public static final class ElevatorConstants {
+    public static final int ENCODER_CHANNEL_A = 1;
+    public static final int ENCODER_CHANNEL_B = 2;
+    public static final int ELEVATOR_MOTOR_ID = 0;
+    public static final double kP = 1.3;
+  }
+
   /**
    * Stores constants related to the DriveBase.
    */

@@ -11,16 +11,22 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import frc.robot.Constants.DriveConstants.DriveMotorCANIDs;
+import frc.robot.Constants.ArmConstants;
 import frc.robot.Constants.DriveConstants;
+import frc.robot.Constants.ElevatorConstants;
 import frc.robot.Constants.FieldConstants;
 import frc.robot.Constants.UIConstants;
 import frc.robot.Constants.UIConstants.DriverAxes;
 import frc.robot.auton.AutonGenerator;
 import frc.robot.commands.drive.TargetCommand;
+import frc.robot.commands.drive.auton.AutonGenerator;
+import frc.robot.commands.drive.RotateArmCommand;
 import frc.robot.commands.drive.StopDriveCommand;
 import frc.robot.commands.drive.TankDriveCommand;
+import frc.robot.subsystems.Arm;
 import frc.robot.subsystems.DriveBase;
 import lobstah.stl.io.LobstahGamepad;
+import frc.robot.subsystems.Elevator;
 
 /**
  * This class is where the bulk of the robot should be declared. Since Command-based is a "declarative" paradigm, very
@@ -33,6 +39,12 @@ public class RobotContainer {
       DriveMotorCANIDs.LEFT_BACK,
       DriveMotorCANIDs.RIGHT_FRONT,
       DriveMotorCANIDs.RIGHT_BACK);
+
+  private final Arm arm = new Arm(ArmConstants.LEFT_MOTOR_ID, ArmConstants.RIGHT_MOTOR_ID,
+      ArmConstants.ENCODER_CHANNEL_A, ArmConstants.ENCODER_CHANNEL_B);
+  private final Elevator elevator =
+      new Elevator(ElevatorConstants.ELEVATOR_MOTOR_ID, ElevatorConstants.ENCODER_CHANNEL_A,
+          ElevatorConstants.ENCODER_CHANNEL_B);
 
   private final AutonGenerator autonGenerator = new AutonGenerator(driveBase);
 
@@ -55,7 +67,7 @@ public class RobotContainer {
    * Use this method to define your button->command mappings.
    */
   private void configureButtonBindings() {
-    button.whileTrue(new TargetCommand(driveBase, () -> (this.updateTarget())));
+    button.whileTrue(new RotateArmCommand(arm, 2));
     slowdownButton.whileTrue(new TankDriveCommand(driveBase,
         () -> DriveConstants.SLOWDOWN_PERCENT * driverJoystick.getRawAxis(DriverAxes.LEFT),
         () -> DriveConstants.SLOWDOWN_PERCENT * driverJoystick.getRawAxis(DriverAxes.RIGHT),
