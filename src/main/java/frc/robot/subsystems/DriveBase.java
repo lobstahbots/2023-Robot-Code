@@ -279,15 +279,6 @@ public class DriveBase extends SubsystemBase {
   }
 
   /**
-   * Returns the x component of the Transform2d from the pose of the robot to the target Pose.
-   * 
-   * @return The distance in meters from the robot to the target in the x direction.
-   */
-  public double getXDistanceToPose(Pose2d targetPose) {
-    return this.getPose().getX() - targetPose.getX();
-  }
-
-  /**
    * Returns the y component of the Transform2d from the pose of the robot to the target Pose.
    * 
    * @return The distance in meters from the robot to the target in the y direction.
