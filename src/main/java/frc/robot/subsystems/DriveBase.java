@@ -236,12 +236,8 @@ public class DriveBase extends SubsystemBase {
    * @param leftVolts the commanded left output
    * @param rightVolts the commanded right output
    */
-  public void tankDriveVolts(double leftVolts, double rightVolts) {
-    leftFrontMotor.setVoltage(leftVolts);
-    leftBackMotor.setVoltage(leftVolts);
-    rightFrontMotor.setVoltage(rightVolts);
-    rightBackMotor.setVoltage(rightVolts);
-    differentialDrive.feed();
+  public void tankDriveVoltage(double leftVolts, double rightVolts) {
+    differentialDrive.tankDriveVoltage(leftVolts, rightVolts);
   }
 
   /**

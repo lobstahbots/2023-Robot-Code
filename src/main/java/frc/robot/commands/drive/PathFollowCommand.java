@@ -43,7 +43,7 @@ public class PathFollowCommand extends SequentialCommandGroup {
         leftController,
         rightController,
         (leftVolts, rightVolts) -> {
-          driveBase.tankDriveVolts(leftVolts, rightVolts);
+          driveBase.tankDriveVoltage(leftVolts, rightVolts);
         }, driveBase);
     addCommands(new InstantCommand(() -> {
       if (isFirstPath) {
