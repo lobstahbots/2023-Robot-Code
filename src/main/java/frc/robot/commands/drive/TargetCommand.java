@@ -59,7 +59,8 @@ public class TargetCommand extends DriveCommand {
             FieldConstants.TRAVELING_WAYPOINTS[i].getY(), Rotation2d.fromDegrees(90)));
       }
       waypoints.add(targetPose);
-      CommandScheduler.getInstance().schedule(new GeneratePathCommand(driveBase, waypoints));
+      CommandScheduler.getInstance()
+          .schedule(new PathFollowCommand(driveBase, driveBase.generatePath(waypoints), false, true));
 
     } else {
       int index = FieldConstants.TRAVELING_WAYPOINTS.length - 1;
@@ -73,7 +74,8 @@ public class TargetCommand extends DriveCommand {
             FieldConstants.TRAVELING_WAYPOINTS[i].getY(), Rotation2d.fromDegrees(-90)));
       }
       waypoints.add(targetPose);
-      CommandScheduler.getInstance().schedule(new GeneratePathCommand(driveBase, waypoints));
+      CommandScheduler.getInstance()
+          .schedule(new PathFollowCommand(driveBase, driveBase.generatePath(waypoints), false, true));
     }
   }
 
