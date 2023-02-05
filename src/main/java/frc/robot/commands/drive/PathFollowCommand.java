@@ -12,44 +12,26 @@ import edu.wpi.first.math.controller.SimpleMotorFeedforward;
 import frc.robot.Constants.DriveConstants;
 import frc.robot.Constants.PathConstants;
 import frc.robot.subsystems.DriveBase;
-import edu.wpi.first.wpilibj2.command.InstantCommand;
-import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 
 /**
  * Makes an {@link DriveBase} follow a given PathPlannerTrajectory using a Ramsete Controller.
  */
-public class PathFollowCommand extends SequentialCommandGroup {
-  private final RamseteController ramsete;
-  private final PIDController leftController;
-  private final PIDController rightController;
-  private final PPRamseteCommand ramseteCommand;
-  private final DriveBase driveBase;
+public class PathFollowCommand extends PPRamseteCommand {
+
 
   /**
    * Drives an {@link DriveBase} through the provided PathPlannerTrajectory using a Ramsete Controller.
    */
-  public PathFollowCommand(DriveBase drivebase, PathPlannerTrajectory traj, boolean isFirstPath) {
-    this.driveBase = drivebase;
-    this.ramsete = new RamseteController();
-    this.leftController = new PIDController(PathConstants.KP, PathConstants.KI, PathConstants.KD);
-    this.rightController = new PIDController(PathConstants.KP, PathConstants.KI, PathConstants.KD);
-    ramseteCommand = new PPRamseteCommand(
+  public PathFollowCommand(DriveBase driveBase, PathPlannerTrajectory traj) {
+    super(
         traj,
         driveBase::getPose,
-        ramsete,
+        new RamseteController(),
         new SimpleMotorFeedforward(PathConstants.KS, PathConstants.KV, PathConstants.KA),
         DriveConstants.KINEMATICS,
         driveBase::getWheelSpeeds,
-        leftController,
-        rightController,
-        (leftVolts, rightVolts) -> {
-          driveBase.tankDriveVoltage(leftVolts, rightVolts);
-        }, driveBase);
-    addCommands(new InstantCommand(() -> {
-      if (isFirstPath) {
-        driveBase.resetOdometry(traj.getInitialPose().getTranslation(), traj.getInitialPose().getRotation());
-      }
-    }));
-    addCommands(ramseteCommand);
+        new PIDController(PathConstants.KP, PathConstants.KI, PathConstants.KD),
+        new PIDController(PathConstants.KP, PathConstants.KI, PathConstants.KD),
+        driveBase::tankDriveVoltage);
   }
 }

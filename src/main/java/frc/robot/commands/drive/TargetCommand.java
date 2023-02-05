@@ -31,10 +31,6 @@ public class TargetCommand extends DriveCommand {
   @Override
   public void initialize() {
     this.targetPose = targetSupplier.get();
-  }
-
-  @Override
-  public void execute() {
     /* Finding the waypoint closest to the target. */
     int finalWaypointIndex = 0;
     for (int i = 0; i < FieldConstants.TRAVELING_WAYPOINTS.length; i++) {
@@ -60,7 +56,7 @@ public class TargetCommand extends DriveCommand {
       }
       waypoints.add(targetPose);
       CommandScheduler.getInstance()
-          .schedule(new PathFollowCommand(driveBase, driveBase.generatePath(waypoints), false));
+          .schedule(new PathFollowCommand(driveBase, driveBase.generatePath(waypoints)));
 
     } else {
       int index = FieldConstants.TRAVELING_WAYPOINTS.length - 1;
@@ -75,12 +71,12 @@ public class TargetCommand extends DriveCommand {
       }
       waypoints.add(targetPose);
       CommandScheduler.getInstance()
-          .schedule(new PathFollowCommand(driveBase, driveBase.generatePath(waypoints), false));
+          .schedule(new PathFollowCommand(driveBase, driveBase.generatePath(waypoints)));
     }
   }
 
   @Override
   public boolean isFinished() {
-    return false;
+    return true;
   }
 }

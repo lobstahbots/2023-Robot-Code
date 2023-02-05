@@ -10,6 +10,8 @@ import com.pathplanner.lib.PathConstraints;
 import com.pathplanner.lib.PathPlanner;
 import com.pathplanner.lib.PathPlannerTrajectory;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.InstantCommand;
+import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import frc.robot.Constants.AutonConstants;
 import frc.robot.Constants.PathConstants;
 import frc.robot.commands.drive.PathFollowCommand;
@@ -73,8 +75,13 @@ public class AutonGenerator {
    */
   public Command getPathFollowCommand(int initialPosition, int crossingPosition, int finalPosition) {
     ArrayList<PathPlannerTrajectory> pathGroup = this.getPath(initialPosition, crossingPosition, finalPosition);
-    return new PathFollowCommand(this.driveBase, pathGroup.get(0), true)
-        .andThen(new PathFollowCommand(this.driveBase, pathGroup.get(1), false));
+    return new SequentialCommandGroup(
+        new InstantCommand(() -> {
+          driveBase.resetOdometry(pathGroup.get(0).getInitialPose().getTranslation(),
+              pathGroup.get(0).getInitialPose().getRotation());
+        }),
+        new PathFollowCommand(this.driveBase, pathGroup.get(0)),
+        new PathFollowCommand(this.driveBase, pathGroup.get(1)));
   }
 
   /**
