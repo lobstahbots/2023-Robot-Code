@@ -28,7 +28,7 @@ public class PathFollowCommand extends SequentialCommandGroup {
   /**
    * Drives an {@link DriveBase} through the provided PathPlannerTrajectory using a Ramsete Controller.
    */
-  public PathFollowCommand(DriveBase drivebase, PathPlannerTrajectory traj, boolean isFirstPath, boolean isLastPath) {
+  public PathFollowCommand(DriveBase drivebase, PathPlannerTrajectory traj, boolean isFirstPath) {
     this.driveBase = drivebase;
     this.ramsete = new RamseteController();
     this.leftController = new PIDController(PathConstants.KP, PathConstants.KI, PathConstants.KD);
@@ -49,10 +49,7 @@ public class PathFollowCommand extends SequentialCommandGroup {
       if (isFirstPath) {
         driveBase.resetOdometry(traj.getInitialPose().getTranslation(), traj.getInitialPose().getRotation());
       }
-    }), ramseteCommand, new InstantCommand(() -> {
-      if (isLastPath) {
-        driveBase.stopDrive();
-      }
     }));
+    addCommands(ramseteCommand);
   }
 }
