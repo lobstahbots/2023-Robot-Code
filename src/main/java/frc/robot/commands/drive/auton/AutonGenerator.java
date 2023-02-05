@@ -73,8 +73,8 @@ public class AutonGenerator {
    */
   public Command getPathFollowCommand(int initialPosition, int crossingPosition, int finalPosition) {
     ArrayList<PathPlannerTrajectory> pathGroup = this.getPath(initialPosition, crossingPosition, finalPosition);
-    return new PathFollowCommand(this.driveBase, pathGroup.get(0), true, false)
-        .andThen(new PathFollowCommand(this.driveBase, pathGroup.get(1), false, true));
+    return new PathFollowCommand(this.driveBase, pathGroup.get(0), true)
+        .andThen(new PathFollowCommand(this.driveBase, pathGroup.get(1), false));
   }
 
   /**
