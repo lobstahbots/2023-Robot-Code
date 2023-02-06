@@ -2,6 +2,7 @@
 package frc.robot.subsystems;
 
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 
 import com.ctre.phoenix.motorcontrol.FeedbackDevice;
@@ -110,7 +111,7 @@ public class DriveBase extends SubsystemBase {
     rightBackMotor.configSelectedFeedbackSensor(FeedbackDevice.IntegratedSensor);
 
 
-    setBrakingMode(NeutralMode.Brake);
+    setNeutralMode(NeutralMode.Brake);
 
     differentialDrive =
         new LobstahDifferentialDrive(
@@ -130,24 +131,26 @@ public class DriveBase extends SubsystemBase {
   /**
    * Toggles the {@link NeutralMode} between Coast and Brake.
    */
-  public void toggleBrakingMode() {
+  public void toggleNeutralMode() {
     switch (motorNeutralMode) {
       case Brake:
-        setBrakingMode(NeutralMode.Coast);
+        setNeutralMode(NeutralMode.Coast);
         return;
       case Coast:
+        setNeutralMode(NeutralMode.Brake);
+        return;
       default:
-        setBrakingMode(NeutralMode.Brake);
+        setNeutralMode(NeutralMode.Brake);
         return;
     }
   }
 
   /**
-   * Sets the braking mode to the given {@link NeutralMode}.
+   * Sets the neutral mode to the given {@link NeutralMode}.
    *
    * @param mode The {@link NeutralMode} to set the motors to
    */
-  public void setBrakingMode(NeutralMode mode) {
+  public void setNeutralMode(NeutralMode mode) {
     leftFrontMotor.setNeutralMode(mode);
     leftBackMotor.setNeutralMode(mode);
     rightFrontMotor.setNeutralMode(mode);
@@ -234,12 +237,8 @@ public class DriveBase extends SubsystemBase {
    * @param leftVolts the commanded left output
    * @param rightVolts the commanded right output
    */
-  public void tankDriveVolts(double leftVolts, double rightVolts) {
-    leftFrontMotor.setVoltage(leftVolts);
-    leftBackMotor.setVoltage(leftVolts);
-    rightFrontMotor.setVoltage(rightVolts);
-    rightBackMotor.setVoltage(rightVolts);
-    differentialDrive.feed();
+  public void tankDriveVoltage(double leftVolts, double rightVolts) {
+    differentialDrive.tankDriveVoltage(leftVolts, rightVolts);
   }
 
   /**
@@ -277,35 +276,16 @@ public class DriveBase extends SubsystemBase {
   }
 
   /**
-   * Returns the x component of the Transform2d from the pose of the robot to the target Pose.
-   * 
-   * @return The distance in meters from the robot to the target in the x direction.
-   */
-  public double getXDistanceToPose(Pose2d targetPose) {
-    return this.getPose().getX() - targetPose.getX();
-  }
-
-  /**
-   * Returns the y component of the Transform2d from the pose of the robot to the target Pose.
-   * 
-   * @return The distance in meters from the robot to the target in the y direction.
-   */
-  public double getYDistanceToPose(Pose2d startingPose, Pose2d targetPose) {
-    return startingPose.getY() - targetPose.getY();
-  }
-
-  /**
    * Generates a trajectory through a list of provided waypoints from the robot's position to the given target Pose.
    * 
    * @return A PathPlannerTrajectory to follow to the target position.
    */
-  public PathPlannerTrajectory generatePath(Pose2d targetPose, ArrayList<Pose2d> waypoints) {
+  public PathPlannerTrajectory generatePath(List<Pose2d> waypoints) {
     ArrayList<PathPoint> pathPoints = new ArrayList<>();
     pathPoints.add(new PathPoint(this.getPose().getTranslation(), this.getPose().getRotation()));
     for (Pose2d waypoint : waypoints) {
       pathPoints.add(new PathPoint(waypoint.getTranslation(), waypoint.getRotation()));
     }
-    pathPoints.add(new PathPoint(targetPose.getTranslation(), targetPose.getRotation()));
     return PathPlanner
         .generatePath(new PathConstraints(PathConstants.MAX_DRIVE_SPEED, PathConstants.MAX_ACCELERATION), pathPoints);
   }

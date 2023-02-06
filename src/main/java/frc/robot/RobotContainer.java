@@ -6,12 +6,9 @@ package frc.robot;
 
 import com.pathplanner.lib.server.PathPlannerServer;
 import edu.wpi.first.math.geometry.Pose2d;
-import edu.wpi.first.math.geometry.Rotation2d;
-import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import frc.robot.Constants.DriveConstants.DriveMotorCANIDs;
 import frc.robot.Constants.DriveConstants;
@@ -23,7 +20,7 @@ import frc.robot.commands.drive.TargetCommand;
 import frc.robot.commands.drive.StopDriveCommand;
 import frc.robot.commands.drive.TankDriveCommand;
 import frc.robot.subsystems.DriveBase;
-import lobstah.stl.ui.LobstahGamepad;
+import lobstah.stl.io.LobstahGamepad;
 
 /**
  * This class is where the bulk of the robot should be declared. Since Command-based is a "declarative" paradigm, very
@@ -92,7 +89,7 @@ public class RobotContainer {
         autonGenerator.getPathFollowCommand(initialPosition.getSelected(), crossingPosition.getSelected(),
             endingPosition.getSelected()));
     autonChooser.addOption("Simple Auton", autonGenerator.getSimpleAutonCommand());
-    autonChooser.addOption("Do Nothing Auton", autonGenerator.getDoNothingCommand());
+    autonChooser.addOption("Do Nothing Auton", null);
     targetPosition.addOption("0", 0);
     targetPosition.addOption("1", 1);
     targetPosition.addOption("2", 2);

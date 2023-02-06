@@ -40,6 +40,18 @@ public class LobstahDifferentialDrive extends DifferentialDrive {
   }
 
   /**
+   * Tank drive method for differential drive platform using voltage control.
+   * 
+   * @param leftVolts The left motor output voltage.
+   * @param rightVolts The right motor output voltage.
+   */
+  public void tankDriveVoltage(double leftVolts, double rightVolts) {
+    left.setVoltage(leftVolts);
+    right.setVoltage(rightVolts);
+    feed();
+  }
+
+  /**
    * Sets a new rate limit for the motor controllers.
    * 
    * @param rateLimit The maximum rate of change in output percentage per second.

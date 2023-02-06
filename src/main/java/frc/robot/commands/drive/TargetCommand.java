@@ -31,17 +31,11 @@ public class TargetCommand extends DriveCommand {
   @Override
   public void initialize() {
     this.targetPose = targetSupplier.get();
-  }
-
-  @Override
-  public void execute() {
     /* Finding the waypoint closest to the target. */
     int finalWaypointIndex = 0;
     for (int i = 0; i < FieldConstants.TRAVELING_WAYPOINTS.length; i++) {
-      if (Math
-          .abs(driveBase.getYDistanceToPose(targetPose, FieldConstants.TRAVELING_WAYPOINTS[i])) < Math
-              .abs(driveBase
-                  .getYDistanceToPose(targetPose, FieldConstants.TRAVELING_WAYPOINTS[finalWaypointIndex]))) {
+      if (Math.abs(targetPose.getY() - FieldConstants.TRAVELING_WAYPOINTS[i].getY()) < Math
+          .abs(targetPose.getY() - FieldConstants.TRAVELING_WAYPOINTS[finalWaypointIndex].getY())) {
         finalWaypointIndex = i;
       }
     }
@@ -49,9 +43,9 @@ public class TargetCommand extends DriveCommand {
      * Finding the starting waypoint (closest to robot) and generating a path to the final waypoint. Logic is slightly
      * different depending on direction the robot is traveling.
      */
-    if (driveBase.getYDistanceToPose(driveBase.getPose(), targetPose) < 0) {
+    if (driveBase.getDistanceToPose(targetPose).getY() < 0) {
       int index = 0;
-      while (driveBase.getYDistanceToPose(driveBase.getPose(), FieldConstants.TRAVELING_WAYPOINTS[index]) > 0) {
+      while (driveBase.getDistanceToPose(FieldConstants.TRAVELING_WAYPOINTS[index]).getY() > 0) {
         index++;
       }
       index++;
@@ -60,12 +54,13 @@ public class TargetCommand extends DriveCommand {
         waypoints.add(new Pose2d(FieldConstants.TRAVELING_WAYPOINTS[i].getX(),
             FieldConstants.TRAVELING_WAYPOINTS[i].getY(), Rotation2d.fromDegrees(90)));
       }
+      waypoints.add(targetPose);
       CommandScheduler.getInstance()
-          .schedule(new GeneratePathCommand(driveBase, targetPose, waypoints));
+          .schedule(new PathFollowCommand(driveBase, driveBase.generatePath(waypoints)));
 
     } else {
       int index = FieldConstants.TRAVELING_WAYPOINTS.length - 1;
-      while (driveBase.getYDistanceToPose(driveBase.getPose(), FieldConstants.TRAVELING_WAYPOINTS[index]) < 0) {
+      while (driveBase.getDistanceToPose(FieldConstants.TRAVELING_WAYPOINTS[index]).getY() < 0) {
         index--;
       }
       index--;
@@ -74,14 +69,14 @@ public class TargetCommand extends DriveCommand {
         waypoints.add(new Pose2d(FieldConstants.TRAVELING_WAYPOINTS[i].getX(),
             FieldConstants.TRAVELING_WAYPOINTS[i].getY(), Rotation2d.fromDegrees(-90)));
       }
+      waypoints.add(targetPose);
       CommandScheduler.getInstance()
-          .schedule(new GeneratePathCommand(driveBase, targetPose,
-              waypoints));
+          .schedule(new PathFollowCommand(driveBase, driveBase.generatePath(waypoints)));
     }
   }
 
   @Override
   public boolean isFinished() {
-    return false;
+    return true;
   }
 }
