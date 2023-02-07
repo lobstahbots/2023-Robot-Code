@@ -8,28 +8,33 @@ import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.subsystems.Arm;
 
 public class RotateArmCommand extends CommandBase {
-  private final Arm arm;
-  private final int position;
+
+  public final Arm arm;
+  public final double speed;
 
   /**
-   * Creates a command that rotates the {@link Arm} to a given position.
+   * Creates a command that rotates the {@link Arm} at a given speed.
    *
    * @param arm The {@link Arm} to control
-   * @param position The position to rotate the arm to
+   * @param speed The speed at which to rotate the arm
    */
-  public RotateArmCommand(Arm arm, int position) {
+  public RotateArmCommand(Arm arm, double speed) {
     this.arm = arm;
-    this.position = position;
+    this.speed = speed;
+    addRequirements(this.arm);
   }
 
-  public void initialize() {
-    this.arm.enable();
-  }
-
+  @Override
   public void execute() {
-    this.arm.setGoal(this.position);
+    arm.setRotationSpeed(speed);
   }
 
+  @Override
+  public void end(boolean interrupted) {
+    arm.setRotationSpeed(0.0);
+  }
+
+  @Override
   public boolean isFinished() {
     return false;
   }

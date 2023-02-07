@@ -130,6 +130,7 @@ public final class Constants {
   public static final class ElevatorConstants {
     public static final int ENCODER_CHANNEL_A = 1;
     public static final int ENCODER_CHANNEL_B = 2;
+    public static final int LIMIT_SWITCH_CHANNEL = 3;
     public static final int ELEVATOR_MOTOR_ID = 0;
     public static final double kP = 1.3;
   }

@@ -57,7 +57,9 @@ public class Arm extends ProfiledPIDSubsystem {
     return armEncoder.getDistance() + ArmConstants.kArmOffsetRads;
   }
 
-  public double getAngle() {
-    return 0;
+  public void setRotationSpeed(double speed) {
+    leftArmMotor.set(speed);
+    rightArmMotor.set(speed);
   }
+
 }

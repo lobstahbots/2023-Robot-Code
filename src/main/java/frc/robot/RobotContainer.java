@@ -20,7 +20,8 @@ import frc.robot.Constants.UIConstants.DriverAxes;
 import frc.robot.auton.AutonGenerator;
 import frc.robot.commands.drive.TargetCommand;
 import frc.robot.commands.drive.auton.AutonGenerator;
-import frc.robot.commands.drive.RotateArmCommand;
+import frc.robot.commands.arm.RotateArmCommand;
+import frc.robot.commands.arm.RotateArmToPositionCommand;
 import frc.robot.commands.drive.StopDriveCommand;
 import frc.robot.commands.drive.TankDriveCommand;
 import frc.robot.subsystems.Arm;
@@ -44,7 +45,7 @@ public class RobotContainer {
       ArmConstants.ENCODER_CHANNEL_A, ArmConstants.ENCODER_CHANNEL_B);
   private final Elevator elevator =
       new Elevator(ElevatorConstants.ELEVATOR_MOTOR_ID, ElevatorConstants.ENCODER_CHANNEL_A,
-          ElevatorConstants.ENCODER_CHANNEL_B);
+          ElevatorConstants.ENCODER_CHANNEL_B, ElevatorConstants.LIMIT_SWITCH_CHANNEL);
 
   private final AutonGenerator autonGenerator = new AutonGenerator(driveBase);
 
@@ -52,6 +53,7 @@ public class RobotContainer {
   private final LobstahGamepad operatorJoystick = new LobstahGamepad(UIConstants.OPERATOR_JOYSTICK_INDEX);
 
   private final JoystickButton button = driverJoystick.button(1);
+  private final JoystickButton button2 = driverJoystick.button(2);
   private final JoystickButton slowdownButton = driverJoystick.button(UIConstants.SLOWDOWN_BUTTON_INDEX);
 
   /**
@@ -67,7 +69,8 @@ public class RobotContainer {
    * Use this method to define your button->command mappings.
    */
   private void configureButtonBindings() {
-    button.whileTrue(new RotateArmCommand(arm, 2));
+    button.whileTrue(new RotateArmCommand(arm, 0.5));
+    button2.whileTrue(new RotateArmCommand(arm, -0.5));
     slowdownButton.whileTrue(new TankDriveCommand(driveBase,
         () -> DriveConstants.SLOWDOWN_PERCENT * driverJoystick.getRawAxis(DriverAxes.LEFT),
         () -> DriveConstants.SLOWDOWN_PERCENT * driverJoystick.getRawAxis(DriverAxes.RIGHT),
