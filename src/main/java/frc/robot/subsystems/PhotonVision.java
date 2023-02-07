@@ -26,7 +26,8 @@ import frc.robot.Constants.VisionConstants;
  * A subsystem that controls the PhotonVision tracking on the robot.
  */
 public class PhotonVision extends SubsystemBase {
-  private PhotonCamera frontCamera;
+  private PhotonCamera frontLeftCamera;
+  private PhotonCamera frontRightCamera;
   private PhotonCamera rearCamera;
   private AprilTagFieldLayout aprilTagFieldLayout;
   private RobotPoseEstimator robotPoseEstimator;
@@ -36,9 +37,11 @@ public class PhotonVision extends SubsystemBase {
   /** Constructs a new Photonvision. */
   public PhotonVision() {
     this.rearCamera = new PhotonCamera("photonvision_rear");
-    this.frontCamera = new PhotonCamera("photonvision_front");
+    this.frontLeftCamera = new PhotonCamera("photonvision_front_left");
+    this.frontRightCamera = new PhotonCamera("photonvision_front_right");
 
-    camList.add(new Pair<PhotonCamera, Transform3d>(frontCamera, VisionConstants.FRONT_CAMERA_TO_ROBOT));
+    camList.add(new Pair<PhotonCamera, Transform3d>(frontLeftCamera, VisionConstants.FRONT_LEFT_CAMERA_TO_ROBOT));
+    camList.add(new Pair<PhotonCamera, Transform3d>(frontRightCamera, VisionConstants.FRONT_RIGHT_CAMERA_TO_ROBOT));
     camList.add(new Pair<PhotonCamera, Transform3d>(rearCamera, VisionConstants.REAR_CAMERA_TO_ROBOT));
 
     try {
@@ -52,10 +55,17 @@ public class PhotonVision extends SubsystemBase {
   }
 
   /**
-   * Returns the latest camera result from the front camera.
+   * Returns the latest camera result from the front left camera.
    */
-  public PhotonPipelineResult getFrontLatestResult() {
-    return frontCamera.getLatestResult();
+  public PhotonPipelineResult getFrontLeftLatestResult() {
+    return frontLeftCamera.getLatestResult();
+  }
+
+  /**
+   * Returns the latest camera result from the front right camera.
+   */
+  public PhotonPipelineResult getFrontRightLatestResult() {
+    return frontRightCamera.getLatestResult();
   }
 
   /**
@@ -69,7 +79,9 @@ public class PhotonVision extends SubsystemBase {
    * Returns a List of the visible AprilTags from the front camera.
    */
   public List<PhotonTrackedTarget> getFrontTargets() {
-    return this.getFrontLatestResult().getTargets();
+    List<PhotonTrackedTarget> targets = this.getFrontRightLatestResult().getTargets();
+    targets.addAll(this.getFrontLeftLatestResult().getTargets());
+    return targets;
   }
 
   /**
@@ -91,26 +103,6 @@ public class PhotonVision extends SubsystemBase {
       ids.add(target.getFiducialId());
     }
     return ids;
-  }
-
-  /**
-   * Returns the best visible target.
-   */
-  public PhotonTrackedTarget getBestTarget() {
-    PhotonTrackedTarget rear = this.getRearLatestResult().getBestTarget();
-    PhotonTrackedTarget front = this.getFrontLatestResult().getBestTarget();
-    if (rear.getPoseAmbiguity() < front.getPoseAmbiguity()) {
-      return rear;
-    } else {
-      return front;
-    }
-  }
-
-  /**
-   * Returns the best visible target's ID.
-   */
-  public Integer getBestFiducialID() {
-    return this.getBestTarget().getFiducialId();
   }
 
   /**
