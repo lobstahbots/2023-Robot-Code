@@ -4,21 +4,17 @@
 
 package frc.robot.subsystems;
 
-import com.revrobotics.CANSparkMax;
-import com.revrobotics.CANSparkMax.IdleMode;
-import com.revrobotics.CANSparkMaxLowLevel.MotorType;
+import edu.wpi.first.wpilibj.motorcontrol.PWMSparkMax;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 public class Intake extends SubsystemBase {
-  private final CANSparkMax leftIntakeMotor;
-  private final CANSparkMax rightIntakeMotor;
+  private final PWMSparkMax leftIntakeMotor;
+  private final PWMSparkMax rightIntakeMotor;
 
   public Intake(int leftIntakeMotorID, int rightIntakeMotorID) {
-    this.leftIntakeMotor = new CANSparkMax(leftIntakeMotorID, MotorType.kBrushless);
-    this.rightIntakeMotor = new CANSparkMax(rightIntakeMotorID, MotorType.kBrushless);
-    leftIntakeMotor.setIdleMode(IdleMode.kBrake);
-    rightIntakeMotor.setIdleMode(IdleMode.kBrake);
+    this.leftIntakeMotor = new PWMSparkMax(leftIntakeMotorID);
+    this.rightIntakeMotor = new PWMSparkMax(rightIntakeMotorID);
     CommandScheduler.getInstance().registerSubsystem(this);
   }
 

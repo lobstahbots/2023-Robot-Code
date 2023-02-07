@@ -2,12 +2,12 @@
 // Open Source Software; you can modify and/or share it under the terms of
 // the WPILib BSD license file in the root directory of this project.
 
-package frc.robot.commands.drive.arm;
+package frc.robot.commands.arm;
 
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.subsystems.Intake;
 
-public class RunIntakeCommand extends CommandBase {
+public class SpinIntakeCommand extends CommandBase {
 
   public final Intake intake;
   public final double speed;
@@ -18,7 +18,7 @@ public class RunIntakeCommand extends CommandBase {
    * @param intake The {@link Intake} to control
    * @param speed The speed at which to spin the intake
    */
-  public RunIntakeCommand(Intake intake, double speed) {
+  public SpinIntakeCommand(Intake intake, double speed) {
     this.intake = intake;
     this.speed = speed;
     addRequirements(this.intake);
