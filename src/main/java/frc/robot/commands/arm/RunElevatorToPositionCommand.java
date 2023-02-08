@@ -27,6 +27,7 @@ public class RunElevatorToPositionCommand extends CommandBase {
     this.elevator.setGoal(this.position);
   }
 
+  @Override
   public boolean isFinished() {
     return false;
   }
