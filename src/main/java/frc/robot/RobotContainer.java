@@ -15,18 +15,21 @@ import frc.robot.Constants.ArmConstants;
 import frc.robot.Constants.DriveConstants;
 import frc.robot.Constants.ElevatorConstants;
 import frc.robot.Constants.FieldConstants;
+import frc.robot.Constants.IntakeConstants;
 import frc.robot.Constants.UIConstants;
 import frc.robot.Constants.UIConstants.DriverAxes;
 import frc.robot.Constants.UIConstants.OperatorAxes;
-import frc.robot.commands.drive.auton.AutonGenerator;
+import frc.robot.auton.AutonGenerator;
 import frc.robot.commands.arm.RotateArmCommand;
 import frc.robot.commands.arm.RunElevatorCommand;
+import frc.robot.commands.arm.SpinIntakeCommand;
 import frc.robot.commands.drive.StopDriveCommand;
 import frc.robot.commands.drive.TankDriveCommand;
 import frc.robot.subsystems.Arm;
 import frc.robot.subsystems.DriveBase;
 import lobstah.stl.io.LobstahGamepad;
 import frc.robot.subsystems.Elevator;
+import frc.robot.subsystems.Intake;
 
 /**
  * This class is where the bulk of the robot should be declared. Since Command-based is a "declarative" paradigm, very
@@ -45,6 +48,7 @@ public class RobotContainer {
   private final Elevator elevator =
       new Elevator(ElevatorConstants.ELEVATOR_MOTOR_ID, ElevatorConstants.ENCODER_CHANNEL_A,
           ElevatorConstants.ENCODER_CHANNEL_B, ElevatorConstants.LIMIT_SWITCH_CHANNEL);
+  private final Intake intake = new Intake(IntakeConstants.LEFT_MOTOR_ID, IntakeConstants.RIGHT_MOTOR_ID);
 
   private final AutonGenerator autonGenerator = new AutonGenerator(driveBase);
 
@@ -52,7 +56,6 @@ public class RobotContainer {
   private final LobstahGamepad operatorJoystick = new LobstahGamepad(UIConstants.OPERATOR_JOYSTICK_INDEX);
 
   private final JoystickButton button = driverJoystick.button(1);
-  private final JoystickButton button2 = driverJoystick.button(2);
   private final JoystickButton slowdownButton = driverJoystick.button(UIConstants.SLOWDOWN_BUTTON_INDEX);
 
   /**
@@ -68,6 +71,7 @@ public class RobotContainer {
    * Use this method to define your button->command mappings.
    */
   private void configureButtonBindings() {
+    button.whileTrue(new SpinIntakeCommand(intake, IntakeConstants.SPIN_SPEED));
     slowdownButton.whileTrue(new TankDriveCommand(driveBase,
         () -> DriveConstants.SLOWDOWN_PERCENT * driverJoystick.getRawAxis(DriverAxes.LEFT),
         () -> DriveConstants.SLOWDOWN_PERCENT * driverJoystick.getRawAxis(DriverAxes.RIGHT),

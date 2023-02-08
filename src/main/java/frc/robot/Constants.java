@@ -116,6 +116,9 @@ public final class Constants {
     }
   }
 
+  /**
+   * Stores constants related to the arm.
+   */
   public static final class ArmConstants {
     public static final int ENCODER_CHANNEL_A = 1;
     public static final int ENCODER_CHANNEL_B = 2;
@@ -132,12 +135,24 @@ public final class Constants {
     public static double kArmOffsetRads = 0;
   }
 
+  /**
+   * Stores constants related to the elevator.
+   */
   public static final class ElevatorConstants {
     public static final int ENCODER_CHANNEL_A = 1;
     public static final int ENCODER_CHANNEL_B = 2;
     public static final int LIMIT_SWITCH_CHANNEL = 3;
     public static final int ELEVATOR_MOTOR_ID = 0;
     public static final double kP = 1.3;
+  }
+
+  /**
+   * Stores constants related to the intake.
+   */
+  public static final class IntakeConstants {
+    public static final int LEFT_MOTOR_ID = 0;
+    public static final int RIGHT_MOTOR_ID = 0;
+    public static final double SPIN_SPEED = 0.5;
   }
 
   /**
