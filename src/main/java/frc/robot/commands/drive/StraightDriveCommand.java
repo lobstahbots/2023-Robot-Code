@@ -4,7 +4,7 @@
 
 package frc.robot.commands.drive;
 
-import java.util.function.Supplier;
+import java.util.function.DoubleSupplier;
 
 import frc.robot.subsystems.DriveBase;
 
@@ -21,7 +21,7 @@ public class StraightDriveCommand extends TankDriveCommand {
    * @param squaredInputs Whether to drive with squared inputs
    */
   public StraightDriveCommand(DriveBase driveBase,
-      Supplier<Double> speedSupplier, boolean squaredInputs) {
+      DoubleSupplier speedSupplier, boolean squaredInputs) {
     super(driveBase, speedSupplier, speedSupplier, squaredInputs);
   }
 
