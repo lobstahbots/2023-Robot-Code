@@ -5,6 +5,7 @@
 package frc.robot.commands.arm;
 
 import edu.wpi.first.wpilibj2.command.CommandBase;
+import frc.robot.Constants.ElevatorConstants;
 import frc.robot.subsystems.Elevator;
 
 public class RunElevatorToPositionCommand extends CommandBase {
@@ -20,6 +21,7 @@ public class RunElevatorToPositionCommand extends CommandBase {
   public RunElevatorToPositionCommand(Elevator elevator, double position) {
     this.elevator = elevator;
     this.position = position;
+    addRequirements(this.elevator);
   }
 
   @Override
@@ -29,6 +31,7 @@ public class RunElevatorToPositionCommand extends CommandBase {
 
   @Override
   public boolean isFinished() {
-    return false;
+    return elevator.getExtension() >= ElevatorConstants.kMaxExtension
+        || elevator.getExtension() <= ElevatorConstants.kMinExtension;
   }
 }

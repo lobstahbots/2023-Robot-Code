@@ -7,6 +7,7 @@ package frc.robot.commands.arm;
 import java.util.function.Supplier;
 
 import edu.wpi.first.wpilibj2.command.CommandBase;
+import frc.robot.Constants.ArmConstants;
 import frc.robot.subsystems.Arm;
 
 public class RotateArmCommand extends CommandBase {
@@ -48,6 +49,7 @@ public class RotateArmCommand extends CommandBase {
 
   @Override
   public boolean isFinished() {
-    return false;
+    return arm.getMeasurement() >= ArmConstants.kMaxRotationRads
+        || arm.getMeasurement() <= ArmConstants.kMinRotationRads;
   }
 }
