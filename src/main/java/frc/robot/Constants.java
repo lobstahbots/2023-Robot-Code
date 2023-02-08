@@ -109,6 +109,11 @@ public final class Constants {
       public static final int LEFT = 1;
       public static final int RIGHT = 5;
     }
+
+    public static final class OperatorAxes {
+      public static final int ELEVATOR_AXIS = 1;
+      public static final int ARM_AXIS = 5;
+    }
   }
 
   public static final class ArmConstants {

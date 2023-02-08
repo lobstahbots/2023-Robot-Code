@@ -4,13 +4,27 @@
 
 package frc.robot.commands.arm;
 
+import java.util.function.Supplier;
+
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.subsystems.Arm;
 
 public class RotateArmCommand extends CommandBase {
 
   public final Arm arm;
-  public final double speed;
+  public final Supplier<Double> speed;
+
+  /**
+   * Creates a command that rotates the {@link Arm} at a given speed.
+   *
+   * @param arm The {@link Arm} to control
+   * @param speed Supplier for the speed at which to rotate the arm
+   */
+  public RotateArmCommand(Arm arm, Supplier<Double> speed) {
+    this.arm = arm;
+    this.speed = speed;
+    addRequirements(this.arm);
+  }
 
   /**
    * Creates a command that rotates the {@link Arm} at a given speed.
@@ -19,14 +33,12 @@ public class RotateArmCommand extends CommandBase {
    * @param speed The speed at which to rotate the arm
    */
   public RotateArmCommand(Arm arm, double speed) {
-    this.arm = arm;
-    this.speed = speed;
-    addRequirements(this.arm);
+    this(arm, () -> speed);
   }
 
   @Override
   public void execute() {
-    arm.setRotationSpeed(speed);
+    arm.setRotationSpeed(speed.get());
   }
 
   @Override

@@ -4,13 +4,28 @@
 
 package frc.robot.commands.arm;
 
+import java.util.function.Supplier;
+
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.subsystems.Elevator;
 
 public class RunElevatorCommand extends CommandBase {
 
   public final Elevator elevator;
-  public final double speed;
+  public final Supplier<Double> speed;
+
+
+  /**
+   * Creates a command that extends/retracts the {@link Elevator} at the speed given by the supplier.
+   *
+   * @param elevator The {@link Elevator} to control
+   * @param speed Supplier for the speed at which to extend/retract the elevator
+   */
+  public RunElevatorCommand(Elevator elevator, Supplier<Double> speed) {
+    this.elevator = elevator;
+    this.speed = speed;
+    addRequirements(this.elevator);
+  }
 
   /**
    * Creates a command that extends/retracts the {@link Elevator} at a given speed.
@@ -19,14 +34,12 @@ public class RunElevatorCommand extends CommandBase {
    * @param speed The speed at which to extend/retract the elevator
    */
   public RunElevatorCommand(Elevator elevator, double speed) {
-    this.elevator = elevator;
-    this.speed = speed;
-    addRequirements(this.elevator);
+    this(elevator, () -> speed);
   }
 
   @Override
   public void execute() {
-    elevator.extend(speed);
+    elevator.extend(speed.get());
   }
 
   @Override

@@ -17,8 +17,10 @@ import frc.robot.Constants.ElevatorConstants;
 import frc.robot.Constants.FieldConstants;
 import frc.robot.Constants.UIConstants;
 import frc.robot.Constants.UIConstants.DriverAxes;
+import frc.robot.Constants.UIConstants.OperatorAxes;
 import frc.robot.commands.drive.auton.AutonGenerator;
 import frc.robot.commands.arm.RotateArmCommand;
+import frc.robot.commands.arm.RunElevatorCommand;
 import frc.robot.commands.drive.StopDriveCommand;
 import frc.robot.commands.drive.TankDriveCommand;
 import frc.robot.subsystems.Arm;
@@ -66,8 +68,6 @@ public class RobotContainer {
    * Use this method to define your button->command mappings.
    */
   private void configureButtonBindings() {
-    button.whileTrue(new RotateArmCommand(arm, 0.5));
-    button2.whileTrue(new RotateArmCommand(arm, -0.5));
     slowdownButton.whileTrue(new TankDriveCommand(driveBase,
         () -> DriveConstants.SLOWDOWN_PERCENT * driverJoystick.getRawAxis(DriverAxes.LEFT),
         () -> DriveConstants.SLOWDOWN_PERCENT * driverJoystick.getRawAxis(DriverAxes.RIGHT),
@@ -147,6 +147,10 @@ public class RobotContainer {
             () -> -driverJoystick.getRawAxis(DriverAxes.LEFT),
             () -> -driverJoystick.getRawAxis(DriverAxes.RIGHT),
             UIConstants.SQUARED_INPUTS));
+    elevator
+        .setDefaultCommand(
+            new RunElevatorCommand(elevator, () -> operatorJoystick.getRawAxis(OperatorAxes.ELEVATOR_AXIS)));
+    arm.setDefaultCommand(new RotateArmCommand(arm, () -> operatorJoystick.getRawAxis(OperatorAxes.ARM_AXIS)));
   }
 
   /**
