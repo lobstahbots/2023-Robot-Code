@@ -145,6 +145,8 @@ public final class Constants {
     public static final int ELEVATOR_MOTOR_ID = 0;
     public static final double kP = 1.3;
     public static final double kDistancePerPulse = 0;
+    public static final double kMaxVelocity = 0.75;
+    public static final double kMaxAcceleration = 0.5;
   }
 
   /**

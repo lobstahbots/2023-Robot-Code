@@ -23,7 +23,7 @@ public class RetractElevatorCommand extends CommandBase {
   public RetractElevatorCommand(Elevator elevator, double speed) {
     this.elevator = elevator;
     this.speed = speed;
-    addRequirements(elevator);
+    addRequirements(this.elevator);
   }
 
   @Override
@@ -48,6 +48,6 @@ public class RetractElevatorCommand extends CommandBase {
 
   @Override
   public boolean isFinished() {
-    return false;
+    return !this.limitSwitchInitialValue && elevator.getLimitSwitchValue();
   }
 }

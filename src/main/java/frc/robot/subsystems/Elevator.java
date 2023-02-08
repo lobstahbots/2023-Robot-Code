@@ -18,7 +18,7 @@ public class Elevator extends SubsystemBase {
   private final CANSparkMax elevatorMotor;
   private final DigitalInput limitSwitch;
   private final TrapezoidProfile.Constraints constraints =
-      new TrapezoidProfile.Constraints(1.75, 0.75);
+      new TrapezoidProfile.Constraints(ElevatorConstants.kMaxVelocity, ElevatorConstants.kMaxAcceleration);
   private final ProfiledPIDController pidController =
       new ProfiledPIDController(ElevatorConstants.kP, 0, 0, constraints, 0);
   private final Encoder encoder;
