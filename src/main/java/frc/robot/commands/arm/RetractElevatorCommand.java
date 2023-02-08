@@ -30,6 +30,7 @@ public class RetractElevatorCommand extends CommandBase {
     this.limitSwitchInitialValue = elevator.getLimitSwitchValue();
   }
 
+  @Override
   public void execute() {
     if (this.limitSwitchInitialValue) {
       if (elevator.getLimitSwitchValue()) {
