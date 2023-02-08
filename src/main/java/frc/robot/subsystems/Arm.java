@@ -53,6 +53,7 @@ public class Arm extends ProfiledPIDSubsystem {
     rightArmMotor.setVoltage(output + feedforward.calculate(setpoint.position, setpoint.velocity));
   }
 
+  @Override
   public double getMeasurement() {
     return armEncoder.getDistance() + ArmConstants.kArmOffsetRads;
   }
