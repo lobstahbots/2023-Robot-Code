@@ -28,6 +28,7 @@ public class RotateArmToPositionCommand extends CommandBase {
     this.finalPosition = finalPosition;
   }
 
+  @Override
   public void initialize() {
     this.arm.enable();
   }
