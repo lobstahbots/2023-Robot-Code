@@ -9,7 +9,7 @@ import frc.robot.subsystems.Elevator;
 
 public class RunElevatorToPositionCommand extends CommandBase {
   private final Elevator elevator;
-  private final int position;
+  private final double position;
 
   /**
    * Creates a command that runs the {@link Elevator} to a given position.
