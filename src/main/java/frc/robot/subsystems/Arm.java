@@ -48,6 +48,7 @@ public class Arm extends ProfiledPIDSubsystem {
     CommandScheduler.getInstance().registerSubsystem(this);
   }
 
+  @Override
   public void useOutput(double output, TrapezoidProfile.State setpoint) {
     leftArmMotor.setVoltage(output + feedforward.calculate(setpoint.position, setpoint.velocity));
     rightArmMotor.setVoltage(output + feedforward.calculate(setpoint.position, setpoint.velocity));
