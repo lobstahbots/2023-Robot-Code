@@ -42,6 +42,7 @@ public class RotateArmToPositionCommand extends CommandBase {
     SmartDashboard.putNumber("Intake Y Component", currentPose.getY());
   }
 
+  @Override
   public boolean isFinished() {
     return false;
   }
