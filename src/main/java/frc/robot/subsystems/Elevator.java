@@ -50,6 +50,7 @@ public class Elevator extends SubsystemBase {
     return encoder.getDistance();
   }
 
+  @Override
   public void periodic() {
     elevatorMotor.set(pidController.calculate(encoder.getDistance()));
   }
