@@ -17,7 +17,7 @@ public class RunElevatorToPositionCommand extends CommandBase {
    * @param elevator The {@link Elevator} to control
    * @param position The position to run the elevator to
    */
-  public RunElevatorToPositionCommand(Elevator elevator, int position) {
+  public RunElevatorToPositionCommand(Elevator elevator, double position) {
     this.elevator = elevator;
     this.position = position;
   }
