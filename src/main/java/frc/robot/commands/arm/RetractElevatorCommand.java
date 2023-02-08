@@ -25,6 +25,7 @@ public class RetractElevatorCommand extends CommandBase {
     this.speed = speed;
   }
 
+  @Override
   public void initialize() {
     this.limitSwitchInitialValue = elevator.getLimitSwitchValue();
   }
