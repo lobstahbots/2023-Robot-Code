@@ -33,6 +33,7 @@ public class RotateArmToPositionCommand extends CommandBase {
     this.arm.enable();
   }
 
+  @Override
   public void execute() {
     Translation2d currentPose = new Translation2d(elevator.getExtension(), new Rotation2d(arm.getMeasurement()));
     this.arm.setGoal(this.finalPosition.getAngle().getRadians());
