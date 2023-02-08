@@ -15,7 +15,7 @@ public class RotateArmCommand extends CommandBase {
   public final Supplier<Double> speed;
 
   /**
-   * Creates a command that rotates the {@link Arm} at a given speed.
+   * Creates a command that rotates the {@link Arm} at the speed given by the supplier.
    *
    * @param arm The {@link Arm} to control
    * @param speed Supplier for the speed at which to rotate the arm

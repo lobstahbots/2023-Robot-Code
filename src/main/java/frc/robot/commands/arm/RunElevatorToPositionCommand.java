@@ -24,7 +24,7 @@ public class RunElevatorToPositionCommand extends CommandBase {
 
   @Override
   public void execute() {
-    this.elevator.setGoal(this.position);
+    this.elevator.setTargetExtension(this.position);
   }
 
   @Override

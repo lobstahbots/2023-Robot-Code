@@ -11,7 +11,6 @@ import edu.wpi.first.math.controller.ArmFeedforward;
 import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.wpilibj.Encoder;
-import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.ProfiledPIDSubsystem;
 import frc.robot.Constants.ArmConstants;
 
@@ -41,11 +40,9 @@ public class Arm extends ProfiledPIDSubsystem {
     rightArmMotor.setIdleMode(IdleMode.kBrake);
     leftArmMotor.setInverted(false);
     rightArmMotor.setInverted(true);
-    armEncoder.setDistancePerPulse(ArmConstants.kEncoderDistancePerPulse);
+    armEncoder.setDistancePerPulse(ArmConstants.kEncoderRadiansPerPulse);
     setGoal(ArmConstants.kArmOffsetRads);
 
-
-    CommandScheduler.getInstance().registerSubsystem(this);
   }
 
   @Override

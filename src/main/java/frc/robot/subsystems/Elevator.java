@@ -11,7 +11,6 @@ import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.Encoder;
-import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.ElevatorConstants;
 
@@ -29,12 +28,11 @@ public class Elevator extends SubsystemBase {
     elevatorMotor.setInverted(true);
     elevatorMotor.setIdleMode(IdleMode.kBrake);
     this.encoder = new Encoder(encoderChannelA, encoderChannelB);
-    encoder.setDistancePerPulse(1.0 / 360.0 * 2.0 * Math.PI * 1.5);
+    encoder.setDistancePerPulse(ElevatorConstants.kDistancePerPulse);
     this.limitSwitch = new DigitalInput(limitSwitchChannel);
-    CommandScheduler.getInstance().registerSubsystem(this);
   }
 
-  public void setGoal(double position) {
+  public void setTargetExtension(double position) {
     pidController.setGoal(position);
   }
 
@@ -44,6 +42,10 @@ public class Elevator extends SubsystemBase {
 
   public void extend(double speed) {
     elevatorMotor.set(speed);
+  }
+
+  public void retract(double speed) {
+    elevatorMotor.set(-speed);
   }
 
   public double getExtension() {

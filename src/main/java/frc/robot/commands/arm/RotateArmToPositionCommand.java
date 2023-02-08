@@ -37,7 +37,7 @@ public class RotateArmToPositionCommand extends CommandBase {
   public void execute() {
     Translation2d currentPose = new Translation2d(elevator.getExtension(), new Rotation2d(arm.getMeasurement()));
     this.arm.setGoal(this.finalPosition.getAngle().getRadians());
-    this.elevator.setGoal(this.finalPosition.getNorm());
+    this.elevator.setTargetExtension(this.finalPosition.getNorm());
     SmartDashboard.putNumber("Intake X Component", currentPose.getX());
     SmartDashboard.putNumber("Intake Y Component", currentPose.getY());
   }

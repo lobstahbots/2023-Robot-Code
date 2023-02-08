@@ -131,7 +131,7 @@ public final class Constants {
     public static final double kP = 0;
     public static double kMaxVelocityRadPerSecond = 0;
     public static double kMaxAccelerationRadPerSecSquared = 0;
-    public static double kEncoderDistancePerPulse = 0;
+    public static double kEncoderRadiansPerPulse = 0;
     public static double kArmOffsetRads = 0;
   }
 
@@ -144,6 +144,7 @@ public final class Constants {
     public static final int LIMIT_SWITCH_CHANNEL = 3;
     public static final int ELEVATOR_MOTOR_ID = 0;
     public static final double kP = 1.3;
+    public static final double kDistancePerPulse = 0;
   }
 
   /**
