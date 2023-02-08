@@ -23,6 +23,7 @@ public class RetractElevatorCommand extends CommandBase {
   public RetractElevatorCommand(Elevator elevator, double speed) {
     this.elevator = elevator;
     this.speed = speed;
+    addRequirements(elevator);
   }
 
   @Override

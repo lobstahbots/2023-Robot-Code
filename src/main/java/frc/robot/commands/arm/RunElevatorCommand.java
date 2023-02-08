@@ -24,7 +24,7 @@ public class RunElevatorCommand extends CommandBase {
   public RunElevatorCommand(Elevator elevator, Supplier<Double> speed) {
     this.elevator = elevator;
     this.speed = speed;
-    addRequirements(this.elevator);
+    addRequirements(elevator);
   }
 
   /**

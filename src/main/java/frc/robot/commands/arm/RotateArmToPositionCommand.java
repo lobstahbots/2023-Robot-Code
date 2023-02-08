@@ -26,6 +26,7 @@ public class RotateArmToPositionCommand extends CommandBase {
     this.arm = arm;
     this.elevator = elevator;
     this.finalPosition = finalPosition;
+    addRequirements(this.arm, this.elevator);
   }
 
   @Override

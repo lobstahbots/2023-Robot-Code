@@ -23,7 +23,7 @@ public class RotateArmCommand extends CommandBase {
   public RotateArmCommand(Arm arm, Supplier<Double> speed) {
     this.arm = arm;
     this.speed = speed;
-    addRequirements(this.arm);
+    addRequirements(arm);
   }
 
   /**
