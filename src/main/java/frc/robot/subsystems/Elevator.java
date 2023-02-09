@@ -36,7 +36,7 @@ public class Elevator extends SubsystemBase {
     pidController.setGoal(position);
   }
 
-  public boolean getLimitSwitchValue() {
+  public boolean isRetracted() {
     return this.limitSwitch.get();
   }
 

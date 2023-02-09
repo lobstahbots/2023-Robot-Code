@@ -28,19 +28,19 @@ public class RetractElevatorCommand extends CommandBase {
 
   @Override
   public void initialize() {
-    this.limitSwitchInitialValue = elevator.getLimitSwitchValue();
+    this.limitSwitchInitialValue = elevator.isRetracted();
   }
 
   @Override
   public void execute() {
     if (this.limitSwitchInitialValue) {
-      if (elevator.getLimitSwitchValue()) {
+      if (elevator.isRetracted()) {
         elevator.extend(speed);
       } else {
         this.limitSwitchInitialValue = false;
       }
     } else {
-      if (!elevator.getLimitSwitchValue()) {
+      if (!elevator.isRetracted()) {
         elevator.extend(-speed);
       }
     }
@@ -48,6 +48,6 @@ public class RetractElevatorCommand extends CommandBase {
 
   @Override
   public boolean isFinished() {
-    return !this.limitSwitchInitialValue && elevator.getLimitSwitchValue();
+    return !this.limitSwitchInitialValue && elevator.isRetracted();
   }
 }
