@@ -41,7 +41,7 @@ public class RetractElevatorCommand extends CommandBase {
       }
     } else {
       if (!elevator.isRetracted()) {
-        elevator.extend(-speed);
+        elevator.retract(speed);
       }
     }
   }

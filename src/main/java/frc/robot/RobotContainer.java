@@ -9,6 +9,7 @@ import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import frc.robot.Constants.DriveConstants.DriveMotorCANIDs;
 import frc.robot.Constants.ArmConstants;
@@ -18,10 +19,14 @@ import frc.robot.Constants.FieldConstants;
 import frc.robot.Constants.IntakeConstants;
 import frc.robot.Constants.UIConstants;
 import frc.robot.Constants.UIConstants.DriverAxes;
+import frc.robot.Constants.UIConstants.DriverConstants;
 import frc.robot.Constants.UIConstants.OperatorAxes;
+import frc.robot.Constants.UIConstants.OperatorConstants;
 import frc.robot.auton.AutonGenerator;
+import frc.robot.commands.arm.RetractElevatorCommand;
 import frc.robot.commands.arm.RotateArmCommand;
 import frc.robot.commands.arm.RunElevatorCommand;
+import frc.robot.commands.arm.RunElevatorToPositionCommand;
 import frc.robot.commands.arm.SpinIntakeCommand;
 import frc.robot.commands.drive.StopDriveCommand;
 import frc.robot.commands.drive.TankDriveCommand;
@@ -52,11 +57,13 @@ public class RobotContainer {
 
   private final AutonGenerator autonGenerator = new AutonGenerator(driveBase);
 
-  private final LobstahGamepad driverJoystick = new LobstahGamepad(UIConstants.DRIVER_JOYSTICK_INDEX);
-  private final LobstahGamepad operatorJoystick = new LobstahGamepad(UIConstants.OPERATOR_JOYSTICK_INDEX);
+  private final LobstahGamepad driverJoystick = new LobstahGamepad(DriverConstants.DRIVER_JOYSTICK_INDEX);
+  private final LobstahGamepad operatorJoystick = new LobstahGamepad(OperatorConstants.OPERATOR_JOYSTICK_INDEX);
 
-  private final JoystickButton button = driverJoystick.button(1);
-  private final JoystickButton slowdownButton = driverJoystick.button(UIConstants.SLOWDOWN_BUTTON_INDEX);
+  private final JoystickButton intakeButton = operatorJoystick.button(OperatorConstants.INTAKE_BUTTON_INDEX);
+  private final JoystickButton manualControlButton =
+      operatorJoystick.button(OperatorConstants.MANUAL_CONTROL_BUTTON_INDEX);
+  private final JoystickButton slowdownButton = driverJoystick.button(DriverConstants.SLOWDOWN_BUTTON_INDEX);
 
   /**
    * The container for the robot. Contains subsystems, OI devices, and commands.
@@ -71,11 +78,15 @@ public class RobotContainer {
    * Use this method to define your button->command mappings.
    */
   private void configureButtonBindings() {
-    button.whileTrue(new SpinIntakeCommand(intake, IntakeConstants.SPIN_SPEED));
+    intakeButton.whileTrue(new SpinIntakeCommand(intake, IntakeConstants.SPIN_SPEED));
+    manualControlButton
+        .whileTrue(new ParallelCommandGroup(
+            new RunElevatorCommand(elevator, () -> operatorJoystick.getRawAxis(OperatorAxes.ELEVATOR_AXIS)),
+            new RotateArmCommand(arm, () -> operatorJoystick.getRawAxis(OperatorAxes.ARM_AXIS))));
     slowdownButton.whileTrue(new TankDriveCommand(driveBase,
         () -> DriveConstants.SLOWDOWN_PERCENT * driverJoystick.getRawAxis(DriverAxes.LEFT),
         () -> DriveConstants.SLOWDOWN_PERCENT * driverJoystick.getRawAxis(DriverAxes.RIGHT),
-        UIConstants.SQUARED_INPUTS));
+        DriverConstants.SQUARED_INPUTS));
   }
 
   private final SendableChooser<Command> autonChooser = new SendableChooser<>();
@@ -150,11 +161,12 @@ public class RobotContainer {
             driveBase,
             () -> -driverJoystick.getRawAxis(DriverAxes.LEFT),
             () -> -driverJoystick.getRawAxis(DriverAxes.RIGHT),
-            UIConstants.SQUARED_INPUTS));
+            DriverConstants.SQUARED_INPUTS));
     elevator
-        .setDefaultCommand(
-            new RunElevatorCommand(elevator, () -> operatorJoystick.getRawAxis(OperatorAxes.ELEVATOR_AXIS)));
-    arm.setDefaultCommand(new RotateArmCommand(arm, () -> operatorJoystick.getRawAxis(OperatorAxes.ARM_AXIS)));
+        .setDefaultCommand(new RetractElevatorCommand(elevator, ElevatorConstants.RETRACT_SPEED));
+
+    // arm.setDefaultCommand(new RotateArmCommand(arm, () -> operatorJoystick.getRawAxis(OperatorAxes.ARM_AXIS)));
+    intake.setDefaultCommand(new SpinIntakeCommand(intake, IntakeConstants.SPIN_SPEED));
   }
 
   /**

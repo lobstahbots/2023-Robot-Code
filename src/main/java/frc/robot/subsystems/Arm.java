@@ -11,6 +11,7 @@ import edu.wpi.first.math.controller.ArmFeedforward;
 import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.wpilibj.Encoder;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.ProfiledPIDSubsystem;
 import frc.robot.Constants.ArmConstants;
 
@@ -59,6 +60,11 @@ public class Arm extends ProfiledPIDSubsystem {
   public void setRotationSpeed(double speed) {
     leftArmMotor.set(speed);
     rightArmMotor.set(speed);
+  }
+
+  @Override
+  public void periodic() {
+    SmartDashboard.putNumber("Arm Rotation", this.getMeasurement());
   }
 
 }

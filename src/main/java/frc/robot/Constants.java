@@ -98,12 +98,18 @@ public final class Constants {
    * Stores constants related to driver controls, SmartDashboard and other user interface elements.
    */
   public static final class UIConstants {
-    public static final int DRIVER_JOYSTICK_INDEX = 0;
-    public static final int OPERATOR_JOYSTICK_INDEX = 1;
+    public static final class DriverConstants {
+      public static final int DRIVER_JOYSTICK_INDEX = 0;
+      public static final boolean SQUARED_INPUTS = true;
+      public static final int SLOWDOWN_BUTTON_INDEX = 2;
+    }
 
-    public static final boolean SQUARED_INPUTS = true;
+    public static final class OperatorConstants {
+      public static final int OPERATOR_JOYSTICK_INDEX = 1;
+      public static final int MANUAL_CONTROL_BUTTON_INDEX = 1;
+      public static final int INTAKE_BUTTON_INDEX = 2;
+    }
 
-    public static final int SLOWDOWN_BUTTON_INDEX = 2;
 
     public static final class DriverAxes {
       public static final int LEFT = 1;
@@ -143,7 +149,7 @@ public final class Constants {
   public static final class ElevatorConstants {
     public static final int ENCODER_CHANNEL_A = 1;
     public static final int ENCODER_CHANNEL_B = 2;
-    public static final int LIMIT_SWITCH_CHANNEL = 3;
+    public static final int LIMIT_SWITCH_CHANNEL = 1;
     public static final int ELEVATOR_MOTOR_ID = 0;
     public static final double kP = 1.3;
     public static final double kMaxVelocity = 0.75;
@@ -151,6 +157,7 @@ public final class Constants {
     public static final double kDistancePerPulse = 0;
     public static final double kMaxExtension = 10;
     public static final double kMinExtension = 0;
+    public static final double RETRACT_SPEED = 0.25;
   }
 
   /**
