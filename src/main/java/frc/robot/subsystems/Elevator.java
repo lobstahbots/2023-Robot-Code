@@ -21,7 +21,7 @@ public class Elevator extends SubsystemBase {
   private final TrapezoidProfile.Constraints constraints =
       new TrapezoidProfile.Constraints(ElevatorConstants.kMaxVelocity, ElevatorConstants.kMaxAcceleration);
   private final ProfiledPIDController pidController =
-      new ProfiledPIDController(ElevatorConstants.kP, 0, 0, constraints, 0);
+      new ProfiledPIDController(ElevatorConstants.kP, 0, 0, constraints);
   private final Encoder encoder;
 
   public Elevator(int elevatorMotorID, int encoderChannelA, int encoderChannelB, int limitSwitchChannel) {
@@ -38,15 +38,11 @@ public class Elevator extends SubsystemBase {
   }
 
   public boolean isRetracted() {
-    return this.limitSwitch.get();
+    return !this.limitSwitch.get();
   }
 
-  public void extend(double speed) {
+  public void move(double speed) {
     elevatorMotor.set(speed);
-  }
-
-  public void retract(double speed) {
-    elevatorMotor.set(-speed);
   }
 
   public double getExtension() {

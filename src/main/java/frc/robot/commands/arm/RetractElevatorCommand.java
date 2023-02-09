@@ -8,7 +8,7 @@ import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.subsystems.Elevator;
 
 public class RetractElevatorCommand extends CommandBase {
-  private boolean limitSwitchInitialValue;
+  private boolean needsToExtend;
   private final Elevator elevator;
   private final double speed;
 
@@ -28,26 +28,31 @@ public class RetractElevatorCommand extends CommandBase {
 
   @Override
   public void initialize() {
-    this.limitSwitchInitialValue = elevator.isRetracted();
+    this.needsToExtend = elevator.isRetracted();
   }
 
   @Override
   public void execute() {
-    if (this.limitSwitchInitialValue) {
+    System.out.println("Limit switch value:" + elevator.isRetracted());
+    System.out.println("Need to extend:" + this.needsToExtend);
+    if (this.needsToExtend) {
       if (elevator.isRetracted()) {
-        elevator.extend(speed);
+        elevator.move(-speed);
       } else {
-        this.limitSwitchInitialValue = false;
+        this.needsToExtend = false;
       }
     } else {
       if (!elevator.isRetracted()) {
-        elevator.retract(speed);
+        elevator.move(speed);
+      } else {
+        elevator.move(0);
       }
     }
   }
 
   @Override
   public boolean isFinished() {
-    return !this.limitSwitchInitialValue && elevator.isRetracted();
+    // return !this.limitSwitchInitialValue && elevator.isRetracted();
+    return false;
   }
 }

@@ -102,34 +102,28 @@ public final class Constants {
       public static final int DRIVER_JOYSTICK_INDEX = 0;
       public static final boolean SQUARED_INPUTS = true;
       public static final int SLOWDOWN_BUTTON_INDEX = 2;
+      public static final int LEFT_AXIS = 1;
+      public static final int RIGHT_AXIS = 5;
     }
 
     public static final class OperatorConstants {
       public static final int OPERATOR_JOYSTICK_INDEX = 1;
-      public static final int MANUAL_CONTROL_BUTTON_INDEX = 1;
-      public static final int INTAKE_BUTTON_INDEX = 2;
-    }
-
-
-    public static final class DriverAxes {
-      public static final int LEFT = 1;
-      public static final int RIGHT = 5;
-    }
-
-    public static final class OperatorAxes {
+      public static final int MANUAL_CONTROL_BUTTON_INDEX = 7;
+      public static final int INTAKE_BUTTON_INDEX = 5;
+      public static final int OUTTAKE_BUTTON_INDEX = 6;
       public static final int ELEVATOR_AXIS = 1;
       public static final int ARM_AXIS = 5;
     }
+
   }
 
   /**
    * Stores constants related to the arm.
    */
   public static final class ArmConstants {
-    public static final int ENCODER_CHANNEL_A = 1;
-    public static final int ENCODER_CHANNEL_B = 2;
-    public static final int LEFT_MOTOR_ID = 1;
-    public static final int RIGHT_MOTOR_ID = 0;
+    public static final int ENCODER_CHANNEL = 3;
+    public static final int LEFT_MOTOR_ID = 21; // TODO: figure out which is left and which is right
+    public static final int RIGHT_MOTOR_ID = 22;
     public static final double kSVolts = 0;
     public static final double kGVolts = 0;
     public static final double kAVoltSecondSquaredPerRad = 0;
@@ -137,7 +131,7 @@ public final class Constants {
     public static final double kP = 0;
     public static double kMaxVelocityRadPerSecond = 0;
     public static double kMaxAccelerationRadPerSecSquared = 0;
-    public static double kEncoderRadiansPerPulse = 0;
+    public static double ARM_DEGREES_PER_ROTATION = 360;
     public static double kArmOffsetRads = 0;
     public static double kMaxRotationRads = 10;
     public static double kMinRotationRads = 0;
@@ -147,17 +141,17 @@ public final class Constants {
    * Stores constants related to the elevator.
    */
   public static final class ElevatorConstants {
-    public static final int ENCODER_CHANNEL_A = 1;
-    public static final int ENCODER_CHANNEL_B = 2;
-    public static final int LIMIT_SWITCH_CHANNEL = 1;
-    public static final int ELEVATOR_MOTOR_ID = 0;
+    public static final int ENCODER_CHANNEL_A = 0;
+    public static final int ENCODER_CHANNEL_B = 1;
+    public static final int LIMIT_SWITCH_CHANNEL = 2;
+    public static final int ELEVATOR_MOTOR_ID = 31;
     public static final double kP = 1.3;
     public static final double kMaxVelocity = 0.75;
     public static final double kMaxAcceleration = 0.5;
     public static final double kDistancePerPulse = 0;
     public static final double kMaxExtension = 10;
     public static final double kMinExtension = 0;
-    public static final double RETRACT_SPEED = 0.25;
+    public static final double RETRACT_SPEED = 0.18;
   }
 
   /**
@@ -165,8 +159,9 @@ public final class Constants {
    */
   public static final class IntakeConstants {
     public static final int LEFT_MOTOR_ID = 0;
-    public static final int RIGHT_MOTOR_ID = 0;
-    public static final double SPIN_SPEED = 0.5;
+    public static final int RIGHT_MOTOR_ID = 1;
+    public static final double OUTTAKE_SPEED = -0.2;
+    public static final double INTAKE_SPEED = 0.5;
   }
 
   /**

@@ -5,7 +5,6 @@
 package frc.robot.subsystems;
 
 import edu.wpi.first.wpilibj.motorcontrol.PWMSparkMax;
-import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 public class Intake extends SubsystemBase {
@@ -15,7 +14,6 @@ public class Intake extends SubsystemBase {
   public Intake(int leftIntakeMotorID, int rightIntakeMotorID) {
     this.leftIntakeMotor = new PWMSparkMax(leftIntakeMotorID);
     this.rightIntakeMotor = new PWMSparkMax(rightIntakeMotorID);
-    CommandScheduler.getInstance().registerSubsystem(this);
   }
 
   public void setSpinSpeed(double speed) {

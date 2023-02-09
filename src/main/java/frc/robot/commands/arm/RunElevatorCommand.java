@@ -39,12 +39,12 @@ public class RunElevatorCommand extends CommandBase {
 
   @Override
   public void execute() {
-    elevator.extend(speed.getAsDouble());
+    elevator.move(speed.getAsDouble());
   }
 
   @Override
   public void end(boolean interrupted) {
-    elevator.extend(0.0);
+    elevator.move(0.0);
   }
 
   @Override

@@ -10,14 +10,15 @@ import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 import edu.wpi.first.math.controller.ArmFeedforward;
 import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
-import edu.wpi.first.wpilibj.Encoder;
+import edu.wpi.first.wpilibj.DigitalInput;
+import edu.wpi.first.wpilibj.DutyCycleEncoder;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.ProfiledPIDSubsystem;
 import frc.robot.Constants.ArmConstants;
 
 public class Arm extends ProfiledPIDSubsystem {
 
-  private final Encoder armEncoder;
+  private final DutyCycleEncoder armEncoder;
   private final CANSparkMax leftArmMotor;
   private final CANSparkMax rightArmMotor;
   private final ArmFeedforward feedforward =
@@ -25,23 +26,22 @@ public class Arm extends ProfiledPIDSubsystem {
           ArmConstants.kSVolts, ArmConstants.kGVolts,
           ArmConstants.kVVoltSecondPerRad, ArmConstants.kAVoltSecondSquaredPerRad);
 
-  public Arm(int leftMotorID, int rightMotorID, int encoderChannelA, int encoderChannelB) {
+  public Arm(int leftMotorID, int rightMotorID, int encoderChannel) {
     super(new ProfiledPIDController(
         ArmConstants.kP,
         0,
         0,
         new TrapezoidProfile.Constraints(
             ArmConstants.kMaxVelocityRadPerSecond,
-            ArmConstants.kMaxAccelerationRadPerSecSquared)),
-        0);
+            ArmConstants.kMaxAccelerationRadPerSecSquared)));
     this.leftArmMotor = new CANSparkMax(leftMotorID, MotorType.kBrushless);
     this.rightArmMotor = new CANSparkMax(rightMotorID, MotorType.kBrushless);
-    this.armEncoder = new Encoder(encoderChannelA, encoderChannelB);
+    this.armEncoder = new DutyCycleEncoder(new DigitalInput(encoderChannel));
     leftArmMotor.setIdleMode(IdleMode.kBrake);
     rightArmMotor.setIdleMode(IdleMode.kBrake);
-    leftArmMotor.setInverted(false);
-    rightArmMotor.setInverted(true);
-    armEncoder.setDistancePerPulse(ArmConstants.kEncoderRadiansPerPulse);
+    leftArmMotor.setInverted(true);
+    rightArmMotor.setInverted(false);
+    armEncoder.setDistancePerRotation(ArmConstants.ARM_DEGREES_PER_ROTATION);
     setGoal(ArmConstants.kArmOffsetRads);
 
   }
