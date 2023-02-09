@@ -226,8 +226,8 @@ public class DriveBase extends SubsystemBase {
     return (getLeftEncoderDistanceMeters() + getRightEncoderDistanceMeters()) / 2.0;
   }
 
-  /** Zeroes the heading of the robot. */
-  public void zeroHeading() {
+  /** Zeroes the gyro value. */
+  public void zeroGyro() {
     gyro.reset();
   }
 
@@ -242,21 +242,12 @@ public class DriveBase extends SubsystemBase {
   }
 
   /**
-   * Returns the heading of the robot.
+   * Returns the heading of the robot from 180 to -180 degrees in radians.
    *
-   * @return the robot's heading in radians as a Rotation2d (from 180 to -180 degrees).
+   * @return the robot's heading in radians as a Rotation2d.
    */
   public Rotation2d getHeading() {
     return new Rotation2d(Math.toRadians(gyro.getYaw()));
-  }
-
-  /**
-   * Returns the angle of the robot.
-   *
-   * @return the robot's heading in radians as a Rotation2d (from 0 to 360 degrees).
-   */
-  public Rotation2d getAngle() {
-    return new Rotation2d(-Math.toRadians(gyro.getAngle() % 360));
   }
 
   /**
@@ -337,7 +328,7 @@ public class DriveBase extends SubsystemBase {
 
     }
 
-    SmartDashboard.putNumber("Gyro", this.getAngle().getDegrees());
+    SmartDashboard.putNumber("Gyro", this.getHeading().getDegrees());
     SmartDashboard.putString("Pose", this.getPose().toString());
     SmartDashboard.putNumber("Number of Tags Visible In Front", this.photonVision.getFrontTargets().size());
     SmartDashboard.putNumber("Number of Tags Visible In Rear", this.photonVision.getRearTargets().size());

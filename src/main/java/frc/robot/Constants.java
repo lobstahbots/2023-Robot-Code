@@ -174,7 +174,7 @@ public final class Constants {
    */
   public static final class DriveConstants {
 
-    public static final double ACCELERATION_RATE_LIMIT = 2.1;
+    public static final double ACCELERATION_RATE_LIMIT = 1.5;
     public static final DifferentialDriveKinematics KINEMATICS =
         new DifferentialDriveKinematics(Units.inchesToMeters(RobotConstants.TRACK_WIDTH));
     public static final double TURN_KP = 0.01;
@@ -182,10 +182,10 @@ public final class Constants {
     public static final double SLOWDOWN_PERCENT = 0.5;
 
     public static final class DriveMotorCANIDs {
-      public static final int RIGHT_FRONT = 44;
-      public static final int RIGHT_BACK = 43;
-      public static final int LEFT_FRONT = 42;
-      public static final int LEFT_BACK = 41;
+      public static final int RIGHT_FRONT = 14;
+      public static final int RIGHT_BACK = 13;
+      public static final int LEFT_FRONT = 12;
+      public static final int LEFT_BACK = 11;
     }
 
     public static final int STATOR_CURRENT_LIMIT = 50;
