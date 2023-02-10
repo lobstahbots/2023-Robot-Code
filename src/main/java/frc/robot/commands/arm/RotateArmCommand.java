@@ -49,8 +49,8 @@ public class RotateArmCommand extends CommandBase {
 
   @Override
   public boolean isFinished() {
-    // return arm.getMeasurement() >= ArmConstants.kMaxRotationRads
-    // || arm.getMeasurement() <= ArmConstants.kMinRotationRads;
+    // return arm.getMeasurement() >= ArmConstants.kMaxRotationRads + ArmConstants.kMaxRotationDeg
+    // || arm.getMeasurement() <= ArmConstants.kMinRotationRads + kMinRotationDeg;
     return false;
   }
 }

@@ -125,7 +125,7 @@
               "_showGlyph": false
             }
           },
-          "10,3": {
+          "7,4": {
             "size": [
               2,
               1
@@ -138,7 +138,7 @@
               "_showGlyph": false
             }
           },
-          "10,2": {
+          "8,3": {
             "size": [
               2,
               1
@@ -151,7 +151,7 @@
               "_showGlyph": false
             }
           },
-          "7,3": {
+          "10,2": {
             "size": [
               3,
               2
@@ -193,17 +193,51 @@
               "imageHeight": -1
             }
           },
-          "8,2": {
+          "0,5": {
             "size": [
-              1,
+              2,
               1
             ],
             "content": {
-              "_type": "ComboBox Chooser",
-              "_source0": "network_table:///SmartDashboard/Auto choices",
-              "_title": "Auto choices",
+              "_type": "Text View",
+              "_source0": "network_table:///SmartDashboard/Arm Rotation",
+              "_title": "Arm Rotation",
               "_glyph": 148,
               "_showGlyph": false
+            }
+          },
+          "4,4": {
+            "size": [
+              2,
+              1
+            ],
+            "content": {
+              "_type": "Text View",
+              "_source0": "network_table:///SmartDashboard/Elevator Extension",
+              "_title": "Elevator Extension",
+              "_glyph": 148,
+              "_showGlyph": false
+            }
+          },
+          "10,4": {
+            "size": [
+              3,
+              2
+            ],
+            "content": {
+              "_type": "Camera Stream",
+              "_source0": "camera_server://photonvision_Port_1182_MJPEG_Server",
+              "_title": "photonvision_Port_1182_MJPEG_Server",
+              "_glyph": 148,
+              "_showGlyph": false,
+              "Crosshair/Show crosshair": true,
+              "Crosshair/Crosshair color": "#FFFFFFFF",
+              "Controls/Show controls": true,
+              "Controls/Rotation": "NONE",
+              "compression": -1.0,
+              "fps": -1,
+              "imageWidth": 0,
+              "imageHeight": 0
             }
           }
         }

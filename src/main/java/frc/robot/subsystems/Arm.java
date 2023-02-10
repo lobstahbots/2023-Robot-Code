@@ -42,7 +42,7 @@ public class Arm extends ProfiledPIDSubsystem {
     leftArmMotor.setInverted(true);
     rightArmMotor.setInverted(false);
     armEncoder.setDistancePerRotation(ArmConstants.ARM_DEGREES_PER_ROTATION);
-    setGoal(ArmConstants.kArmOffsetRads);
+    setGoal(ArmConstants.kArmOffsetDeg);
 
   }
 
@@ -54,7 +54,7 @@ public class Arm extends ProfiledPIDSubsystem {
 
   @Override
   public double getMeasurement() {
-    return armEncoder.getDistance() + ArmConstants.kArmOffsetRads;
+    return armEncoder.getDistance() + ArmConstants.kArmOffsetDeg;
   }
 
   public void setRotationSpeed(double speed) {

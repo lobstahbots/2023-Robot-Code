@@ -132,8 +132,8 @@ public final class Constants {
     public static double kMaxVelocityRadPerSecond = 0;
     public static double kMaxAccelerationRadPerSecSquared = 0;
     public static double ARM_DEGREES_PER_ROTATION = 360;
-    public static double kArmOffsetRads = 0;
-    public static double kMaxRotationRads = 10;
+    public static double kArmOffsetDeg = 285;
+    public static double kMaxRotationDeg = 40;
     public static double kMinRotationRads = 0;
   }
 

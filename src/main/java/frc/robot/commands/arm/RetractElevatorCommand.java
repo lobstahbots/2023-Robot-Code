@@ -33,8 +33,6 @@ public class RetractElevatorCommand extends CommandBase {
 
   @Override
   public void execute() {
-    System.out.println("Limit switch value:" + elevator.isRetracted());
-    System.out.println("Need to extend:" + this.needsToExtend);
     if (this.needsToExtend) {
       if (elevator.isRetracted()) {
         elevator.move(-speed);
