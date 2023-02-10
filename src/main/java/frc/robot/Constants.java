@@ -160,8 +160,8 @@ public final class Constants {
   public static final class IntakeConstants {
     public static final int LEFT_MOTOR_ID = 0;
     public static final int RIGHT_MOTOR_ID = 1;
-    public static final double OUTTAKE_SPEED = -0.2;
-    public static final double INTAKE_SPEED = 0.5;
+    public static final double OUTTAKE_SPEED = 0.2;
+    public static final double INTAKE_SPEED = -0.5;
   }
 
   /**
