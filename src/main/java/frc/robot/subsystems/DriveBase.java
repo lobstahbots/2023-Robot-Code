@@ -3,8 +3,6 @@ package frc.robot.subsystems;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
-
 import com.ctre.phoenix.motorcontrol.FeedbackDevice;
 import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.ctre.phoenix.motorcontrol.StatorCurrentLimitConfiguration;
@@ -18,11 +16,9 @@ import com.pathplanner.lib.PathPlanner;
 import com.pathplanner.lib.PathPlannerTrajectory;
 import com.pathplanner.lib.PathPoint;
 import edu.wpi.first.math.geometry.Pose2d;
-import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Transform2d;
 import edu.wpi.first.math.geometry.Translation2d;
-import edu.wpi.first.math.Pair;
 import edu.wpi.first.math.estimator.DifferentialDrivePoseEstimator;
 import edu.wpi.first.math.kinematics.DifferentialDriveWheelSpeeds;
 import edu.wpi.first.wpilibj.motorcontrol.MotorControllerGroup;
@@ -33,6 +29,7 @@ import frc.robot.Constants.DriveConstants;
 import frc.robot.Constants.PathConstants;
 import lobstah.stl.math.LobstahMath;
 import lobstah.stl.motorcontrol.LobstahDifferentialDrive;
+import org.photonvision.EstimatedRobotPose;
 
 /**
  * A subsystem that controls the drive train (aka chassis) on a robot.
@@ -318,12 +315,35 @@ public class DriveBase extends SubsystemBase {
   public void periodic() {
     poseEstimator.update(getHeading(), getLeftEncoderDistanceMeters(), getRightEncoderDistanceMeters());
     try {
-      Optional<Pair<Pose3d, Double>> visionEstimatedPose = photonVision.getEstimatedGlobalPose();
-      if (visionEstimatedPose.isPresent()) {
-        SmartDashboard.putString("PhotonVision Pose", visionEstimatedPose.get().getFirst().toPose2d().toString());
-        poseEstimator.addVisionMeasurement(visionEstimatedPose.get().getFirst().toPose2d(),
-            visionEstimatedPose.get().getSecond());
+      List<EstimatedRobotPose> visionEstimatedPoses = new ArrayList<>();
+      Pose2d estimatedVisionPose = new Pose2d();
+      Rotation2d averageEstimatedRotation = new Rotation2d();
+      double averageEstimatedX = 0;
+      double averageEstimatedY = 0;
+      double averageTimestamp = 0;
+      for (EstimatedRobotPose pose : photonVision.getEstimatedGlobalPoses()) {
+        if (pose.estimatedPose.toPose2d().minus(poseEstimator.getEstimatedPosition()).getTranslation()
+            .getNorm() < PathConstants.MAX_VISION_TO_ODOMETRY_ERROR) {
+          visionEstimatedPoses.add(pose);
+        }
       }
+
+      for (EstimatedRobotPose pose : visionEstimatedPoses) {
+        averageEstimatedRotation = averageEstimatedRotation.plus(pose.estimatedPose.toPose2d().getRotation());
+        averageEstimatedX += pose.estimatedPose.toPose2d().getX();
+        averageEstimatedY += pose.estimatedPose.toPose2d().getY();
+        averageTimestamp += pose.timestampSeconds;
+      }
+
+      averageEstimatedRotation = averageEstimatedRotation.div(visionEstimatedPoses.size());
+      averageEstimatedX /= visionEstimatedPoses.size();
+      averageEstimatedY /= visionEstimatedPoses.size();
+      averageTimestamp /= visionEstimatedPoses.size();
+      estimatedVisionPose = new Pose2d(averageEstimatedX, averageEstimatedY, averageEstimatedRotation);
+
+      SmartDashboard.putString("PhotonVision Pose", estimatedVisionPose.toString());
+      poseEstimator.addVisionMeasurement(estimatedVisionPose, averageTimestamp);
+
     } catch (NullPointerException npe) {
 
     }

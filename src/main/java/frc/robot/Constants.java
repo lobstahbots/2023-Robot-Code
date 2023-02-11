@@ -52,6 +52,7 @@ public final class Constants {
     public static final double KP = 0.00000094597;
     public static final double KI = 0;
     public static final double KD = 0;
+    public static final double MAX_VISION_TO_ODOMETRY_ERROR = 1;
   }
 
   /**
