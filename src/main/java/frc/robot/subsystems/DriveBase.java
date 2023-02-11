@@ -29,7 +29,7 @@ import frc.robot.Constants.DriveConstants;
 import frc.robot.Constants.PathConstants;
 import lobstah.stl.math.LobstahMath;
 import lobstah.stl.motorcontrol.LobstahDifferentialDrive;
-import org.photonvision.EstimatedRobotPose;
+import frc.robot.EstimatedRobotPose;
 
 /**
  * A subsystem that controls the drive train (aka chassis) on a robot.
@@ -315,35 +315,10 @@ public class DriveBase extends SubsystemBase {
   public void periodic() {
     poseEstimator.update(getHeading(), getLeftEncoderDistanceMeters(), getRightEncoderDistanceMeters());
     try {
-      List<EstimatedRobotPose> visionEstimatedPoses = new ArrayList<>();
-      Pose2d estimatedVisionPose = new Pose2d();
-      Rotation2d averageEstimatedRotation = new Rotation2d();
-      double averageEstimatedX = 0;
-      double averageEstimatedY = 0;
-      double averageTimestamp = 0;
-      for (EstimatedRobotPose pose : photonVision.getEstimatedGlobalPoses()) {
-        if (pose.estimatedPose.toPose2d().minus(poseEstimator.getEstimatedPosition()).getTranslation()
-            .getNorm() < PathConstants.MAX_VISION_TO_ODOMETRY_ERROR) {
-          visionEstimatedPoses.add(pose);
-        }
-      }
-
-      for (EstimatedRobotPose pose : visionEstimatedPoses) {
-        averageEstimatedRotation = averageEstimatedRotation.plus(pose.estimatedPose.toPose2d().getRotation());
-        averageEstimatedX += pose.estimatedPose.toPose2d().getX();
-        averageEstimatedY += pose.estimatedPose.toPose2d().getY();
-        averageTimestamp += pose.timestampSeconds;
-      }
-
-      averageEstimatedRotation = averageEstimatedRotation.div(visionEstimatedPoses.size());
-      averageEstimatedX /= visionEstimatedPoses.size();
-      averageEstimatedY /= visionEstimatedPoses.size();
-      averageTimestamp /= visionEstimatedPoses.size();
-      estimatedVisionPose = new Pose2d(averageEstimatedX, averageEstimatedY, averageEstimatedRotation);
-
+      EstimatedRobotPose estimatedVisionPose = this.photonVision.getAveragedGlobalPose();
       SmartDashboard.putString("PhotonVision Pose", estimatedVisionPose.toString());
-      poseEstimator.addVisionMeasurement(estimatedVisionPose, averageTimestamp);
-
+      poseEstimator.addVisionMeasurement(estimatedVisionPose.estimatedPose,
+          estimatedVisionPose.timestampSeconds);
     } catch (NullPointerException npe) {
 
     }

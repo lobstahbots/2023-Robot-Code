@@ -4,19 +4,21 @@
 
 package frc.robot.subsystems;
 
-import org.photonvision.EstimatedRobotPose;
 import org.photonvision.PhotonCamera;
-import org.photonvision.PhotonPoseEstimator;
-import org.photonvision.PhotonPoseEstimator.PoseStrategy;
 import org.photonvision.targeting.PhotonPipelineResult;
 import org.photonvision.targeting.PhotonTrackedTarget;
+
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import edu.wpi.first.apriltag.AprilTagFieldLayout;
+import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.Filesystem;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.EstimatedRobotPose;
+import frc.robot.PhotonPoseEstimator;
 import frc.robot.Constants.VisionConstants;
 
 /**
@@ -45,15 +47,15 @@ public class PhotonVision extends SubsystemBase {
     }
 
     this.rearPoseEstimator =
-        new PhotonPoseEstimator(aprilTagFieldLayout, PoseStrategy.LOWEST_AMBIGUITY, rearCamera,
+        new PhotonPoseEstimator(aprilTagFieldLayout, rearCamera,
             VisionConstants.REAR_CAMERA_TO_ROBOT);
 
     this.frontLeftPoseEstimator =
-        new PhotonPoseEstimator(aprilTagFieldLayout, PoseStrategy.LOWEST_AMBIGUITY, frontLeftCamera,
+        new PhotonPoseEstimator(aprilTagFieldLayout, frontLeftCamera,
             VisionConstants.FRONT_LEFT_CAMERA_TO_ROBOT);
 
     this.frontRightPoseEstimator =
-        new PhotonPoseEstimator(aprilTagFieldLayout, PoseStrategy.LOWEST_AMBIGUITY, frontRightCamera,
+        new PhotonPoseEstimator(aprilTagFieldLayout, frontRightCamera,
             VisionConstants.FRONT_RIGHT_CAMERA_TO_ROBOT);
 
     estimators.add(rearPoseEstimator);
@@ -115,7 +117,7 @@ public class PhotonVision extends SubsystemBase {
   /**
    * Estimates the global field pose based on previous pose and an {@link RobotPoseEstimator}.
    */
-  public List<EstimatedRobotPose> getEstimatedGlobalPoses() {
+  public List<EstimatedRobotPose> getGlobalPoses() {
     List<EstimatedRobotPose> poses = new ArrayList<>();
 
     for (PhotonPoseEstimator estimator : estimators) {
@@ -125,6 +127,33 @@ public class PhotonVision extends SubsystemBase {
       }
     }
     return poses;
+  }
+
+  public EstimatedRobotPose getAveragedGlobalPose() {
+    List<EstimatedRobotPose> visionEstimatedPoses = this.getGlobalPoses();
+    Pose2d estimatedVisionPose = new Pose2d();
+    Rotation2d averageEstimatedRotation = new Rotation2d();
+    double averageEstimatedX = 0;
+    double averageEstimatedY = 0;
+    double averageTimestamp = 0;
+    double sumConfidence = 0;
+
+    for (EstimatedRobotPose pose : visionEstimatedPoses) {
+      if (pose.confidence > 0) {
+        averageEstimatedRotation = averageEstimatedRotation.plus(pose.estimatedPose.getRotation());
+        averageEstimatedX += pose.estimatedPose.getX() * pose.confidence;
+        averageEstimatedY += pose.estimatedPose.getY() * pose.confidence;
+        averageTimestamp += pose.timestampSeconds * pose.confidence;
+        sumConfidence += pose.confidence;
+      }
+    }
+
+    averageEstimatedRotation = averageEstimatedRotation.div(visionEstimatedPoses.size() * sumConfidence);
+    averageEstimatedX /= visionEstimatedPoses.size() * sumConfidence;
+    averageEstimatedY /= visionEstimatedPoses.size() * sumConfidence;
+    averageTimestamp /= visionEstimatedPoses.size() * sumConfidence;
+    estimatedVisionPose = new Pose2d(averageEstimatedX, averageEstimatedY, averageEstimatedRotation);
+    return new EstimatedRobotPose(estimatedVisionPose, averageTimestamp, sumConfidence);
   }
 
 
