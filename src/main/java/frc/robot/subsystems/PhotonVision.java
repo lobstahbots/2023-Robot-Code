@@ -13,8 +13,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import edu.wpi.first.apriltag.AprilTagFieldLayout;
-import edu.wpi.first.math.geometry.Pose2d;
-import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.Filesystem;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -50,15 +48,15 @@ public class PhotonVision extends SubsystemBase {
 
     this.rearPoseEstimator =
         new PhotonPoseEstimator(aprilTagFieldLayout, rearCamera,
-            VisionConstants.REAR_CAMERA_TO_ROBOT, 0);
+            VisionConstants.ROBOT_TO_REAR_CAMERA, 0);
 
     this.frontLeftPoseEstimator =
         new PhotonPoseEstimator(aprilTagFieldLayout, frontLeftCamera,
-            VisionConstants.FRONT_LEFT_CAMERA_TO_ROBOT, 1);
+            VisionConstants.ROBOT_TO_FRONT_LEFT_CAMERA, 1);
 
     this.frontRightPoseEstimator =
         new PhotonPoseEstimator(aprilTagFieldLayout, frontRightCamera,
-            VisionConstants.FRONT_RIGHT_CAMERA_TO_ROBOT, 2);
+            VisionConstants.ROBOT_TO_FRONT_RIGHT_CAMERA, 2);
 
     estimators.add(rearPoseEstimator);
     estimators.add(frontLeftPoseEstimator);
@@ -151,5 +149,10 @@ public class PhotonVision extends SubsystemBase {
     }
     currentCamera = bestId;
     return bestPose;
+  }
+
+  @Override
+  public void periodic() {
+    SmartDashboard.putNumber("Current Camera Used:", currentCamera);
   }
 }
