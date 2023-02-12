@@ -8,6 +8,7 @@ import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.CommandBase;
+import frc.robot.Constants.ArmConstants;
 import frc.robot.subsystems.Arm;
 import frc.robot.subsystems.Elevator;
 
@@ -36,7 +37,9 @@ public class RotateArmToPositionCommand extends CommandBase {
 
   @Override
   public void execute() {
-    Translation2d currentPose = new Translation2d(elevator.getExtension(), new Rotation2d(arm.getMeasurement()));
+    Translation2d currentPose =
+        new Translation2d(elevator.getLength(), new Rotation2d(arm.getMeasurement())).plus(new Translation2d(0,
+            ArmConstants.PIVOT_HEIGHT_FROM_GROUND));
     this.arm.setGoal(this.finalPosition.getAngle().getRadians());
     this.elevator.setTargetExtension(this.finalPosition.getNorm());
     SmartDashboard.putNumber("Intake X Component", currentPose.getX());

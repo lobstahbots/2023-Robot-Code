@@ -49,6 +49,10 @@ public class Elevator extends SubsystemBase {
     return encoder.getDistance();
   }
 
+  public double getLength() {
+    return ElevatorConstants.LENGTH_FULLY_RETRACTED + encoder.getDistance();
+  }
+
   @Override
   public void periodic() {
     System.out.println(this.getExtension());

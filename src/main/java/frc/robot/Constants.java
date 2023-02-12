@@ -129,6 +129,7 @@ public final class Constants {
     public static final double kAVoltSecondSquaredPerRad = 0;
     public static final double kVVoltSecondPerRad = 0;
     public static final double kP = 0;
+    public static final double PIVOT_HEIGHT_FROM_GROUND = 51.428;
     public static double kMaxVelocityRadPerSecond = 0;
     public static double kMaxAccelerationRadPerSecSquared = 0;
     public static double ARM_DEGREES_PER_ROTATION = 360;
@@ -151,6 +152,7 @@ public final class Constants {
     public static final double kMaxExtension = 29;
     public static final double kMinExtension = 0;
     public static final double RETRACT_SPEED = 0.18;
+    public static final double LENGTH_FULLY_RETRACTED = 37.697;
     public static final double kS = 0.32321;
     public static final double kV = 0.23766;
     public static final double kA = 0.0853;
