@@ -9,6 +9,7 @@ import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.Constants.ArmConstants;
+import frc.robot.Constants.ElevatorConstants;
 import frc.robot.subsystems.Arm;
 import frc.robot.subsystems.Elevator;
 
@@ -40,7 +41,7 @@ public class RotateArmToPositionCommand extends CommandBase {
     Translation2d currentPose =
         new Translation2d(elevator.getLength(), new Rotation2d(arm.getMeasurement())).plus(new Translation2d(0,
             ArmConstants.PIVOT_HEIGHT_FROM_GROUND));
-    this.arm.setGoal(this.finalPosition.getAngle().getRadians());
+    this.arm.setGoal(this.finalPosition.getAngle().getDegrees());
     this.elevator.setTargetExtension(this.finalPosition.getNorm());
     SmartDashboard.putNumber("Intake X Component", currentPose.getX());
     SmartDashboard.putNumber("Intake Y Component", currentPose.getY());
@@ -48,7 +49,10 @@ public class RotateArmToPositionCommand extends CommandBase {
 
   @Override
   public boolean isFinished() {
-    return false;
+    return arm.getMeasurement() > ArmConstants.kMaxRotationDeg
+        || arm.getMeasurement() < ArmConstants.kMinRotationDeg
+        || elevator.getExtension() > ElevatorConstants.kMaxExtension
+        || elevator.getExtension() < ElevatorConstants.kMinExtension;
   }
 
 }

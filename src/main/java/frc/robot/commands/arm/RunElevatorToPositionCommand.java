@@ -31,7 +31,7 @@ public class RunElevatorToPositionCommand extends CommandBase {
 
   @Override
   public boolean isFinished() {
-    return elevator.getExtension() >= ElevatorConstants.kMaxExtension
-        || elevator.getExtension() <= ElevatorConstants.kMinExtension;
+    return elevator.getExtension() > ElevatorConstants.kMaxExtension
+        || elevator.getExtension() < ElevatorConstants.kMinExtension;
   }
 }

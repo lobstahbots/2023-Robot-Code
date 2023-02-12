@@ -6,7 +6,9 @@ package frc.robot.commands.arm;
 
 import java.util.function.DoubleSupplier;
 
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.CommandBase;
+import frc.robot.Constants.ElevatorConstants;
 import frc.robot.subsystems.Elevator;
 
 public class RunElevatorCommand extends CommandBase {
@@ -39,7 +41,14 @@ public class RunElevatorCommand extends CommandBase {
 
   @Override
   public void execute() {
-    elevator.move(speed.getAsDouble());
+    if ((elevator.getExtension() > ElevatorConstants.kMaxExtension && speed.getAsDouble() < 0)
+        || (elevator.getExtension() < ElevatorConstants.kMinExtension && speed.getAsDouble() > 0)) {
+      SmartDashboard.putBoolean("Elevator Within Limit", false);
+      elevator.move(0.0);
+    } else {
+      elevator.move(speed.getAsDouble());
+      SmartDashboard.putBoolean("Elevator Within Limit", true);
+    }
   }
 
   @Override
@@ -52,3 +61,4 @@ public class RunElevatorCommand extends CommandBase {
     return false;
   }
 }
+
