@@ -121,8 +121,6 @@ public class DriveBase extends SubsystemBase {
         new DifferentialDrivePoseEstimator(DriveConstants.KINEMATICS, gyro.getRotation2d(), 0, 0, new Pose2d());
 
     this.photonVision = new PhotonVision();
-
-    CommandScheduler.getInstance().registerSubsystem(this);
   }
 
   /**
@@ -316,7 +314,7 @@ public class DriveBase extends SubsystemBase {
     poseEstimator.update(getHeading(), getLeftEncoderDistanceMeters(), getRightEncoderDistanceMeters());
     try {
       EstimatedRobotPose estimatedVisionPose = this.photonVision.getAveragedGlobalPose();
-      SmartDashboard.putString("PhotonVision Pose", estimatedVisionPose.toString());
+      SmartDashboard.putString("PhotonVision Pose", estimatedVisionPose.estimatedPose.toString());
       poseEstimator.addVisionMeasurement(estimatedVisionPose.estimatedPose,
           estimatedVisionPose.timestampSeconds);
     } catch (NullPointerException npe) {

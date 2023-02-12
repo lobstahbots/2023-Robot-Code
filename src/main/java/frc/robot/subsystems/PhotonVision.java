@@ -16,6 +16,7 @@ import edu.wpi.first.apriltag.AprilTagFieldLayout;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.Filesystem;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.EstimatedRobotPose;
 import frc.robot.PhotonPoseEstimator;
@@ -131,6 +132,9 @@ public class PhotonVision extends SubsystemBase {
 
   public EstimatedRobotPose getAveragedGlobalPose() {
     List<EstimatedRobotPose> visionEstimatedPoses = this.getGlobalPoses();
+    if (visionEstimatedPoses.size() == 0) {
+      return null;
+    }
     Pose2d estimatedVisionPose = new Pose2d();
     Rotation2d averageEstimatedRotation = new Rotation2d();
     double averageEstimatedX = 0;
@@ -148,13 +152,11 @@ public class PhotonVision extends SubsystemBase {
       }
     }
 
-    averageEstimatedRotation = averageEstimatedRotation.div(visionEstimatedPoses.size() * sumConfidence);
-    averageEstimatedX /= visionEstimatedPoses.size() * sumConfidence;
-    averageEstimatedY /= visionEstimatedPoses.size() * sumConfidence;
-    averageTimestamp /= visionEstimatedPoses.size() * sumConfidence;
+    averageEstimatedRotation = averageEstimatedRotation.div(sumConfidence);
+    averageEstimatedX /= sumConfidence;
+    averageEstimatedY /= sumConfidence;
+    averageTimestamp /= sumConfidence;
     estimatedVisionPose = new Pose2d(averageEstimatedX, averageEstimatedY, averageEstimatedRotation);
     return new EstimatedRobotPose(estimatedVisionPose, averageTimestamp, sumConfidence);
   }
-
-
 }
