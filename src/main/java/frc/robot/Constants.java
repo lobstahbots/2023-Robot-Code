@@ -93,6 +93,7 @@ public final class Constants {
     public static final Transform3d FRONT_LEFT_CAMERA_TO_ROBOT = new Transform3d();
     public static final Transform3d FRONT_RIGHT_CAMERA_TO_ROBOT = new Transform3d();
     public static final Transform3d REAR_CAMERA_TO_ROBOT = new Transform3d();
+    public static final double MAINTAIN_CAMERA_THRESHOLD = 0.5;
   }
 
   /**

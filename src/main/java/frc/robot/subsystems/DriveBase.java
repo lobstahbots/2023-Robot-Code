@@ -313,7 +313,7 @@ public class DriveBase extends SubsystemBase {
   public void periodic() {
     poseEstimator.update(getHeading(), getLeftEncoderDistanceMeters(), getRightEncoderDistanceMeters());
     try {
-      EstimatedRobotPose estimatedVisionPose = this.photonVision.getAveragedGlobalPose();
+      EstimatedRobotPose estimatedVisionPose = this.photonVision.getCurrentPose();
       SmartDashboard.putString("PhotonVision Pose", estimatedVisionPose.estimatedPose.toString());
       poseEstimator.addVisionMeasurement(estimatedVisionPose.estimatedPose,
           estimatedVisionPose.timestampSeconds);

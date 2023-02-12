@@ -34,6 +34,7 @@ public class PhotonVision extends SubsystemBase {
   private PhotonPoseEstimator frontLeftPoseEstimator;
   private PhotonPoseEstimator frontRightPoseEstimator;
   private List<PhotonPoseEstimator> estimators = new ArrayList<>();
+  private int currentCamera = -1;
 
   /** Constructs a new Photonvision. */
   public PhotonVision() {
@@ -49,15 +50,15 @@ public class PhotonVision extends SubsystemBase {
 
     this.rearPoseEstimator =
         new PhotonPoseEstimator(aprilTagFieldLayout, rearCamera,
-            VisionConstants.REAR_CAMERA_TO_ROBOT);
+            VisionConstants.REAR_CAMERA_TO_ROBOT, 0);
 
     this.frontLeftPoseEstimator =
         new PhotonPoseEstimator(aprilTagFieldLayout, frontLeftCamera,
-            VisionConstants.FRONT_LEFT_CAMERA_TO_ROBOT);
+            VisionConstants.FRONT_LEFT_CAMERA_TO_ROBOT, 1);
 
     this.frontRightPoseEstimator =
         new PhotonPoseEstimator(aprilTagFieldLayout, frontRightCamera,
-            VisionConstants.FRONT_RIGHT_CAMERA_TO_ROBOT);
+            VisionConstants.FRONT_RIGHT_CAMERA_TO_ROBOT, 2);
 
     estimators.add(rearPoseEstimator);
     estimators.add(frontLeftPoseEstimator);
@@ -130,33 +131,25 @@ public class PhotonVision extends SubsystemBase {
     return poses;
   }
 
-  public EstimatedRobotPose getAveragedGlobalPose() {
-    List<EstimatedRobotPose> visionEstimatedPoses = this.getGlobalPoses();
-    if (visionEstimatedPoses.size() == 0) {
-      return null;
-    }
-    Pose2d estimatedVisionPose = new Pose2d();
-    Rotation2d averageEstimatedRotation = new Rotation2d();
-    double averageEstimatedX = 0;
-    double averageEstimatedY = 0;
-    double averageTimestamp = 0;
-    double sumConfidence = 0;
-
-    for (EstimatedRobotPose pose : visionEstimatedPoses) {
-      if (pose.confidence > 0) {
-        averageEstimatedRotation = averageEstimatedRotation.plus(pose.estimatedPose.getRotation());
-        averageEstimatedX += pose.estimatedPose.getX() * pose.confidence;
-        averageEstimatedY += pose.estimatedPose.getY() * pose.confidence;
-        averageTimestamp += pose.timestampSeconds * pose.confidence;
-        sumConfidence += pose.confidence;
+  public EstimatedRobotPose getCurrentPose() {
+    double bestConfidence = 0;
+    EstimatedRobotPose bestPose = null;
+    int bestId = -1;
+    for (PhotonPoseEstimator estimator : estimators) {
+      Optional<EstimatedRobotPose> result = estimator.update();
+      if (result.isPresent()) {
+        EstimatedRobotPose pose = result.get();
+        if (estimator.id == currentCamera && pose.confidence > VisionConstants.MAINTAIN_CAMERA_THRESHOLD) {
+          return pose;
+        }
+        if (pose.confidence > bestConfidence) {
+          bestConfidence = pose.confidence;
+          bestPose = pose;
+          bestId = estimator.id;
+        }
       }
     }
-
-    averageEstimatedRotation = averageEstimatedRotation.div(sumConfidence);
-    averageEstimatedX /= sumConfidence;
-    averageEstimatedY /= sumConfidence;
-    averageTimestamp /= sumConfidence;
-    estimatedVisionPose = new Pose2d(averageEstimatedX, averageEstimatedY, averageEstimatedRotation);
-    return new EstimatedRobotPose(estimatedVisionPose, averageTimestamp, sumConfidence);
+    currentCamera = bestId;
+    return bestPose;
   }
 }

@@ -45,6 +45,8 @@ public class PhotonPoseEstimator {
 
   private final Set<Integer> reportedErrors = new HashSet<>();
 
+  public final int id;
+
   /**
    * Create a new PhotonPoseEstimator.
    *
@@ -57,10 +59,11 @@ public class PhotonPoseEstimator {
   public PhotonPoseEstimator(
       AprilTagFieldLayout fieldTags,
       PhotonCamera camera,
-      Transform3d robotToCamera) {
+      Transform3d robotToCamera, int id) {
     this.fieldTags = fieldTags;
     this.camera = camera;
     this.robotToCamera = robotToCamera;
+    this.id = id;
   }
 
   /**
