@@ -145,13 +145,17 @@ public final class Constants {
     public static final int ENCODER_CHANNEL_B = 1;
     public static final int LIMIT_SWITCH_CHANNEL = 2;
     public static final int ELEVATOR_MOTOR_ID = 31;
-    public static final double kP = 1.3;
     public static final double kMaxVelocity = 0.75;
     public static final double kMaxAcceleration = 0.5;
-    public static final double kDistancePerPulse = 0;
-    public static final double kMaxExtension = 10;
+    public static final double kDistancePerPulse = 5.5 / 2048;
+    public static final double kMaxExtension = 29;
     public static final double kMinExtension = 0;
     public static final double RETRACT_SPEED = 0.18;
+    public static final double kS = 0.32321;
+    public static final double kV = 0.23766;
+    public static final double kA = 0.0853;
+    public static final double kG = -0.11681;
+    public static final double kP = 0.066729;
   }
 
   /**

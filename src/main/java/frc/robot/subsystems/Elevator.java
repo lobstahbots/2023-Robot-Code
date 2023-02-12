@@ -28,7 +28,7 @@ public class Elevator extends SubsystemBase {
     this.elevatorMotor = new CANSparkMax(elevatorMotorID, MotorType.kBrushless);
     elevatorMotor.setInverted(true);
     elevatorMotor.setIdleMode(IdleMode.kBrake);
-    this.encoder = new Encoder(encoderChannelA, encoderChannelB);
+    this.encoder = new Encoder(encoderChannelA, encoderChannelB, true, Encoder.EncodingType.k1X);
     encoder.setDistancePerPulse(ElevatorConstants.kDistancePerPulse);
     this.limitSwitch = new DigitalInput(limitSwitchChannel);
   }
@@ -51,6 +51,7 @@ public class Elevator extends SubsystemBase {
 
   @Override
   public void periodic() {
+    System.out.println(this.getExtension());
     SmartDashboard.putNumber("Elevator Extension", this.getExtension());
   }
 
