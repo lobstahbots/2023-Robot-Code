@@ -11,6 +11,7 @@ import edu.wpi.first.math.controller.ArmFeedforward;
 import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.math.trajectory.TrapezoidProfile.Constraints;
+import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.DutyCycleEncoder;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -61,6 +62,10 @@ public class Arm extends SubsystemBase {
 
   public void feedPID() {
     this.setRotationSpeed(-pidController.calculate(this.getAngle()));
+  }
+
+  public void feedForwardPID(TrapezoidProfile.State setpoint) {
+    this.leftArmMotor.setVoltage(-pidController.calculate(this.getAngle()) + feedforward.calculate(Units.degreesToRadians(setpoint.position - ArmConstants.STRAIGHT_ARM_OFFSET), setpoint.velocity));
   }
 
   @Override

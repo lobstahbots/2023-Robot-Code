@@ -7,6 +7,7 @@ package frc.robot;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Transform3d;
+import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.DifferentialDriveKinematics;
 import edu.wpi.first.math.util.Units;
 
@@ -130,14 +131,28 @@ public final class Constants {
     public static final double kVVoltSecondPerRad = 0;
     public static final double kP = 0.03;
     public static final double PIVOT_HEIGHT_FROM_GROUND = 51.428;
+    public static final double PIVOT_SETBACK = -27.521;
     public static final int CURRENT_LIMIT = 40;
     public static final double ROTATION_ERROR_DEADBAND = 1;
+    public static final Rotation2d ZERO_ARM_OFFSET = new Rotation2d(Units.degreesToRadians(30));
+    public static final double STRAIGHT_ARM_OFFSET = 50;
     public static double kMaxVelocityRadPerSecond = 3;
     public static double kMaxAccelerationRadPerSecSquared = 10;
     public static double ARM_DEGREES_PER_ROTATION = 360;
     public static double kArmOffsetDeg = 285;
     public static double kMaxRotationDeg = 75;
     public static double kMinRotationDeg = 0;
+  }
+
+  /**
+   * Stores positions for the arm.
+   */
+  public static final class ArmPositionConstants {
+    public static final Translation2d CONE_PICKUP = new Translation2d(5, 10);
+    public static final Translation2d LOW_GOAL_SCORING = new Translation2d(20, 40);
+    public static final Translation2d HIGH_GOAL_SCORING = new Translation2d(30, 50);
+    public static final Translation2d PLAYER_STATION_PICKUP = new Translation2d(30, 40);
+    public static final Translation2d OUTSIDE_BUMPERS = new Translation2d(10, 3);
   }
 
   /**

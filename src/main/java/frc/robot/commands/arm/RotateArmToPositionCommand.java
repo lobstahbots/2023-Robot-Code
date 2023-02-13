@@ -4,16 +4,18 @@
 
 package frc.robot.commands.arm;
 
-import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-import edu.wpi.first.wpilibj2.command.CommandBase;
+import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import frc.robot.Constants.ArmConstants;
+import frc.robot.Constants.ArmPositionConstants;
 import frc.robot.Constants.ElevatorConstants;
+import frc.robot.commands.arm.elevator.ResetElevatorCommand;
+import frc.robot.commands.arm.elevator.RunElevatorToPositionCommand;
 import frc.robot.subsystems.Arm;
 import frc.robot.subsystems.Elevator;
 
-public class RotateArmToPositionCommand extends CommandBase {
+public class RotateArmToPositionCommand extends SequentialCommandGroup {
   private final Arm arm;
   private final Elevator elevator;
   private final Translation2d finalPosition;
@@ -27,27 +29,25 @@ public class RotateArmToPositionCommand extends CommandBase {
   public RotateArmToPositionCommand(Arm arm, Elevator elevator, Translation2d finalPosition) {
     this.arm = arm;
     this.elevator = elevator;
-    this.finalPosition = finalPosition;
+    this.finalPosition =
+        finalPosition.minus(new Translation2d(ArmConstants.PIVOT_SETBACK, ArmConstants.PIVOT_HEIGHT_FROM_GROUND));
+    SmartDashboard.putString("Target Position", this.finalPosition.toString());
     addRequirements(this.arm, this.elevator);
+    if (finalPosition.getX() < ArmPositionConstants.OUTSIDE_BUMPERS.getX()
+        && finalPosition.getY() < ArmPositionConstants.OUTSIDE_BUMPERS.getY()) {
+      addCommands(new ResetElevatorCommand(elevator, ElevatorConstants.RETRACT_SPEED),
+          new RotateArmToAngleCommand(arm,
+              ArmPositionConstants.OUTSIDE_BUMPERS.getAngle().minus(ArmConstants.ZERO_ARM_OFFSET).getDegrees()),
+          new RunElevatorToPositionCommand(elevator,
+              this.finalPosition.getNorm() - ElevatorConstants.LENGTH_FULLY_RETRACTED),
+          new RotateArmToAngleCommand(arm,
+              this.finalPosition.getAngle().minus(ArmConstants.ZERO_ARM_OFFSET).getDegrees()));
+    } else {
+      addCommands(new ResetElevatorCommand(elevator, ElevatorConstants.RETRACT_SPEED),
+          new RotateArmToAngleCommand(arm,
+              this.finalPosition.getAngle().minus(ArmConstants.ZERO_ARM_OFFSET).getDegrees()),
+          new RunElevatorToPositionCommand(elevator,
+              this.finalPosition.getNorm() - ElevatorConstants.LENGTH_FULLY_RETRACTED));
+    }
   }
-
-  @Override
-  public void execute() {
-    Translation2d currentPose =
-        new Translation2d(elevator.getLength(), new Rotation2d(arm.getAngle())).plus(new Translation2d(0,
-            ArmConstants.PIVOT_HEIGHT_FROM_GROUND));
-    this.arm.setPIDGoal(this.finalPosition.getAngle().getDegrees());
-    this.elevator.setTargetExtension(this.finalPosition.getNorm());
-    SmartDashboard.putNumber("Intake X Component", currentPose.getX());
-    SmartDashboard.putNumber("Intake Y Component", currentPose.getY());
-  }
-
-  @Override
-  public boolean isFinished() {
-    return arm.getAngle() > ArmConstants.kMaxRotationDeg
-        || arm.getAngle() < ArmConstants.kMinRotationDeg
-        || elevator.getExtension() > ElevatorConstants.kMaxExtension
-        || elevator.getExtension() < ElevatorConstants.kMinExtension;
-  }
-
 }

@@ -34,8 +34,13 @@ public class Elevator extends SubsystemBase {
     this.limitSwitch = new DigitalInput(limitSwitchChannel);
   }
 
-  public void setTargetExtension(double position) {
-    pidController.setGoal(position);
+  public void setPIDGoal(double goalExtension) {
+    pidController.setGoal(goalExtension);
+    this.move(pidController.calculate(this.getExtension()));
+  }
+
+  public void feedPID() {
+    this.move(pidController.calculate(this.getExtension()));
   }
 
   public boolean isRetracted() {
