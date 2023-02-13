@@ -40,15 +40,14 @@ public class RotateArmCommand extends CommandBase {
 
   @Override
   public void execute() {
-    // if ((arm.getMeasurement() > ArmConstants.kMaxRotationDeg && speed.getAsDouble() < 0)
-    // || (arm.getMeasurement() < ArmConstants.kMinRotationDeg && speed.getAsDouble() > 0)) {
-    // arm.setRotationSpeed(0.0);
-    // SmartDashboard.putBoolean("Arm Within Limit", false);
-    // } else {
-    // arm.setRotationSpeed(speed.getAsDouble());
-    // SmartDashboard.putBoolean("Arm Within Limit", true);
-    // }
-    arm.setRotationSpeed(speed.getAsDouble());
+    if ((arm.getMeasurement() > ArmConstants.kMaxRotationDeg && speed.getAsDouble() < 0)
+        || (arm.getMeasurement() < ArmConstants.kMinRotationDeg && speed.getAsDouble() > 0)) {
+      arm.setRotationSpeed(0.0);
+      SmartDashboard.putBoolean("Arm Within Limit", false);
+    } else {
+      arm.setRotationSpeed(speed.getAsDouble());
+      SmartDashboard.putBoolean("Arm Within Limit", true);
+    }
   }
 
   @Override

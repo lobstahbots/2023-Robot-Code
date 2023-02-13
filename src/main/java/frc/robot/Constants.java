@@ -128,14 +128,14 @@ public final class Constants {
     public static final double kGVolts = 0;
     public static final double kAVoltSecondSquaredPerRad = 0;
     public static final double kVVoltSecondPerRad = 0;
-    public static final double kP = 0.0;
+    public static final double kP = 1.0;
     public static final double PIVOT_HEIGHT_FROM_GROUND = 51.428;
     public static final int CURRENT_LIMIT = 40;
     public static double kMaxVelocityRadPerSecond = 0;
     public static double kMaxAccelerationRadPerSecSquared = 0;
     public static double ARM_DEGREES_PER_ROTATION = 360;
-    public static double kArmOffsetDeg = 0;
-    public static double kMaxRotationDeg = 76;
+    public static double kArmOffsetDeg = 285;
+    public static double kMaxRotationDeg = 75;
     public static double kMinRotationDeg = 0;
   }
 
@@ -153,7 +153,7 @@ public final class Constants {
     public static final double kDistancePerPulse = 5.5 / 2048; // 5.5 inches for a 22 tooth-sprocket with 1/4" chain
                                                                // links
     public static final double kMaxExtension = 29;
-    public static final double kMinExtension = 0;
+    public static final double kMinExtension = 0.25;
     public static final double RETRACT_SPEED = 0.18;
     public static final double LENGTH_FULLY_RETRACTED = 37.697;
     public static final double kS = 0.32321;

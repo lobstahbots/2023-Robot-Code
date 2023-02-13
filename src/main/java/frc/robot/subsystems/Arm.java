@@ -44,7 +44,6 @@ public class Arm extends ProfiledPIDSubsystem {
     leftArmMotor.setSmartCurrentLimit(ArmConstants.CURRENT_LIMIT);
     rightArmMotor.setSmartCurrentLimit(ArmConstants.CURRENT_LIMIT);
     armEncoder.setDistancePerRotation(ArmConstants.ARM_DEGREES_PER_ROTATION);
-    setGoal(ArmConstants.kArmOffsetDeg);
   }
 
   @Override
@@ -55,7 +54,7 @@ public class Arm extends ProfiledPIDSubsystem {
 
   @Override
   public double getMeasurement() {
-    return armEncoder.getAbsolutePosition() * 360 + ArmConstants.kArmOffsetDeg;
+    return ArmConstants.kArmOffsetDeg - armEncoder.getAbsolutePosition() * 360;
   }
 
   public void setRotationSpeed(double speed) {

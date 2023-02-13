@@ -10,6 +10,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
+import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import frc.robot.Constants.DriveConstants.DriveMotorCANIDs;
 import frc.robot.Constants.ArmConstants;
@@ -20,8 +21,10 @@ import frc.robot.Constants.IntakeConstants;
 import frc.robot.Constants.UIConstants.DriverConstants;
 import frc.robot.Constants.UIConstants.OperatorConstants;
 import frc.robot.auton.AutonGenerator;
+import frc.robot.commands.arm.ResetElevatorCommand;
 import frc.robot.commands.arm.RetractElevatorCommand;
 import frc.robot.commands.arm.RotateArmCommand;
+import frc.robot.commands.arm.RotateArmToAngleCommand;
 import frc.robot.commands.arm.RunElevatorCommand;
 import frc.robot.commands.arm.SpinIntakeCommand;
 import frc.robot.commands.arm.StopSpinIntakeCommand;
@@ -146,7 +149,9 @@ public class RobotContainer {
    * @return the command to run in autonomous
    */
   public Command getAutonomousCommand() {
-    return autonChooser.getSelected();
+    return new SequentialCommandGroup(
+        new ResetElevatorCommand(elevator, ElevatorConstants.RETRACT_SPEED).andThen(() -> elevator.resetEncoder()),
+        autonChooser.getSelected());
   }
 
   /**
@@ -164,7 +169,7 @@ public class RobotContainer {
     elevator
         .setDefaultCommand(new RetractElevatorCommand(elevator, ElevatorConstants.RETRACT_SPEED));
 
-    // arm.setDefaultCommand(new RotateArmCommand(arm, () -> operatorJoystick.getRawAxis(OperatorAxes.ARM_AXIS)));
+    arm.setDefaultCommand(new RotateArmToAngleCommand(arm, arm.getMeasurement()));
     intake.setDefaultCommand(new StopSpinIntakeCommand(intake));
   }
 

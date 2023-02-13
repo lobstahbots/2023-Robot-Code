@@ -59,5 +59,9 @@ public class Elevator extends SubsystemBase {
     SmartDashboard.putNumber("Elevator Extension", this.getExtension());
   }
 
+  public void resetEncoder() {
+    this.encoder.reset();
+  }
+
 
 }
