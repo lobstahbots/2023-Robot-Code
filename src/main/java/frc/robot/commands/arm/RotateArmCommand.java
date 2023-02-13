@@ -40,8 +40,8 @@ public class RotateArmCommand extends CommandBase {
 
   @Override
   public void execute() {
-    if ((arm.getMeasurement() > ArmConstants.kMaxRotationDeg && speed.getAsDouble() < 0)
-        || (arm.getMeasurement() < ArmConstants.kMinRotationDeg && speed.getAsDouble() > 0)) {
+    if ((arm.getAngle() > ArmConstants.kMaxRotationDeg && speed.getAsDouble() < 0)
+        || (arm.getAngle() < ArmConstants.kMinRotationDeg && speed.getAsDouble() > 0)) {
       arm.setRotationSpeed(0.0);
       SmartDashboard.putBoolean("Arm Within Limit", false);
     } else {

@@ -32,16 +32,11 @@ public class RotateArmToPositionCommand extends CommandBase {
   }
 
   @Override
-  public void initialize() {
-    this.arm.enable();
-  }
-
-  @Override
   public void execute() {
     Translation2d currentPose =
-        new Translation2d(elevator.getLength(), new Rotation2d(arm.getMeasurement())).plus(new Translation2d(0,
+        new Translation2d(elevator.getLength(), new Rotation2d(arm.getAngle())).plus(new Translation2d(0,
             ArmConstants.PIVOT_HEIGHT_FROM_GROUND));
-    this.arm.setGoal(this.finalPosition.getAngle().getDegrees());
+    this.arm.setPIDGoal(this.finalPosition.getAngle().getDegrees());
     this.elevator.setTargetExtension(this.finalPosition.getNorm());
     SmartDashboard.putNumber("Intake X Component", currentPose.getX());
     SmartDashboard.putNumber("Intake Y Component", currentPose.getY());
@@ -49,8 +44,8 @@ public class RotateArmToPositionCommand extends CommandBase {
 
   @Override
   public boolean isFinished() {
-    return arm.getMeasurement() > ArmConstants.kMaxRotationDeg
-        || arm.getMeasurement() < ArmConstants.kMinRotationDeg
+    return arm.getAngle() > ArmConstants.kMaxRotationDeg
+        || arm.getAngle() < ArmConstants.kMinRotationDeg
         || elevator.getExtension() > ElevatorConstants.kMaxExtension
         || elevator.getExtension() < ElevatorConstants.kMinExtension;
   }

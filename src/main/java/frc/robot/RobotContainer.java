@@ -9,6 +9,7 @@ import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
@@ -21,6 +22,7 @@ import frc.robot.Constants.IntakeConstants;
 import frc.robot.Constants.UIConstants.DriverConstants;
 import frc.robot.Constants.UIConstants.OperatorConstants;
 import frc.robot.auton.AutonGenerator;
+import frc.robot.commands.arm.MaintainArmAngleCommand;
 import frc.robot.commands.arm.ResetElevatorCommand;
 import frc.robot.commands.arm.RetractElevatorCommand;
 import frc.robot.commands.arm.RotateArmCommand;
@@ -118,7 +120,7 @@ public class RobotContainer {
         autonGenerator.getPathFollowCommand(initialPosition.getSelected(), crossingPosition.getSelected(),
             endingPosition.getSelected()));
     autonChooser.addOption("Simple Auton", autonGenerator.getSimpleAutonCommand());
-    autonChooser.addOption("Do Nothing Auton", null);
+    autonChooser.addOption("Do Nothing Auton", new StopDriveCommand(driveBase));
     targetPosition.addOption("0", 0);
     targetPosition.addOption("1", 1);
     targetPosition.addOption("2", 2);
@@ -134,6 +136,8 @@ public class RobotContainer {
     SmartDashboard.putData("Crossing Position Chooser", crossingPosition);
     SmartDashboard.putData("Ending Position Chooser", endingPosition);
     SmartDashboard.putData("Teleop Target", targetPosition);
+    SmartDashboard.putData("Command Scheduler", CommandScheduler.getInstance());
+    SmartDashboard.putData("Rotate To 30 Command", new RotateArmToAngleCommand(arm, 30));
   }
 
   /**
@@ -169,7 +173,7 @@ public class RobotContainer {
     elevator
         .setDefaultCommand(new RetractElevatorCommand(elevator, ElevatorConstants.RETRACT_SPEED));
 
-    arm.setDefaultCommand(new RotateArmToAngleCommand(arm, arm.getMeasurement()));
+    arm.setDefaultCommand(new MaintainArmAngleCommand(arm));
     intake.setDefaultCommand(new StopSpinIntakeCommand(intake));
   }
 

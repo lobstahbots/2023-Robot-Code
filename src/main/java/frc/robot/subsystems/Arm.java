@@ -10,13 +10,14 @@ import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 import edu.wpi.first.math.controller.ArmFeedforward;
 import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
+import edu.wpi.first.math.trajectory.TrapezoidProfile.Constraints;
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.DutyCycleEncoder;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-import edu.wpi.first.wpilibj2.command.ProfiledPIDSubsystem;
+import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.ArmConstants;
 
-public class Arm extends ProfiledPIDSubsystem {
+public class Arm extends SubsystemBase {
 
   private final DutyCycleEncoder armEncoder;
   private final CANSparkMax leftArmMotor;
@@ -25,15 +26,12 @@ public class Arm extends ProfiledPIDSubsystem {
       new ArmFeedforward(
           ArmConstants.kSVolts, ArmConstants.kGVolts,
           ArmConstants.kVVoltSecondPerRad, ArmConstants.kAVoltSecondSquaredPerRad);
+  private final Constraints constraints = new TrapezoidProfile.Constraints(
+      ArmConstants.kMaxVelocityRadPerSecond,
+      ArmConstants.kMaxAccelerationRadPerSecSquared);
+  private final ProfiledPIDController pidController = new ProfiledPIDController(ArmConstants.kP, 0, 0, constraints);
 
   public Arm(int leftMotorID, int rightMotorID, int encoderChannel) {
-    super(new ProfiledPIDController(
-        ArmConstants.kP,
-        0,
-        0,
-        new TrapezoidProfile.Constraints(
-            ArmConstants.kMaxVelocityRadPerSecond,
-            ArmConstants.kMaxAccelerationRadPerSecSquared)));
     this.leftArmMotor = new CANSparkMax(leftMotorID, MotorType.kBrushless);
     this.rightArmMotor = new CANSparkMax(rightMotorID, MotorType.kBrushless);
     this.armEncoder = new DutyCycleEncoder(new DigitalInput(encoderChannel));
@@ -44,16 +42,10 @@ public class Arm extends ProfiledPIDSubsystem {
     leftArmMotor.setSmartCurrentLimit(ArmConstants.CURRENT_LIMIT);
     rightArmMotor.setSmartCurrentLimit(ArmConstants.CURRENT_LIMIT);
     armEncoder.setDistancePerRotation(ArmConstants.ARM_DEGREES_PER_ROTATION);
+    SmartDashboard.putData("Arm PID", this.pidController);
   }
 
-  @Override
-  public void useOutput(double output, TrapezoidProfile.State setpoint) {
-    leftArmMotor.setVoltage(output + feedforward.calculate(setpoint.position, setpoint.velocity));
-    rightArmMotor.setVoltage(output + feedforward.calculate(setpoint.position, setpoint.velocity));
-  }
-
-  @Override
-  public double getMeasurement() {
+  public double getAngle() {
     return ArmConstants.kArmOffsetDeg - armEncoder.getAbsolutePosition() * 360;
   }
 
@@ -62,9 +54,18 @@ public class Arm extends ProfiledPIDSubsystem {
     rightArmMotor.set(speed);
   }
 
+  public void setPIDGoal(double goalAngle) {
+    pidController.setGoal(goalAngle);
+    this.setRotationSpeed(-pidController.calculate(this.getAngle()));
+  }
+
+  public void feedPID() {
+    this.setRotationSpeed(-pidController.calculate(this.getAngle()));
+  }
+
   @Override
   public void periodic() {
-    SmartDashboard.putNumber("Arm Rotation", this.getMeasurement());
+    SmartDashboard.putNumber("Arm Rotation", this.getAngle());
   }
 
 }

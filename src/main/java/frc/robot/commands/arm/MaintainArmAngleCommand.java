@@ -8,24 +8,18 @@ import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.Constants.ArmConstants;
 import frc.robot.subsystems.Arm;
 
-public class RotateArmToAngleCommand extends CommandBase {
+public class MaintainArmAngleCommand extends CommandBase {
   private final Arm arm;
   private double targetAngleDegrees;
 
-  /**
-   * Creates a command that rotates the {@link Arm} to a given angle in degrees.
-   *
-   * @param arm The {@link Arm} to control
-   * @param angle The angle in degrees to rotate the arm to
-   */
-  public RotateArmToAngleCommand(Arm arm, double angleDegrees) {
+  public MaintainArmAngleCommand(Arm arm) {
     this.arm = arm;
-    this.targetAngleDegrees = angleDegrees;
     addRequirements(this.arm);
   }
 
   @Override
   public void initialize() {
+    this.targetAngleDegrees = arm.getAngle();
     if (this.targetAngleDegrees > ArmConstants.kMaxRotationDeg) {
       targetAngleDegrees = ArmConstants.kMaxRotationDeg;
     }
@@ -36,14 +30,12 @@ public class RotateArmToAngleCommand extends CommandBase {
 
   @Override
   public void execute() {
-    this.arm.setPIDGoal(targetAngleDegrees);
+    this.arm.setPIDGoal(this.targetAngleDegrees);
   }
 
   @Override
   public boolean isFinished() {
     return arm.getAngle() > ArmConstants.kMaxRotationDeg
-        || arm.getAngle() < ArmConstants.kMinRotationDeg
-        || Math.abs(this.targetAngleDegrees - arm.getAngle()) < ArmConstants.ROTATION_ERROR_DEADBAND;
+        || arm.getAngle() < ArmConstants.kMinRotationDeg;
   }
-
 }

@@ -128,11 +128,12 @@ public final class Constants {
     public static final double kGVolts = 0;
     public static final double kAVoltSecondSquaredPerRad = 0;
     public static final double kVVoltSecondPerRad = 0;
-    public static final double kP = 1.0;
+    public static final double kP = 0.03;
     public static final double PIVOT_HEIGHT_FROM_GROUND = 51.428;
     public static final int CURRENT_LIMIT = 40;
-    public static double kMaxVelocityRadPerSecond = 0;
-    public static double kMaxAccelerationRadPerSecSquared = 0;
+    public static final double ROTATION_ERROR_DEADBAND = 1;
+    public static double kMaxVelocityRadPerSecond = 3;
+    public static double kMaxAccelerationRadPerSecSquared = 10;
     public static double ARM_DEGREES_PER_ROTATION = 360;
     public static double kArmOffsetDeg = 285;
     public static double kMaxRotationDeg = 75;
