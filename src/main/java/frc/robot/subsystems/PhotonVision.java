@@ -16,9 +16,9 @@ import edu.wpi.first.apriltag.AprilTagFieldLayout;
 import edu.wpi.first.wpilibj.Filesystem;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import frc.robot.EstimatedRobotPose;
-import frc.robot.PhotonPoseEstimator;
 import frc.robot.Constants.VisionConstants;
+import frc.robot.photonvision.EstimatedRobotPose;
+import frc.robot.photonvision.PhotonPoseEstimator;
 
 /**
  * A subsystem that controls the PhotonVision tracking on the robot.
@@ -115,7 +115,7 @@ public class PhotonVision extends SubsystemBase {
   }
 
   /**
-   * Estimates the global field pose based on previous pose and an {@link RobotPoseEstimator}.
+   * Returns a list of estimated robot poses from the three {@link PhotonPoseEstimator}.
    */
   public List<EstimatedRobotPose> getGlobalPoses() {
     List<EstimatedRobotPose> poses = new ArrayList<>();
@@ -129,6 +129,9 @@ public class PhotonVision extends SubsystemBase {
     return poses;
   }
 
+  /**
+   * Estimates the global field pose based on a selected {@link PhotonPoseEstimator}.
+   */
   public EstimatedRobotPose getCurrentPose() {
     double bestConfidence = 0;
     EstimatedRobotPose bestPose = null;
