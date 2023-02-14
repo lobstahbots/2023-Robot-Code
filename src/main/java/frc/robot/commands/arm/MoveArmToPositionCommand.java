@@ -15,7 +15,7 @@ import frc.robot.commands.arm.elevator.RunElevatorToPositionCommand;
 import frc.robot.subsystems.Arm;
 import frc.robot.subsystems.Elevator;
 
-public class RotateArmToPositionCommand extends SequentialCommandGroup {
+public class MoveArmToPositionCommand extends SequentialCommandGroup {
   private final Arm arm;
   private final Elevator elevator;
   private final Translation2d finalPosition;
@@ -26,7 +26,7 @@ public class RotateArmToPositionCommand extends SequentialCommandGroup {
    * @param arm The {@link Arm} to control
    * @param position The position to rotate the arm to
    */
-  public RotateArmToPositionCommand(Arm arm, Elevator elevator, Translation2d finalPosition) {
+  public MoveArmToPositionCommand(Arm arm, Elevator elevator, Translation2d finalPosition) {
     this.arm = arm;
     this.elevator = elevator;
     this.finalPosition =
