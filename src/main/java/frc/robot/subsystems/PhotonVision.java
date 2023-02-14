@@ -157,5 +157,12 @@ public class PhotonVision extends SubsystemBase {
   @Override
   public void periodic() {
     SmartDashboard.putNumber("Current Camera Used:", currentCamera);
+    for (int i = 0; i < estimators.size(); i++) {
+      Optional<EstimatedRobotPose> result = estimators.get(i).update();
+      if (result.isPresent()) {
+        SmartDashboard.putString("Pose" + i, result.get().estimatedPose.toString());
+        SmartDashboard.putNumber("Confidence" + i, result.get().confidence);
+      }
+    }
   }
 }
