@@ -123,6 +123,13 @@ public class DriveBase extends SubsystemBase {
   }
 
   /**
+   * Sets the slew rate limit of the differential drive.
+   */
+  public void setRateLimit(double limit) {
+    this.differentialDrive.setRateLimit(limit);
+  }
+
+  /**
    * Toggles the {@link NeutralMode} between Coast and Brake.
    */
   public void toggleNeutralMode() {
