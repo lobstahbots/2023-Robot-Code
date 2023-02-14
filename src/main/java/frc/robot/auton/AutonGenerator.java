@@ -15,9 +15,9 @@ import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import frc.robot.Constants.AutonConstants;
 import frc.robot.Constants.PathConstants;
 import frc.robot.commands.drive.PathFollowCommand;
+import frc.robot.commands.drive.StopDriveCommand;
 import frc.robot.commands.drive.StraightDriveCommand;
 import frc.robot.subsystems.DriveBase;
-import frc.robot.subsystems.Elevator;
 import lobstah.stl.command.TimedCommand;
 
 /**
@@ -26,17 +26,14 @@ import lobstah.stl.command.TimedCommand;
 public class AutonGenerator {
 
   private final DriveBase driveBase;
-  private final Elevator elevator;
 
   /**
    * Constructs an AutonGenerator with a {@link DriveBase}.
    *
-   * @param driveBase The drivetrain for the AutonGenerator to command.
-   * @param elevator The elevator for the AutonGenerator to command.
+   * @param driveBase The drivetrain for the AutonGenerator to control.
    */
-  public AutonGenerator(DriveBase driveBase, Elevator elevator) {
+  public AutonGenerator(DriveBase driveBase) {
     this.driveBase = driveBase;
-    this.elevator = elevator;
   }
 
   /**
@@ -48,7 +45,7 @@ public class AutonGenerator {
             AutonConstants.SIMPLE_AUTON_RUNTIME,
             new StraightDriveCommand(
                 driveBase,
-                AutonConstants.SIMPLE_AUTON_SPEED, elevator.getExtension(), false));
+                AutonConstants.SIMPLE_AUTON_SPEED, false));
     return simpleAutonCommand;
   }
 

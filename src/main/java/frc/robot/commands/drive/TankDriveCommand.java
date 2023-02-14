@@ -6,9 +6,7 @@ package frc.robot.commands.drive;
 
 import java.util.function.DoubleSupplier;
 
-import frc.robot.Constants.ElevatorConstants;
 import frc.robot.subsystems.DriveBase;
-import lobstah.stl.math.LobstahMath;
 
 /**
  * Drives a {@link DriveBase} using tank drive controls.
@@ -17,7 +15,6 @@ public class TankDriveCommand extends DriveCommand {
 
   private final DoubleSupplier leftSpeedSupplier;
   private final DoubleSupplier rightSpeedSupplier;
-  private final DoubleSupplier armExtension;
   private final boolean squaredInputs;
 
   /**
@@ -26,15 +23,13 @@ public class TankDriveCommand extends DriveCommand {
    * @param driveBase The {@link DriveBase} to drive
    * @param leftSpeedSupplier Supplier for left speed
    * @param rightSpeedSupplier Supplier for right speed
-   * @param armExtension The current extension of the arm
    * @param squaredInputs Whether to drive with squared inputs
    */
   public TankDriveCommand(DriveBase driveBase, DoubleSupplier leftSpeedSupplier,
-      DoubleSupplier rightSpeedSupplier, DoubleSupplier armExtension, boolean squaredInputs) {
+      DoubleSupplier rightSpeedSupplier, boolean squaredInputs) {
     super(driveBase);
     this.leftSpeedSupplier = leftSpeedSupplier;
     this.rightSpeedSupplier = rightSpeedSupplier;
-    this.armExtension = armExtension;
     this.squaredInputs = squaredInputs;
   }
 
@@ -44,22 +39,15 @@ public class TankDriveCommand extends DriveCommand {
    * @param driveBase The {@link DriveBase} to drive
    * @param leftSpeed The left speed
    * @param rightSpeed The right speed
-   * @param armExtension The current extension of the arm
    * @param squaredInputs Whether to drive with squared inputs
    */
-  public TankDriveCommand(DriveBase driveBase, double leftSpeed, double rightSpeed, double armExtension,
-      boolean squaredInputs) {
-    this(driveBase, () -> leftSpeed, () -> rightSpeed, () -> armExtension, squaredInputs);
+  public TankDriveCommand(DriveBase driveBase, double leftSpeed, double rightSpeed, boolean squaredInputs) {
+    this(driveBase, () -> leftSpeed, () -> rightSpeed, squaredInputs);
   }
 
   @Override
   public void execute() {
-    driveBase.tankDrive(
-        leftSpeedSupplier.getAsDouble()
-            / LobstahMath.scaleNumberToRange(armExtension.getAsDouble(), 0, ElevatorConstants.kMaxExtension, 0, 2),
-        rightSpeedSupplier.getAsDouble()
-            / LobstahMath.scaleNumberToRange(armExtension.getAsDouble(), 0, ElevatorConstants.kMaxExtension, 0, 2),
-        squaredInputs);
+    driveBase.tankDrive(leftSpeedSupplier.getAsDouble(), rightSpeedSupplier.getAsDouble(), squaredInputs);
   }
 
   @Override

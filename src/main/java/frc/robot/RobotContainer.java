@@ -57,7 +57,7 @@ public class RobotContainer {
           ElevatorConstants.ENCODER_CHANNEL_B, ElevatorConstants.LIMIT_SWITCH_CHANNEL);
   private final Intake intake = new Intake(IntakeConstants.LEFT_MOTOR_ID, IntakeConstants.RIGHT_MOTOR_ID);
 
-  private final AutonGenerator autonGenerator = new AutonGenerator(driveBase, elevator);
+  private final AutonGenerator autonGenerator = new AutonGenerator(driveBase);
 
   private final LobstahGamepad driverJoystick = new LobstahGamepad(DriverConstants.DRIVER_JOYSTICK_INDEX);
   private final LobstahGamepad operatorJoystick = new LobstahGamepad(OperatorConstants.OPERATOR_JOYSTICK_INDEX);
@@ -90,7 +90,6 @@ public class RobotContainer {
     slowdownButton.whileTrue(new TankDriveCommand(driveBase,
         () -> DriveConstants.SLOWDOWN_PERCENT * driverJoystick.getRawAxis(DriverConstants.LEFT_AXIS),
         () -> DriveConstants.SLOWDOWN_PERCENT * driverJoystick.getRawAxis(DriverConstants.RIGHT_AXIS),
-        () -> elevator.getExtension(),
         DriverConstants.SQUARED_INPUTS));
   }
 
@@ -170,7 +169,7 @@ public class RobotContainer {
             driveBase,
             () -> -driverJoystick.getRawAxis(DriverConstants.LEFT_AXIS),
             () -> -driverJoystick.getRawAxis(DriverConstants.RIGHT_AXIS),
-            () -> elevator.getExtension(), DriverConstants.SQUARED_INPUTS));
+            DriverConstants.SQUARED_INPUTS));
     elevator
         .setDefaultCommand(new RetractElevatorCommand(elevator, ElevatorConstants.RETRACT_SPEED));
 

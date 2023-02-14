@@ -18,12 +18,11 @@ public class StraightDriveCommand extends TankDriveCommand {
    *
    * @param driveBase The {@link DriveBase} to drive
    * @param speedSupplier Supplier for speed
-   * @param armExtension The current extension of the arm
    * @param squaredInputs Whether to drive with squared inputs
    */
   public StraightDriveCommand(DriveBase driveBase,
-      DoubleSupplier speedSupplier, DoubleSupplier armExtension, boolean squaredInputs) {
-    super(driveBase, speedSupplier, speedSupplier, armExtension, squaredInputs);
+      DoubleSupplier speedSupplier, boolean squaredInputs) {
+    super(driveBase, speedSupplier, speedSupplier, squaredInputs);
   }
 
   /**
@@ -32,10 +31,9 @@ public class StraightDriveCommand extends TankDriveCommand {
    * @param driveBase The {@link DriveBase} to drive
    * @param leftSpeed The left speed
    * @param rightSpeed The right speed
-   * @param armExtension The current extension of the arm
    * @param squaredInputs Whether to drive with squared inputs
    */
-  public StraightDriveCommand(DriveBase driveBase, double speed, double armExtension, boolean squaredInputs) {
-    this(driveBase, () -> speed, () -> armExtension, squaredInputs);
+  public StraightDriveCommand(DriveBase driveBase, double speed, boolean squaredInputs) {
+    this(driveBase, () -> speed, squaredInputs);
   }
 }
