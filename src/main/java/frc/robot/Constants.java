@@ -100,7 +100,7 @@ public final class Constants {
             new Translation3d(-Units.inchesToMeters(9.766), -Units.inchesToMeters(7.852), Units.inchesToMeters(28.242)),
             new Rotation3d());
     public static final Transform3d ROBOT_TO_REAR_CAMERA =
-        new Transform3d(new Translation3d(-Units.inchesToMeters(12.1585), 0, Units.inchesToMeters(20.749)),
+        new Transform3d(new Translation3d(-Units.inchesToMeters(12.1585), 0.07, Units.inchesToMeters(20.749)),
             new Rotation3d(0, 0, Math.PI));
     public static final double MAINTAIN_CAMERA_CONFIDENCE_THRESHOLD = 0.7;
   }
