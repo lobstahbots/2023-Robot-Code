@@ -140,7 +140,7 @@ public class PhotonVision extends SubsystemBase {
       Optional<EstimatedRobotPose> result = estimator.update();
       if (result.isPresent()) {
         EstimatedRobotPose pose = result.get();
-        if (estimator.id == currentCamera && pose.confidence > VisionConstants.MAINTAIN_CAMERA_THRESHOLD) {
+        if (estimator.id == currentCamera && pose.confidence > VisionConstants.MAINTAIN_CAMERA_CONFIDENCE_THRESHOLD) {
           return pose;
         }
         if (pose.confidence > bestConfidence) {

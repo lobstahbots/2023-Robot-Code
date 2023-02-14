@@ -54,7 +54,6 @@ public final class Constants {
     public static final double KP = 0.00000094597;
     public static final double KI = 0;
     public static final double KD = 0;
-    public static final double MAX_VISION_TO_ODOMETRY_ERROR = 1;
   }
 
   /**
@@ -103,7 +102,7 @@ public final class Constants {
     public static final Transform3d ROBOT_TO_REAR_CAMERA =
         new Transform3d(new Translation3d(0, -Units.inchesToMeters(12.1585), Units.inchesToMeters(20.749)),
             new Rotation3d(0, 0, Math.PI));
-    public static final double MAINTAIN_CAMERA_THRESHOLD = 0.5;
+    public static final double MAINTAIN_CAMERA_CONFIDENCE_THRESHOLD = 0.7;
   }
 
   /**

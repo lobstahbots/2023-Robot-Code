@@ -1,5 +1,5 @@
 
-package frc.robot;
+package frc.robot.photonvision;
 
 import edu.wpi.first.math.geometry.Pose2d;
 
