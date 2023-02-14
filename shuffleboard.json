@@ -151,15 +151,15 @@
               "_showGlyph": false
             }
           },
-          "7,3": {
+          "10,0": {
             "size": [
               3,
               2
             ],
             "content": {
               "_type": "Camera Stream",
-              "_source0": "camera_server://photonvision-front_Port_1182_MJPEG_Server",
-              "_title": "photonvision-front_Port_1182_MJPEG_Server",
+              "_source0": "camera_server://photonvision-rear_Port_1182_MJPEG_Server",
+              "_title": "photonvision-rear_Port_1182_MJPEG_Server",
               "_glyph": 148,
               "_showGlyph": false,
               "Crosshair/Show crosshair": true,
@@ -172,15 +172,49 @@
               "imageHeight": -1
             }
           },
-          "10,0": {
+          "8,2": {
+            "size": [
+              1,
+              1
+            ],
+            "content": {
+              "_type": "Text View",
+              "_source0": "network_table:///SmartDashboard/Current Camera Used:",
+              "_title": "Current Camera Used:",
+              "_glyph": 148,
+              "_showGlyph": false
+            }
+          },
+          "7,3": {
             "size": [
               3,
               2
             ],
             "content": {
               "_type": "Camera Stream",
-              "_source0": "camera_server://photonvision-rear_Port_1182_MJPEG_Server",
-              "_title": "photonvision-rear_Port_1182_MJPEG_Server",
+              "_source0": "camera_server://photonvision-front-right_Port_1182_MJPEG_Server",
+              "_title": "photonvision-front-right_Port_1182_MJPEG_Server",
+              "_glyph": 148,
+              "_showGlyph": false,
+              "Crosshair/Show crosshair": true,
+              "Crosshair/Crosshair color": "#FFFFFFFF",
+              "Controls/Show controls": true,
+              "Controls/Rotation": "NONE",
+              "compression": -1.0,
+              "fps": -1,
+              "imageWidth": -1,
+              "imageHeight": -1
+            }
+          },
+          "4,4": {
+            "size": [
+              3,
+              2
+            ],
+            "content": {
+              "_type": "Camera Stream",
+              "_source0": "camera_server://photonvision-front-left_Port_1182_MJPEG_Server",
+              "_title": "photonvision-front-left_Port_1182_MJPEG_Server",
               "_glyph": 148,
               "_showGlyph": false,
               "Crosshair/Show crosshair": true,
