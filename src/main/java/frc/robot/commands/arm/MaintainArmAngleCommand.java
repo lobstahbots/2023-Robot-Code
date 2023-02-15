@@ -10,7 +10,6 @@ import frc.robot.subsystems.Arm;
 
 public class MaintainArmAngleCommand extends CommandBase {
   private final Arm arm;
-  private double targetAngleDegrees;
 
   public MaintainArmAngleCommand(Arm arm) {
     this.arm = arm;
@@ -19,18 +18,20 @@ public class MaintainArmAngleCommand extends CommandBase {
 
   @Override
   public void initialize() {
-    this.targetAngleDegrees = arm.getAngle();
-    if (this.targetAngleDegrees > ArmConstants.kMaxRotationDeg) {
+    System.out.println("Maintain Angle");
+    double targetAngleDegrees = arm.getAngle();
+    if (targetAngleDegrees > ArmConstants.kMaxRotationDeg) {
       targetAngleDegrees = ArmConstants.kMaxRotationDeg;
     }
-    if (this.targetAngleDegrees < ArmConstants.kMinRotationDeg) {
+    if (targetAngleDegrees < ArmConstants.kMinRotationDeg) {
       targetAngleDegrees = ArmConstants.kMinRotationDeg;
     }
+    arm.setPIDGoal(targetAngleDegrees);
   }
 
   @Override
   public void execute() {
-    this.arm.setPIDGoal(this.targetAngleDegrees);
+    arm.feedPID();
   }
 
   @Override

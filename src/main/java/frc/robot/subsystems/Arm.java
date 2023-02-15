@@ -43,6 +43,7 @@ public class Arm extends SubsystemBase {
     leftArmMotor.setSmartCurrentLimit(ArmConstants.CURRENT_LIMIT);
     rightArmMotor.setSmartCurrentLimit(ArmConstants.CURRENT_LIMIT);
     armEncoder.setDistancePerRotation(ArmConstants.ARM_DEGREES_PER_ROTATION);
+    pidController.setTolerance(ArmConstants.ROTATION_ERROR_DEADBAND);
     SmartDashboard.putData("Arm PID", this.pidController);
   }
 
@@ -56,21 +57,28 @@ public class Arm extends SubsystemBase {
   }
 
   public void setPIDGoal(double goalAngle) {
+    System.out.println(goalAngle);
     pidController.setGoal(goalAngle);
-    this.setRotationSpeed(-pidController.calculate(this.getAngle()));
+    pidController.reset(getAngle());
+
+  }
+
+  public boolean atSetpoint() {
+    return pidController.atGoal();
   }
 
   public void feedPID() {
-    this.setRotationSpeed(-pidController.calculate(this.getAngle()));
+    setRotationSpeed(-pidController.calculate(getAngle()));
   }
 
   public void feedForwardPID(TrapezoidProfile.State setpoint) {
-    this.leftArmMotor.setVoltage(-pidController.calculate(this.getAngle()) + feedforward.calculate(Units.degreesToRadians(setpoint.position - ArmConstants.STRAIGHT_ARM_OFFSET), setpoint.velocity));
+    leftArmMotor.setVoltage(-pidController.calculate(getAngle()) + feedforward
+        .calculate(Units.degreesToRadians(setpoint.position - ArmConstants.STRAIGHT_ARM_OFFSET), setpoint.velocity));
   }
 
   @Override
   public void periodic() {
-    SmartDashboard.putNumber("Arm Rotation", this.getAngle());
+    SmartDashboard.putNumber("Arm Rotation", getAngle());
   }
 
 }

@@ -26,24 +26,26 @@ public class RotateArmToAngleCommand extends CommandBase {
 
   @Override
   public void initialize() {
-    if (this.targetAngleDegrees > ArmConstants.kMaxRotationDeg) {
+    if (targetAngleDegrees > ArmConstants.kMaxRotationDeg) {
       targetAngleDegrees = ArmConstants.kMaxRotationDeg;
     }
-    if (this.targetAngleDegrees < ArmConstants.kMinRotationDeg) {
+    if (targetAngleDegrees < ArmConstants.kMinRotationDeg) {
       targetAngleDegrees = ArmConstants.kMinRotationDeg;
     }
+    arm.setPIDGoal(targetAngleDegrees);
   }
 
   @Override
   public void execute() {
-    this.arm.setPIDGoal(targetAngleDegrees);
+    System.out.println("Feeding");
+    arm.feedPID();
   }
 
   @Override
   public boolean isFinished() {
     return arm.getAngle() > ArmConstants.kMaxRotationDeg
         || arm.getAngle() < ArmConstants.kMinRotationDeg
-        || Math.abs(this.targetAngleDegrees - arm.getAngle()) < ArmConstants.ROTATION_ERROR_DEADBAND;
+        || arm.atSetpoint();
   }
 
 }
