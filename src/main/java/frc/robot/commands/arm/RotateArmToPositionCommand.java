@@ -10,6 +10,7 @@ import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import frc.robot.Constants.ArmConstants;
 import frc.robot.Constants.ArmPositionConstants;
 import frc.robot.Constants.ElevatorConstants;
+import frc.robot.Constants.IntakeConstants;
 import frc.robot.commands.arm.elevator.ResetElevatorCommand;
 import frc.robot.commands.arm.elevator.RunElevatorToPositionCommand;
 import frc.robot.subsystems.Arm;
@@ -30,11 +31,15 @@ public class RotateArmToPositionCommand extends SequentialCommandGroup {
     this.arm = arm;
     this.elevator = elevator;
     this.finalPosition =
-        finalPosition.minus(new Translation2d(ArmConstants.PIVOT_SETBACK, ArmConstants.PIVOT_HEIGHT_FROM_GROUND));
+        finalPosition.minus(new Translation2d(ArmConstants.PIVOT_SETBACK,
+            ArmConstants.PIVOT_HEIGHT_FROM_GROUND - IntakeConstants.INTAKE_HEIGHT));
+    // gets the desired position in arm coordinates, arm (0,0) is at the pivot
     SmartDashboard.putString("Target Position", this.finalPosition.toString());
     addRequirements(this.arm, this.elevator);
     if (finalPosition.getX() < ArmPositionConstants.OUTSIDE_BUMPERS.getX()
         && finalPosition.getY() < ArmPositionConstants.OUTSIDE_BUMPERS.getY()) {
+      // if the target position is within the collision point with the bumpers, the arm needs to first rotate to a
+      // position where it won't collide with them.
       addCommands(new ResetElevatorCommand(elevator, ElevatorConstants.RETRACT_SPEED),
           new RotateArmToAngleCommand(arm,
               ArmPositionConstants.OUTSIDE_BUMPERS.getAngle().minus(ArmConstants.ZERO_ARM_OFFSET).getDegrees()),
@@ -46,8 +51,12 @@ public class RotateArmToPositionCommand extends SequentialCommandGroup {
       addCommands(new ResetElevatorCommand(elevator, ElevatorConstants.RETRACT_SPEED),
           new RotateArmToAngleCommand(arm,
               this.finalPosition.getAngle().minus(ArmConstants.ZERO_ARM_OFFSET).getDegrees()),
+          // angle of the translation from the pivot to the target point is the angle the arm needs to rotate
+          // however, the angle must be offset because the arm's 0-degree rotation is not actually vertical.
           new RunElevatorToPositionCommand(elevator,
               this.finalPosition.getNorm() - ElevatorConstants.LENGTH_FULLY_RETRACTED));
+      // length of the translation from the pivot to the target point is the total length the elevator needs to span;
+      // need to subtract the fully retracted length of the elevator to calculate how much it needs to extend.
     }
   }
 }

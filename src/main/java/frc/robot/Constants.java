@@ -136,7 +136,7 @@ public final class Constants {
     public static final double ROTATION_ERROR_DEADBAND = 1;
     public static final Rotation2d ZERO_ARM_OFFSET = new Rotation2d(Units.degreesToRadians(30));
     public static final double STRAIGHT_ARM_OFFSET = 50;
-    public static double kMaxVelocityRadPerSecond = 200;
+    public static double kMaxVelocityRadPerSecond = 300;
     public static double kMaxAccelerationRadPerSecSquared = 1000;
     public static double ARM_DEGREES_PER_ROTATION = 360;
     public static double kArmOffsetDeg = 285;
@@ -187,6 +187,7 @@ public final class Constants {
     public static final int RIGHT_MOTOR_ID = 1;
     public static final double OUTTAKE_SPEED = 0.2;
     public static final double INTAKE_SPEED = -0.5;
+    public static final double INTAKE_HEIGHT = 12.980;
   }
 
   /**
