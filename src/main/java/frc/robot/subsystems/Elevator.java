@@ -32,15 +32,15 @@ public class Elevator extends SubsystemBase {
     this.encoder = new Encoder(encoderChannelA, encoderChannelB, true, Encoder.EncodingType.k1X);
     encoder.setDistancePerPulse(ElevatorConstants.kDistancePerPulse);
     this.limitSwitch = new DigitalInput(limitSwitchChannel);
+    SmartDashboard.putData("Elevator PID", this.pidController);
   }
 
   public void setPIDGoal(double goalExtension) {
     pidController.setGoal(goalExtension);
-    this.move(pidController.calculate(this.getExtension()));
   }
 
   public void feedPID() {
-    this.move(pidController.calculate(this.getExtension()));
+    this.move(-pidController.calculate(this.getExtension()));
   }
 
   public boolean isRetracted() {

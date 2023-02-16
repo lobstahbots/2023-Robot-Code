@@ -25,8 +25,13 @@ public class RunElevatorToPositionCommand extends CommandBase {
   }
 
   @Override
-  public void execute() {
+  public void initialize() {
     this.elevator.setPIDGoal(this.position);
+  }
+
+  @Override
+  public void execute() {
+    this.elevator.feedPID();
   }
 
   @Override

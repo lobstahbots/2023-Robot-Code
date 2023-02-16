@@ -173,10 +173,10 @@ public final class Constants {
     public static final double RETRACT_SPEED = 0.18;
     public static final double LENGTH_FULLY_RETRACTED = 37.697;
     public static final double kS = 0.32321;
-    public static final double kV = 0.23766;
+    public static final double kV = 0.123766;
     public static final double kA = 0.0853;
     public static final double kG = -0.11681;
-    public static final double kP = 0.066729;
+    public static final double kP = 0.08;
   }
 
   /**

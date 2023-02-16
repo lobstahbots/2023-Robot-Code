@@ -28,6 +28,7 @@ import frc.robot.commands.arm.RotateArmToAngleCommand;
 import frc.robot.commands.arm.elevator.ResetElevatorCommand;
 import frc.robot.commands.arm.elevator.RetractElevatorCommand;
 import frc.robot.commands.arm.elevator.RunElevatorCommand;
+import frc.robot.commands.arm.elevator.RunElevatorToPositionCommand;
 import frc.robot.commands.drive.StopDriveCommand;
 import frc.robot.commands.drive.TankDriveCommand;
 import frc.robot.commands.intake.SpinIntakeCommand;
@@ -67,6 +68,7 @@ public class RobotContainer {
   private final JoystickButton manualControlButton =
       operatorJoystick.button(OperatorConstants.MANUAL_CONTROL_BUTTON_INDEX);
   private final JoystickButton slowdownButton = driverJoystick.button(DriverConstants.SLOWDOWN_BUTTON_INDEX);
+  private final JoystickButton magicElevatorButton = operatorJoystick.button(2); // TODO remove
 
   /**
    * The container for the robot. Contains subsystems, OI devices, and commands.
@@ -91,6 +93,7 @@ public class RobotContainer {
         () -> DriveConstants.SLOWDOWN_PERCENT * driverJoystick.getRawAxis(DriverConstants.LEFT_AXIS),
         () -> DriveConstants.SLOWDOWN_PERCENT * driverJoystick.getRawAxis(DriverConstants.RIGHT_AXIS),
         DriverConstants.SQUARED_INPUTS));
+    magicElevatorButton.whileTrue(new RunElevatorToPositionCommand(elevator, 20));
   }
 
   private final SendableChooser<Command> autonChooser = new SendableChooser<>();
