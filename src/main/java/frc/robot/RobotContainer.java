@@ -150,7 +150,7 @@ public class RobotContainer {
     SmartDashboard.putData("Teleop Target", targetPosition);
     SmartDashboard.putData("Command Scheduler", CommandScheduler.getInstance());
     SmartDashboard.putData("Rotate To 50 Command",
-        new RotateArmToAngleCommand(arm, 50, ArmConstants.ROTATION_ERROR_DEADBAND));
+        new RotateArmToAngleCommand(arm, 50));
     SmartDashboard.putData("Extend To 20 Command", new RunElevatorToPositionCommand(elevator, 20));
   }
 
