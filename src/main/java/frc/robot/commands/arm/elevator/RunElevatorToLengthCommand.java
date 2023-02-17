@@ -8,7 +8,7 @@ import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.Constants.ElevatorConstants;
 import frc.robot.subsystems.Elevator;
 
-public class RunElevatorToPositionCommand extends CommandBase {
+public class RunElevatorToLengthCommand extends CommandBase {
   private final Elevator elevator;
   private final double position;
 
@@ -18,7 +18,7 @@ public class RunElevatorToPositionCommand extends CommandBase {
    * @param elevator The {@link Elevator} to control
    * @param position The position to run the elevator to
    */
-  public RunElevatorToPositionCommand(Elevator elevator, double position) {
+  public RunElevatorToLengthCommand(Elevator elevator, double position) {
     this.elevator = elevator;
     this.position = Math.min(ElevatorConstants.kMaxExtension, Math.max(ElevatorConstants.kMinExtension, position));
     addRequirements(this.elevator);

@@ -14,18 +14,18 @@ import frc.robot.Constants.ArmPositionConstants;
 import frc.robot.Constants.ElevatorConstants;
 import frc.robot.Constants.IntakeConstants;
 import frc.robot.commands.arm.elevator.ResetElevatorCommand;
-import frc.robot.commands.arm.elevator.RunElevatorToPositionCommand;
+import frc.robot.commands.arm.elevator.RunElevatorToLengthCommand;
 import frc.robot.subsystems.Arm;
 import frc.robot.subsystems.Elevator;
 
-public class RotateArmToPositionCommand extends SequentialCommandGroup {
+public class MoveArmToPositionCommand extends SequentialCommandGroup {
   /**
    * Creates a command that rotates the {@link Arm} and extends the {@link Elevator} to a given position.
    *
    * @param arm The {@link Arm} to control
    * @param position The position to rotate the arm to
    */
-  public RotateArmToPositionCommand(Arm arm, Elevator elevator, Translation2d finalPosition) {
+  public MoveArmToPositionCommand(Arm arm, Elevator elevator, Translation2d finalPosition) {
     // gets the desired position in arm coordinates, arm (0,0) is at the pivot
     finalPosition = finalPosition.minus(new Translation2d(ArmConstants.PIVOT_SETBACK,
         ArmConstants.PIVOT_HEIGHT_FROM_GROUND - IntakeConstants.INTAKE_HEIGHT));
@@ -59,7 +59,7 @@ public class RotateArmToPositionCommand extends SequentialCommandGroup {
         // however, the angle must be offset because the arm's 0-degree rotation is not actually vertical.
         new ParallelCommandGroup(
             new RotateArmToAngleCommand(arm, targetRotation),
-            new RunElevatorToPositionCommand(elevator, targetExtension)));
+            new RunElevatorToLengthCommand(elevator, targetExtension)));
     // length of the translation from the pivot to the target point is the total length the elevator needs to span;
     // need to subtract the fully retracted length of the elevator to calculate how much it needs to extend.
     // }

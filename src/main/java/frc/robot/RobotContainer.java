@@ -26,11 +26,11 @@ import frc.robot.auton.AutonGenerator;
 import frc.robot.commands.arm.MaintainArmAngleCommand;
 import frc.robot.commands.arm.RotateArmCommand;
 import frc.robot.commands.arm.RotateArmToAngleCommand;
-import frc.robot.commands.arm.RotateArmToPositionCommand;
+import frc.robot.commands.arm.MoveArmToPositionCommand;
 import frc.robot.commands.arm.elevator.ResetElevatorCommand;
 import frc.robot.commands.arm.elevator.RetractElevatorCommand;
 import frc.robot.commands.arm.elevator.RunElevatorCommand;
-import frc.robot.commands.arm.elevator.RunElevatorToPositionCommand;
+import frc.robot.commands.arm.elevator.RunElevatorToLengthCommand;
 import frc.robot.commands.drive.StopDriveCommand;
 import frc.robot.commands.drive.TankDriveCommand;
 import frc.robot.commands.intake.SpinIntakeCommand;
@@ -102,7 +102,7 @@ public class RobotContainer {
         () -> DriveConstants.SLOWDOWN_PERCENT * driverJoystick.getRawAxis(DriverConstants.RIGHT_AXIS),
         DriverConstants.SQUARED_INPUTS));
 
-    highGoalButton.whileTrue(new RotateArmToPositionCommand(arm, elevator, ArmPositionConstants.HIGH_GOAL_SCORING));
+    highGoalButton.whileTrue(new MoveArmToPositionCommand(arm, elevator, ArmPositionConstants.HIGH_GOAL_SCORING));
   }
 
   private final SendableChooser<Command> autonChooser = new SendableChooser<>();
@@ -151,7 +151,7 @@ public class RobotContainer {
     SmartDashboard.putData("Command Scheduler", CommandScheduler.getInstance());
     SmartDashboard.putData("Rotate To 50 Command",
         new RotateArmToAngleCommand(arm, 50));
-    SmartDashboard.putData("Extend To 20 Command", new RunElevatorToPositionCommand(elevator, 20));
+    SmartDashboard.putData("Extend To 20 Command", new RunElevatorToLengthCommand(elevator, 20));
   }
 
   /**
