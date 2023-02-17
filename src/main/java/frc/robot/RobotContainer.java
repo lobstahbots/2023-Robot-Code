@@ -188,7 +188,7 @@ public class RobotContainer {
         .setDefaultCommand(new RetractElevatorCommand(elevator));
 
     arm.setDefaultCommand(new MaintainArmAngleCommand(arm));
-    intake.setDefaultCommand(new StopSpinIntakeCommand(intake));
+    intake.setDefaultCommand(new SpinIntakeCommand(intake, IntakeConstants.PASSIVE_INTAKE_SPEED));
   }
 
   /**
