@@ -91,8 +91,8 @@ public class RobotContainer {
    * Use this method to define your button->command mappings.
    */
   private void configureButtonBindings() {
-    intakeButton.whileTrue(new SpinIntakeCommand(intake, IntakeConstants.INTAKE_SPEED));
-    outtakeButton.whileTrue(new SpinIntakeCommand(intake, IntakeConstants.OUTTAKE_SPEED));
+    intakeButton.whileTrue(new SpinIntakeCommand(intake, IntakeConstants.INTAKE_VOLTAGE));
+    outtakeButton.whileTrue(new SpinIntakeCommand(intake, IntakeConstants.OUTTAKE_VOLTAGE));
     manualControlButton
         .whileTrue(new ParallelCommandGroup(
             new RunElevatorCommand(elevator, () -> operatorJoystick.getRawAxis(OperatorConstants.ELEVATOR_AXIS)),
@@ -188,7 +188,7 @@ public class RobotContainer {
         .setDefaultCommand(new RetractElevatorCommand(elevator));
 
     arm.setDefaultCommand(new MaintainArmAngleCommand(arm));
-    intake.setDefaultCommand(new SpinIntakeCommand(intake, IntakeConstants.PASSIVE_INTAKE_SPEED));
+    intake.setDefaultCommand(new SpinIntakeCommand(intake, IntakeConstants.PASSIVE_INTAKE_VOLTAGE));
   }
 
   /**

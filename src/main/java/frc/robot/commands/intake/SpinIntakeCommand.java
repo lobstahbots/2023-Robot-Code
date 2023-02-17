@@ -10,28 +10,28 @@ import frc.robot.subsystems.Intake;
 public class SpinIntakeCommand extends CommandBase {
 
   public final Intake intake;
-  public final double speed;
+  public final double voltage;
 
   /**
    * Creates a command that spins the {@link Intake} at a given speed.
    *
    * @param intake The {@link Intake} to control
-   * @param speed The speed at which to spin the intake
+   * @param voltage The speed at which to spin the intake
    */
-  public SpinIntakeCommand(Intake intake, double speed) {
+  public SpinIntakeCommand(Intake intake, double voltage) {
     this.intake = intake;
-    this.speed = speed;
+    this.voltage = voltage;
     addRequirements(this.intake);
   }
 
   @Override
   public void execute() {
-    intake.setSpinSpeed(speed);
+    intake.setSpinVoltage(voltage);
   }
 
   @Override
   public void end(boolean interrupted) {
-    intake.setSpinSpeed(0.0);
+    intake.setSpinVoltage(0.0);
   }
 
   @Override

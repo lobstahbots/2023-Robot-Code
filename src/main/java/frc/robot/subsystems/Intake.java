@@ -4,21 +4,25 @@
 
 package frc.robot.subsystems;
 
+import edu.wpi.first.wpilibj.motorcontrol.MotorControllerGroup;
 import edu.wpi.first.wpilibj.motorcontrol.PWMSparkMax;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 public class Intake extends SubsystemBase {
-  private final PWMSparkMax leftIntakeMotor;
-  private final PWMSparkMax rightIntakeMotor;
+  private final MotorControllerGroup intakeMotors;
 
   public Intake(int leftIntakeMotorID, int rightIntakeMotorID) {
-    this.leftIntakeMotor = new PWMSparkMax(leftIntakeMotorID);
-    this.rightIntakeMotor = new PWMSparkMax(rightIntakeMotorID);
+    intakeMotors = new MotorControllerGroup(
+        new PWMSparkMax(leftIntakeMotorID),
+        new PWMSparkMax(rightIntakeMotorID));
   }
 
   public void setSpinSpeed(double speed) {
-    leftIntakeMotor.set(speed);
-    rightIntakeMotor.set(speed);
+    intakeMotors.set(speed);
+  }
+
+  public void setSpinVoltage(double voltage) {
+    intakeMotors.setVoltage(voltage);
   }
 
 }
