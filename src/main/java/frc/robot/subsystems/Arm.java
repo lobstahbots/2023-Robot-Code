@@ -14,6 +14,7 @@ import edu.wpi.first.math.trajectory.TrapezoidProfile.Constraints;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.DutyCycleEncoder;
+import edu.wpi.first.wpilibj.motorcontrol.MotorControllerGroup;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.ArmConstants;
@@ -23,6 +24,7 @@ public class Arm extends SubsystemBase {
   private final DutyCycleEncoder armEncoder;
   private final CANSparkMax leftArmMotor;
   private final CANSparkMax rightArmMotor;
+  private final MotorControllerGroup motors;
   private final ArmFeedforward feedforward =
       new ArmFeedforward(
           ArmConstants.kSVolts, ArmConstants.kGVolts,
@@ -42,6 +44,7 @@ public class Arm extends SubsystemBase {
     rightArmMotor.setInverted(false);
     leftArmMotor.setSmartCurrentLimit(ArmConstants.CURRENT_LIMIT);
     rightArmMotor.setSmartCurrentLimit(ArmConstants.CURRENT_LIMIT);
+    motors = new MotorControllerGroup(leftArmMotor, rightArmMotor);
     armEncoder.setDistancePerRotation(ArmConstants.ARM_DEGREES_PER_ROTATION);
     pidController.setTolerance(ArmConstants.ROTATION_ERROR_DEADBAND);
     SmartDashboard.putData("Arm PID", this.pidController);
@@ -52,8 +55,7 @@ public class Arm extends SubsystemBase {
   }
 
   public void setRotationSpeed(double speed) {
-    leftArmMotor.set(speed);
-    rightArmMotor.set(speed);
+    motors.set(speed);
   }
 
   public void setPIDGoal(double goalAngle) {
@@ -79,6 +81,10 @@ public class Arm extends SubsystemBase {
   @Override
   public void periodic() {
     SmartDashboard.putNumber("Arm Rotation", getAngle());
+    if (getAngle() < ArmConstants.kMinRotationDeg && motors.get() < 0)
+      motors.set(0);
+    if (getAngle() > ArmConstants.kMaxRotationDeg && motors.get() > 0)
+      motors.set(0);
   }
 
 }

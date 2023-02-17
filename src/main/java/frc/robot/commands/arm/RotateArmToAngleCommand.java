@@ -11,16 +11,19 @@ import frc.robot.subsystems.Arm;
 public class RotateArmToAngleCommand extends CommandBase {
   private final Arm arm;
   private double targetAngleDegrees;
+  private final double tolerance;
 
   /**
    * Creates a command that rotates the {@link Arm} to a given angle in degrees.
    *
    * @param arm The {@link Arm} to control
    * @param angle The angle in degrees to rotate the arm to
+   * @param tolerance The accepted angle deadband
    */
-  public RotateArmToAngleCommand(Arm arm, double angleDegrees) {
+  public RotateArmToAngleCommand(Arm arm, double angleDegrees, double tolerance) {
     this.arm = arm;
     this.targetAngleDegrees = angleDegrees;
+    this.tolerance = tolerance;
     addRequirements(this.arm);
   }
 
@@ -38,14 +41,20 @@ public class RotateArmToAngleCommand extends CommandBase {
   @Override
   public void execute() {
     System.out.println("Feeding");
+    System.out.println(targetAngleDegrees);
     arm.feedPID();
+  }
+
+  @Override
+  public void end(boolean interrupted) {
+    arm.setRotationSpeed(0);
   }
 
   @Override
   public boolean isFinished() {
     return arm.getAngle() > ArmConstants.kMaxRotationDeg
         || arm.getAngle() < ArmConstants.kMinRotationDeg
-        || arm.atSetpoint();
+        || Math.abs(arm.getAngle() - targetAngleDegrees) < tolerance;
   }
 
 }

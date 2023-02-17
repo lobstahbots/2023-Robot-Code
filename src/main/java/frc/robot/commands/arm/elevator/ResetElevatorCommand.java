@@ -2,12 +2,12 @@
 package frc.robot.commands.arm.elevator;
 
 import edu.wpi.first.wpilibj2.command.CommandBase;
+import frc.robot.Constants.ElevatorConstants;
 import frc.robot.subsystems.Elevator;
 
 public class ResetElevatorCommand extends CommandBase {
   private boolean needsToExtend;
   private final Elevator elevator;
-  private final double speed;
 
   /**
    * Creates a command that fully retracts the {@link Elevator} until the limit switch is flipped. If the limit switch
@@ -15,11 +15,9 @@ public class ResetElevatorCommand extends CommandBase {
    * partial triggering.
    * 
    * @param elevator The {@link Elevator} to control
-   * @param speed The speed at which the elevator retracts
    */
-  public ResetElevatorCommand(Elevator elevator, double speed) {
+  public ResetElevatorCommand(Elevator elevator) {
     this.elevator = elevator;
-    this.speed = speed;
     addRequirements(this.elevator);
   }
 
@@ -32,13 +30,13 @@ public class ResetElevatorCommand extends CommandBase {
   public void execute() {
     if (this.needsToExtend) {
       if (elevator.isRetracted()) {
-        elevator.move(-speed);
+        elevator.move(-ElevatorConstants.RETRACT_SPEED);
       } else {
         this.needsToExtend = false;
       }
     } else {
       if (!elevator.isRetracted()) {
-        elevator.move(speed);
+        elevator.moveToSwitch();
       } else {
         elevator.move(0);
       }
@@ -48,5 +46,10 @@ public class ResetElevatorCommand extends CommandBase {
   @Override
   public boolean isFinished() {
     return !this.needsToExtend && elevator.isRetracted();
+  }
+
+  @Override
+  public void end(boolean interrupted) {
+    elevator.resetEncoder();
   }
 }

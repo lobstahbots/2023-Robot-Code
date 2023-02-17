@@ -112,6 +112,11 @@ public final class Constants {
       public static final int MANUAL_CONTROL_BUTTON_INDEX = 7;
       public static final int INTAKE_BUTTON_INDEX = 5;
       public static final int OUTTAKE_BUTTON_INDEX = 6;
+      public static final int OUTSIDE_BUMPERS_BTN_INDEX = 0;
+      public static final int LOW_GOAL_BTN_INDEX = 0;
+      public static final int HIGH_GOAL_BTN_INDEX = 1;
+      public static final int STATION_PICKUP_BTN_INDEX = 0;
+      public static final int CONE_PICKUP_BTN_INDEX = 0;
       public static final int ELEVATOR_AXIS = 1;
       public static final int ARM_AXIS = 5;
     }
@@ -134,7 +139,8 @@ public final class Constants {
     public static final double PIVOT_SETBACK = -27.521;
     public static final int CURRENT_LIMIT = 40;
     public static final double ROTATION_ERROR_DEADBAND = 1;
-    public static final Rotation2d ZERO_ARM_OFFSET = new Rotation2d(Units.degreesToRadians(30));
+    public static final double SEQUENTIAL_ROTATION_ERROR_DEADBAND = 5;
+    public static final Rotation2d ZERO_ARM_OFFSET = new Rotation2d(Units.degreesToRadians(60));
     public static final double STRAIGHT_ARM_OFFSET = 50;
     public static double kMaxVelocityRadPerSecond = 300;
     public static double kMaxAccelerationRadPerSecSquared = 1000;
@@ -150,7 +156,7 @@ public final class Constants {
   public static final class ArmPositionConstants {
     public static final Translation2d CONE_PICKUP = new Translation2d(5, 10);
     public static final Translation2d LOW_GOAL_SCORING = new Translation2d(20, 40);
-    public static final Translation2d HIGH_GOAL_SCORING = new Translation2d(30, 50);
+    public static final Translation2d HIGH_GOAL_SCORING = new Translation2d(39.75, 50);
     public static final Translation2d PLAYER_STATION_PICKUP = new Translation2d(30, 40);
     public static final Translation2d OUTSIDE_BUMPERS = new Translation2d(10, 3);
   }

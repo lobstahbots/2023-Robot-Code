@@ -20,7 +20,7 @@ public class RunElevatorToPositionCommand extends CommandBase {
    */
   public RunElevatorToPositionCommand(Elevator elevator, double position) {
     this.elevator = elevator;
-    this.position = position;
+    this.position = Math.min(ElevatorConstants.kMaxExtension, Math.max(ElevatorConstants.kMinExtension, position));
     addRequirements(this.elevator);
   }
 
@@ -35,8 +35,12 @@ public class RunElevatorToPositionCommand extends CommandBase {
   }
 
   @Override
+  public void end(boolean interrupted) {
+    elevator.move(0);
+  }
+
+  @Override
   public boolean isFinished() {
-    return elevator.getExtension() > ElevatorConstants.kMaxExtension
-        || elevator.getExtension() < ElevatorConstants.kMinExtension;
+    return false;
   }
 }

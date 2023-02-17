@@ -44,7 +44,21 @@ public class Elevator extends SubsystemBase {
   }
 
   public void move(double speed) {
+    if (getExtension() > ElevatorConstants.kMaxExtension && speed < 0) {
+      elevatorMotor.set(0.0);
+      return;
+    }
+    if (getExtension() < ElevatorConstants.kMinExtension && speed > 0) {
+      elevatorMotor.set(0.0);
+      return;
+    }
     elevatorMotor.set(speed);
+  }
+
+  public void moveToSwitch() {
+    if (!isRetracted()) {
+      elevatorMotor.set(ElevatorConstants.RETRACT_SPEED);
+    }
   }
 
   public double getExtension() {

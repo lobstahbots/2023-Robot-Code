@@ -15,6 +15,7 @@ import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import frc.robot.Constants.DriveConstants.DriveMotorCANIDs;
 import frc.robot.Constants.ArmConstants;
+import frc.robot.Constants.ArmPositionConstants;
 import frc.robot.Constants.DriveConstants;
 import frc.robot.Constants.ElevatorConstants;
 import frc.robot.Constants.FieldConstants;
@@ -25,6 +26,7 @@ import frc.robot.auton.AutonGenerator;
 import frc.robot.commands.arm.MaintainArmAngleCommand;
 import frc.robot.commands.arm.RotateArmCommand;
 import frc.robot.commands.arm.RotateArmToAngleCommand;
+import frc.robot.commands.arm.RotateArmToPositionCommand;
 import frc.robot.commands.arm.elevator.ResetElevatorCommand;
 import frc.robot.commands.arm.elevator.RetractElevatorCommand;
 import frc.robot.commands.arm.elevator.RunElevatorCommand;
@@ -68,6 +70,13 @@ public class RobotContainer {
   private final JoystickButton manualControlButton =
       operatorJoystick.button(OperatorConstants.MANUAL_CONTROL_BUTTON_INDEX);
   private final JoystickButton slowdownButton = driverJoystick.button(DriverConstants.SLOWDOWN_BUTTON_INDEX);
+  // private final JoystickButton outsideBumpersButton =
+  // driverJoystick.button(OperatorConstants.OUTSIDE_BUMPERS_BTN_INDEX);
+  // private final JoystickButton lowGoalButton = driverJoystick.button(OperatorConstants.LOW_GOAL_BTN_INDEX);
+  private final JoystickButton highGoalButton = operatorJoystick.button(OperatorConstants.HIGH_GOAL_BTN_INDEX);
+  // private final JoystickButton stationPickupButton =
+  // driverJoystick.button(OperatorConstants.STATION_PICKUP_BTN_INDEX);
+  // private final JoystickButton conePickupButton = driverJoystick.button(OperatorConstants.CONE_PICKUP_BTN_INDEX);
 
   /**
    * The container for the robot. Contains subsystems, OI devices, and commands.
@@ -92,6 +101,8 @@ public class RobotContainer {
         () -> DriveConstants.SLOWDOWN_PERCENT * driverJoystick.getRawAxis(DriverConstants.LEFT_AXIS),
         () -> DriveConstants.SLOWDOWN_PERCENT * driverJoystick.getRawAxis(DriverConstants.RIGHT_AXIS),
         DriverConstants.SQUARED_INPUTS));
+
+    highGoalButton.whileTrue(new RotateArmToPositionCommand(arm, elevator, ArmPositionConstants.HIGH_GOAL_SCORING));
   }
 
   private final SendableChooser<Command> autonChooser = new SendableChooser<>();
@@ -138,7 +149,8 @@ public class RobotContainer {
     SmartDashboard.putData("Ending Position Chooser", endingPosition);
     SmartDashboard.putData("Teleop Target", targetPosition);
     SmartDashboard.putData("Command Scheduler", CommandScheduler.getInstance());
-    SmartDashboard.putData("Rotate To 30 Command", new RotateArmToAngleCommand(arm, 30));
+    SmartDashboard.putData("Rotate To 50 Command",
+        new RotateArmToAngleCommand(arm, 50, ArmConstants.ROTATION_ERROR_DEADBAND));
     SmartDashboard.putData("Extend To 20 Command", new RunElevatorToPositionCommand(elevator, 20));
   }
 
@@ -156,7 +168,7 @@ public class RobotContainer {
    */
   public Command getAutonomousCommand() {
     return new SequentialCommandGroup(
-        new ResetElevatorCommand(elevator, ElevatorConstants.RETRACT_SPEED).andThen(() -> elevator.resetEncoder()),
+        new ResetElevatorCommand(elevator),
         autonChooser.getSelected());
   }
 
@@ -173,7 +185,7 @@ public class RobotContainer {
             () -> -driverJoystick.getRawAxis(DriverConstants.RIGHT_AXIS),
             DriverConstants.SQUARED_INPUTS));
     elevator
-        .setDefaultCommand(new RetractElevatorCommand(elevator, ElevatorConstants.RETRACT_SPEED));
+        .setDefaultCommand(new RetractElevatorCommand(elevator));
 
     arm.setDefaultCommand(new MaintainArmAngleCommand(arm));
     intake.setDefaultCommand(new StopSpinIntakeCommand(intake));
