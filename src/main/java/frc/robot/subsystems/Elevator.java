@@ -8,8 +8,6 @@ import com.revrobotics.CANSparkMax;
 import com.revrobotics.CANSparkMax.IdleMode;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 import edu.wpi.first.math.controller.PIDController;
-import edu.wpi.first.math.controller.ProfiledPIDController;
-import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.Encoder;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -19,10 +17,6 @@ import frc.robot.Constants.ElevatorConstants;
 public class Elevator extends SubsystemBase {
   private final CANSparkMax elevatorMotor;
   private final DigitalInput limitSwitch;
-  private final TrapezoidProfile.Constraints constraints =
-      new TrapezoidProfile.Constraints(ElevatorConstants.kMaxVelocity, ElevatorConstants.kMaxAcceleration);
-  // private final ProfiledPIDController pidController =
-  // new ProfiledPIDController(ElevatorConstants.kP, 0, 0, constraints);
   private final PIDController pidController = new PIDController(ElevatorConstants.kP, 0, 0);
   private final Encoder encoder;
 
