@@ -7,6 +7,7 @@ package frc.robot.subsystems;
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.CANSparkMax.IdleMode;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
+import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.wpilibj.DigitalInput;
@@ -20,8 +21,9 @@ public class Elevator extends SubsystemBase {
   private final DigitalInput limitSwitch;
   private final TrapezoidProfile.Constraints constraints =
       new TrapezoidProfile.Constraints(ElevatorConstants.kMaxVelocity, ElevatorConstants.kMaxAcceleration);
-  private final ProfiledPIDController pidController =
-      new ProfiledPIDController(ElevatorConstants.kP, 0, 0, constraints);
+  // private final ProfiledPIDController pidController =
+  // new ProfiledPIDController(ElevatorConstants.kP, 0, 0, constraints);
+  private final PIDController pidController = new PIDController(ElevatorConstants.kP, 0, 0);
   private final Encoder encoder;
 
   public Elevator(int elevatorMotorID, int encoderChannelA, int encoderChannelB, int limitSwitchChannel) {
@@ -36,7 +38,7 @@ public class Elevator extends SubsystemBase {
   }
 
   public void setPIDGoal(double goalExtension) {
-    pidController.setGoal(goalExtension);
+    pidController.setSetpoint(goalExtension);
   }
 
   public void feedPID() {

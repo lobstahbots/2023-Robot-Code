@@ -35,7 +35,7 @@
               "_title": "PPRamseteCommand_field",
               "_glyph": 148,
               "_showGlyph": false,
-              "Game/Game": "A2022_Rapid_React",
+              "Game/Game": "A2023_Charged_Up",
               "Visuals/Robot Icon Size": 50.0,
               "Visuals/Show Outside Circles": false
             }
@@ -125,32 +125,6 @@
               "_showGlyph": false
             }
           },
-          "10,3": {
-            "size": [
-              2,
-              1
-            ],
-            "content": {
-              "_type": "Text View",
-              "_source0": "network_table:///SmartDashboard/Number of Tags Visible In Front",
-              "_title": "Number of Tags Visible In Front",
-              "_glyph": 148,
-              "_showGlyph": false
-            }
-          },
-          "10,2": {
-            "size": [
-              2,
-              1
-            ],
-            "content": {
-              "_type": "Text View",
-              "_source0": "network_table:///SmartDashboard/Number of Tags Visible In Rear",
-              "_title": "Number of Tags Visible In Rear",
-              "_glyph": 148,
-              "_showGlyph": false
-            }
-          },
           "10,0": {
             "size": [
               3,
@@ -174,7 +148,7 @@
           },
           "8,2": {
             "size": [
-              1,
+              2,
               1
             ],
             "content": {
@@ -185,7 +159,7 @@
               "_showGlyph": false
             }
           },
-          "7,3": {
+          "10,2": {
             "size": [
               3,
               2
@@ -206,7 +180,7 @@
               "imageHeight": -1
             }
           },
-          "4,4": {
+          "10,4": {
             "size": [
               3,
               2
@@ -225,136 +199,6 @@
               "fps": -1,
               "imageWidth": -1,
               "imageHeight": -1
-            }
-          },
-          "0,5": {
-            "size": [
-              4,
-              1
-            ],
-            "content": {
-              "_type": "Text View",
-              "_source0": "network_table:///SmartDashboard/Pose2",
-              "_title": "Pose2",
-              "_glyph": 148,
-              "_showGlyph": false
-            }
-          },
-          "12,2": {
-            "size": [
-              1,
-              1
-            ],
-            "content": {
-              "_type": "Text View",
-              "_source0": "network_table:///SmartDashboard/Confidence2",
-              "_title": "Confidence2",
-              "_glyph": 148,
-              "_showGlyph": false
-            }
-          },
-          "7,5": {
-            "size": [
-              4,
-              1
-            ],
-            "content": {
-              "_type": "Text View",
-              "_source0": "network_table:///SmartDashboard/Pose0",
-              "_title": "Pose0",
-              "_glyph": 148,
-              "_showGlyph": false
-            }
-          },
-          "12,3": {
-            "size": [
-              1,
-              1
-            ],
-            "content": {
-              "_type": "Text View",
-              "_source0": "network_table:///SmartDashboard/Confidence0",
-              "_title": "Confidence0",
-              "_glyph": 148,
-              "_showGlyph": false
-            }
-          },
-          "9,2": {
-            "size": [
-              1,
-              1
-            ],
-            "content": {
-              "_type": "Text View",
-              "_source0": "network_table:///SmartDashboard/Confidence1",
-              "_title": "Confidence1",
-              "_glyph": 148,
-              "_showGlyph": false
-            }
-          },
-          "10,4": {
-            "size": [
-              1,
-              1
-            ],
-            "content": {
-              "_type": "Text View",
-              "_source0": "network_table:///SmartDashboard/Pose1",
-              "_title": "Pose1",
-              "_glyph": 148,
-              "_showGlyph": false
-            }
-          },
-          "11,4": {
-            "size": [
-              1,
-              1
-            ],
-            "content": {
-              "_type": "Text View",
-              "_source0": "network_table:///SmartDashboard/Arm PID/p",
-              "_title": "Arm PID/p",
-              "_glyph": 148,
-              "_showGlyph": false
-            }
-          },
-          "12,4": {
-            "size": [
-              1,
-              1
-            ],
-            "content": {
-              "_type": "Text View",
-              "_source0": "network_table:///SmartDashboard/Arm PID/i",
-              "_title": "Arm PID/i",
-              "_glyph": 148,
-              "_showGlyph": false
-            }
-          },
-          "11,5": {
-            "size": [
-              1,
-              1
-            ],
-            "content": {
-              "_type": "Text View",
-              "_source0": "network_table:///SmartDashboard/Arm PID/d",
-              "_title": "Arm PID/d",
-              "_glyph": 148,
-              "_showGlyph": false
-            }
-          },
-          "12,5": {
-            "size": [
-              1,
-              1
-            ],
-            "content": {
-              "_type": "Text View",
-              "_source0": "network_table:///SmartDashboard/Arm PID/goal",
-              "_title": "Arm PID/goal",
-              "_glyph": 148,
-              "_showGlyph": false
             }
           }
         }
@@ -427,55 +271,55 @@
         "vgap": 16.0,
         "titleType": 0,
         "tiles": {
-          "1,0": {
-            "size": [
-              2,
-              1
-            ],
-            "content": {
-              "_type": "Text View",
-              "_source0": "network_table:///SmartDashboard/Arm Rotation",
-              "_title": "SmartDashboard/Arm Rotation",
-              "_glyph": 148,
-              "_showGlyph": false
-            }
-          },
-          "4,0": {
+          "4,1": {
             "size": [
               2,
               1
             ],
             "content": {
               "_type": "Command",
-              "_source0": "network_table:///SmartDashboard/Rotate To 30 Command",
-              "_title": "SmartDashboard/Rotate To 30 Command",
+              "_source0": "network_table:///SmartDashboard/Extend To 20 Command",
+              "_title": "/SmartDashboard/Extend To 20 Command",
               "_glyph": 148,
               "_showGlyph": false
             }
           },
-          "0,1": {
+          "4,2": {
             "size": [
-              3,
+              2,
+              1
+            ],
+            "content": {
+              "_type": "Text View",
+              "_source0": "network_table:///SmartDashboard/Elevator Extension",
+              "_title": "/SmartDashboard/Elevator Extension",
+              "_glyph": 148,
+              "_showGlyph": false
+            }
+          },
+          "7,1": {
+            "size": [
+              2,
               2
             ],
             "content": {
               "_type": "Network Table Tree",
-              "_source0": "network_table:///SmartDashboard/Arm PID",
-              "_title": "SmartDashboard/Arm PID",
+              "_source0": "network_table:///SmartDashboard/Elevator PID",
+              "_title": "/SmartDashboard/Elevator PID",
               "_glyph": 148,
               "_showGlyph": false
             }
           },
-          "3,1": {
+          "1,2": {
             "size": [
-              4,
-              4
+              3,
+              3
             ],
             "content": {
               "_type": "Graph",
-              "_source0": "network_table:///SmartDashboard/Arm PID/goal",
-              "_source1": "network_table:///SmartDashboard/Arm Rotation",
-              "_title": "SmartDashboard/Arm PID/goal",
+              "_source0": "network_table:///SmartDashboard/Elevator PID/goal",
+              "_source1": "network_table:///SmartDashboard/Elevator Extension",
+              "_title": "SmartDashboard/Elevator PID/goal",
               "_glyph": 148,
               "_showGlyph": false,
               "Graph/Visible time": 30.0,
@@ -484,8 +328,8 @@
               "Y-axis/Upper bound": 1.0,
               "Y-axis/Lower bound": -1.0,
               "Y-axis/Unit": "ul",
-              "Visible data/SmartDashboard/Arm PID/goal": true,
-              "Visible data/SmartDashboard/Arm Rotation": true
+              "Visible data/SmartDashboard/Elevator Extension": true,
+              "Visible data/SmartDashboard/Elevator PID/goal": true
             }
           }
         }
