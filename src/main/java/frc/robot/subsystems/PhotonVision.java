@@ -5,22 +5,20 @@
 package frc.robot.subsystems;
 
 import org.photonvision.PhotonCamera;
-import org.photonvision.RobotPoseEstimator;
-import org.photonvision.RobotPoseEstimator.PoseStrategy;
 import org.photonvision.targeting.PhotonPipelineResult;
 import org.photonvision.targeting.PhotonTrackedTarget;
+
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import edu.wpi.first.apriltag.AprilTagFieldLayout;
-import edu.wpi.first.math.Pair;
-import edu.wpi.first.math.geometry.Pose3d;
-import edu.wpi.first.math.geometry.Transform3d;
 import edu.wpi.first.wpilibj.Filesystem;
-import edu.wpi.first.wpilibj.Timer;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.VisionConstants;
+import frc.robot.photonvision.EstimatedRobotPose;
+import frc.robot.photonvision.PhotonPoseEstimator;
 
 /**
  * A subsystem that controls the PhotonVision tracking on the robot.
@@ -30,9 +28,11 @@ public class PhotonVision extends SubsystemBase {
   private PhotonCamera frontRightCamera;
   private PhotonCamera rearCamera;
   private AprilTagFieldLayout aprilTagFieldLayout;
-  private RobotPoseEstimator robotPoseEstimator;
-
-  private ArrayList<Pair<PhotonCamera, Transform3d>> camList = new ArrayList<>();
+  private PhotonPoseEstimator rearPoseEstimator;
+  private PhotonPoseEstimator frontLeftPoseEstimator;
+  private PhotonPoseEstimator frontRightPoseEstimator;
+  private List<PhotonPoseEstimator> estimators = new ArrayList<>();
+  private int currentCamera = -1;
 
   /** Constructs a new Photonvision. */
   public PhotonVision() {
@@ -40,18 +40,27 @@ public class PhotonVision extends SubsystemBase {
     this.frontLeftCamera = new PhotonCamera("photonvision_front_left");
     this.frontRightCamera = new PhotonCamera("photonvision_front_right");
 
-    camList.add(new Pair<PhotonCamera, Transform3d>(frontLeftCamera, VisionConstants.FRONT_LEFT_CAMERA_TO_ROBOT));
-    camList.add(new Pair<PhotonCamera, Transform3d>(frontRightCamera, VisionConstants.FRONT_RIGHT_CAMERA_TO_ROBOT));
-    camList.add(new Pair<PhotonCamera, Transform3d>(rearCamera, VisionConstants.REAR_CAMERA_TO_ROBOT));
-
     try {
       this.aprilTagFieldLayout =
           new AprilTagFieldLayout(Filesystem.getDeployDirectory() + "/AprilTagLayout/2023-chargedup.json");
     } catch (IOException io) {
     }
 
-    this.robotPoseEstimator =
-        new RobotPoseEstimator(aprilTagFieldLayout, PoseStrategy.LOWEST_AMBIGUITY, camList);
+    this.rearPoseEstimator =
+        new PhotonPoseEstimator(aprilTagFieldLayout, rearCamera,
+            VisionConstants.ROBOT_TO_REAR_CAMERA, 0);
+
+    this.frontLeftPoseEstimator =
+        new PhotonPoseEstimator(aprilTagFieldLayout, frontLeftCamera,
+            VisionConstants.ROBOT_TO_FRONT_LEFT_CAMERA, 1);
+
+    this.frontRightPoseEstimator =
+        new PhotonPoseEstimator(aprilTagFieldLayout, frontRightCamera,
+            VisionConstants.ROBOT_TO_FRONT_RIGHT_CAMERA, 2);
+
+    estimators.add(rearPoseEstimator);
+    estimators.add(frontLeftPoseEstimator);
+    estimators.add(frontRightPoseEstimator);
   }
 
   /**
@@ -106,17 +115,47 @@ public class PhotonVision extends SubsystemBase {
   }
 
   /**
-   * Estimates the global field pose based on previous pose and an {@link RobotPoseEstimator}.
+   * Returns a list of estimated robot poses from the three {@link PhotonPoseEstimator}.
    */
-  public Optional<Pair<Pose3d, Double>> getEstimatedGlobalPose() {
-    double currentTime = Timer.getFPGATimestamp();
-    Optional<Pair<Pose3d, Double>> result = robotPoseEstimator.update();
-    if (result.isPresent()) {
-      return Optional.of(new Pair<Pose3d, Double>(result.get().getFirst(), currentTime - result.get().getSecond()));
-    } else {
-      return Optional.empty();
+  public List<EstimatedRobotPose> getGlobalPoses() {
+    List<EstimatedRobotPose> poses = new ArrayList<>();
+
+    for (PhotonPoseEstimator estimator : estimators) {
+      Optional<EstimatedRobotPose> result = estimator.update();
+      if (result.isPresent()) {
+        poses.add(result.get());
+      }
     }
+    return poses;
   }
 
+  /**
+   * Estimates the global field pose based on a selected {@link PhotonPoseEstimator}.
+   */
+  public EstimatedRobotPose getCurrentPose() {
+    double bestConfidence = 0;
+    EstimatedRobotPose bestPose = null;
+    int bestId = -1;
+    for (PhotonPoseEstimator estimator : estimators) {
+      Optional<EstimatedRobotPose> result = estimator.update();
+      if (result.isPresent()) {
+        EstimatedRobotPose pose = result.get();
+        if (estimator.id == currentCamera && pose.confidence > VisionConstants.MAINTAIN_CAMERA_CONFIDENCE_THRESHOLD) {
+          return pose;
+        }
+        if (pose.confidence > bestConfidence) {
+          bestConfidence = pose.confidence;
+          bestPose = pose;
+          bestId = estimator.id;
+        }
+      }
+    }
+    currentCamera = bestId;
+    return bestPose;
+  }
 
+  @Override
+  public void periodic() {
+    SmartDashboard.putNumber("Current Camera Used:", currentCamera);
+  }
 }

@@ -6,8 +6,10 @@ package frc.robot;
 
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.math.geometry.Transform3d;
 import edu.wpi.first.math.geometry.Translation2d;
+import edu.wpi.first.math.geometry.Translation3d;
 import edu.wpi.first.math.kinematics.DifferentialDriveKinematics;
 import edu.wpi.first.math.util.Units;
 
@@ -90,9 +92,18 @@ public final class Constants {
   }
 
   public static final class VisionConstants {
-    public static final Transform3d FRONT_LEFT_CAMERA_TO_ROBOT = new Transform3d();
-    public static final Transform3d FRONT_RIGHT_CAMERA_TO_ROBOT = new Transform3d();
-    public static final Transform3d REAR_CAMERA_TO_ROBOT = new Transform3d();
+    public static final Transform3d ROBOT_TO_FRONT_LEFT_CAMERA =
+        new Transform3d(
+            new Translation3d(-Units.inchesToMeters(9.766), Units.inchesToMeters(7.852), Units.inchesToMeters(28.242)),
+            new Rotation3d());
+    public static final Transform3d ROBOT_TO_FRONT_RIGHT_CAMERA =
+        new Transform3d(
+            new Translation3d(-Units.inchesToMeters(9.766), -Units.inchesToMeters(7.852), Units.inchesToMeters(28.242)),
+            new Rotation3d());
+    public static final Transform3d ROBOT_TO_REAR_CAMERA =
+        new Transform3d(new Translation3d(-Units.inchesToMeters(12.1585), 0.07, Units.inchesToMeters(20.749)),
+            new Rotation3d(0, 0, Math.PI));
+    public static final double MAINTAIN_CAMERA_CONFIDENCE_THRESHOLD = 0.7;
   }
 
   /**
