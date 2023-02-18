@@ -35,8 +35,8 @@ public class MoveArmToPositionCommand extends SequentialCommandGroup {
     double targetRotation = finalPosition.getAngle().plus(ArmConstants.ZERO_ARM_OFFSET).getDegrees();
     double targetExtension = finalPosition.getNorm() - ElevatorConstants.LENGTH_FULLY_RETRACTED;
 
-    SmartDashboard.putString("Target Arm Position", finalPosition.toString());
-    SmartDashboard.putNumber("Desired offset with Angle", targetRotation);
+    // SmartDashboard.putString("Target Arm Position", finalPosition.toString());
+    // SmartDashboard.putNumber("Desired offset with Angle", targetRotation);
 
     addCommands(new ResetElevatorCommand(elevator)
         .unless(() -> Math.abs(arm.getAngle() - targetRotation) < ArmConstants.RETRACT_BEFORE_MOVING_DEADBAND),

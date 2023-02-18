@@ -87,8 +87,8 @@ public final class Constants {
    * Stores constants related to autonomous routines.
    */
   public static final class AutonConstants {
-    public static final double SIMPLE_AUTON_SPEED = 0.7;
-    public static final double SIMPLE_AUTON_RUNTIME = 3.0;
+    public static final double SIMPLE_AUTON_SPEED = 0.3;
+    public static final double SIMPLE_AUTON_RUNTIME = 2.0;
   }
 
   public static final class VisionConstants {

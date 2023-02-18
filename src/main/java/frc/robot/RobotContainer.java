@@ -153,10 +153,10 @@ public class RobotContainer {
     SmartDashboard.putData("Crossing Position Chooser", crossingPosition);
     SmartDashboard.putData("Ending Position Chooser", endingPosition);
     SmartDashboard.putData("Teleop Target", targetPosition);
-    SmartDashboard.putData("Command Scheduler", CommandScheduler.getInstance());
-    SmartDashboard.putData("Rotate To 50 Command",
-        new RotateArmToAngleCommand(arm, 50));
-    SmartDashboard.putData("Extend To 20 Command", new RunElevatorToLengthCommand(elevator, 20));
+    // SmartDashboard.putData("Command Scheduler", CommandScheduler.getInstance());
+    // SmartDashboard.putData("Rotate To 50 Command",
+    // new RotateArmToAngleCommand(arm, 50));
+    // SmartDashboard.putData("Extend To 20 Command", new RunElevatorToLengthCommand(elevator, 20));
   }
 
   /**
