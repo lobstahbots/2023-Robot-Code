@@ -37,8 +37,8 @@ public class RotateArmToAngleCommand extends CommandBase {
 
   @Override
   public void execute() {
-    System.out.println("Feeding");
-    System.out.println(targetAngleDegrees);
+    // System.out.println("Feeding");
+    // System.out.println(targetAngleDegrees);
     arm.feedPID();
   }
 

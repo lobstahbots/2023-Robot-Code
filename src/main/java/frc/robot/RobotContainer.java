@@ -220,9 +220,4 @@ public class RobotContainer {
   public void setSimDefaultCommands() {
     driveBase.setDefaultCommand(new StopDriveCommand(driveBase));
   }
-
-  public void sendArmCoords() {
-    SmartDashboard.putString("Arm Pos Cart", ArmSystemCoordinates.getArmPositionCartesian(arm, elevator).toString());
-  }
-
 }

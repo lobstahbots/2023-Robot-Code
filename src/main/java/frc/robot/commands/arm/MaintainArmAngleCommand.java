@@ -18,7 +18,7 @@ public class MaintainArmAngleCommand extends CommandBase {
 
   @Override
   public void initialize() {
-    System.out.println("Maintain Angle");
+    // System.out.println("Maintain Angle");
     double targetAngleDegrees = arm.getAngle();
     if (targetAngleDegrees > ArmConstants.kMaxRotationDeg) {
       targetAngleDegrees = ArmConstants.kMaxRotationDeg;

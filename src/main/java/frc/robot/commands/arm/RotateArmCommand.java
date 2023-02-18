@@ -43,10 +43,10 @@ public class RotateArmCommand extends CommandBase {
     if ((arm.getAngle() > ArmConstants.kMaxRotationDeg && speed.getAsDouble() < 0)
         || (arm.getAngle() < ArmConstants.kMinRotationDeg && speed.getAsDouble() > 0)) {
       arm.setRotationSpeed(0.0);
-      SmartDashboard.putBoolean("Arm Within Limit", false);
+      // SmartDashboard.putBoolean("Arm Within Limit", false);
     } else {
       arm.setRotationSpeed(speed.getAsDouble());
-      SmartDashboard.putBoolean("Arm Within Limit", true);
+      // SmartDashboard.putBoolean("Arm Within Limit", true);
     }
   }
 

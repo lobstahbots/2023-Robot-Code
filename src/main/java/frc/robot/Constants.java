@@ -88,7 +88,7 @@ public final class Constants {
    */
   public static final class AutonConstants {
     public static final double SIMPLE_AUTON_SPEED = 0.3;
-    public static final double SIMPLE_AUTON_RUNTIME = 2.0;
+    public static final double SIMPLE_AUTON_RUNTIME = 2.75;
   }
 
   public static final class VisionConstants {
@@ -210,7 +210,7 @@ public final class Constants {
     public static final double OUTTAKE_VOLTAGE = 2.4;
     public static final double INTAKE_VOLTAGE = -5;
     public static final double INTAKE_HEIGHT = 6.37;
-    public static final double PASSIVE_INTAKE_VOLTAGE = -0.8;
+    public static final double PASSIVE_INTAKE_VOLTAGE = -1.6;
   }
 
   /**

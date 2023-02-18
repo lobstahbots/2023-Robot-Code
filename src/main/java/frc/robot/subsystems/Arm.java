@@ -48,7 +48,7 @@ public class Arm extends SubsystemBase {
     motors = new MotorControllerGroup(leftArmMotor, rightArmMotor);
     armEncoder.setDistancePerRotation(ArmConstants.ARM_DEGREES_PER_ROTATION);
     pidController.setTolerance(ArmConstants.ROTATION_ERROR_DEADBAND);
-    SmartDashboard.putData("Arm PID", this.pidController);
+    // SmartDashboard.putData("Arm PID", this.pidController);
   }
 
   public double getAngle() {
