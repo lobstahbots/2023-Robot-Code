@@ -88,7 +88,7 @@ public final class Constants {
    */
   public static final class AutonConstants {
     public static final double SIMPLE_AUTON_SPEED = 0.3;
-    public static final double SIMPLE_AUTON_RUNTIME = 2.75;
+    public static final double SIMPLE_AUTON_RUNTIME = 3.25;
   }
 
   public static final class VisionConstants {
