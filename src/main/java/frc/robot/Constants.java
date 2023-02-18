@@ -132,7 +132,7 @@ public final class Constants {
       // public static final int CONE_PICKUP_BTN_INDEX = 0;
       public static final int ELEVATOR_AXIS = 1;
       public static final int ARM_AXIS = 5;
-      public static final double JOYSTICK_DEADBAND = 0.1;
+      public static final double JOYSTICK_DEADBAND = 0.05;
     }
 
   }
@@ -157,8 +157,8 @@ public final class Constants {
     public static final Rotation2d ZERO_ARM_OFFSET = new Rotation2d(Units.degreesToRadians(60));
     public static final double STRAIGHT_ARM_OFFSET = 50;
     public static final double RETRACT_BEFORE_MOVING_DEADBAND = 5;
-    public static double kMaxVelocityRadPerSecond = 300;
-    public static double kMaxAccelerationRadPerSecSquared = 1000;
+    public static double kMaxVelocityDegPerSecond = 300;
+    public static double kMaxAccelerationDegPerSecSquared = 1000;
     public static double ARM_DEGREES_PER_ROTATION = 360;
     public static double kArmOffsetDeg = 285;
     public static double kMaxRotationDeg = 75;
@@ -170,7 +170,7 @@ public final class Constants {
    */
   public static final class ArmPositionConstants {
     public static final Translation2d GROUND_PICKUP = new Translation2d(10, 5);
-    public static final Translation2d GROUND_SCORING = new Translation2d(10, 5);
+    public static final Translation2d GROUND_SCORING = new Translation2d(15, 5);
     public static final Translation2d MID_GOAL_SCORING = new Translation2d(22.75, 38);
     public static final Translation2d HIGH_GOAL_SCORING = new Translation2d(39.75, 50);
     public static final Translation2d CONE_SCORING_OFFSET = new Translation2d(0, -4);

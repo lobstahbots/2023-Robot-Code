@@ -31,8 +31,8 @@ public class Arm extends SubsystemBase {
           ArmConstants.kSVolts, ArmConstants.kGVolts,
           ArmConstants.kVVoltSecondPerRad, ArmConstants.kAVoltSecondSquaredPerRad);
   private final Constraints constraints = new TrapezoidProfile.Constraints(
-      ArmConstants.kMaxVelocityRadPerSecond,
-      ArmConstants.kMaxAccelerationRadPerSecSquared);
+      ArmConstants.kMaxVelocityDegPerSecond,
+      ArmConstants.kMaxAccelerationDegPerSecSquared);
   private final ProfiledPIDController pidController = new ProfiledPIDController(ArmConstants.kP, 0, 0, constraints);
 
   public Arm(int leftMotorID, int rightMotorID, int encoderChannel) {

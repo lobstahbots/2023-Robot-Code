@@ -25,6 +25,7 @@ import frc.robot.Constants.IntakeConstants;
 import frc.robot.Constants.UIConstants.DriverConstants;
 import frc.robot.Constants.UIConstants.OperatorConstants;
 import frc.robot.auton.AutonGenerator;
+import frc.robot.commands.PeriodicConditionalCommand;
 import frc.robot.commands.arm.MaintainArmAngleCommand;
 import frc.robot.commands.arm.RotateArmCommand;
 import frc.robot.commands.arm.RotateArmToAngleCommand;
@@ -97,11 +98,11 @@ public class RobotContainer {
     manualControlButton
         .whileTrue(new ParallelCommandGroup(
             new RunElevatorCommand(elevator, () -> operatorJoystick.getRawAxis(OperatorConstants.ELEVATOR_AXIS)),
-            new ConditionalCommand(
+            new PeriodicConditionalCommand(
                 new RotateArmCommand(arm, () -> operatorJoystick.getRawAxis(OperatorConstants.ARM_AXIS)),
                 new MaintainArmAngleCommand(arm),
                 () -> Math.abs(operatorJoystick
-                    .getRawAxis(OperatorConstants.ELEVATOR_AXIS)) > OperatorConstants.JOYSTICK_DEADBAND)));
+                    .getRawAxis(OperatorConstants.ARM_AXIS)) > OperatorConstants.JOYSTICK_DEADBAND)));
     slowdownButton.whileTrue(new TankDriveCommand(driveBase,
         () -> DriveConstants.SLOWDOWN_PERCENT * driverJoystick.getRawAxis(DriverConstants.LEFT_AXIS),
         () -> DriveConstants.SLOWDOWN_PERCENT * driverJoystick.getRawAxis(DriverConstants.RIGHT_AXIS),
@@ -198,8 +199,9 @@ public class RobotContainer {
         .setDefaultCommand(new RetractElevatorCommand(elevator));
 
     // arm.setDefaultCommand(new MaintainArmAngleCommand(arm));
-    arm.setDefaultCommand(new ConditionalCommand(new MaintainArmAngleCommand(arm), new RotateArmToAngleCommand(arm, 0),
-        () -> elevator.getExtension() > ElevatorConstants.CAN_ROTATE));
+    arm.setDefaultCommand(
+        new PeriodicConditionalCommand(new MaintainArmAngleCommand(arm), new RotateArmToAngleCommand(arm, 0),
+            () -> elevator.getExtension() > ElevatorConstants.CAN_ROTATE));
     intake.setDefaultCommand(new SpinIntakeCommand(intake, IntakeConstants.PASSIVE_INTAKE_VOLTAGE));
   }
 
