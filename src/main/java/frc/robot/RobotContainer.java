@@ -71,13 +71,12 @@ public class RobotContainer {
   private final JoystickButton manualControlButton =
       operatorJoystick.button(OperatorConstants.MANUAL_CONTROL_BUTTON_INDEX);
   private final JoystickButton slowdownButton = driverJoystick.button(DriverConstants.SLOWDOWN_BUTTON_INDEX);
-  // private final JoystickButton outsideBumpersButton =
-  // driverJoystick.button(OperatorConstants.OUTSIDE_BUMPERS_BTN_INDEX);
-  // private final JoystickButton lowGoalButton = driverJoystick.button(OperatorConstants.LOW_GOAL_BTN_INDEX);
+  private final JoystickButton lowGoalButton = operatorJoystick.button(OperatorConstants.LOW_GOAL_BTN_INDEX);
+  private final JoystickButton midGoalButton = operatorJoystick.button(OperatorConstants.MID_GOAL_BTN_INDEX);
   private final JoystickButton highGoalButton = operatorJoystick.button(OperatorConstants.HIGH_GOAL_BTN_INDEX);
-  // private final JoystickButton stationPickupButton =
-  // driverJoystick.button(OperatorConstants.STATION_PICKUP_BTN_INDEX);
-  // private final JoystickButton conePickupButton = driverJoystick.button(OperatorConstants.CONE_PICKUP_BTN_INDEX);
+  private final JoystickButton playerStationButton =
+      operatorJoystick.button(OperatorConstants.STATION_PICKUP_BTN_INDEX);
+  // private final JoystickButton groundPickupButton = operatorJoystick.button(OperatorConstants.LOW_GOAL_BTN_INDEX);
 
   /**
    * The container for the robot. Contains subsystems, OI devices, and commands.
@@ -104,6 +103,11 @@ public class RobotContainer {
         DriverConstants.SQUARED_INPUTS));
 
     highGoalButton.whileTrue(new MoveArmToPositionCommand(arm, elevator, ArmPositionConstants.HIGH_GOAL_SCORING));
+    midGoalButton.whileTrue(new MoveArmToPositionCommand(arm, elevator, ArmPositionConstants.MID_GOAL_SCORING));
+    // groundPickupButton.whileTrue(new MoveArmToPositionCommand(arm, elevator, ArmPositionConstants.GROUND_PICKUP));
+    playerStationButton
+        .whileTrue(new MoveArmToPositionCommand(arm, elevator, ArmPositionConstants.PLAYER_STATION_PICKUP));
+    lowGoalButton.whileTrue(new MoveArmToPositionCommand(arm, elevator, ArmPositionConstants.GROUND_SCORING));
   }
 
   private final SendableChooser<Command> autonChooser = new SendableChooser<>();
