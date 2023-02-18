@@ -178,7 +178,7 @@ public final class Constants {
     public static final double kMaxExtension = 29;
     public static final double kMinExtension = -0.1;
     public static final double RETRACT_SPEED = 0.18;
-    public static final double LENGTH_FULLY_RETRACTED = 37.697;
+    public static final double LENGTH_FULLY_RETRACTED = 42.25;
     public static final double kS = 0.32321;
     public static final double kV = 0.123766;
     public static final double kA = 0.0853;
@@ -194,8 +194,8 @@ public final class Constants {
     public static final int RIGHT_MOTOR_ID = 1;
     public static final double OUTTAKE_VOLTAGE = 2.4;
     public static final double INTAKE_VOLTAGE = -5;
+    public static final double INTAKE_HEIGHT = 6.37;
     public static final double PASSIVE_INTAKE_VOLTAGE = -0.8;
-    public static final double INTAKE_HEIGHT = 12.980;
   }
 
   /**
