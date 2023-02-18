@@ -6,6 +6,7 @@ package frc.robot;
 
 import com.pathplanner.lib.server.PathPlannerServer;
 import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -216,5 +217,8 @@ public class RobotContainer {
     driveBase.setDefaultCommand(new StopDriveCommand(driveBase));
   }
 
+  public void sendArmCoords() {
+    SmartDashboard.putString("Arm Pos Cart", ArmSystemCoordinates.getArmPositionCartesian(arm, elevator).toString());
+  }
 
 }

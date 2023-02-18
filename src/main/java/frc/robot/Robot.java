@@ -83,7 +83,9 @@ public class Robot extends TimedRobot {
 
   /** This function is called periodically during teleop. */
   @Override
-  public void teleopPeriodic() {}
+  public void teleopPeriodic() {
+    m_robotContainer.sendArmCoords();
+  }
 
   /** This function is called once each time the robot enters Test mode. */
   @Override

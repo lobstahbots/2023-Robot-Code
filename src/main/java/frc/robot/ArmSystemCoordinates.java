@@ -7,6 +7,7 @@ package frc.robot;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import frc.robot.Constants.ArmConstants;
+import frc.robot.Constants.IntakeConstants;
 import frc.robot.subsystems.Arm;
 import frc.robot.subsystems.Elevator;
 
@@ -24,17 +25,17 @@ public class ArmSystemCoordinates {
   }
 
   public static Translation2d getArmPositionCartesian(Arm arm, Elevator elevator) {
-    Rotation2d armAngle = new Rotation2d(Math.toRadians(30 + arm.getAngle()));
+    Rotation2d armAngle = new Rotation2d(Math.toRadians(22 + arm.getAngle()));
     Translation2d armPosition =
         new Translation2d(elevator.getLength(), armAngle);
-    double xComponent = Math.abs(armPosition.getX()) + ArmConstants.PIVOT_SETBACK;
-    double yComponent = ArmConstants.PIVOT_HEIGHT_FROM_GROUND;
+    System.out.println("Angle" + armAngle.getDegrees());
+    double xComponent = Math.abs(armPosition.getY()) + ArmConstants.PIVOT_SETBACK;
+    double yComponent = ArmConstants.PIVOT_HEIGHT_FROM_GROUND - IntakeConstants.INTAKE_HEIGHT;
     if (armAngle.getDegrees() > 90) {
-      yComponent += armPosition.getY();
+      yComponent += Math.abs(armPosition.getX());
     } else {
-      yComponent -= armPosition.getY();
+      yComponent -= Math.abs(armPosition.getX());
     }
-
     return new Translation2d(xComponent, yComponent);
   }
 }

@@ -142,6 +142,7 @@ public final class Constants {
     public static final double SEQUENTIAL_ROTATION_ERROR_DEADBAND = 5;
     public static final Rotation2d ZERO_ARM_OFFSET = new Rotation2d(Units.degreesToRadians(60));
     public static final double STRAIGHT_ARM_OFFSET = 50;
+    public static final double RETRACT_BEFORE_MOVING_DEADBAND = 5;
     public static double kMaxVelocityRadPerSecond = 300;
     public static double kMaxAccelerationRadPerSecSquared = 1000;
     public static double ARM_DEGREES_PER_ROTATION = 360;
@@ -158,7 +159,7 @@ public final class Constants {
     public static final Translation2d LOW_GOAL_SCORING = new Translation2d(20, 40);
     public static final Translation2d HIGH_GOAL_SCORING = new Translation2d(39.75, 50);
     public static final Translation2d PLAYER_STATION_PICKUP = new Translation2d(30, 40);
-    public static final Translation2d OUTSIDE_BUMPERS = new Translation2d(10, 3);
+    public static final Translation2d OUTSIDE_BUMPERS = new Translation2d(0, 0);
   }
 
   /**
