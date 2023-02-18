@@ -155,10 +155,11 @@ public final class Constants {
    * Stores positions for the arm.
    */
   public static final class ArmPositionConstants {
-    public static final Translation2d CONE_PICKUP = new Translation2d(5, 10);
-    public static final Translation2d LOW_GOAL_SCORING = new Translation2d(20, 40);
+    public static final Translation2d GROUND_PICKUP = new Translation2d(10, 5);
+    public static final Translation2d MID_GOAL_SCORING = new Translation2d(22.75, 38);
     public static final Translation2d HIGH_GOAL_SCORING = new Translation2d(39.75, 50);
-    public static final Translation2d PLAYER_STATION_PICKUP = new Translation2d(30, 40);
+    public static final Translation2d CONE_SCORING_OFFSET = new Translation2d(0, -4);
+    public static final Translation2d PLAYER_STATION_PICKUP = new Translation2d(10, 44.375);
     public static final Translation2d OUTSIDE_BUMPERS = new Translation2d(0, 0);
   }
 
@@ -192,10 +193,10 @@ public final class Constants {
   public static final class IntakeConstants {
     public static final int LEFT_MOTOR_ID = 0;
     public static final int RIGHT_MOTOR_ID = 1;
-    public static final double OUTTAKE_SPEED = 0.2;
-    public static final double INTAKE_SPEED = -0.5;
+    public static final double OUTTAKE_VOLTAGE = 2.4;
+    public static final double INTAKE_VOLTAGE = -5;
     public static final double INTAKE_HEIGHT = 6.37;
-    public static final double PASSIVE_INTAKE_SPEED = -0.06;
+    public static final double PASSIVE_INTAKE_VOLTAGE = -0.8;
   }
 
   /**
