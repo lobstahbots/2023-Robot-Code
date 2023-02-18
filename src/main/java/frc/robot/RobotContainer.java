@@ -11,6 +11,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
+import edu.wpi.first.wpilibj2.command.ConditionalCommand;
 import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
@@ -96,7 +97,11 @@ public class RobotContainer {
     manualControlButton
         .whileTrue(new ParallelCommandGroup(
             new RunElevatorCommand(elevator, () -> operatorJoystick.getRawAxis(OperatorConstants.ELEVATOR_AXIS)),
-            new RotateArmCommand(arm, () -> operatorJoystick.getRawAxis(OperatorConstants.ARM_AXIS))));
+            new ConditionalCommand(
+                new RotateArmCommand(arm, () -> operatorJoystick.getRawAxis(OperatorConstants.ARM_AXIS)),
+                new MaintainArmAngleCommand(arm),
+                () -> Math.abs(operatorJoystick
+                    .getRawAxis(OperatorConstants.ELEVATOR_AXIS)) > OperatorConstants.JOYSTICK_DEADBAND)));
     slowdownButton.whileTrue(new TankDriveCommand(driveBase,
         () -> DriveConstants.SLOWDOWN_PERCENT * driverJoystick.getRawAxis(DriverConstants.LEFT_AXIS),
         () -> DriveConstants.SLOWDOWN_PERCENT * driverJoystick.getRawAxis(DriverConstants.RIGHT_AXIS),
@@ -192,7 +197,9 @@ public class RobotContainer {
     elevator
         .setDefaultCommand(new RetractElevatorCommand(elevator));
 
-    arm.setDefaultCommand(new MaintainArmAngleCommand(arm));
+    // arm.setDefaultCommand(new MaintainArmAngleCommand(arm));
+    arm.setDefaultCommand(new ConditionalCommand(new MaintainArmAngleCommand(arm), new RotateArmToAngleCommand(arm, 0),
+        () -> elevator.getExtension() > ElevatorConstants.CAN_ROTATE));
     intake.setDefaultCommand(new SpinIntakeCommand(intake, IntakeConstants.PASSIVE_INTAKE_VOLTAGE));
   }
 

@@ -132,6 +132,7 @@ public final class Constants {
       // public static final int CONE_PICKUP_BTN_INDEX = 0;
       public static final int ELEVATOR_AXIS = 1;
       public static final int ARM_AXIS = 5;
+      public static final double JOYSTICK_DEADBAND = 0.1;
     }
 
   }
@@ -199,6 +200,7 @@ public final class Constants {
     public static final double kA = 0.0853;
     public static final double kG = -0.11681;
     public static final double kP = 0.16023;
+    public static final double CAN_ROTATE = 0.5;
   }
 
   /**
