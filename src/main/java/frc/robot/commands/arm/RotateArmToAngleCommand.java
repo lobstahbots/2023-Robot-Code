@@ -4,6 +4,7 @@
 
 package frc.robot.commands.arm;
 
+import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.Constants.ArmConstants;
 import frc.robot.subsystems.Arm;
@@ -20,18 +21,12 @@ public class RotateArmToAngleCommand extends CommandBase {
    */
   public RotateArmToAngleCommand(Arm arm, double angleDegrees) {
     this.arm = arm;
-    this.targetAngleDegrees = angleDegrees;
+    this.targetAngleDegrees = MathUtil.clamp(angleDegrees, ArmConstants.kMinRotationDeg, ArmConstants.kMaxRotationDeg);;
     addRequirements(this.arm);
   }
 
   @Override
   public void initialize() {
-    if (targetAngleDegrees > ArmConstants.kMaxRotationDeg) {
-      targetAngleDegrees = ArmConstants.kMaxRotationDeg;
-    }
-    if (targetAngleDegrees < ArmConstants.kMinRotationDeg) {
-      targetAngleDegrees = ArmConstants.kMinRotationDeg;
-    }
     arm.setPIDGoal(targetAngleDegrees);
   }
 

@@ -4,6 +4,7 @@
 
 package frc.robot.commands.arm.elevator;
 
+import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.Constants.ElevatorConstants;
 import frc.robot.subsystems.Elevator;
@@ -20,7 +21,7 @@ public class RunElevatorToLengthCommand extends CommandBase {
    */
   public RunElevatorToLengthCommand(Elevator elevator, double position) {
     this.elevator = elevator;
-    this.position = Math.min(ElevatorConstants.kMaxExtension, Math.max(ElevatorConstants.kMinExtension, position));
+    this.position = MathUtil.clamp(position, ElevatorConstants.kMinExtension, ElevatorConstants.kMaxExtension);
     addRequirements(this.elevator);
   }
 
