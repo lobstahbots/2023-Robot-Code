@@ -35,7 +35,7 @@
               "_title": "PPRamseteCommand_field",
               "_glyph": 148,
               "_showGlyph": false,
-              "Game/Game": "A2022_Rapid_React",
+              "Game/Game": "A2023_Charged_Up",
               "Visuals/Robot Icon Size": 50.0,
               "Visuals/Show Outside Circles": false
             }
@@ -125,41 +125,15 @@
               "_showGlyph": false
             }
           },
-          "10,3": {
-            "size": [
-              2,
-              1
-            ],
-            "content": {
-              "_type": "Text View",
-              "_source0": "network_table:///SmartDashboard/Number of Tags Visible In Front",
-              "_title": "Number of Tags Visible In Front",
-              "_glyph": 148,
-              "_showGlyph": false
-            }
-          },
-          "10,2": {
-            "size": [
-              2,
-              1
-            ],
-            "content": {
-              "_type": "Text View",
-              "_source0": "network_table:///SmartDashboard/Number of Tags Visible In Rear",
-              "_title": "Number of Tags Visible In Rear",
-              "_glyph": 148,
-              "_showGlyph": false
-            }
-          },
-          "7,3": {
+          "10,0": {
             "size": [
               3,
               2
             ],
             "content": {
               "_type": "Camera Stream",
-              "_source0": "camera_server://photonvision-front_Port_1182_MJPEG_Server",
-              "_title": "photonvision-front_Port_1182_MJPEG_Server",
+              "_source0": "camera_server://photonvision-rear_Port_1182_MJPEG_Server",
+              "_title": "photonvision-rear_Port_1182_MJPEG_Server",
               "_glyph": 148,
               "_showGlyph": false,
               "Crosshair/Show crosshair": true,
@@ -172,6 +146,19 @@
               "imageHeight": -1
             }
           },
+          "8,2": {
+            "size": [
+              2,
+              1
+            ],
+            "content": {
+              "_type": "Text View",
+              "_source0": "network_table:///SmartDashboard/Current Camera Used:",
+              "_title": "Current Camera Used:",
+              "_glyph": 148,
+              "_showGlyph": false
+            }
+          },
           "10,0": {
             "size": [
               3,
@@ -181,6 +168,61 @@
               "_type": "Camera Stream",
               "_source0": "camera_server://photonvision-rear_Port_1182_MJPEG_Server",
               "_title": "photonvision-rear_Port_1182_MJPEG_Server",
+              "_glyph": 148,
+              "_showGlyph": false,
+              "Crosshair/Show crosshair": true,
+              "Crosshair/Crosshair color": "#FFFFFFFF",
+              "Controls/Show controls": true,
+              "Controls/Rotation": "NONE",
+              "compression": -1.0,
+              "fps": -1,
+              "imageWidth": -1,
+              "imageHeight": -1
+            }
+          },
+          "8,2": {
+            "size": [
+              1,
+              1
+            ],
+            "content": {
+              "_type": "Text View",
+              "_source0": "network_table:///SmartDashboard/Current Camera Used:",
+              "_title": "Current Camera Used:",
+              "_glyph": 148,
+              "_showGlyph": false
+            }
+          },
+          "7,3": {
+            "size": [
+              3,
+              2
+            ],
+            "content": {
+              "_type": "Camera Stream",
+              "_source0": "camera_server://photonvision-front-right_Port_1182_MJPEG_Server",
+              "_title": "photonvision-front-right_Port_1182_MJPEG_Server",
+              "_glyph": 148,
+              "_showGlyph": false,
+              "Crosshair/Show crosshair": true,
+              "Crosshair/Crosshair color": "#FFFFFFFF",
+              "Controls/Show controls": true,
+              "Controls/Rotation": "NONE",
+              "compression": -1.0,
+              "fps": -1,
+              "imageWidth": -1,
+              "imageHeight": -1
+            }
+          },
+          "4,4": {
+            "size": [
+              3,
+              2
+            ],
+            "content": {
+              "_type": "Camera Stream",
+              "_source0": "camera_server://photonvision-front-left_Port_1182_MJPEG_Server",
+              "_title": "photonvision-front-left_Port_1182_MJPEG_Server",
               "_glyph": 148,
               "_showGlyph": false,
               "Crosshair/Show crosshair": true,
@@ -251,12 +293,87 @@
           }
         }
       }
+    },
+    {
+      "title": "Tab 3",
+      "autoPopulate": false,
+      "autoPopulatePrefix": "",
+      "widgetPane": {
+        "gridSize": 128.0,
+        "showGrid": true,
+        "hgap": 16.0,
+        "vgap": 16.0,
+        "titleType": 0,
+        "tiles": {
+          "4,1": {
+            "size": [
+              2,
+              1
+            ],
+            "content": {
+              "_type": "Command",
+              "_source0": "network_table:///SmartDashboard/Extend To 20 Command",
+              "_title": "/SmartDashboard/Extend To 20 Command",
+              "_glyph": 148,
+              "_showGlyph": false
+            }
+          },
+          "4,2": {
+            "size": [
+              2,
+              1
+            ],
+            "content": {
+              "_type": "Text View",
+              "_source0": "network_table:///SmartDashboard/Elevator Extension",
+              "_title": "/SmartDashboard/Elevator Extension",
+              "_glyph": 148,
+              "_showGlyph": false
+            }
+          },
+          "7,1": {
+            "size": [
+              2,
+              2
+            ],
+            "content": {
+              "_type": "Network Table Tree",
+              "_source0": "network_table:///SmartDashboard/Elevator PID",
+              "_title": "/SmartDashboard/Elevator PID",
+              "_glyph": 148,
+              "_showGlyph": false
+            }
+          },
+          "1,2": {
+            "size": [
+              3,
+              3
+            ],
+            "content": {
+              "_type": "Graph",
+              "_source0": "network_table:///SmartDashboard/Elevator PID/goal",
+              "_source1": "network_table:///SmartDashboard/Elevator Extension",
+              "_title": "SmartDashboard/Elevator PID/goal",
+              "_glyph": 148,
+              "_showGlyph": false,
+              "Graph/Visible time": 30.0,
+              "Graph/X-axis auto scrolling": true,
+              "Y-axis/Automatic bounds": true,
+              "Y-axis/Upper bound": 1.0,
+              "Y-axis/Lower bound": -1.0,
+              "Y-axis/Unit": "ul",
+              "Visible data/SmartDashboard/Elevator Extension": true,
+              "Visible data/SmartDashboard/Elevator PID/goal": true
+            }
+          }
+        }
+      }
     }
   ],
   "windowGeometry": {
-    "x": -7.0,
-    "y": 2.0,
-    "width": 1932.0,
-    "height": 1055.0
+    "x": -8.0,
+    "y": -8.0,
+    "width": 1936.0,
+    "height": 1066.0
   }
 }

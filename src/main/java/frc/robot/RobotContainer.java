@@ -9,17 +9,33 @@ import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
+import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
+import frc.robot.Constants.ArmConstants;
+import frc.robot.Constants.ArmPositionConstants;
 import frc.robot.Constants.DriveConstants.DriveMotorCANIDs;
-import frc.robot.Constants.DriveConstants;
+import frc.robot.Constants.ElevatorConstants;
 import frc.robot.Constants.FieldConstants;
-import frc.robot.Constants.UIConstants;
-import frc.robot.Constants.UIConstants.DriverAxes;
+import frc.robot.Constants.IntakeConstants;
+import frc.robot.Constants.UIConstants.DriverConstants;
+import frc.robot.Constants.UIConstants.OperatorConstants;
 import frc.robot.auton.AutonGenerator;
-import frc.robot.commands.drive.TargetCommand;
+import frc.robot.commands.arm.MaintainArmAngleCommand;
+import frc.robot.commands.arm.MoveArmToPositionCommand;
+import frc.robot.commands.arm.RotateArmCommand;
+import frc.robot.commands.arm.RotateArmToAngleCommand;
+import frc.robot.commands.arm.elevator.ResetElevatorCommand;
+import frc.robot.commands.arm.elevator.RunElevatorCommand;
+import frc.robot.commands.arm.elevator.RunElevatorToLengthCommand;
 import frc.robot.commands.drive.StopDriveCommand;
 import frc.robot.commands.drive.TankDriveCommand;
+import frc.robot.commands.intake.SpinIntakeCommand;
+import frc.robot.subsystems.Arm;
 import frc.robot.subsystems.DriveBase;
+import frc.robot.subsystems.Elevator;
+import frc.robot.subsystems.Intake;
+import lobstah.stl.command.PeriodicConditionalCommand;
 import lobstah.stl.io.LobstahGamepad;
 
 /**
@@ -34,13 +50,28 @@ public class RobotContainer {
       DriveMotorCANIDs.RIGHT_FRONT,
       DriveMotorCANIDs.RIGHT_BACK);
 
+  private final Arm arm = new Arm(ArmConstants.LEFT_MOTOR_ID, ArmConstants.RIGHT_MOTOR_ID,
+      ArmConstants.ENCODER_CHANNEL);
+  private final Elevator elevator =
+      new Elevator(ElevatorConstants.ELEVATOR_MOTOR_ID, ElevatorConstants.ENCODER_CHANNEL_A,
+          ElevatorConstants.ENCODER_CHANNEL_B, ElevatorConstants.LIMIT_SWITCH_CHANNEL);
+  private final Intake intake = new Intake(IntakeConstants.LEFT_MOTOR_ID, IntakeConstants.RIGHT_MOTOR_ID);
+
   private final AutonGenerator autonGenerator = new AutonGenerator(driveBase);
 
-  private final LobstahGamepad driverJoystick = new LobstahGamepad(UIConstants.DRIVER_JOYSTICK_INDEX);
-  private final LobstahGamepad operatorJoystick = new LobstahGamepad(UIConstants.OPERATOR_JOYSTICK_INDEX);
+  private final LobstahGamepad driverJoystick = new LobstahGamepad(DriverConstants.DRIVER_JOYSTICK_INDEX);
+  private final JoystickButton slowdownButton = driverJoystick.button(DriverConstants.SLOWDOWN_BUTTON_INDEX);
 
-  private final JoystickButton button = driverJoystick.button(1);
-  private final JoystickButton slowdownButton = driverJoystick.button(UIConstants.SLOWDOWN_BUTTON_INDEX);
+  private final LobstahGamepad operatorJoystick = new LobstahGamepad(OperatorConstants.OPERATOR_JOYSTICK_INDEX);
+  private final JoystickButton intakeButton = operatorJoystick.button(OperatorConstants.INTAKE_BUTTON_INDEX);
+  private final JoystickButton outtakeButton = operatorJoystick.button(OperatorConstants.OUTTAKE_BUTTON_INDEX);
+  private final JoystickButton manualControlButton =
+      operatorJoystick.button(OperatorConstants.MANUAL_CONTROL_BUTTON_INDEX);
+  private final JoystickButton lowGoalButton = operatorJoystick.button(OperatorConstants.LOW_GOAL_BTN_INDEX);
+  private final JoystickButton midGoalButton = operatorJoystick.button(OperatorConstants.MID_GOAL_BTN_INDEX);
+  private final JoystickButton highGoalButton = operatorJoystick.button(OperatorConstants.HIGH_GOAL_BTN_INDEX);
+  private final JoystickButton playerStationButton =
+      operatorJoystick.button(OperatorConstants.STATION_PICKUP_BTN_INDEX);
 
   /**
    * The container for the robot. Contains subsystems, OI devices, and commands.
@@ -55,11 +86,26 @@ public class RobotContainer {
    * Use this method to define your button->command mappings.
    */
   private void configureButtonBindings() {
-    button.whileTrue(new TargetCommand(driveBase, () -> (this.updateTarget())));
+    intakeButton.whileTrue(new SpinIntakeCommand(intake, IntakeConstants.INTAKE_VOLTAGE));
+    outtakeButton.whileTrue(new SpinIntakeCommand(intake, IntakeConstants.OUTTAKE_VOLTAGE));
+    manualControlButton
+        .whileTrue(new ParallelCommandGroup(
+            new RunElevatorCommand(elevator, () -> -operatorJoystick.getRawAxis(OperatorConstants.ELEVATOR_AXIS)),
+            new PeriodicConditionalCommand(
+                new RotateArmCommand(arm, () -> -operatorJoystick.getRawAxis(OperatorConstants.ARM_AXIS)),
+                new MaintainArmAngleCommand(arm),
+                () -> Math.abs(operatorJoystick
+                    .getRawAxis(OperatorConstants.ARM_AXIS)) > OperatorConstants.JOYSTICK_DEADBAND)));
+    highGoalButton.whileTrue(new MoveArmToPositionCommand(arm, elevator, ArmPositionConstants.HIGH_GOAL_SCORING));
+    midGoalButton.whileTrue(new MoveArmToPositionCommand(arm, elevator, ArmPositionConstants.MID_GOAL_SCORING));
+    lowGoalButton.whileTrue(new MoveArmToPositionCommand(arm, elevator, ArmPositionConstants.GROUND_SCORING));
+    playerStationButton
+        .whileTrue(new MoveArmToPositionCommand(arm, elevator, ArmPositionConstants.PLAYER_STATION_PICKUP));
+
     slowdownButton.whileTrue(new TankDriveCommand(driveBase,
-        () -> DriveConstants.SLOWDOWN_PERCENT * driverJoystick.getRawAxis(DriverAxes.LEFT),
-        () -> DriveConstants.SLOWDOWN_PERCENT * driverJoystick.getRawAxis(DriverAxes.RIGHT),
-        UIConstants.SQUARED_INPUTS));
+        () -> DriverConstants.SLOWDOWN_PERCENT * driverJoystick.getRawAxis(DriverConstants.LEFT_AXIS),
+        () -> DriverConstants.SLOWDOWN_PERCENT * driverJoystick.getRawAxis(DriverConstants.RIGHT_AXIS),
+        DriverConstants.SQUARED_INPUTS));
   }
 
   private final SendableChooser<Command> autonChooser = new SendableChooser<>();
@@ -89,7 +135,7 @@ public class RobotContainer {
         autonGenerator.getPathFollowCommand(initialPosition.getSelected(), crossingPosition.getSelected(),
             endingPosition.getSelected()));
     autonChooser.addOption("Simple Auton", autonGenerator.getSimpleAutonCommand());
-    autonChooser.addOption("Do Nothing Auton", null);
+    autonChooser.addOption("Do Nothing Auton", new StopDriveCommand(driveBase));
     targetPosition.addOption("0", 0);
     targetPosition.addOption("1", 1);
     targetPosition.addOption("2", 2);
@@ -120,7 +166,9 @@ public class RobotContainer {
    * @return the command to run in autonomous
    */
   public Command getAutonomousCommand() {
-    return autonChooser.getSelected();
+    return new SequentialCommandGroup(
+        new ResetElevatorCommand(elevator),
+        autonChooser.getSelected());
   }
 
   /**
@@ -132,9 +180,16 @@ public class RobotContainer {
     driveBase.setDefaultCommand(
         new TankDriveCommand(
             driveBase,
-            () -> -driverJoystick.getRawAxis(DriverAxes.LEFT),
-            () -> -driverJoystick.getRawAxis(DriverAxes.RIGHT),
-            UIConstants.SQUARED_INPUTS));
+            () -> -driverJoystick.getRawAxis(DriverConstants.LEFT_AXIS),
+            () -> -driverJoystick.getRawAxis(DriverConstants.RIGHT_AXIS),
+            DriverConstants.SQUARED_INPUTS));
+
+    arm.setDefaultCommand(
+        new PeriodicConditionalCommand(new MaintainArmAngleCommand(arm), new RotateArmToAngleCommand(arm, 0),
+            () -> elevator.getExtension() > ElevatorConstants.LENGTH_RETRACTED_BEFORE_ROTATING));
+    elevator
+        .setDefaultCommand(new RunElevatorToLengthCommand(elevator, 0));
+    intake.setDefaultCommand(new SpinIntakeCommand(intake, IntakeConstants.PASSIVE_INTAKE_VOLTAGE));
   }
 
   /**
@@ -161,6 +216,4 @@ public class RobotContainer {
   public void setSimDefaultCommands() {
     driveBase.setDefaultCommand(new StopDriveCommand(driveBase));
   }
-
-
 }

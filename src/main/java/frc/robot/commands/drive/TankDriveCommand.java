@@ -4,7 +4,7 @@
 
 package frc.robot.commands.drive;
 
-import java.util.function.Supplier;
+import java.util.function.DoubleSupplier;
 
 import frc.robot.subsystems.DriveBase;
 
@@ -13,8 +13,8 @@ import frc.robot.subsystems.DriveBase;
  */
 public class TankDriveCommand extends DriveCommand {
 
-  private final Supplier<Double> leftSpeedSupplier;
-  private final Supplier<Double> rightSpeedSupplier;
+  private final DoubleSupplier leftSpeedSupplier;
+  private final DoubleSupplier rightSpeedSupplier;
   private final boolean squaredInputs;
 
   /**
@@ -25,8 +25,8 @@ public class TankDriveCommand extends DriveCommand {
    * @param rightSpeedSupplier Supplier for right speed
    * @param squaredInputs Whether to drive with squared inputs
    */
-  public TankDriveCommand(DriveBase driveBase, Supplier<Double> leftSpeedSupplier,
-      Supplier<Double> rightSpeedSupplier, boolean squaredInputs) {
+  public TankDriveCommand(DriveBase driveBase, DoubleSupplier leftSpeedSupplier,
+      DoubleSupplier rightSpeedSupplier, boolean squaredInputs) {
     super(driveBase);
     this.leftSpeedSupplier = leftSpeedSupplier;
     this.rightSpeedSupplier = rightSpeedSupplier;
@@ -47,7 +47,7 @@ public class TankDriveCommand extends DriveCommand {
 
   @Override
   public void execute() {
-    driveBase.tankDrive(leftSpeedSupplier.get(), rightSpeedSupplier.get(), squaredInputs);
+    driveBase.tankDrive(leftSpeedSupplier.getAsDouble(), rightSpeedSupplier.getAsDouble(), squaredInputs);
   }
 
   @Override

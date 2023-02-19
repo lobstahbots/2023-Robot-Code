@@ -22,29 +22,19 @@ public class LobstahMath {
    */
   public static double scaleNumberToRange(double x, double inputMin, double inputMax, double outputMin,
       double outputMax) {
-    if (inputMax < inputMin) {
-      double temp = inputMin;
-      inputMin = inputMax;
-      inputMax = temp;
-    }
+    double inputRange = inputMax - inputMin;
+    double outputRange = outputMax - outputMin;
 
-    if (outputMax < outputMin) {
-      double temp = outputMin;
-      outputMin = outputMax;
-      outputMax = temp;
-    }
-    double originalRange = inputMax - inputMin;
-    double scaledRange = outputMax - outputMin;
+    if (inputRange == 0)
+      throw new IllegalArgumentException("Input range cannot be 0");
 
-    if (originalRange == 0) {
-      System.out.println("Error: Cannot scale to a range of 0");
-      return x;
-    }
+    return ((x - inputMin) / inputRange * outputRange) + outputMin;
+  }
 
-    x = MathUtil.clamp(x, inputMin, inputMax);
-
-    double scaledValue = (((x - inputMin) * scaledRange) / originalRange) + outputMin;
-    return scaledValue;
+  public static double scaleNumberToClampedRange(double x, double inputMin, double inputMax, double outputMin,
+      double outputMax) {
+    x = MathUtil.clamp(x, inputMin, outputMax);
+    return scaleNumberToRange(x, inputMin, inputMax, outputMin, outputMax);
   }
 
   /**
@@ -54,9 +44,9 @@ public class LobstahMath {
    */
   public static int distanceToNativeUnits(double positionMeters) {
     double wheelRotations =
-        positionMeters / (2 * Math.PI * Units.inchesToMeters(Constants.RobotConstants.kWheelRadiusInches));
-    double motorRotations = wheelRotations * Constants.RobotConstants.kSensorGearRatio;
-    int sensorCounts = (int) (motorRotations * Constants.RobotConstants.kCountsPerRev);
+        positionMeters / (2 * Math.PI * Units.inchesToMeters(Constants.RobotConstants.WHEEL_RADIUS_INCHES));
+    double motorRotations = wheelRotations * Constants.RobotConstants.SENSOR_GEAR_RATIO;
+    int sensorCounts = (int) (motorRotations * Constants.RobotConstants.COUNTS_PER_REV);
     return sensorCounts;
   }
 
@@ -66,11 +56,11 @@ public class LobstahMath {
    * @param nativeVelocity The native velocity to convert to meters per second.
    */
   public static double nativeUnitsToVelocityMetersPerSecond(double nativeVelocity) {
-    double motorRotationsPer100ms = nativeVelocity / Constants.RobotConstants.kCountsPerRev;
-    double motorRotationsPerSecond = motorRotationsPer100ms * Constants.RobotConstants.k100msPerSecond;
-    double wheelRotationsPerSecond = motorRotationsPerSecond / Constants.RobotConstants.kSensorGearRatio;
+    double motorRotationsPer100ms = nativeVelocity / Constants.RobotConstants.COUNTS_PER_REV;
+    double motorRotationsPerSecond = motorRotationsPer100ms * 10;
+    double wheelRotationsPerSecond = motorRotationsPerSecond / Constants.RobotConstants.SENSOR_GEAR_RATIO;
     double velocityMetersPerSecond =
-        wheelRotationsPerSecond * (2 * Math.PI * Units.inchesToMeters(Constants.RobotConstants.kWheelRadiusInches));
+        wheelRotationsPerSecond * (2 * Math.PI * Units.inchesToMeters(Constants.RobotConstants.WHEEL_RADIUS_INCHES));
     return velocityMetersPerSecond;
   }
 
@@ -80,10 +70,10 @@ public class LobstahMath {
    * @param positionMeters The number of sensor counts to convert to meters.
    */
   public static double nativeUnitsToDistanceMeters(double sensorCounts) {
-    double motorRotations = (double) sensorCounts / Constants.RobotConstants.kCountsPerRev;
-    double wheelRotations = motorRotations / Constants.RobotConstants.kSensorGearRatio;
+    double motorRotations = (double) sensorCounts / Constants.RobotConstants.COUNTS_PER_REV;
+    double wheelRotations = motorRotations / Constants.RobotConstants.SENSOR_GEAR_RATIO;
     double positionMeters =
-        wheelRotations * (2 * Math.PI * Units.inchesToMeters(Constants.RobotConstants.kWheelRadiusInches));
+        wheelRotations * (2 * Math.PI * Units.inchesToMeters(Constants.RobotConstants.WHEEL_RADIUS_INCHES));
     return positionMeters;
   }
 

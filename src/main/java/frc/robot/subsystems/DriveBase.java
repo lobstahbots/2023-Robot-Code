@@ -3,8 +3,6 @@ package frc.robot.subsystems;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
-
 import com.ctre.phoenix.motorcontrol.FeedbackDevice;
 import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.ctre.phoenix.motorcontrol.StatorCurrentLimitConfiguration;
@@ -18,21 +16,19 @@ import com.pathplanner.lib.PathPlanner;
 import com.pathplanner.lib.PathPlannerTrajectory;
 import com.pathplanner.lib.PathPoint;
 import edu.wpi.first.math.geometry.Pose2d;
-import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Transform2d;
 import edu.wpi.first.math.geometry.Translation2d;
-import edu.wpi.first.math.Pair;
 import edu.wpi.first.math.estimator.DifferentialDrivePoseEstimator;
 import edu.wpi.first.math.kinematics.DifferentialDriveWheelSpeeds;
 import edu.wpi.first.wpilibj.motorcontrol.MotorControllerGroup;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.DriveConstants;
 import frc.robot.Constants.PathConstants;
 import lobstah.stl.math.LobstahMath;
 import lobstah.stl.motorcontrol.LobstahDifferentialDrive;
+import frc.robot.photonvision.EstimatedRobotPose;
 
 /**
  * A subsystem that controls the drive train (aka chassis) on a robot.
@@ -124,8 +120,6 @@ public class DriveBase extends SubsystemBase {
         new DifferentialDrivePoseEstimator(DriveConstants.KINEMATICS, gyro.getRotation2d(), 0, 0, new Pose2d());
 
     this.photonVision = new PhotonVision();
-
-    CommandScheduler.getInstance().registerSubsystem(this);
   }
 
   /**
@@ -318,12 +312,10 @@ public class DriveBase extends SubsystemBase {
   public void periodic() {
     poseEstimator.update(getHeading(), getLeftEncoderDistanceMeters(), getRightEncoderDistanceMeters());
     try {
-      Optional<Pair<Pose3d, Double>> visionEstimatedPose = photonVision.getEstimatedGlobalPose();
-      if (visionEstimatedPose.isPresent()) {
-        SmartDashboard.putString("PhotonVision Pose", visionEstimatedPose.get().getFirst().toPose2d().toString());
-        poseEstimator.addVisionMeasurement(visionEstimatedPose.get().getFirst().toPose2d(),
-            visionEstimatedPose.get().getSecond());
-      }
+      EstimatedRobotPose estimatedVisionPose = this.photonVision.getCurrentPose();
+      SmartDashboard.putString("PhotonVision Pose", estimatedVisionPose.estimatedPose.toString());
+      poseEstimator.addVisionMeasurement(estimatedVisionPose.estimatedPose,
+          estimatedVisionPose.timestampSeconds);
     } catch (NullPointerException npe) {
 
     }
