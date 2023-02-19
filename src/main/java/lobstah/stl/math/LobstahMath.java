@@ -22,29 +22,19 @@ public class LobstahMath {
    */
   public static double scaleNumberToRange(double x, double inputMin, double inputMax, double outputMin,
       double outputMax) {
-    if (inputMax < inputMin) {
-      double temp = inputMin;
-      inputMin = inputMax;
-      inputMax = temp;
-    }
+    double inputRange = inputMax - inputMin;
+    double outputRange = outputMax - outputMin;
 
-    if (outputMax < outputMin) {
-      double temp = outputMin;
-      outputMin = outputMax;
-      outputMax = temp;
-    }
-    double originalRange = inputMax - inputMin;
-    double scaledRange = outputMax - outputMin;
+    if (inputRange == 0)
+      throw new IllegalArgumentException("Input range cannot be 0");
 
-    if (originalRange == 0) {
-      System.err.println("Error: Cannot scale to a range of 0");
-      return x;
-    }
+    return ((x - inputMin) / inputRange * outputRange) + outputMin;
+  }
 
-    x = MathUtil.clamp(x, inputMin, inputMax);
-
-    double scaledValue = (((x - inputMin) * scaledRange) / originalRange) + outputMin;
-    return scaledValue;
+  public static double scaleNumberToClampedRange(double x, double inputMin, double inputMax, double outputMin,
+      double outputMax) {
+    x = MathUtil.clamp(x, inputMin, outputMax);
+    return scaleNumberToRange(x, inputMin, inputMax, outputMin, outputMax);
   }
 
   /**
