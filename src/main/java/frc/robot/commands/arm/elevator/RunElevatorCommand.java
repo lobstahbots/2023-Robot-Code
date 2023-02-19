@@ -40,8 +40,8 @@ public class RunElevatorCommand extends CommandBase {
 
   @Override
   public void execute() {
-    if ((elevator.getExtension() > ElevatorConstants.kMaxExtension && speed.getAsDouble() < 0)
-        || (elevator.getExtension() < ElevatorConstants.kMinExtension && speed.getAsDouble() > 0)) {
+    if ((elevator.getExtension() > ElevatorConstants.MAX_EXTENSION_INCHES && speed.getAsDouble() < 0)
+        || (elevator.getExtension() < ElevatorConstants.MIN_EXTENSION_INCHES && speed.getAsDouble() > 0)) {
       elevator.move(0.0);
     } else {
       elevator.move(speed.getAsDouble());

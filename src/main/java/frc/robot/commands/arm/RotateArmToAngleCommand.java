@@ -21,7 +21,8 @@ public class RotateArmToAngleCommand extends CommandBase {
    */
   public RotateArmToAngleCommand(Arm arm, double angleDegrees) {
     this.arm = arm;
-    this.targetAngleDegrees = MathUtil.clamp(angleDegrees, ArmConstants.kMinRotationDeg, ArmConstants.kMaxRotationDeg);;
+    this.targetAngleDegrees =
+        MathUtil.clamp(angleDegrees, ArmConstants.MIN_ROTATION_DEG, ArmConstants.MAX_ROTATION_DEG);;
     addRequirements(this.arm);
   }
 

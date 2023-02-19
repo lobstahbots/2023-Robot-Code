@@ -14,7 +14,6 @@ import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import frc.robot.Constants.ArmConstants;
 import frc.robot.Constants.ArmPositionConstants;
-import frc.robot.Constants.DriveConstants;
 import frc.robot.Constants.DriveConstants.DriveMotorCANIDs;
 import frc.robot.Constants.ElevatorConstants;
 import frc.robot.Constants.FieldConstants;
@@ -99,8 +98,8 @@ public class RobotContainer {
                 () -> Math.abs(operatorJoystick
                     .getRawAxis(OperatorConstants.ARM_AXIS)) > OperatorConstants.JOYSTICK_DEADBAND)));
     slowdownButton.whileTrue(new TankDriveCommand(driveBase,
-        () -> DriveConstants.SLOWDOWN_PERCENT * driverJoystick.getRawAxis(DriverConstants.LEFT_AXIS),
-        () -> DriveConstants.SLOWDOWN_PERCENT * driverJoystick.getRawAxis(DriverConstants.RIGHT_AXIS),
+        () -> DriverConstants.SLOWDOWN_PERCENT * driverJoystick.getRawAxis(DriverConstants.LEFT_AXIS),
+        () -> DriverConstants.SLOWDOWN_PERCENT * driverJoystick.getRawAxis(DriverConstants.RIGHT_AXIS),
         DriverConstants.SQUARED_INPUTS));
 
     highGoalButton.whileTrue(new MoveArmToPositionCommand(arm, elevator, ArmPositionConstants.HIGH_GOAL_SCORING));
@@ -154,10 +153,6 @@ public class RobotContainer {
     SmartDashboard.putData("Crossing Position Chooser", crossingPosition);
     SmartDashboard.putData("Ending Position Chooser", endingPosition);
     SmartDashboard.putData("Teleop Target", targetPosition);
-    // SmartDashboard.putData("Command Scheduler", CommandScheduler.getInstance());
-    // SmartDashboard.putData("Rotate To 50 Command",
-    // new RotateArmToAngleCommand(arm, 50));
-    // SmartDashboard.putData("Extend To 20 Command", new RunElevatorToLengthCommand(elevator, 20));
   }
 
   /**
@@ -193,10 +188,9 @@ public class RobotContainer {
     elevator
         .setDefaultCommand(new RetractElevatorCommand(elevator));
 
-    // arm.setDefaultCommand(new MaintainArmAngleCommand(arm));
     arm.setDefaultCommand(
         new PeriodicConditionalCommand(new MaintainArmAngleCommand(arm), new RotateArmToAngleCommand(arm, 0),
-            () -> elevator.getExtension() > ElevatorConstants.CAN_ROTATE));
+            () -> elevator.getExtension() > ElevatorConstants.LENGTH_RETRACTED_BEFORE_ROTATING));
     intake.setDefaultCommand(new SpinIntakeCommand(intake, IntakeConstants.PASSIVE_INTAKE_VOLTAGE));
   }
 

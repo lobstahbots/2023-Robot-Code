@@ -26,7 +26,7 @@ public class Elevator extends SubsystemBase {
     elevatorMotor.setIdleMode(IdleMode.kBrake);
     elevatorMotor.setSmartCurrentLimit(ElevatorConstants.CURRENT_LIMIT);
     this.encoder = new Encoder(encoderChannelA, encoderChannelB, true, Encoder.EncodingType.k1X);
-    encoder.setDistancePerPulse(ElevatorConstants.kDistancePerPulse);
+    encoder.setDistancePerPulse(ElevatorConstants.DISTANCE_PER_PULSE);
     this.limitSwitch = new DigitalInput(limitSwitchChannel);
   }
 
@@ -43,8 +43,8 @@ public class Elevator extends SubsystemBase {
   }
 
   public void move(double speed) {
-    if (getExtension() > ElevatorConstants.kMaxExtension && speed < 0
-        || getExtension() < ElevatorConstants.kMinExtension && speed > 0) {
+    if (getExtension() > ElevatorConstants.MAX_EXTENSION_INCHES && speed < 0
+        || getExtension() < ElevatorConstants.MIN_EXTENSION_INCHES && speed > 0) {
       elevatorMotor.set(0.0);
       return;
     }

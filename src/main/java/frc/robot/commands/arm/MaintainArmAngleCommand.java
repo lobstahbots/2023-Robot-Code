@@ -20,7 +20,7 @@ public class MaintainArmAngleCommand extends CommandBase {
   @Override
   public void initialize() {
     double targetAngleDegrees =
-        MathUtil.clamp(arm.getAngle(), ArmConstants.kMinRotationDeg, ArmConstants.kMaxRotationDeg);
+        MathUtil.clamp(arm.getAngle(), ArmConstants.MIN_ROTATION_DEG, ArmConstants.MAX_ROTATION_DEG);
     arm.setPIDGoal(targetAngleDegrees);
   }
 

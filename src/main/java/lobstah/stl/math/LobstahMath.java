@@ -54,9 +54,9 @@ public class LobstahMath {
    */
   public static int distanceToNativeUnits(double positionMeters) {
     double wheelRotations =
-        positionMeters / (2 * Math.PI * Units.inchesToMeters(Constants.RobotConstants.kWheelRadiusInches));
-    double motorRotations = wheelRotations * Constants.RobotConstants.kSensorGearRatio;
-    int sensorCounts = (int) (motorRotations * Constants.RobotConstants.kCountsPerRev);
+        positionMeters / (2 * Math.PI * Units.inchesToMeters(Constants.RobotConstants.WHEEL_RADIUS_INCHES));
+    double motorRotations = wheelRotations * Constants.RobotConstants.SENSOR_GEAR_RATIO;
+    int sensorCounts = (int) (motorRotations * Constants.RobotConstants.COUNTS_PER_REV);
     return sensorCounts;
   }
 
@@ -66,11 +66,11 @@ public class LobstahMath {
    * @param nativeVelocity The native velocity to convert to meters per second.
    */
   public static double nativeUnitsToVelocityMetersPerSecond(double nativeVelocity) {
-    double motorRotationsPer100ms = nativeVelocity / Constants.RobotConstants.kCountsPerRev;
-    double motorRotationsPerSecond = motorRotationsPer100ms * Constants.RobotConstants.k100msPerSecond;
-    double wheelRotationsPerSecond = motorRotationsPerSecond / Constants.RobotConstants.kSensorGearRatio;
+    double motorRotationsPer100ms = nativeVelocity / Constants.RobotConstants.COUNTS_PER_REV;
+    double motorRotationsPerSecond = motorRotationsPer100ms * 10;
+    double wheelRotationsPerSecond = motorRotationsPerSecond / Constants.RobotConstants.SENSOR_GEAR_RATIO;
     double velocityMetersPerSecond =
-        wheelRotationsPerSecond * (2 * Math.PI * Units.inchesToMeters(Constants.RobotConstants.kWheelRadiusInches));
+        wheelRotationsPerSecond * (2 * Math.PI * Units.inchesToMeters(Constants.RobotConstants.WHEEL_RADIUS_INCHES));
     return velocityMetersPerSecond;
   }
 
@@ -80,10 +80,10 @@ public class LobstahMath {
    * @param positionMeters The number of sensor counts to convert to meters.
    */
   public static double nativeUnitsToDistanceMeters(double sensorCounts) {
-    double motorRotations = (double) sensorCounts / Constants.RobotConstants.kCountsPerRev;
-    double wheelRotations = motorRotations / Constants.RobotConstants.kSensorGearRatio;
+    double motorRotations = (double) sensorCounts / Constants.RobotConstants.COUNTS_PER_REV;
+    double wheelRotations = motorRotations / Constants.RobotConstants.SENSOR_GEAR_RATIO;
     double positionMeters =
-        wheelRotations * (2 * Math.PI * Units.inchesToMeters(Constants.RobotConstants.kWheelRadiusInches));
+        wheelRotations * (2 * Math.PI * Units.inchesToMeters(Constants.RobotConstants.WHEEL_RADIUS_INCHES));
     return positionMeters;
   }
 

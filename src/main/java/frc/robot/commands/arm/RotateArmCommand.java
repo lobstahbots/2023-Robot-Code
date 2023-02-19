@@ -38,8 +38,8 @@ public class RotateArmCommand extends CommandBase {
 
   @Override
   public void execute() {
-    if ((arm.getAngle() > ArmConstants.kMaxRotationDeg && speed.getAsDouble() < 0)
-        || (arm.getAngle() < ArmConstants.kMinRotationDeg && speed.getAsDouble() > 0)) {
+    if ((arm.getAngle() > ArmConstants.MAX_ROTATION_DEG && speed.getAsDouble() < 0)
+        || (arm.getAngle() < ArmConstants.MIN_ROTATION_DEG && speed.getAsDouble() > 0)) {
       arm.setRotationSpeed(0.0);
     } else {
       arm.setRotationSpeed(speed.getAsDouble());

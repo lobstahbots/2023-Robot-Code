@@ -21,7 +21,8 @@ public class RunElevatorToLengthCommand extends CommandBase {
    */
   public RunElevatorToLengthCommand(Elevator elevator, double position) {
     this.elevator = elevator;
-    this.position = MathUtil.clamp(position, ElevatorConstants.kMinExtension, ElevatorConstants.kMaxExtension);
+    this.position =
+        MathUtil.clamp(position, ElevatorConstants.MIN_EXTENSION_INCHES, ElevatorConstants.MAX_EXTENSION_INCHES);
     addRequirements(this.elevator);
   }
 

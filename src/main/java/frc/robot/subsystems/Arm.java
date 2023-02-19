@@ -30,8 +30,8 @@ public class Arm extends SubsystemBase {
           ArmConstants.kSVolts, ArmConstants.kGVolts,
           ArmConstants.kVVoltSecondPerRad, ArmConstants.kAVoltSecondSquaredPerRad);
   private final Constraints constraints = new TrapezoidProfile.Constraints(
-      ArmConstants.kMaxVelocityDegPerSecond,
-      ArmConstants.kMaxAccelerationDegPerSecSquared);
+      ArmConstants.MAX_VELOCITY_DEG_PER_SEC,
+      ArmConstants.MAX_ACCELERATION_DEG_PER_SEC_SQUARED);
   private final ProfiledPIDController pidController = new ProfiledPIDController(ArmConstants.kP, 0, 0, constraints);
 
   public Arm(int leftMotorID, int rightMotorID, int encoderChannel) {
@@ -50,12 +50,12 @@ public class Arm extends SubsystemBase {
   }
 
   public double getAngle() {
-    return ArmConstants.kArmOffsetDeg - armEncoder.getAbsolutePosition() * 360;
+    return ArmConstants.ARM_OFFSET_DEG - armEncoder.getAbsolutePosition() * 360;
   }
 
   public void setRotationSpeed(double speed) {
-    if (getAngle() < ArmConstants.kMinRotationDeg && motors.get() < 0
-        || getAngle() > ArmConstants.kMaxRotationDeg && motors.get() > 0) {
+    if (getAngle() < ArmConstants.MIN_ROTATION_DEG && motors.get() < 0
+        || getAngle() > ArmConstants.MAX_ROTATION_DEG && motors.get() > 0) {
       motors.set(0);
       return;
     }
@@ -74,11 +74,6 @@ public class Arm extends SubsystemBase {
 
   public void feedPID() {
     setRotationSpeed(-pidController.calculate(getAngle()));
-  }
-
-  public void feedForwardPID(TrapezoidProfile.State setpoint) {
-    leftArmMotor.setVoltage(-pidController.calculate(getAngle()) + feedforward
-        .calculate(Units.degreesToRadians(setpoint.position - ArmConstants.STRAIGHT_ARM_OFFSET), setpoint.velocity));
   }
 
   @Override
