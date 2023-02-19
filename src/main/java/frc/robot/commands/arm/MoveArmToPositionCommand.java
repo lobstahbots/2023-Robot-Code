@@ -4,14 +4,10 @@
 
 package frc.robot.commands.arm;
 
-import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
-import frc.robot.ArmSystemCoordinates;
 import frc.robot.Constants.ArmConstants;
-import frc.robot.Constants.ArmPositionConstants;
 import frc.robot.Constants.ElevatorConstants;
 import frc.robot.Constants.IntakeConstants;
 import frc.robot.commands.arm.elevator.ResetElevatorCommand;
@@ -34,9 +30,6 @@ public class MoveArmToPositionCommand extends SequentialCommandGroup {
 
     double targetRotation = finalPosition.getAngle().plus(ArmConstants.ZERO_ARM_OFFSET).getDegrees();
     double targetExtension = finalPosition.getNorm() - ElevatorConstants.LENGTH_FULLY_RETRACTED;
-
-    // SmartDashboard.putString("Target Arm Position", finalPosition.toString());
-    // SmartDashboard.putNumber("Desired offset with Angle", targetRotation);
 
     addCommands(new ResetElevatorCommand(elevator)
         .unless(() -> Math.abs(arm.getAngle() - targetRotation) < ArmConstants.RETRACT_BEFORE_MOVING_DEADBAND),

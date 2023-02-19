@@ -28,7 +28,6 @@ public class Elevator extends SubsystemBase {
     this.encoder = new Encoder(encoderChannelA, encoderChannelB, true, Encoder.EncodingType.k1X);
     encoder.setDistancePerPulse(ElevatorConstants.kDistancePerPulse);
     this.limitSwitch = new DigitalInput(limitSwitchChannel);
-    // SmartDashboard.putData("Elevator PID", this.pidController);
   }
 
   public void setPIDGoal(double goalExtension) {
@@ -44,18 +43,15 @@ public class Elevator extends SubsystemBase {
   }
 
   public void move(double speed) {
-    if (getExtension() > ElevatorConstants.kMaxExtension && speed < 0) {
-      elevatorMotor.set(0.0);
-      return;
-    }
-    if (getExtension() < ElevatorConstants.kMinExtension && speed > 0) {
+    if (getExtension() > ElevatorConstants.kMaxExtension && speed < 0
+        || getExtension() < ElevatorConstants.kMinExtension && speed > 0) {
       elevatorMotor.set(0.0);
       return;
     }
     elevatorMotor.set(speed);
   }
 
-  public void moveToSwitch() {
+  public void moveToLimitSwitch() {
     if (!isRetracted()) {
       elevatorMotor.set(ElevatorConstants.RETRACT_SPEED);
     }
@@ -71,7 +67,7 @@ public class Elevator extends SubsystemBase {
 
   @Override
   public void periodic() {
-    // SmartDashboard.putNumber("Elevator Extension", this.getExtension());
+    SmartDashboard.putNumber("Elevator Extension", this.getExtension());
   }
 
   public void resetEncoder() {

@@ -48,7 +48,6 @@ public class Arm extends SubsystemBase {
     motors = new MotorControllerGroup(leftArmMotor, rightArmMotor);
     armEncoder.setDistancePerRotation(ArmConstants.ARM_DEGREES_PER_ROTATION);
     pidController.setTolerance(ArmConstants.ROTATION_ERROR_DEADBAND);
-    // SmartDashboard.putData("Arm PID", this.pidController);
   }
 
   public double getAngle() {
@@ -56,6 +55,11 @@ public class Arm extends SubsystemBase {
   }
 
   public void setRotationSpeed(double speed) {
+    if (getAngle() < ArmConstants.kMinRotationDeg && motors.get() < 0
+        || getAngle() > ArmConstants.kMaxRotationDeg && motors.get() > 0) {
+      motors.set(0);
+      return;
+    }
     motors.set(speed);
   }
 
@@ -82,10 +86,5 @@ public class Arm extends SubsystemBase {
   @Override
   public void periodic() {
     SmartDashboard.putNumber("Arm Rotation", getAngle());
-    if (getAngle() < ArmConstants.kMinRotationDeg && motors.get() < 0)
-      motors.set(0);
-    if (getAngle() > ArmConstants.kMaxRotationDeg && motors.get() > 0)
-      motors.set(0);
   }
-
 }

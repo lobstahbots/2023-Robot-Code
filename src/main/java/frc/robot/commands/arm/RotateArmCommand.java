@@ -5,8 +5,6 @@
 package frc.robot.commands.arm;
 
 import java.util.function.DoubleSupplier;
-
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.Constants.ArmConstants;
 import frc.robot.subsystems.Arm;
@@ -43,10 +41,8 @@ public class RotateArmCommand extends CommandBase {
     if ((arm.getAngle() > ArmConstants.kMaxRotationDeg && speed.getAsDouble() < 0)
         || (arm.getAngle() < ArmConstants.kMinRotationDeg && speed.getAsDouble() > 0)) {
       arm.setRotationSpeed(0.0);
-      // SmartDashboard.putBoolean("Arm Within Limit", false);
     } else {
       arm.setRotationSpeed(speed.getAsDouble());
-      // SmartDashboard.putBoolean("Arm Within Limit", true);
     }
   }
 
@@ -57,8 +53,6 @@ public class RotateArmCommand extends CommandBase {
 
   @Override
   public boolean isFinished() {
-    // return arm.getMeasurement() >= ArmConstants.kMaxRotationRads + ArmConstants.kMaxRotationDeg
-    // || arm.getMeasurement() <= ArmConstants.kMinRotationRads + kMinRotationDeg;
     return false;
   }
 }

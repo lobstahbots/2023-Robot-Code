@@ -28,18 +28,14 @@ public class ResetElevatorCommand extends CommandBase {
 
   @Override
   public void execute() {
-    if (this.needsToExtend) {
-      if (elevator.isRetracted()) {
+
+    if (elevator.isRetracted()) {
+      if (this.needsToExtend) {
         elevator.move(-ElevatorConstants.RETRACT_SPEED);
-      } else {
-        this.needsToExtend = false;
       }
     } else {
-      if (!elevator.isRetracted()) {
-        elevator.moveToSwitch();
-      } else {
-        elevator.move(0);
-      }
+      this.needsToExtend = false;
+      elevator.moveToLimitSwitch();
     }
   }
 
@@ -51,5 +47,6 @@ public class ResetElevatorCommand extends CommandBase {
   @Override
   public void end(boolean interrupted) {
     elevator.resetEncoder();
+    elevator.move(0);
   }
 }

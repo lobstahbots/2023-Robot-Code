@@ -6,19 +6,16 @@ package frc.robot;
 
 import com.pathplanner.lib.server.PathPlannerServer;
 import edu.wpi.first.math.geometry.Pose2d;
-import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.CommandScheduler;
-import edu.wpi.first.wpilibj2.command.ConditionalCommand;
 import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
-import frc.robot.Constants.DriveConstants.DriveMotorCANIDs;
 import frc.robot.Constants.ArmConstants;
 import frc.robot.Constants.ArmPositionConstants;
 import frc.robot.Constants.DriveConstants;
+import frc.robot.Constants.DriveConstants.DriveMotorCANIDs;
 import frc.robot.Constants.ElevatorConstants;
 import frc.robot.Constants.FieldConstants;
 import frc.robot.Constants.IntakeConstants;
@@ -27,22 +24,20 @@ import frc.robot.Constants.UIConstants.OperatorConstants;
 import frc.robot.auton.AutonGenerator;
 import frc.robot.commands.PeriodicConditionalCommand;
 import frc.robot.commands.arm.MaintainArmAngleCommand;
+import frc.robot.commands.arm.MoveArmToPositionCommand;
 import frc.robot.commands.arm.RotateArmCommand;
 import frc.robot.commands.arm.RotateArmToAngleCommand;
-import frc.robot.commands.arm.MoveArmToPositionCommand;
 import frc.robot.commands.arm.elevator.ResetElevatorCommand;
 import frc.robot.commands.arm.elevator.RetractElevatorCommand;
 import frc.robot.commands.arm.elevator.RunElevatorCommand;
-import frc.robot.commands.arm.elevator.RunElevatorToLengthCommand;
 import frc.robot.commands.drive.StopDriveCommand;
 import frc.robot.commands.drive.TankDriveCommand;
 import frc.robot.commands.intake.SpinIntakeCommand;
-import frc.robot.commands.intake.StopSpinIntakeCommand;
 import frc.robot.subsystems.Arm;
 import frc.robot.subsystems.DriveBase;
-import lobstah.stl.io.LobstahGamepad;
 import frc.robot.subsystems.Elevator;
 import frc.robot.subsystems.Intake;
+import lobstah.stl.io.LobstahGamepad;
 
 /**
  * This class is where the bulk of the robot should be declared. Since Command-based is a "declarative" paradigm, very

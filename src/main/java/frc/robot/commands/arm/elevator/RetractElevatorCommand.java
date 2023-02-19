@@ -39,7 +39,7 @@ public class RetractElevatorCommand extends CommandBase {
       }
     } else {
       if (!elevator.isRetracted()) {
-        elevator.moveToSwitch();
+        elevator.moveToLimitSwitch();
       } else {
         elevator.move(0);
       }
