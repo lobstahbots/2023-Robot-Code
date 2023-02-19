@@ -21,14 +21,13 @@ import frc.robot.Constants.IntakeConstants;
 import frc.robot.Constants.UIConstants.DriverConstants;
 import frc.robot.Constants.UIConstants.OperatorConstants;
 import frc.robot.auton.AutonGenerator;
-import frc.robot.commands.PeriodicConditionalCommand;
 import frc.robot.commands.arm.MaintainArmAngleCommand;
 import frc.robot.commands.arm.MoveArmToPositionCommand;
 import frc.robot.commands.arm.RotateArmCommand;
 import frc.robot.commands.arm.RotateArmToAngleCommand;
 import frc.robot.commands.arm.elevator.ResetElevatorCommand;
-import frc.robot.commands.arm.elevator.RetractElevatorCommand;
 import frc.robot.commands.arm.elevator.RunElevatorCommand;
+import frc.robot.commands.arm.elevator.RunElevatorToLengthCommand;
 import frc.robot.commands.drive.StopDriveCommand;
 import frc.robot.commands.drive.TankDriveCommand;
 import frc.robot.commands.intake.SpinIntakeCommand;
@@ -36,6 +35,7 @@ import frc.robot.subsystems.Arm;
 import frc.robot.subsystems.DriveBase;
 import frc.robot.subsystems.Elevator;
 import frc.robot.subsystems.Intake;
+import lobstah.stl.command.PeriodicConditionalCommand;
 import lobstah.stl.io.LobstahGamepad;
 
 /**
@@ -186,7 +186,7 @@ public class RobotContainer {
             () -> -driverJoystick.getRawAxis(DriverConstants.RIGHT_AXIS),
             DriverConstants.SQUARED_INPUTS));
     elevator
-        .setDefaultCommand(new RetractElevatorCommand(elevator));
+        .setDefaultCommand(new RunElevatorToLengthCommand(elevator, 0));
 
     arm.setDefaultCommand(
         new PeriodicConditionalCommand(new MaintainArmAngleCommand(arm), new RotateArmToAngleCommand(arm, 0),
