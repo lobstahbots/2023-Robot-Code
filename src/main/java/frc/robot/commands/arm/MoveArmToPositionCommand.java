@@ -7,9 +7,9 @@ package frc.robot.commands.arm;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
+import frc.robot.ArmSystemCoordinates;
 import frc.robot.Constants.ArmConstants;
 import frc.robot.Constants.ElevatorConstants;
-import frc.robot.Constants.IntakeConstants;
 import frc.robot.commands.arm.elevator.ResetElevatorCommand;
 import frc.robot.commands.arm.elevator.RunElevatorToLengthCommand;
 import frc.robot.subsystems.Arm;
@@ -24,24 +24,21 @@ public class MoveArmToPositionCommand extends SequentialCommandGroup {
    * @param position The position to rotate the arm to
    */
   public MoveArmToPositionCommand(Arm arm, Elevator elevator, Translation2d finalPosition) {
-    // gets the desired position in arm coordinates, arm (0,0) is at the pivot
-    finalPosition = finalPosition.minus(new Translation2d(ArmConstants.PIVOT_SETBACK,
-        ArmConstants.PIVOT_HEIGHT_FROM_GROUND - IntakeConstants.INTAKE_HEIGHT));
+    Translation2d polarPosition = ArmSystemCoordinates.getPolarPosition(finalPosition);
 
-    double targetRotation = finalPosition.getAngle().plus(ArmConstants.ZERO_ARM_OFFSET).getDegrees();
-    double targetExtension = finalPosition.getNorm() - ElevatorConstants.LENGTH_FULLY_RETRACTED;
+    double targetRotation = polarPosition.getAngle().getDegrees();
+    double targetExtension = polarPosition.getNorm() - ElevatorConstants.LENGTH_FULLY_RETRACTED;
 
     addCommands(new ResetElevatorCommand(elevator)
-        .unless(() -> Math.abs(arm.getAngle() - targetRotation) < ArmConstants.RETRACT_BEFORE_MOVING_DEADBAND),
+        .unless(() -> Math.abs(arm.getRotation() - targetRotation) < ArmConstants.RETRACT_BEFORE_MOVING_DEADBAND),
         new RotateArmToAngleCommand(arm, targetRotation)
-            .until(() -> Math.abs(targetRotation - arm.getAngle()) < ArmConstants.SEQUENTIAL_ROTATION_ERROR_DEADBAND),
-        // angle of the translation from the pivot to the target point is the angle the arm needs to rotate
-        // however, the angle must be offset because the arm's 0-degree rotation is not actually vertical.
+            .until(
+                () -> Math.abs(targetRotation - arm.getRotation()) < ArmConstants.SEQUENTIAL_ROTATION_ERROR_DEADBAND),
+
         new ParallelCommandGroup(
             new RotateArmToAngleCommand(arm, targetRotation),
             new RunElevatorToLengthCommand(elevator, targetExtension)));
-    // length of the translation from the pivot to the target point is the total length the elevator needs to span;
-    // need to subtract the fully retracted length of the elevator to calculate how much it needs to extend.);
+
     addRequirements(arm, elevator);
   }
 }

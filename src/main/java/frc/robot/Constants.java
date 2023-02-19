@@ -144,6 +144,7 @@ public final class Constants {
     public static final double PIVOT_SETBACK = -27.521;
     public static final double ARM_OFFSET_DEG = 285;
     public static final Rotation2d ZERO_ARM_OFFSET = new Rotation2d(Units.degreesToRadians(60));
+    public static final Rotation2d ANGLE_AT_ARM_ZERO = new Rotation2d(Units.degreesToRadians(22));
     public static final double ARM_DEGREES_PER_ROTATION = 360;
 
     public static final double MAX_VELOCITY_DEG_PER_SEC = 300;
