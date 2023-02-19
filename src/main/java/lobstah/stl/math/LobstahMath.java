@@ -37,7 +37,7 @@ public class LobstahMath {
     double scaledRange = outputMax - outputMin;
 
     if (originalRange == 0) {
-      System.out.println("Error: Cannot scale to a range of 0");
+      System.err.println("Error: Cannot scale to a range of 0");
       return x;
     }
 

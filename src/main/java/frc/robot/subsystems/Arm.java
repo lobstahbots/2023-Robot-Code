@@ -63,7 +63,6 @@ public class Arm extends SubsystemBase {
   }
 
   public void setPIDGoal(double goalAngle) {
-    System.out.println(goalAngle);
     pidController.setGoal(goalAngle);
     pidController.reset(getAngle());
 

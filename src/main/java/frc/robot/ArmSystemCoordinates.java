@@ -28,7 +28,6 @@ public class ArmSystemCoordinates {
     Rotation2d armAngle = new Rotation2d(Math.toRadians(22 + arm.getAngle()));
     Translation2d armPosition =
         new Translation2d(elevator.getLength(), armAngle);
-    // System.out.println("Angle" + armAngle.getDegrees());
     double xComponent = Math.abs(armPosition.getY()) + ArmConstants.PIVOT_SETBACK;
     double yComponent = ArmConstants.PIVOT_HEIGHT_FROM_GROUND - IntakeConstants.INTAKE_HEIGHT;
     if (armAngle.getDegrees() > 90) {
