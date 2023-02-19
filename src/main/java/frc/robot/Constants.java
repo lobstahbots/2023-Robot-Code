@@ -132,89 +132,103 @@ public final class Constants {
   }
 
   /**
-   * Stores constants related to the arm.
+   * Stores constants related the scoring system (arm, elevator, and intake).
    */
-  public static final class ArmConstants {
-    public static final int ENCODER_CHANNEL = 3;
-    public static final int LEFT_MOTOR_ID = 21; // TODO: figure out which is left and which is right
-    public static final int RIGHT_MOTOR_ID = 22;
-    public static final int CURRENT_LIMIT = 40;
+  public static final class ScoringSystemConstants {
+    public static final Translation2d ROBOT_TO_SCORING_ORIGIN = new Translation2d(0, 0); // TODO
+    public static final double RETRACT_BEFORE_ROTATING_ANGLE = 5;
+    public static final double RETRACTED_LENGTH_BEFORE_ROTATING = 0.5;
 
-    public static final double PIVOT_HEIGHT_FROM_GROUND = 51.428;
-    public static final double PIVOT_SETBACK = -27.521;
-    public static final double ARM_OFFSET_DEG = 285;
-    public static final Rotation2d ZERO_ARM_OFFSET = new Rotation2d(Units.degreesToRadians(60));
-    public static final Rotation2d ANGLE_AT_ARM_ZERO = new Rotation2d(Units.degreesToRadians(22));
-    public static final double ARM_DEGREES_PER_ROTATION = 360;
+    /**
+     * Stores constants related to the arm.
+     */
+    public static final class ArmConstants {
+      // Geometry
+      public static final Translation2d ORIGIN_TO_PIVOT = new Translation2d(-27.521, 51.428);
+      public static final double ARM_OFFSET_DEG = 285;
 
-    public static final double MAX_VELOCITY_DEG_PER_SEC = 300;
-    public static final double MAX_ACCELERATION_DEG_PER_SEC_SQUARED = 1000;
-    public static final double MAX_ROTATION_DEG = 75;
-    public static final double MIN_ROTATION_DEG = 0;
+      // IO
+      public static final int ENCODER_CHANNEL = 3;
+      public static final double ARM_DEGREES_PER_ROTATION = 360;
+      public static final int LEFT_MOTOR_ID = 21; // TODO: figure out which is left and which is right
+      public static final int RIGHT_MOTOR_ID = 22;
 
-    public static final double ROTATION_ERROR_DEADBAND = 1;
-    public static final double SEQUENTIAL_ROTATION_ERROR_DEADBAND = 5;
-    public static final double RETRACT_BEFORE_MOVING_DEADBAND = 5;
+      // Limits
+      public static final int CURRENT_LIMIT = 40;
+      public static final double MAX_VELOCITY_DEG_PER_SEC = 300;
+      public static final double MAX_ACCELERATION_DEG_PER_SEC_SQUARED = 1000;
+      public static final double MAX_ROTATION_DEG = 75;
+      public static final double MIN_ROTATION_DEG = 0;
 
-    public static final double kP = 0.03;
-    public static final double kSVolts = 0;
-    public static final double kGVolts = 0;
-    public static final double kAVoltSecondSquaredPerRad = 0;
-    public static final double kVVoltSecondPerRad = 0;
+      // PID
+      public static final double P = 0.03;
+      public static final double S_VOLTS = 0;
+      public static final double G_VOLTS = 0;
+      public static final double A_VOLT_SECOND_SQUARED_PER_RAD = 0;
+      public static final double V_VOLT_SECOND_PER_RAD = 0;
+      public static final double ROTATION_PID_TOLERANCE = 1;
+    }
+
+    /**
+     * Stores constants related to the elevator.
+     */
+    public static final class ElevatorConstants {
+      public static final double LENGTH_FULLY_RETRACTED = 38;
+      public static final double HOME_SPEED = 0.18;
+
+      // IO
+      public static final int ENCODER_CHANNEL_A = 0;
+      public static final int ENCODER_CHANNEL_B = 1;
+      public static final double DISTANCE_PER_PULSE = 5.5 / 2048; // 5.5 inches for a 22 tooth-sprocket with 1/4" chain
+                                                                  // links
+      public static final int LIMIT_SWITCH_CHANNEL = 2;
+      public static final int ELEVATOR_MOTOR_ID = 31;
+
+      // Limits
+      public static final int CURRENT_LIMIT = 20;
+      public static final double MAX_EXTENSION_INCHES = 29;
+      public static final double MIN_EXTENSION_INCHES = -0.1;
+      public static final double MAX_VELOCITY_INCHES_PER_SEC = 10;
+      public static final double MAX_ACCELERATION_INCHES_PER_SEC_SQUARED = 5;
+
+      // PID
+      public static final double S = 0.32321;
+      public static final double V = 0.123766;
+      public static final double A = 0.0853;
+      public static final double G = -0.11681;
+      public static final double P = 0.16023;
+    }
+
+    /**
+     * Stores constants related to the intake.
+     */
+    public static final class IntakeConstants {
+      public static final Translation2d INTAKE_OFFSET = new Translation2d(4.281, 6.37);
+
+      // IO
+      public static final int LEFT_MOTOR_ID = 0;
+      public static final int RIGHT_MOTOR_ID = 1;
+
+      // Speeds
+      public static final double OUTTAKE_VOLTAGE = 2.4;
+      public static final double INTAKE_VOLTAGE = -5;
+      public static final double PASSIVE_INTAKE_VOLTAGE = -1.6;
+    }
   }
 
   /**
-   * Stores positions for the arm.
+   * Stores positions for the scoring system.
    */
-  public static final class ArmPositionConstants {
+  public static final class ScoringPositionConstants {
+    public static final Translation2d STOWED = new Translation2d(0, 0); // TODO
     public static final Translation2d GROUND_PICKUP = new Translation2d(10, 5);
-    public static final Translation2d GROUND_SCORING = new Translation2d(15, 5);
+    public static final Translation2d LOW_GOAL_SCORING = new Translation2d(15, 5);
     public static final Translation2d MID_GOAL_SCORING = new Translation2d(22.75, 38);
     public static final Translation2d HIGH_GOAL_SCORING = new Translation2d(39.75, 50);
     public static final Translation2d CONE_SCORING_OFFSET = new Translation2d(0, -4);
     public static final Translation2d PLAYER_STATION_PICKUP = new Translation2d(10, 44.375);
-    public static final Translation2d OUTSIDE_BUMPERS = new Translation2d(0, 0);
   }
 
-  /**
-   * Stores constants related to the elevator.
-   */
-  public static final class ElevatorConstants {
-    public static final int ENCODER_CHANNEL_A = 0;
-    public static final int ENCODER_CHANNEL_B = 1;
-    public static final int LIMIT_SWITCH_CHANNEL = 2;
-    public static final int ELEVATOR_MOTOR_ID = 31;
-    public static final int CURRENT_LIMIT = 20;
-
-    public static final double LENGTH_FULLY_RETRACTED = 42.25;
-    public static final double LENGTH_RETRACTED_BEFORE_ROTATING = 0.5;
-    public static final double MAX_EXTENSION_INCHES = 29;
-    public static final double MIN_EXTENSION_INCHES = -0.1;
-    public static final double HOME_SPEED = 0.18;
-    public static final double MAX_VELOCITY_INCHES_PER_SEC = 10;
-    public static final double MAX_ACCELERATION_INCHES_PER_SEC_SQUARED = 5;
-    public static final double DISTANCE_PER_PULSE = 5.5 / 2048; // 5.5 inches for a 22 tooth-sprocket with 1/4" chain
-                                                                // links
-    public static final double kS = 0.32321;
-    public static final double kV = 0.123766;
-    public static final double kA = 0.0853;
-    public static final double kG = -0.11681;
-    public static final double kP = 0.16023;
-  }
-
-  /**
-   * Stores constants related to the intake.
-   */
-  public static final class IntakeConstants {
-    public static final int LEFT_MOTOR_ID = 0;
-    public static final int RIGHT_MOTOR_ID = 1;
-
-    public static final double INTAKE_HEIGHT = 6.37;
-
-    public static final double OUTTAKE_VOLTAGE = 2.4;
-    public static final double INTAKE_VOLTAGE = -5;
-    public static final double PASSIVE_INTAKE_VOLTAGE = -1.6;
-  }
 
   /**
    * Stores constants related to the DriveBase.
