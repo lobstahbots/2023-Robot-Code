@@ -31,7 +31,7 @@ public class ResetElevatorCommand extends CommandBase {
 
     if (elevator.isRetracted()) {
       if (this.needsToExtend) {
-        elevator.move(-ElevatorConstants.RETRACT_SPEED);
+        elevator.move(ElevatorConstants.HOME_SPEED);
       }
     } else {
       this.needsToExtend = false;

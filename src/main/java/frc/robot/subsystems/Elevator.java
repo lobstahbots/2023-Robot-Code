@@ -34,7 +34,6 @@ public class Elevator extends SubsystemBase {
    */
   public Elevator(int elevatorMotorID, int encoderChannelA, int encoderChannelB, int limitSwitchChannel) {
     this.elevatorMotor = new CANSparkMax(elevatorMotorID, MotorType.kBrushless);
-    elevatorMotor.setInverted(true);
     elevatorMotor.setIdleMode(IdleMode.kBrake);
     elevatorMotor.setSmartCurrentLimit(ElevatorConstants.CURRENT_LIMIT);
     this.encoder = new Encoder(encoderChannelA, encoderChannelB, true, Encoder.EncodingType.k1X);
@@ -48,8 +47,8 @@ public class Elevator extends SubsystemBase {
    * @param speed The desired extension/retraction speed.
    */
   public void move(double speed) {
-    if (getExtension() > ElevatorConstants.MAX_EXTENSION_INCHES && speed < 0
-        || getExtension() < ElevatorConstants.MIN_EXTENSION_INCHES && speed > 0) {
+    if (getExtension() > ElevatorConstants.MAX_EXTENSION_INCHES && speed > 0
+        || getExtension() < ElevatorConstants.MIN_EXTENSION_INCHES && speed < 0) {
       elevatorMotor.set(0.0);
       return;
     }
@@ -69,7 +68,7 @@ public class Elevator extends SubsystemBase {
    * Feeds the PID input to the motor.
    */
   public void feedPID() {
-    this.move(-pidController.calculate(this.getExtension()));
+    this.move(pidController.calculate(this.getExtension()));
   }
 
   /**
@@ -86,7 +85,7 @@ public class Elevator extends SubsystemBase {
    */
   public void moveToLimitSwitch() {
     if (!isRetracted()) {
-      elevatorMotor.set(ElevatorConstants.RETRACT_SPEED);
+      elevatorMotor.set(-ElevatorConstants.HOME_SPEED);
     }
   }
 

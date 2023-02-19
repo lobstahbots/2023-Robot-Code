@@ -33,7 +33,7 @@ public class RetractElevatorCommand extends CommandBase {
   public void execute() {
     if (this.needsToExtend) {
       if (elevator.isRetracted()) {
-        elevator.move(-ElevatorConstants.RETRACT_SPEED);
+        elevator.move(ElevatorConstants.HOME_SPEED);
       } else {
         this.needsToExtend = false;
       }

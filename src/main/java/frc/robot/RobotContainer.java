@@ -90,9 +90,9 @@ public class RobotContainer {
     outtakeButton.whileTrue(new SpinIntakeCommand(intake, IntakeConstants.OUTTAKE_VOLTAGE));
     manualControlButton
         .whileTrue(new ParallelCommandGroup(
-            new RunElevatorCommand(elevator, () -> operatorJoystick.getRawAxis(OperatorConstants.ELEVATOR_AXIS)),
+            new RunElevatorCommand(elevator, () -> -operatorJoystick.getRawAxis(OperatorConstants.ELEVATOR_AXIS)),
             new PeriodicConditionalCommand(
-                new RotateArmCommand(arm, () -> operatorJoystick.getRawAxis(OperatorConstants.ARM_AXIS)),
+                new RotateArmCommand(arm, () -> -operatorJoystick.getRawAxis(OperatorConstants.ARM_AXIS)),
                 new MaintainArmAngleCommand(arm),
                 () -> Math.abs(operatorJoystick
                     .getRawAxis(OperatorConstants.ARM_AXIS)) > OperatorConstants.JOYSTICK_DEADBAND)));

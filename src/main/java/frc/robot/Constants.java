@@ -190,7 +190,7 @@ public final class Constants {
     public static final double LENGTH_RETRACTED_BEFORE_ROTATING = 0.5;
     public static final double MAX_EXTENSION_INCHES = 29;
     public static final double MIN_EXTENSION_INCHES = -0.1;
-    public static final double RETRACT_SPEED = 0.18;
+    public static final double HOME_SPEED = 0.18;
     public static final double MAX_VELOCITY_INCHES_PER_SEC = 10;
     public static final double MAX_ACCELERATION_INCHES_PER_SEC_SQUARED = 5;
     public static final double DISTANCE_PER_PULSE = 5.5 / 2048; // 5.5 inches for a 22 tooth-sprocket with 1/4" chain

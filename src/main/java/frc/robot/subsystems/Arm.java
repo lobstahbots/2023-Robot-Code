@@ -25,8 +25,6 @@ import frc.robot.Constants.ArmConstants;
 public class Arm extends SubsystemBase {
 
   private final DutyCycleEncoder armEncoder;
-  private final CANSparkMax leftArmMotor;
-  private final CANSparkMax rightArmMotor;
   private final MotorControllerGroup motors;
   private final ArmFeedforward feedforward =
       new ArmFeedforward(
@@ -45,17 +43,19 @@ public class Arm extends SubsystemBase {
    * @param encoderChannel The encoder channel on the RIO
    */
   public Arm(int leftMotorID, int rightMotorID, int encoderChannel) {
-    this.leftArmMotor = new CANSparkMax(leftMotorID, MotorType.kBrushless);
-    this.rightArmMotor = new CANSparkMax(rightMotorID, MotorType.kBrushless);
-    this.armEncoder = new DutyCycleEncoder(new DigitalInput(encoderChannel));
+    CANSparkMax leftArmMotor = new CANSparkMax(leftMotorID, MotorType.kBrushless);
+    CANSparkMax rightArmMotor = new CANSparkMax(rightMotorID, MotorType.kBrushless);
     leftArmMotor.setIdleMode(IdleMode.kBrake);
     rightArmMotor.setIdleMode(IdleMode.kBrake);
-    leftArmMotor.setInverted(true);
-    rightArmMotor.setInverted(false);
+    leftArmMotor.setInverted(false);
+    rightArmMotor.setInverted(true);
     leftArmMotor.setSmartCurrentLimit(ArmConstants.CURRENT_LIMIT);
     rightArmMotor.setSmartCurrentLimit(ArmConstants.CURRENT_LIMIT);
     motors = new MotorControllerGroup(leftArmMotor, rightArmMotor);
+
+    this.armEncoder = new DutyCycleEncoder(new DigitalInput(encoderChannel));
     armEncoder.setDistancePerRotation(ArmConstants.ARM_DEGREES_PER_ROTATION);
+
     pidController.setTolerance(ArmConstants.ROTATION_ERROR_DEADBAND);
   }
 
@@ -90,7 +90,6 @@ public class Arm extends SubsystemBase {
   public void setPIDGoal(double goalAngle) {
     pidController.setGoal(goalAngle);
     pidController.reset(getRotation());
-
   }
 
   /**
@@ -106,7 +105,7 @@ public class Arm extends SubsystemBase {
    * Feeds the PID input to the motors.
    */
   public void feedPID() {
-    setRotationSpeed(-pidController.calculate(getRotation()));
+    setRotationSpeed(pidController.calculate(getRotation()));
   }
 
   @Override
