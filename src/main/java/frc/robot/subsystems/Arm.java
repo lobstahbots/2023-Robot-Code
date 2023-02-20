@@ -69,6 +69,15 @@ public class Arm extends SubsystemBase {
   }
 
   /**
+   * Gets PID setpoint of the arm. The arm's fully retracted position is 0 degrees. Note: This is not vertical.
+   * 
+   * @return The setpoint angle of the arm in degrees.
+   */
+  public double getSetpoint() {
+    return pidController.getSetpoint().position;
+  }
+
+  /**
    * Sets rotation speed of the arm motors. Includes stop to keep arm from rotating beyond limits.
    * 
    * @param speed The desired rotation speed

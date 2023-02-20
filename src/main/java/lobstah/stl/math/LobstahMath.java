@@ -31,6 +31,15 @@ public class LobstahMath {
     return ((x - inputMin) / inputRange * outputRange) + outputMin;
   }
 
+  /**
+   * Clamps and scales a number to a range of values to a corresponding value on a different range
+   * 
+   * @param x The number to scale.
+   * @param inputMin The original range's lower bound
+   * @param inputMax The original range's upper bound
+   * @param outputMin The new range's lower bound
+   * @param outputMax The new range's upper bound
+   */
   public static double scaleNumberToClampedRange(double x, double inputMin, double inputMax, double outputMin,
       double outputMax) {
     x = MathUtil.clamp(x, inputMin, outputMax);

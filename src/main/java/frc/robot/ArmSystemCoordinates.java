@@ -8,6 +8,8 @@ import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import frc.robot.Constants.ArmConstants;
 import frc.robot.Constants.IntakeConstants;
+import frc.robot.subsystems.Arm;
+import frc.robot.subsystems.Elevator;
 
 /** A class containing methods to convert between arm coordinates and Cartesian systems. */
 public class ArmSystemCoordinates {
@@ -66,5 +68,45 @@ public class ArmSystemCoordinates {
     // however, the angle must be offset because the arm's 0-degree rotation is not actually vertical.
 
     return new Translation2d(cartesianPosition.getNorm(), offsetRotation);
+  }
+
+  /**
+   * Returns the current setpoint of the arm and elevator in arm polar coordinates
+   * 
+   * @param arm The rotating arm subsystem
+   * @param elevator The extending elevator subsystem
+   */
+  public static Translation2d getSetpointPositionPolar(Arm arm, Elevator elevator) {
+    return new Translation2d(elevator.getSetpointExtension(), new Rotation2d(Math.toRadians(arm.getSetpoint())));
+  }
+
+  /**
+   * Returns the current setpoint of the arm and elevator in Cartesian coordinates
+   * 
+   * @param arm The rotating arm subsystem
+   * @param elevator The extending elevator subsystem
+   */
+  public static Translation2d getSetpointPositionCartesian(Arm arm, Elevator elevator) {
+    return getCartesianPosition(getSetpointPositionPolar(arm, elevator));
+  }
+
+  /**
+   * Returns the current position of the arm and elevator in arm polar coordinates
+   * 
+   * @param arm The rotating arm subsystem
+   * @param elevator The extending elevator subsystem
+   */
+  public static Translation2d getCurrentPositionPolar(Arm arm, Elevator elevator) {
+    return new Translation2d(elevator.getExtension(), new Rotation2d(Math.toRadians(arm.getRotation())));
+  }
+
+  /**
+   * Returns the current position of the arm and elevator in Cartesian coordinates
+   * 
+   * @param arm The rotating arm subsystem
+   * @param elevator The extending elevator subsystem
+   */
+  public static Translation2d getCurrentPositionCartesian(Arm arm, Elevator elevator) {
+    return getCartesianPosition(getCurrentPositionPolar(arm, elevator));
   }
 }

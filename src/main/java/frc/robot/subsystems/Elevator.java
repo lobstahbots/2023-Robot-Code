@@ -97,6 +97,15 @@ public class Elevator extends SubsystemBase {
   }
 
   /**
+   * Gets the setpoint extension of the elevator.
+   * 
+   * @return The PID controller goal extension of the elevator in inches
+   */
+  public double getSetpointExtension() {
+    return pidController.getSetpoint();
+  }
+
+  /**
    * Gets the current extension of the elevator
    * 
    * @return The extension of the elevator in inches

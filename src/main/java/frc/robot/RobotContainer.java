@@ -6,6 +6,8 @@ package frc.robot;
 
 import com.pathplanner.lib.server.PathPlannerServer;
 import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Translation2d;
+import edu.wpi.first.networktables.NetworkTablesJNI;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -73,6 +75,8 @@ public class RobotContainer {
   private final JoystickButton playerStationButton =
       operatorJoystick.button(OperatorConstants.STATION_PICKUP_BTN_INDEX);
 
+  private double lastRecordedTime = 0;
+
   /**
    * The container for the robot. Contains subsystems, OI devices, and commands.
    */
@@ -82,20 +86,32 @@ public class RobotContainer {
     PathPlannerServer.startServer(5811);
   }
 
+  public double getJoystickLatency() {
+    double latency = NetworkTablesJNI.now() - lastRecordedTime;
+    lastRecordedTime = NetworkTablesJNI.now();
+    SmartDashboard.putNumber("Latency", latency);
+    return latency;
+  }
+
   /**
    * Use this method to define your button->command mappings.
    */
   private void configureButtonBindings() {
     intakeButton.whileTrue(new SpinIntakeCommand(intake, IntakeConstants.INTAKE_VOLTAGE));
     outtakeButton.whileTrue(new SpinIntakeCommand(intake, IntakeConstants.OUTTAKE_VOLTAGE));
-    manualControlButton
-        .whileTrue(new ParallelCommandGroup(
-            new RunElevatorCommand(elevator, () -> -operatorJoystick.getRawAxis(OperatorConstants.ELEVATOR_AXIS)),
-            new PeriodicConditionalCommand(
-                new RotateArmCommand(arm, () -> -operatorJoystick.getRawAxis(OperatorConstants.ARM_AXIS)),
-                new MaintainArmAngleCommand(arm),
-                () -> Math.abs(operatorJoystick
-                    .getRawAxis(OperatorConstants.ARM_AXIS)) > OperatorConstants.JOYSTICK_DEADBAND)));
+    manualControlButton.whileTrue(new MoveArmToPositionCommand(arm, elevator,
+        () -> ArmSystemCoordinates.getSetpointPositionCartesian(arm, elevator)
+            .plus(new Translation2d(
+                -operatorJoystick.getRawAxis(OperatorConstants.HORIZONTAL_ARM_MOVEMENT_AXIS) * getJoystickLatency(),
+                -operatorJoystick.getRawAxis(OperatorConstants.VERTICAL_ARM_MOVEMENT_AXIS) * getJoystickLatency()))));
+    // manualControlButton
+    // .whileTrue(new ParallelCommandGroup(
+    // new RunElevatorCommand(elevator, () -> -operatorJoystick.getRawAxis(OperatorConstants.ELEVATOR_AXIS)),
+    // new PeriodicConditionalCommand(
+    // new RotateArmCommand(arm, () -> -operatorJoystick.getRawAxis(OperatorConstants.ARM_AXIS)),
+    // new MaintainArmAngleCommand(arm),
+    // () -> Math.abs(operatorJoystick
+    // .getRawAxis(OperatorConstants.ARM_AXIS)) > OperatorConstants.JOYSTICK_DEADBAND)));
     highGoalButton.whileTrue(new MoveArmToPositionCommand(arm, elevator, ArmPositionConstants.HIGH_GOAL_SCORING));
     midGoalButton.whileTrue(new MoveArmToPositionCommand(arm, elevator, ArmPositionConstants.MID_GOAL_SCORING));
     lowGoalButton.whileTrue(new MoveArmToPositionCommand(arm, elevator, ArmPositionConstants.GROUND_SCORING));

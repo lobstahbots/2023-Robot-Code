@@ -115,8 +115,8 @@ public final class Constants {
     public static final class OperatorConstants {
       public static final int OPERATOR_JOYSTICK_INDEX = 1;
       public static final double JOYSTICK_DEADBAND = 0.05;
-      public static final int ELEVATOR_AXIS = 1;
-      public static final int ARM_AXIS = 5;
+      public static final int HORIZONTAL_ARM_MOVEMENT_AXIS = 1;
+      public static final int VERTICAL_ARM_MOVEMENT_AXIS = 5;
 
       public static final int MANUAL_CONTROL_BUTTON_INDEX = 7;
       public static final int INTAKE_BUTTON_INDEX = 5;
