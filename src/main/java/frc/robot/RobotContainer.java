@@ -116,10 +116,12 @@ public class RobotContainer {
         .whileTrue(new ScoringSystemTowardsPositionWithRetractionCommand(arm, elevator,
             ScoringPositionConstants.PLAYER_STATION_PICKUP));
 
-    slowdownButton.whileTrue(new TankDriveCommand(driveBase,
-        () -> DriverConstants.SLOWDOWN_PERCENT * driverJoystick.getRawAxis(DriverConstants.LEFT_AXIS),
-        () -> DriverConstants.SLOWDOWN_PERCENT * driverJoystick.getRawAxis(DriverConstants.RIGHT_AXIS),
-        DriverConstants.SQUARED_INPUTS));
+    slowdownButton.whileTrue(new ParallelCommandGroup(
+        new SetAccelerationLimitCommand(driveBase, () -> new Translation2d(elevator.getLength(), arm.getRotation())),
+        new TankDriveCommand(driveBase,
+            () -> DriverConstants.SLOWDOWN_PERCENT * driverJoystick.getRawAxis(DriverConstants.LEFT_AXIS),
+            () -> DriverConstants.SLOWDOWN_PERCENT * driverJoystick.getRawAxis(DriverConstants.RIGHT_AXIS),
+            DriverConstants.SQUARED_INPUTS)));
   }
 
   private final SendableChooser<Command> autonChooser = new SendableChooser<>();
@@ -191,12 +193,13 @@ public class RobotContainer {
    * setAutonDefaultCommands().
    */
   public void setTeleopDefaultCommands() {
-    driveBase.setDefaultCommand(
+    driveBase.setDefaultCommand(new ParallelCommandGroup(
+        new SetAccelerationLimitCommand(driveBase, () -> new Translation2d(elevator.getLength(), arm.getRotation())),
         new TankDriveCommand(
             driveBase,
             () -> -driverJoystick.getRawAxis(DriverConstants.LEFT_AXIS),
             () -> -driverJoystick.getRawAxis(DriverConstants.RIGHT_AXIS),
-            DriverConstants.SQUARED_INPUTS));
+            DriverConstants.SQUARED_INPUTS)));
 
     arm.setDefaultCommand(
         new ScoringSystemTowardsPositionWithRetractionCommand(arm, elevator, ScoringPositionConstants.STOWED));
