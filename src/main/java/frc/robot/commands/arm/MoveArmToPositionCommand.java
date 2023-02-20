@@ -4,6 +4,8 @@
 
 package frc.robot.commands.arm;
 
+import java.util.function.Supplier;
+
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
@@ -16,6 +18,17 @@ import frc.robot.subsystems.Arm;
 import frc.robot.subsystems.Elevator;
 
 public class MoveArmToPositionCommand extends SequentialCommandGroup {
+  /**
+   * Creates a command that rotates the {@link Arm} and extends the {@link Elevator} to a given position.
+   *
+   * @param arm The {@link Arm} to control
+   * @param elevator The {@link Elevator} to control
+   * @param position A supplier for the position to rotate the arm to
+   */
+  public MoveArmToPositionCommand(Arm arm, Elevator elevator, Supplier<Translation2d> finalPosition) {
+    this(arm, elevator, finalPosition.get());
+  }
+
   /**
    * Creates a command that rotates the {@link Arm} and extends the {@link Elevator} to a given position.
    *
