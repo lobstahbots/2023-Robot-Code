@@ -132,19 +132,19 @@ public class RobotContainer {
    * Use this method to run tasks that configure sendables and other smartdashboard items.
    */
   public void configureSmartDash() {
-    initialPosition.addOption("Furthest Down", 0);
+    initialPosition.addOption("Furthest Right", 0);
     initialPosition.addOption("Middle", 1);
-    initialPosition.addOption("Furthest Up", 2);
-    initialPosition.setDefaultOption("Furthest Up", 1);
-    crossingPosition.addOption("Below Platform", 0);
+    initialPosition.addOption("Furthest Left", 2);
+    initialPosition.setDefaultOption("Furthest Right", 1);
+    crossingPosition.addOption("Right of Platform", 0);
     crossingPosition.addOption("Middle", 1);
-    crossingPosition.addOption("Above Platform", 2);
+    crossingPosition.addOption("Left of Platform", 2);
     crossingPosition.setDefaultOption("Middle", 1);
     endingPosition.addOption("Towards Player Station", 3);
-    endingPosition.addOption("Slightly Up", 2);
-    endingPosition.addOption("Slightly Down", 1);
-    endingPosition.addOption("Bottom Corner", 0);
-    endingPosition.setDefaultOption("Slightly Up", 2);
+    endingPosition.addOption("Slightly Left", 2);
+    endingPosition.addOption("Slightly Right", 1);
+    endingPosition.addOption("Right Side", 0);
+    endingPosition.setDefaultOption("Slightly Left", 2);
     autonChooser.addOption("Path Follow Auton",
         autonGenerator.getPathFollowCommand(initialPosition.getSelected(), crossingPosition.getSelected(),
             endingPosition.getSelected()));
