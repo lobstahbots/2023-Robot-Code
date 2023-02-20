@@ -111,6 +111,16 @@ public class ScoringPosition {
   }
 
   /**
+   * Gets the distance between the intake positions of two ScoringPositions.
+   * 
+   * @param other The ScoringPosition to compute the distance to
+   * @return The distance between the intake positions of the two ScoringPositions, in inches.
+   */
+  public double getDistance(ScoringPosition other) {
+    return position.getDistance(other.position);
+  }
+
+  /**
    * @param rotation The amount to rotate the arm by. Positive -> towards front of robot when pointing down.
    * 
    * @return A new ScoringPosition with the arm rotated by the given rotation.
