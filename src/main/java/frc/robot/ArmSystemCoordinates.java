@@ -77,7 +77,7 @@ public class ArmSystemCoordinates {
    * @param elevator The extending elevator subsystem
    */
   public static Translation2d getSetpointPositionPolar(Arm arm, Elevator elevator) {
-    return new Translation2d(elevator.getExtension(), new Rotation2d(Math.toRadians(arm.getSetpoint())));
+    return new Translation2d(elevator.getSetpointExtension(), new Rotation2d(Math.toRadians(arm.getSetpoint())));
   }
 
   /**
@@ -88,5 +88,25 @@ public class ArmSystemCoordinates {
    */
   public static Translation2d getSetpointPositionCartesian(Arm arm, Elevator elevator) {
     return getCartesianPosition(getSetpointPositionPolar(arm, elevator));
+  }
+
+  /**
+   * Returns the current position of the arm and elevator in arm polar coordinates
+   * 
+   * @param arm The rotating arm subsystem
+   * @param elevator The extending elevator subsystem
+   */
+  public static Translation2d getCurrentPositionPolar(Arm arm, Elevator elevator) {
+    return new Translation2d(elevator.getExtension(), new Rotation2d(Math.toRadians(arm.getRotation())));
+  }
+
+  /**
+   * Returns the current position of the arm and elevator in Cartesian coordinates
+   * 
+   * @param arm The rotating arm subsystem
+   * @param elevator The extending elevator subsystem
+   */
+  public static Translation2d getCurrentPositionCartesian(Arm arm, Elevator elevator) {
+    return getCartesianPosition(getCurrentPositionPolar(arm, elevator));
   }
 }
