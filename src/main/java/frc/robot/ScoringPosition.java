@@ -47,8 +47,9 @@ public class ScoringPosition {
     Rotation2d armAngle = relativeToPivot.getAngle()
         .plus(new Rotation2d(Math.asin(IntakeConstants.INTAKE_OFFSET.getY() / relativeToPivot.getNorm())));
 
-    double length =
-        Math.sqrt(Math.pow(relativeToPivot.getNorm(), 2) - Math.pow(IntakeConstants.INTAKE_OFFSET.getY(), 2));
+
+    Translation2d alignedToElevator = new Translation2d(relativeToPivot.getNorm(), armAngle);
+    double length = alignedToElevator.getX();
     double elevatorExtension = length - ElevatorConstants.LENGTH_FULLY_RETRACTED - IntakeConstants.INTAKE_OFFSET.getX();
 
     return new ScoringPosition(armAngle, elevatorExtension);
