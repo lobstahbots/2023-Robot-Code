@@ -2,7 +2,7 @@
 // Open Source Software; you can modify and/or share it under the terms of
 // the WPILib BSD license file in the root directory of this project.
 
-package frc.robot.commands.arm;
+package frc.robot.commands.scoring.arm;
 
 import java.util.function.Supplier;
 
@@ -12,8 +12,8 @@ import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import frc.robot.ArmSystemCoordinates;
 import frc.robot.Constants.ArmConstants;
 import frc.robot.Constants.ElevatorConstants;
-import frc.robot.commands.arm.elevator.ResetElevatorCommand;
-import frc.robot.commands.arm.elevator.RunElevatorToLengthCommand;
+import frc.robot.commands.scoring.elevator.ResetElevatorCommand;
+import frc.robot.commands.scoring.elevator.RunElevatorToLengthCommand;
 import frc.robot.subsystems.Arm;
 import frc.robot.subsystems.Elevator;
 
