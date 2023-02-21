@@ -35,10 +35,12 @@ public class Elevator extends SubsystemBase {
   public Elevator(int elevatorMotorID, int encoderChannelA, int encoderChannelB, int limitSwitchChannel) {
     this.elevatorMotor = new CANSparkMax(elevatorMotorID, MotorType.kBrushless);
     elevatorMotor.setIdleMode(IdleMode.kBrake);
+    elevatorMotor.setInverted(false);
     elevatorMotor.setSmartCurrentLimit(ElevatorConstants.CURRENT_LIMIT);
     this.encoder = new Encoder(encoderChannelA, encoderChannelB, true, Encoder.EncodingType.k1X);
     encoder.setDistancePerPulse(ElevatorConstants.DISTANCE_PER_PULSE);
     this.limitSwitch = new DigitalInput(limitSwitchChannel);
+    pidController.setTolerance(0.3);
   }
 
   /**

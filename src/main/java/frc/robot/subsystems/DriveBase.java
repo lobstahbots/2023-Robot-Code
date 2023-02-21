@@ -159,10 +159,17 @@ public class DriveBase extends SubsystemBase {
    */
   public Pose2d getPose() {
     poseEstimator.update(getHeading(), getLeftEncoderDistanceMeters(), getRightEncoderDistanceMeters());
-    // Pair<Pose3d, Double> visionEstimatedPose = photonVision.getEstimatedGlobalPose();
-    // if (visionEstimatedPose.getFirst() != null) {
-    // poseEstimator.addVisionMeasurement(visionEstimatedPose.getFirst().toPose2d(), visionEstimatedPose.getSecond());
-    // }
+    // EstimatedRobotPose estimatedVisionPose = this.photonVision.getCurrentPose();
+    // SmartDashboard.putString("PhotonVision Pose", estimatedVisionPose.estimatedPose.toString());
+    // poseEstimator.addVisionMeasurement(estimatedVisionPose.estimatedPose, estimatedVisionPose.timestampSeconds);
+    try {
+      EstimatedRobotPose estimatedVisionPose = this.photonVision.getCurrentPose();
+      SmartDashboard.putString("PhotonVision Pose", estimatedVisionPose.estimatedPose.toString());
+      poseEstimator.addVisionMeasurement(estimatedVisionPose.estimatedPose,
+          estimatedVisionPose.timestampSeconds);
+    } catch (NullPointerException npe) {
+
+    }
     return poseEstimator.getEstimatedPosition();
   }
 

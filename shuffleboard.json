@@ -201,17 +201,20 @@
               "imageHeight": -1
             }
           },
-          "10,2": {
+          "9,2": {
             "size": [
-              1,
+              2,
               1
             ],
             "content": {
-              "_type": "Text View",
-              "_source0": "network_table:///SmartDashboard/Number of Tags Visible In Front",
-              "_title": "Number of Tags Visible In Front",
+              "_type": "Field",
+              "_source0": "network_table:///SmartDashboard/Field",
+              "_title": "Field",
               "_glyph": 148,
-              "_showGlyph": false
+              "_showGlyph": false,
+              "Game/Game": "A2023_Charged_Up",
+              "Visuals/Robot Icon Size": 50.0,
+              "Visuals/Show Outside Circles": false
             }
           },
           "11,2": {
@@ -476,68 +479,28 @@
               "_title": "Elevator",
               "_glyph": 149,
               "_showGlyph": false,
-              "Layout/Label position": "BOTTOM",
-              "_children": []
+              "Graph/Visible time": 30.0,
+              "Graph/X-axis auto scrolling": true,
+              "Y-axis/Automatic bounds": true,
+              "Y-axis/Upper bound": 1.0,
+              "Y-axis/Lower bound": -1.0,
+              "Y-axis/Unit": "ul"
             }
           },
-          "7,0": {
+          "4,3": {
             "size": [
-              2,
-              4
+              5,
+              3
             ],
             "content": {
-              "_type": "Subsystem Layout",
-              "_source0": "network_table:///LiveWindow/Intake",
-              "_title": "Intake",
-              "_glyph": 149,
+              "_type": "Field",
+              "_source0": "network_table:///SmartDashboard/Field",
+              "_title": "/SmartDashboard/Field",
+              "_glyph": 148,
               "_showGlyph": false,
-              "Layout/Label position": "BOTTOM",
-              "_children": []
-            }
-          },
-          "9,0": {
-            "size": [
-              2,
-              4
-            ],
-            "content": {
-              "_type": "Subsystem Layout",
-              "_source0": "network_table:///LiveWindow/DriveBase",
-              "_title": "DriveBase",
-              "_glyph": 149,
-              "_showGlyph": false,
-              "Layout/Label position": "BOTTOM",
-              "_children": []
-            }
-          },
-          "11,0": {
-            "size": [
-              2,
-              4
-            ],
-            "content": {
-              "_type": "Subsystem Layout",
-              "_source0": "network_table:///LiveWindow/PhotonVision",
-              "_title": "PhotonVision",
-              "_glyph": 149,
-              "_showGlyph": false,
-              "Layout/Label position": "BOTTOM",
-              "_children": []
-            }
-          },
-          "0,2": {
-            "size": [
-              2,
-              4
-            ],
-            "content": {
-              "_type": "Subsystem Layout",
-              "_source0": "network_table:///LiveWindow/Arm",
-              "_title": "Arm",
-              "_glyph": 149,
-              "_showGlyph": false,
-              "Layout/Label position": "BOTTOM",
-              "_children": []
+              "Game/Game": "A2023_Charged_Up",
+              "Visuals/Robot Icon Size": 50.0,
+              "Visuals/Show Outside Circles": false
             }
           }
         }

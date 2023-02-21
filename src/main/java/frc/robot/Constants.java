@@ -31,7 +31,7 @@ public final class Constants {
     public static final int COUNTS_PER_REV = 2048;
     public static final double SENSOR_GEAR_RATIO = 10.71;
     public static final double WHEEL_RADIUS_INCHES = 6;
-    public static final double TRACK_WIDTH = 27.0;
+    public static final double TRACK_WIDTH = 18.75;
   }
 
   /**
@@ -39,15 +39,16 @@ public final class Constants {
    */
   public static final class PathConstants {
     public static final double MAX_DRIVE_SPEED = 1;
-    public static final double MAX_ACCELERATION = 1;
+    public static final double MAX_ACCELERATION = 0.5;
     public static final double RAMSETE_B = 2.0;
     public static final double RAMSETE_ZETA = 0.7;
-    public static final double kS = 0.56859;
-    public static final double kV = 2.4414;
-    public static final double kA = 0.24643;
-    public static final double kP = 0.00000094597;
+    public static final double kS = 0.86841;
+    public static final double kV = 4.009;
+    public static final double kA = 2.6045;
+    public static final double kP = 0.0074093;
     public static final double kI = 0;
     public static final double KD = 0;
+    public static final double MAX_OFFSET_START = 1;
   }
 
   /**
@@ -246,11 +247,12 @@ public final class Constants {
       public static final int LEFT_BACK = 11;
     }
 
-    public static final int STATOR_CURRENT_LIMIT = 50;
+    public static final int STATOR_CURRENT_LIMIT = 80;
     public static final int SUPPLY_CURRENT_LIMIT = 80;
-    public static final int STATOR_TRIGGER_THRESHOLD = 60;
-    public static final double STATOR_TRIGGER_THRESHOLD_TIME = 0.1;
-    public static final int SUPPLY_TRIGGER_THRESHOLD = 90;
+    public static final int STATOR_TRIGGER_THRESHOLD = 100;
+    public static final double STATOR_TRIGGER_THRESHOLD_TIME = 0.5;
+    public static final int SUPPLY_TRIGGER_THRESHOLD = 100;
     public static final double SUPPLY_TRIGGER_THRESHOLD_TIME = 0.5;
+    public static final double SLEW_RATE_LIMIT = 1.8;
   }
 }

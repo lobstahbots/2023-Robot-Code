@@ -4,6 +4,8 @@
 
 package frc.robot;
 
+import com.pathplanner.lib.PathConstraints;
+import com.pathplanner.lib.PathPlanner;
 import com.pathplanner.lib.server.PathPlannerServer;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
@@ -150,6 +152,8 @@ public class RobotContainer {
             endingPosition.getSelected()));
     autonChooser.addOption("Simple Auton", autonGenerator.getSimpleAutonCommand());
     autonChooser.addOption("Do Nothing Auton", new StopDriveCommand(driveBase));
+    autonChooser.addOption("Test Path Command", new PathFollowCommand(driveBase, PathPlanner.loadPath("New Path",
+        new PathConstraints(PathConstants.MAX_DRIVE_SPEED, PathConstants.MAX_ACCELERATION))));
     targetPosition.addOption("0", 0);
     targetPosition.addOption("1", 1);
     targetPosition.addOption("2", 2);
@@ -165,6 +169,7 @@ public class RobotContainer {
     SmartDashboard.putData("Crossing Position Chooser", crossingPosition);
     SmartDashboard.putData("Ending Position Chooser", endingPosition);
     SmartDashboard.putData("Teleop Target", targetPosition);
+    SmartDashboard.putData("Reset Elevator", new ResetElevatorCommand(elevator));
   }
 
   /**
@@ -182,6 +187,7 @@ public class RobotContainer {
   public Command getAutonomousCommand() {
     return new SequentialCommandGroup(
         new ResetElevatorCommand(elevator),
+        // new InstantCommand(() -> driveBase.resetOdometry(new Translation2d(10, 2), new Rotation2d(0)), driveBase),
         autonChooser.getSelected());
   }
 

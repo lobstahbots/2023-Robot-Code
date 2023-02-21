@@ -130,7 +130,7 @@ public class PhotonPoseEstimator {
                   .transformBy(robotToCamera.inverse()).toPose2d(),
               result.getTimestampSeconds(), 0));
     } else {
-      double confidence = LobstahMath.scaleNumberToClampedRange(lowestAmbiguityScore, 0.2, 0, 0, 1);
+      double confidence = LobstahMath.scaleNumberToClampedRange(0.2 - lowestAmbiguityScore, 0, 0.2, 0, 1);
       return Optional.of(
           new EstimatedRobotPose(
               targetPosition

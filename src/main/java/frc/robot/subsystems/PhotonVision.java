@@ -151,6 +151,7 @@ public class PhotonVision extends SubsystemBase {
       }
     }
     currentCamera = bestId;
+    SmartDashboard.putString("Vision Pose", bestPose.toString());
     return bestPose;
   }
 
