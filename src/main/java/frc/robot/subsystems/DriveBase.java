@@ -208,14 +208,14 @@ public class DriveBase extends SubsystemBase {
    * Gets the distance of the left encoder in meters.
    */
   public double getLeftEncoderDistanceMeters() {
-    return LobstahMath.nativeUnitsToDistanceMeters(leftFrontMotor.getSelectedSensorPosition()) / 2;
+    return LobstahMath.nativeUnitsToDistanceMeters(leftFrontMotor.getSelectedSensorPosition());
   }
 
   /**
    * Gets the distance of the right encoder in meters.
    */
   public double getRightEncoderDistanceMeters() {
-    return LobstahMath.nativeUnitsToDistanceMeters(rightBackMotor.getSelectedSensorPosition()) / 2;
+    return LobstahMath.nativeUnitsToDistanceMeters(rightBackMotor.getSelectedSensorPosition());
   }
 
   /**

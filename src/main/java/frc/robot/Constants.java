@@ -30,7 +30,7 @@ public final class Constants {
   public static final class RobotConstants {
     public static final int COUNTS_PER_REV = 2048;
     public static final double SENSOR_GEAR_RATIO = 10.71;
-    public static final double WHEEL_RADIUS_INCHES = 6;
+    public static final double WHEEL_RADIUS_INCHES = 3;
     public static final double TRACK_WIDTH = 18.75;
   }
 
