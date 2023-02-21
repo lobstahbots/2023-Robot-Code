@@ -134,14 +134,20 @@ public class RobotContainer {
    * Use this method to run tasks that configure sendables and other smartdashboard items.
    */
   public void configureSmartDash() {
-    initialPosition.addOption("Furthest Right", 0);
-    initialPosition.addOption("Middle", 1);
-    initialPosition.addOption("Furthest Left", 2);
-    initialPosition.setDefaultOption("Furthest Right", 1);
+
+    initialPosition.addOption("0", 0);
+    initialPosition.addOption("1", 1);
+    initialPosition.addOption("2", 2);
+    initialPosition.addOption("3", 3);
+    initialPosition.addOption("4", 4);
+    initialPosition.addOption("5", 5);
+    initialPosition.addOption("6", 6);
+    initialPosition.addOption("7", 7);
+    initialPosition.addOption("8", 8);
+    initialPosition.setDefaultOption("0", 1);
     crossingPosition.addOption("Right of Platform", 0);
-    crossingPosition.addOption("Middle", 1);
     crossingPosition.addOption("Left of Platform", 2);
-    crossingPosition.setDefaultOption("Middle", 1);
+    crossingPosition.setDefaultOption("Left of Platform", 0);
     endingPosition.addOption("Towards Player Station", 3);
     endingPosition.addOption("Slightly Left", 2);
     endingPosition.addOption("Slightly Right", 1);
