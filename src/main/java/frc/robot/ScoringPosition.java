@@ -44,12 +44,15 @@ public class ScoringPosition {
    */
   public static ScoringPosition fromXY(Translation2d position) {
     Translation2d relativeToPivot = position.minus(ArmConstants.ORIGIN_TO_PIVOT);
+
+    // Angle of arm from 0 = Angle between arm and (line intersecting pivot and intake position) + angle of that line
+    // from 0
     Rotation2d armAngle = relativeToPivot.getAngle()
         .plus(new Rotation2d(Math.asin(IntakeConstants.INTAKE_OFFSET.getY() / relativeToPivot.getNorm())));
 
-
-    Translation2d alignedToElevator = new Translation2d(relativeToPivot.getNorm(), armAngle);
-    double length = alignedToElevator.getX();
+    // Intake position relative to the pivot, with X axis aligned to the arm
+    Translation2d alignedToArm = new Translation2d(relativeToPivot.getNorm(), armAngle);
+    double length = alignedToArm.getX();
     double elevatorExtension = length - ElevatorConstants.LENGTH_FULLY_RETRACTED - IntakeConstants.INTAKE_OFFSET.getX();
 
     return new ScoringPosition(armAngle, elevatorExtension);
