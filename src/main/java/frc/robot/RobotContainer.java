@@ -6,38 +6,34 @@ package frc.robot;
 
 import com.pathplanner.lib.server.PathPlannerServer;
 import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.networktables.NetworkTablesJNI;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
-import frc.robot.Constants.ArmConstants;
-import frc.robot.Constants.ArmPositionConstants;
 import frc.robot.Constants.DriveConstants.DriveMotorCANIDs;
-import frc.robot.Constants.ElevatorConstants;
+import frc.robot.Constants.ScoringSystemConstants.ArmConstants;
+import frc.robot.Constants.ScoringSystemConstants.ElevatorConstants;
+import frc.robot.Constants.ScoringSystemConstants.IntakeConstants;
 import frc.robot.Constants.FieldConstants;
-import frc.robot.Constants.IntakeConstants;
+import frc.robot.Constants.ScoringPositionConstants;
 import frc.robot.Constants.UIConstants.DriverConstants;
 import frc.robot.Constants.UIConstants.OperatorConstants;
 import frc.robot.auton.AutonGenerator;
 import frc.robot.commands.drive.StopDriveCommand;
 import frc.robot.commands.drive.TankDriveCommand;
-import frc.robot.commands.scoring.arm.MaintainArmAngleCommand;
-import frc.robot.commands.scoring.arm.MoveArmToPositionCommand;
-import frc.robot.commands.scoring.arm.RotateArmCommand;
-import frc.robot.commands.scoring.arm.RotateArmToAngleCommand;
+import frc.robot.commands.scoring.ScoringSystemTowardsPositionCommand;
+import frc.robot.commands.scoring.ScoringSystemTowardsPositionWithRetractionCommand;
 import frc.robot.commands.scoring.elevator.ResetElevatorCommand;
-import frc.robot.commands.scoring.elevator.RunElevatorCommand;
-import frc.robot.commands.scoring.elevator.RunElevatorToLengthCommand;
+import frc.robot.commands.scoring.elevator.RunElevatorToExtensionCommand;
 import frc.robot.commands.scoring.intake.SpinIntakeCommand;
 import frc.robot.subsystems.Arm;
 import frc.robot.subsystems.DriveBase;
 import frc.robot.subsystems.Elevator;
 import frc.robot.subsystems.Intake;
-import lobstah.stl.command.PeriodicConditionalCommand;
 import lobstah.stl.io.LobstahGamepad;
 
 /**
@@ -99,24 +95,23 @@ public class RobotContainer {
   private void configureButtonBindings() {
     intakeButton.whileTrue(new SpinIntakeCommand(intake, IntakeConstants.INTAKE_VOLTAGE));
     outtakeButton.whileTrue(new SpinIntakeCommand(intake, IntakeConstants.OUTTAKE_VOLTAGE));
-    manualControlButton.whileTrue(new MoveArmToPositionCommand(arm, elevator,
-        () -> ArmSystemCoordinates.getSetpointPositionCartesian(arm, elevator)
-            .plus(new Translation2d(
+    manualControlButton.whileTrue(new ScoringSystemTowardsPositionCommand(arm, elevator,
+        () -> ScoringPosition.fromArmElevator(new Rotation2d(arm.getSetpoint()), elevator.getSetpointExtension())
+            .translateBy(new Translation2d(
                 -operatorJoystick.getRawAxis(OperatorConstants.HORIZONTAL_ARM_MOVEMENT_AXIS) * getJoystickLatency(),
                 -operatorJoystick.getRawAxis(OperatorConstants.VERTICAL_ARM_MOVEMENT_AXIS) * getJoystickLatency()))));
-    // manualControlButton
-    // .whileTrue(new ParallelCommandGroup(
-    // new RunElevatorCommand(elevator, () -> -operatorJoystick.getRawAxis(OperatorConstants.ELEVATOR_AXIS)),
-    // new PeriodicConditionalCommand(
-    // new RotateArmCommand(arm, () -> -operatorJoystick.getRawAxis(OperatorConstants.ARM_AXIS)),
-    // new MaintainArmAngleCommand(arm),
-    // () -> Math.abs(operatorJoystick
-    // .getRawAxis(OperatorConstants.ARM_AXIS)) > OperatorConstants.JOYSTICK_DEADBAND)));
-    highGoalButton.whileTrue(new MoveArmToPositionCommand(arm, elevator, ArmPositionConstants.HIGH_GOAL_SCORING));
-    midGoalButton.whileTrue(new MoveArmToPositionCommand(arm, elevator, ArmPositionConstants.MID_GOAL_SCORING));
-    lowGoalButton.whileTrue(new MoveArmToPositionCommand(arm, elevator, ArmPositionConstants.GROUND_SCORING));
+    highGoalButton
+        .whileTrue(new ScoringSystemTowardsPositionWithRetractionCommand(arm, elevator,
+            ScoringPositionConstants.HIGH_GOAL_SCORING));
+    midGoalButton
+        .whileTrue(new ScoringSystemTowardsPositionWithRetractionCommand(arm, elevator,
+            ScoringPositionConstants.MID_GOAL_SCORING));
+    lowGoalButton
+        .whileTrue(new ScoringSystemTowardsPositionWithRetractionCommand(arm, elevator,
+            ScoringPositionConstants.LOW_GOAL_SCORING));
     playerStationButton
-        .whileTrue(new MoveArmToPositionCommand(arm, elevator, ArmPositionConstants.PLAYER_STATION_PICKUP));
+        .whileTrue(new ScoringSystemTowardsPositionWithRetractionCommand(arm, elevator,
+            ScoringPositionConstants.PLAYER_STATION_PICKUP));
 
     slowdownButton.whileTrue(new TankDriveCommand(driveBase,
         () -> DriverConstants.SLOWDOWN_PERCENT * driverJoystick.getRawAxis(DriverConstants.LEFT_AXIS),
@@ -201,10 +196,7 @@ public class RobotContainer {
             DriverConstants.SQUARED_INPUTS));
 
     arm.setDefaultCommand(
-        new PeriodicConditionalCommand(new MaintainArmAngleCommand(arm), new RotateArmToAngleCommand(arm, 0),
-            () -> elevator.getExtension() > ElevatorConstants.LENGTH_RETRACTED_BEFORE_ROTATING));
-    elevator
-        .setDefaultCommand(new RunElevatorToLengthCommand(elevator, 0));
+        new ScoringSystemTowardsPositionWithRetractionCommand(arm, elevator, ScoringPositionConstants.STOWED));
     intake.setDefaultCommand(new SpinIntakeCommand(intake, IntakeConstants.PASSIVE_INTAKE_VOLTAGE));
   }
 

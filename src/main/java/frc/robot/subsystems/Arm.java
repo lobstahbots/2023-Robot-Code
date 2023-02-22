@@ -11,13 +11,12 @@ import edu.wpi.first.math.controller.ArmFeedforward;
 import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.math.trajectory.TrapezoidProfile.Constraints;
-import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.DutyCycleEncoder;
 import edu.wpi.first.wpilibj.motorcontrol.MotorControllerGroup;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import frc.robot.Constants.ArmConstants;
+import frc.robot.Constants.ScoringSystemConstants.ArmConstants;
 
 /**
  * A subsystem that controls the rotating arm on the robot.
@@ -28,12 +27,12 @@ public class Arm extends SubsystemBase {
   private final MotorControllerGroup motors;
   private final ArmFeedforward feedforward =
       new ArmFeedforward(
-          ArmConstants.kSVolts, ArmConstants.kGVolts,
-          ArmConstants.kVVoltSecondPerRad, ArmConstants.kAVoltSecondSquaredPerRad);
+          ArmConstants.S_VOLTS, ArmConstants.G_VOLTS,
+          ArmConstants.V_VOLT_SECOND_PER_RAD, ArmConstants.A_VOLT_SECOND_SQUARED_PER_RAD);
   private final Constraints constraints = new TrapezoidProfile.Constraints(
       ArmConstants.MAX_VELOCITY_DEG_PER_SEC,
       ArmConstants.MAX_ACCELERATION_DEG_PER_SEC_SQUARED);
-  private final ProfiledPIDController pidController = new ProfiledPIDController(ArmConstants.kP, 0, 0, constraints);
+  private final ProfiledPIDController pidController = new ProfiledPIDController(ArmConstants.P, 0, 0, constraints);
 
   /**
    * Constructs an Arm with an {@link CANSparkMax} at the motor IDs and {@link DutyCycleEncoder} at the encoder channel.
@@ -56,22 +55,22 @@ public class Arm extends SubsystemBase {
     this.armEncoder = new DutyCycleEncoder(new DigitalInput(encoderChannel));
     armEncoder.setDistancePerRotation(ArmConstants.ARM_DEGREES_PER_ROTATION);
 
-    pidController.setTolerance(ArmConstants.ROTATION_ERROR_DEADBAND);
+    pidController.setTolerance(ArmConstants.ROTATION_PID_TOLERANCE);
   }
 
   /**
-   * Gets angle of the arm. The arm's fully retracted position is 0 degrees. Note: This is not vertical.
+   * Gets angle of the arm.
    * 
-   * @return The rotation of the arm in degrees.
+   * @return The rotation of the arm in degrees. 0 = Vertical and pointing down. Positive -> towards front of robot.
    */
-  public double getRotation() {
+  public double getAngle() {
     return ArmConstants.ARM_OFFSET_DEG - armEncoder.getAbsolutePosition() * 360;
   }
 
   /**
-   * Gets PID setpoint of the arm. The arm's fully retracted position is 0 degrees. Note: This is not vertical.
+   * Gets PID setpoint of the arm.
    * 
-   * @return The setpoint angle of the arm in degrees.
+   * @return The setpoint angle of the arm in degrees. 0 = Vertical and pointing down. Positive -> towards front of robot.
    */
   public double getSetpoint() {
     return pidController.getSetpoint().position;
@@ -83,8 +82,8 @@ public class Arm extends SubsystemBase {
    * @param speed The desired rotation speed
    */
   public void setRotationSpeed(double speed) {
-    if (getRotation() < ArmConstants.MIN_ROTATION_DEG && motors.get() < 0
-        || getRotation() > ArmConstants.MAX_ROTATION_DEG && motors.get() > 0) {
+    if (getAngle() < ArmConstants.MIN_ROTATION_DEG && motors.get() < 0
+        || getAngle() > ArmConstants.MAX_ROTATION_DEG && motors.get() > 0) {
       motors.set(0);
       return;
     }
@@ -98,7 +97,7 @@ public class Arm extends SubsystemBase {
    */
   public void setPIDGoal(double goalAngle) {
     pidController.setGoal(goalAngle);
-    pidController.reset(getRotation());
+    pidController.reset(getAngle());
   }
 
   /**
@@ -114,11 +113,11 @@ public class Arm extends SubsystemBase {
    * Feeds the PID input to the motors.
    */
   public void feedPID() {
-    setRotationSpeed(pidController.calculate(getRotation()));
+    setRotationSpeed(pidController.calculate(getAngle()));
   }
 
   @Override
   public void periodic() {
-    SmartDashboard.putNumber("Arm Rotation", getRotation());
+    SmartDashboard.putNumber("Arm Rotation", getAngle());
   }
 }

@@ -137,7 +137,7 @@ public final class Constants {
   public static final class ScoringSystemConstants {
     public static final Translation2d ROBOT_TO_SCORING_ORIGIN = new Translation2d(0, 0); // TODO
     public static final double RETRACT_BEFORE_ROTATING_ANGLE = 5;
-    public static final double RETRACTED_LENGTH_BEFORE_ROTATING = 0.5;
+    public static final double RETRACT_BEFORE_ROTATING_PRECISION = 0.5;
 
     /**
      * Stores constants related to the arm.
@@ -220,13 +220,13 @@ public final class Constants {
    * Stores positions for the scoring system.
    */
   public static final class ScoringPositionConstants {
-    public static final Translation2d STOWED = new Translation2d(0, 0); // TODO
-    public static final Translation2d GROUND_PICKUP = new Translation2d(10, 5);
-    public static final Translation2d LOW_GOAL_SCORING = new Translation2d(15, 5);
-    public static final Translation2d MID_GOAL_SCORING = new Translation2d(22.75, 38);
-    public static final Translation2d HIGH_GOAL_SCORING = new Translation2d(39.75, 50);
-    public static final Translation2d CONE_SCORING_OFFSET = new Translation2d(0, -4);
-    public static final Translation2d PLAYER_STATION_PICKUP = new Translation2d(10, 44.375);
+    public static final ScoringPosition STOWED = ScoringPosition.fromXY(0, 0); // TODO
+    public static final ScoringPosition GROUND_PICKUP = ScoringPosition.fromXY(10, 5);
+    public static final ScoringPosition MID_GOAL_SCORING = ScoringPosition.fromXY(22.75, 38);
+    public static final ScoringPosition LOW_GOAL_SCORING = ScoringPosition.fromXY(15, 5);
+    public static final ScoringPosition HIGH_GOAL_SCORING = ScoringPosition.fromXY(39.75, 50);
+    public static final ScoringPosition CONE_SCORING_OFFSET = ScoringPosition.fromXY(0, -4);
+    public static final ScoringPosition PLAYER_STATION_PICKUP = ScoringPosition.fromXY(10, 44.375);
   }
 
 

@@ -5,12 +5,12 @@
 package frc.robot.commands.scoring.elevator;
 
 import edu.wpi.first.wpilibj2.command.CommandBase;
-import frc.robot.Constants.ElevatorConstants;
+import frc.robot.Constants.ScoringSystemConstants.ElevatorConstants;
 import frc.robot.subsystems.Elevator;
 
 public class RetractElevatorCommand extends CommandBase {
-  private boolean needsToExtend;
-  private final Elevator elevator;
+  protected boolean needsToExtend;
+  protected final Elevator elevator;
 
   /**
    * Creates a command that fully retracts the {@link Elevator} until the limit switch is flipped. If the limit switch
@@ -48,7 +48,6 @@ public class RetractElevatorCommand extends CommandBase {
 
   @Override
   public boolean isFinished() {
-    // return !this.limitSwitchInitialValue && elevator.isRetracted();
     return false;
   }
 }
