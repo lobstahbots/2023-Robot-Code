@@ -9,6 +9,14 @@ import frc.robot.subsystems.Arm;
 import frc.robot.subsystems.Elevator;
 
 public class ScoringSystemTowardsPositionWithRetractionCommand extends SequentialCommandGroup {
+  /**
+   * Creates a command that moves the {@link Arm} and {@link Elevator} towards a given position, retracting before
+   * rotating if the difference in arm angle exceeds a certain threshold.
+   * 
+   * @param arm
+   * @param elevator
+   * @param position
+   */
   public ScoringSystemTowardsPositionWithRetractionCommand(Arm arm, Elevator elevator, ScoringPosition position) {
     addRequirements(arm, elevator);
 
