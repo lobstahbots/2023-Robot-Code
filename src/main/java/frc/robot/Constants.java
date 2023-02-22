@@ -11,6 +11,10 @@ import edu.wpi.first.math.geometry.Transform3d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.geometry.Translation3d;
 import edu.wpi.first.math.kinematics.DifferentialDriveKinematics;
+import edu.wpi.first.math.numbers.N2;
+import edu.wpi.first.math.system.LinearSystem;
+import edu.wpi.first.math.system.plant.DCMotor;
+import edu.wpi.first.math.system.plant.LinearSystemId;
 import edu.wpi.first.math.util.Units;
 
 /**
@@ -30,7 +34,7 @@ public final class Constants {
   public static final class RobotConstants {
     public static final int COUNTS_PER_REV = 2048;
     public static final double SENSOR_GEAR_RATIO = 10.71;
-    public static final double WHEEL_RADIUS_INCHES = 6;
+    public static final double WHEEL_DIAMETER_INCHES = 6;
     public static final double TRACK_WIDTH = 27.0;
   }
 
@@ -237,5 +241,15 @@ public final class Constants {
     public static final double STATOR_TRIGGER_THRESHOLD_TIME = 0.1;
     public static final int SUPPLY_TRIGGER_THRESHOLD = 90;
     public static final double SUPPLY_TRIGGER_THRESHOLD_TIME = 0.5;
+
+    public static final LinearSystem<N2, N2, N2> kDrivetrainPlant =
+        LinearSystemId.identifyDrivetrainSystem(
+            PathConstants.kV,
+            PathConstants.kA,
+            20,
+            10);
+
+    public static final DCMotor kDriveGearbox = DCMotor.getFalcon500(2);
+    public static final double kDriveGearing = 8.75;
   }
 }
