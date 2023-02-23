@@ -1,13 +1,16 @@
+// Copyright (c) FIRST and other WPILib contributors.
+// Open Source Software; you can modify and/or share it under the terms of
+// the WPILib BSD license file in the root directory of this project.
 
-package frc.robot.commands.arm.elevator;
+package frc.robot.commands.scoring.elevator;
 
 import edu.wpi.first.wpilibj2.command.CommandBase;
-import frc.robot.Constants.ElevatorConstants;
+import frc.robot.Constants.ScoringSystemConstants.ElevatorConstants;
 import frc.robot.subsystems.Elevator;
 
-public class ResetElevatorCommand extends CommandBase {
-  private boolean needsToExtend;
-  private final Elevator elevator;
+public class RetractElevatorCommand extends CommandBase {
+  protected boolean needsToExtend;
+  protected final Elevator elevator;
 
   /**
    * Creates a command that fully retracts the {@link Elevator} until the limit switch is flipped. If the limit switch
@@ -16,7 +19,7 @@ public class ResetElevatorCommand extends CommandBase {
    * 
    * @param elevator The {@link Elevator} to control
    */
-  public ResetElevatorCommand(Elevator elevator) {
+  public RetractElevatorCommand(Elevator elevator) {
     this.elevator = elevator;
     addRequirements(this.elevator);
   }
@@ -28,25 +31,23 @@ public class ResetElevatorCommand extends CommandBase {
 
   @Override
   public void execute() {
-
-    if (elevator.isRetracted()) {
-      if (this.needsToExtend) {
+    if (this.needsToExtend) {
+      if (elevator.isRetracted()) {
         elevator.move(ElevatorConstants.HOME_SPEED);
+      } else {
+        this.needsToExtend = false;
       }
     } else {
-      this.needsToExtend = false;
-      elevator.moveToLimitSwitch();
+      if (!elevator.isRetracted()) {
+        elevator.moveToLimitSwitch();
+      } else {
+        elevator.move(0);
+      }
     }
   }
 
   @Override
   public boolean isFinished() {
-    return !this.needsToExtend && elevator.isRetracted();
-  }
-
-  @Override
-  public void end(boolean interrupted) {
-    elevator.resetEncoder();
-    elevator.move(0);
+    return false;
   }
 }

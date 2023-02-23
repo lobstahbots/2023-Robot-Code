@@ -2,11 +2,11 @@
 // Open Source Software; you can modify and/or share it under the terms of
 // the WPILib BSD license file in the root directory of this project.
 
-package frc.robot.commands.arm;
+package frc.robot.commands.scoring.arm;
 
 import java.util.function.DoubleSupplier;
 import edu.wpi.first.wpilibj2.command.CommandBase;
-import frc.robot.Constants.ArmConstants;
+import frc.robot.Constants.ScoringSystemConstants.ArmConstants;
 import frc.robot.subsystems.Arm;
 
 public class RotateArmCommand extends CommandBase {
@@ -38,8 +38,8 @@ public class RotateArmCommand extends CommandBase {
 
   @Override
   public void execute() {
-    if ((arm.getRotation() > ArmConstants.MAX_ROTATION_DEG && speed.getAsDouble() > 0)
-        || (arm.getRotation() < ArmConstants.MIN_ROTATION_DEG && speed.getAsDouble() < 0)) {
+    if ((arm.getAngle() > ArmConstants.MAX_ROTATION_DEG && speed.getAsDouble() > 0)
+        || (arm.getAngle() < ArmConstants.MIN_ROTATION_DEG && speed.getAsDouble() < 0)) {
       arm.setRotationSpeed(0.0);
     } else {
       arm.setRotationSpeed(speed.getAsDouble());

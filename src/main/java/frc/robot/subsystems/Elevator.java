@@ -12,7 +12,7 @@ import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.Encoder;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import frc.robot.Constants.ElevatorConstants;
+import frc.robot.Constants.ScoringSystemConstants.ElevatorConstants;
 
 /**
  * A subsystem that controls the extending elevator on the robot.
@@ -20,7 +20,7 @@ import frc.robot.Constants.ElevatorConstants;
 public class Elevator extends SubsystemBase {
   private final CANSparkMax elevatorMotor;
   private final DigitalInput limitSwitch;
-  private final PIDController pidController = new PIDController(ElevatorConstants.kP, 0, 0);
+  private final PIDController pidController = new PIDController(ElevatorConstants.P, 0, 0);
   private final Encoder encoder;
 
   /**
@@ -53,6 +53,14 @@ public class Elevator extends SubsystemBase {
       return;
     }
     elevatorMotor.set(speed);
+  }
+
+  /**
+   * Resets PID controller error.
+   * 
+   */
+  public void resetPID() {
+    pidController.reset();
   }
 
   /**
@@ -94,6 +102,15 @@ public class Elevator extends SubsystemBase {
    */
   public void resetEncoder() {
     this.encoder.reset();
+  }
+
+  /**
+   * Gets the setpoint extension of the elevator.
+   * 
+   * @return The PID controller goal extension of the elevator in inches
+   */
+  public double getSetpointExtension() {
+    return pidController.getSetpoint();
   }
 
   /**

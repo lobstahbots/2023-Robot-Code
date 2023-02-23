@@ -2,12 +2,12 @@
 // Open Source Software; you can modify and/or share it under the terms of
 // the WPILib BSD license file in the root directory of this project.
 
-package frc.robot.commands.arm.elevator;
+package frc.robot.commands.scoring.elevator;
 
 import java.util.function.DoubleSupplier;
 
 import edu.wpi.first.wpilibj2.command.CommandBase;
-import frc.robot.Constants.ElevatorConstants;
+import frc.robot.Constants.ScoringSystemConstants.ElevatorConstants;
 import frc.robot.subsystems.Elevator;
 
 public class RunElevatorCommand extends CommandBase {
