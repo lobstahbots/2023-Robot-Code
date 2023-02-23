@@ -101,9 +101,9 @@ public class RobotContainer {
     outtakeButton.whileTrue(new SpinIntakeCommand(intake, IntakeConstants.OUTTAKE_VOLTAGE));
     manualControlButton.whileTrue(new TranslateScoringSystemCommand(arm, elevator,
         () -> -operatorJoystick.getRawAxis(OperatorConstants.HORIZONTAL_ARM_MOVEMENT_AXIS) * getJoystickLatency()
-            * OperatorConstants.MANUAL_CONTROL_REDUCTION,
+            * OperatorConstants.MANUAL_CONTROL_SPEED,
         () -> -operatorJoystick.getRawAxis(OperatorConstants.VERTICAL_ARM_MOVEMENT_AXIS) * getJoystickLatency()
-            * OperatorConstants.MANUAL_CONTROL_REDUCTION));
+            * OperatorConstants.MANUAL_CONTROL_SPEED));
     highGoalButton
         .whileTrue(new ScoringSystemTowardsPositionWithRetractionCommand(arm, elevator,
             ScoringPositionConstants.HIGH_GOAL_SCORING));
