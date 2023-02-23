@@ -70,7 +70,8 @@ public class Arm extends SubsystemBase {
   /**
    * Gets PID setpoint of the arm.
    * 
-   * @return The setpoint angle of the arm in degrees. 0 = Vertical and pointing down. Positive -> towards front of robot.
+   * @return The setpoint angle of the arm in degrees. 0 = Vertical and pointing down. Positive -> towards front of
+   *         robot.
    */
   public double getSetpoint() {
     return pidController.getSetpoint().position;
@@ -90,6 +91,15 @@ public class Arm extends SubsystemBase {
     motors.set(speed);
   }
 
+
+  /**
+   * Resets PID controller error.
+   * 
+   */
+  public void resetPID() {
+    pidController.reset(getAngle());
+  }
+
   /**
    * Sets setpoint angle of the PID controller.
    * 
@@ -97,7 +107,6 @@ public class Arm extends SubsystemBase {
    */
   public void setPIDGoal(double goalAngle) {
     pidController.setGoal(goalAngle);
-    pidController.reset(getAngle());
   }
 
   /**

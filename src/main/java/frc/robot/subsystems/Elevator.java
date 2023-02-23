@@ -56,6 +56,14 @@ public class Elevator extends SubsystemBase {
   }
 
   /**
+   * Resets PID controller error.
+   * 
+   */
+  public void resetPID() {
+    pidController.reset();
+  }
+
+  /**
    * Sets setpoint extension of the PID controller.
    * 
    * @param goalExtension The desired setpoint extension in inches.

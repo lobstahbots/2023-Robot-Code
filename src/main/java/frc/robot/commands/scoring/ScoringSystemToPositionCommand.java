@@ -31,8 +31,6 @@ public class ScoringSystemToPositionCommand extends ParallelRaceGroup {
     this.position = position;
     this.threshold = threshold;
 
-    addRequirements(arm, elevator);
-
     this.addCommands(new ScoringSystemTowardsPositionCommand(arm, elevator, position),
         new WaitUntilCommand(this::isAtPosition));
   }

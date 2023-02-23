@@ -13,14 +13,14 @@ public class ScoringPosition {
   private final Translation2d position;
 
   private ScoringPosition(Rotation2d armAngle, double elevatorExtension) {
-    this.armAngle = new Rotation2d(
+    this.armAngle = Rotation2d.fromDegrees(
         MathUtil.clamp(armAngle.getDegrees(), ArmConstants.MIN_ROTATION_DEG, ArmConstants.MAX_ROTATION_DEG));
     this.elevatorExtension = MathUtil.clamp(elevatorExtension, ElevatorConstants.MIN_EXTENSION_INCHES,
         ElevatorConstants.MAX_EXTENSION_INCHES);
 
     this.position = new Translation2d(
-        IntakeConstants.INTAKE_OFFSET.getY(),
-        ElevatorConstants.LENGTH_FULLY_RETRACTED + elevatorExtension + IntakeConstants.INTAKE_OFFSET.getX())
+        -IntakeConstants.INTAKE_OFFSET.getY(),
+        -ElevatorConstants.LENGTH_FULLY_RETRACTED - elevatorExtension - IntakeConstants.INTAKE_OFFSET.getX())
             .rotateBy(armAngle).plus(ArmConstants.ORIGIN_TO_PIVOT);
   }
 

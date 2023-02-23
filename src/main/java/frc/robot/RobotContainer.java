@@ -7,7 +7,6 @@ package frc.robot;
 import com.pathplanner.lib.server.PathPlannerServer;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
-import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.networktables.NetworkTablesJNI;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -25,10 +24,9 @@ import frc.robot.Constants.UIConstants.OperatorConstants;
 import frc.robot.auton.AutonGenerator;
 import frc.robot.commands.drive.StopDriveCommand;
 import frc.robot.commands.drive.TankDriveCommand;
-import frc.robot.commands.scoring.ScoringSystemTowardsPositionCommand;
 import frc.robot.commands.scoring.ScoringSystemTowardsPositionWithRetractionCommand;
+import frc.robot.commands.scoring.TranslateScoringSystemCommand;
 import frc.robot.commands.scoring.elevator.ResetElevatorCommand;
-import frc.robot.commands.scoring.elevator.RunElevatorToExtensionCommand;
 import frc.robot.commands.scoring.intake.SpinIntakeCommand;
 import frc.robot.subsystems.Arm;
 import frc.robot.subsystems.DriveBase;
@@ -86,7 +84,12 @@ public class RobotContainer {
     double latency = NetworkTablesJNI.now() - lastRecordedTime;
     lastRecordedTime = NetworkTablesJNI.now();
     SmartDashboard.putNumber("Latency", latency);
-    return latency;
+    return 1;
+  }
+
+  public ScoringPosition getArmPosition() {
+    return ScoringPosition.fromArmElevator(Rotation2d.fromDegrees((arm.getAngle())),
+        elevator.getExtension());
   }
 
   /**
@@ -95,20 +98,19 @@ public class RobotContainer {
   private void configureButtonBindings() {
     intakeButton.whileTrue(new SpinIntakeCommand(intake, IntakeConstants.INTAKE_VOLTAGE));
     outtakeButton.whileTrue(new SpinIntakeCommand(intake, IntakeConstants.OUTTAKE_VOLTAGE));
-    manualControlButton.whileTrue(new ScoringSystemTowardsPositionCommand(arm, elevator,
-        () -> ScoringPosition.fromArmElevator(new Rotation2d(arm.getSetpoint()), elevator.getSetpointExtension())
-            .translateBy(new Translation2d(
-                -operatorJoystick.getRawAxis(OperatorConstants.HORIZONTAL_ARM_MOVEMENT_AXIS) * getJoystickLatency(),
-                -operatorJoystick.getRawAxis(OperatorConstants.VERTICAL_ARM_MOVEMENT_AXIS) * getJoystickLatency()))));
+    manualControlButton.whileTrue(new TranslateScoringSystemCommand(arm, elevator,
+        () -> -operatorJoystick.getRawAxis(OperatorConstants.HORIZONTAL_ARM_MOVEMENT_AXIS) * getJoystickLatency()
+            * 0.1,
+        () -> -operatorJoystick.getRawAxis(OperatorConstants.VERTICAL_ARM_MOVEMENT_AXIS) * getJoystickLatency()
+            * 0.1));
     highGoalButton
         .whileTrue(new ScoringSystemTowardsPositionWithRetractionCommand(arm, elevator,
             ScoringPositionConstants.HIGH_GOAL_SCORING));
     midGoalButton
         .whileTrue(new ScoringSystemTowardsPositionWithRetractionCommand(arm, elevator,
             ScoringPositionConstants.MID_GOAL_SCORING));
-    lowGoalButton
-        .whileTrue(new ScoringSystemTowardsPositionWithRetractionCommand(arm, elevator,
-            ScoringPositionConstants.LOW_GOAL_SCORING));
+    lowGoalButton.whileTrue(new ScoringSystemTowardsPositionWithRetractionCommand(arm, elevator,
+        ScoringPositionConstants.LOW_GOAL_SCORING));
     playerStationButton
         .whileTrue(new ScoringSystemTowardsPositionWithRetractionCommand(arm, elevator,
             ScoringPositionConstants.PLAYER_STATION_PICKUP));
@@ -162,6 +164,9 @@ public class RobotContainer {
     SmartDashboard.putData("Crossing Position Chooser", crossingPosition);
     SmartDashboard.putData("Ending Position Chooser", endingPosition);
     SmartDashboard.putData("Teleop Target", targetPosition);
+    SmartDashboard.putData("Reset Elevator", new ResetElevatorCommand(elevator));
+    SmartDashboard.putNumber("Rotation of Cartesian 11, 26", ScoringPosition.fromXY(11, 26).getArmAngle().getDegrees());
+    SmartDashboard.putNumber("Extension of Cartesian 11, 26", ScoringPosition.fromXY(11, 26).getElevatorExtension());
   }
 
   /**

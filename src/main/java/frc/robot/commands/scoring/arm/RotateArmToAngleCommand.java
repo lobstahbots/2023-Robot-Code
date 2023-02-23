@@ -38,6 +38,11 @@ public class RotateArmToAngleCommand extends CommandBase {
   }
 
   @Override
+  public void initialize() {
+    arm.resetPID();
+  }
+
+  @Override
   public void execute() {
     double clampedAngle =
         MathUtil.clamp(angle.getAsDouble(), ArmConstants.MIN_ROTATION_DEG, ArmConstants.MAX_ROTATION_DEG);

@@ -144,8 +144,8 @@ public final class Constants {
      */
     public static final class ArmConstants {
       // Geometry
-      public static final Translation2d ORIGIN_TO_PIVOT = new Translation2d(-27.521, 51.428);
-      public static final double ARM_OFFSET_DEG = 345;
+      public static final Translation2d ORIGIN_TO_PIVOT = new Translation2d(-24.343, 50);
+      public static final double ARM_OFFSET_DEG = 320;
 
       // IO
       public static final int ENCODER_CHANNEL = 3;
@@ -156,9 +156,9 @@ public final class Constants {
       // Limits
       public static final int CURRENT_LIMIT = 40;
       public static final double MAX_VELOCITY_DEG_PER_SEC = 300;
-      public static final double MAX_ACCELERATION_DEG_PER_SEC_SQUARED = 1000;
-      public static final double MAX_ROTATION_DEG = 135;
-      public static final double MIN_ROTATION_DEG = 60;
+      public static final double MAX_ACCELERATION_DEG_PER_SEC_SQUARED = 400;
+      public static final double MAX_ROTATION_DEG = 105;
+      public static final double MIN_ROTATION_DEG = 35;
 
       // PID
       public static final double P = 0.03;
@@ -220,7 +220,7 @@ public final class Constants {
    * Stores positions for the scoring system.
    */
   public static final class ScoringPositionConstants {
-    public static final ScoringPosition STOWED = ScoringPosition.fromArmElevator(Rotation2d.fromDegrees(60), 0);
+    public static final ScoringPosition STOWED = ScoringPosition.fromArmElevator(Rotation2d.fromDegrees(35), 0);
     public static final ScoringPosition GROUND_PICKUP = ScoringPosition.fromXY(10, 5);
     public static final ScoringPosition MID_GOAL_SCORING = ScoringPosition.fromXY(22.75, 38);
     public static final ScoringPosition LOW_GOAL_SCORING = ScoringPosition.fromXY(15, 5);
