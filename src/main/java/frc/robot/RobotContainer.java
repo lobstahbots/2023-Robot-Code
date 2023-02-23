@@ -14,14 +14,12 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import edu.wpi.first.wpilibj2.command.button.POVButton;
-import frc.robot.Constants.ArmConstants;
-import frc.robot.Constants.ArmPositionConstants;
+import frc.robot.Constants.ScoringPositionConstants;
 import frc.robot.Constants.DriveConstants.DriveMotorCANIDs;
 import frc.robot.Constants.ScoringSystemConstants.ArmConstants;
 import frc.robot.Constants.ScoringSystemConstants.ElevatorConstants;
 import frc.robot.Constants.ScoringSystemConstants.IntakeConstants;
 import frc.robot.Constants.FieldConstants;
-import frc.robot.Constants.ScoringPositionConstants;
 import frc.robot.Constants.UIConstants.DriverConstants;
 import frc.robot.Constants.UIConstants.OperatorConstants;
 import frc.robot.auton.AutonGenerator;
@@ -119,8 +117,8 @@ public class RobotContainer {
     playerStationButton
         .whileTrue(new ScoringSystemTowardsPositionWithRetractionCommand(arm, elevator,
             ScoringPositionConstants.PLAYER_STATION_PICKUP));
-        .whileTrue(new MoveArmToPositionCommand(arm, elevator, ArmPositionConstants.PLAYER_STATION_PICKUP));
-    groundPickupButton.whileTrue(new MoveArmToPositionCommand(arm, elevator, ArmPositionConstants.GROUND_PICKUP));
+    groundPickupButton.whileTrue(new ScoringSystemTowardsPositionWithRetractionCommand(arm, elevator,
+    ScoringPositionConstants.GROUND_PICKUP));
 
     slowdownButton.whileTrue(new TankDriveCommand(driveBase,
         () -> DriverConstants.SLOWDOWN_PERCENT * driverJoystick.getRawAxis(DriverConstants.LEFT_AXIS),
