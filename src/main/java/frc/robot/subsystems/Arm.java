@@ -94,7 +94,6 @@ public class Arm extends SubsystemBase {
 
   /**
    * Resets PID controller error.
-   * 
    */
   public void resetPID() {
     pidController.reset(getAngle());

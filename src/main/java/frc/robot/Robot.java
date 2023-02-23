@@ -89,9 +89,7 @@ public class Robot extends TimedRobot {
 
   /** This function is called periodically during teleop. */
   @Override
-  public void teleopPeriodic() {
-    SmartDashboard.putString("Cartesian", m_robotContainer.getArmPosition().getXY().toString());
-  }
+  public void teleopPeriodic() {}
 
   /** This function is called once each time the robot enters Test mode. */
   @Override

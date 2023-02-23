@@ -164,9 +164,6 @@ public class RobotContainer {
     SmartDashboard.putData("Crossing Position Chooser", crossingPosition);
     SmartDashboard.putData("Ending Position Chooser", endingPosition);
     SmartDashboard.putData("Teleop Target", targetPosition);
-    SmartDashboard.putData("Reset Elevator", new ResetElevatorCommand(elevator));
-    SmartDashboard.putNumber("Rotation of Cartesian 11, 26", ScoringPosition.fromXY(11, 26).getArmAngle().getDegrees());
-    SmartDashboard.putNumber("Extension of Cartesian 11, 26", ScoringPosition.fromXY(11, 26).getElevatorExtension());
   }
 
   /**
