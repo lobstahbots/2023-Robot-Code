@@ -25,16 +25,6 @@ import edu.wpi.first.math.util.Units;
 public final class Constants {
 
   /**
-   * Stores constants related to the robot.
-   */
-  public static final class RobotConstants {
-    public static final int COUNTS_PER_REV = 2048;
-    public static final double SENSOR_GEAR_RATIO = 10.71;
-    public static final double WHEEL_RADIUS_INCHES = 3;
-    public static final double TRACK_WIDTH = 18.75;
-  }
-
-  /**
    * Stores constants related to path following.
    */
   public static final class PathConstants {
@@ -236,9 +226,10 @@ public final class Constants {
    * Stores constants related to the DriveBase.
    */
   public static final class DriveConstants {
-    public static final double ACCELERATION_RATE_LIMIT = 1.5;
-    public static final DifferentialDriveKinematics KINEMATICS =
-        new DifferentialDriveKinematics(Units.inchesToMeters(RobotConstants.TRACK_WIDTH));
+    public static final int COUNTS_PER_REV = 2048;
+    public static final double SENSOR_GEAR_RATIO = 10.71;
+    public static final double WHEEL_RADIUS_INCHES = 3;
+    public static final double TRACK_WIDTH = 18.75;
 
     public static final class DriveMotorCANIDs {
       public static final int RIGHT_FRONT = 14;
@@ -254,5 +245,10 @@ public final class Constants {
     public static final int SUPPLY_TRIGGER_THRESHOLD = 100;
     public static final double SUPPLY_TRIGGER_THRESHOLD_TIME = 0.5;
     public static final double SLEW_RATE_LIMIT = 1.8;
+
+    public static final double ACCELERATION_RATE_LIMIT = 1.5;
+    public static final DifferentialDriveKinematics KINEMATICS =
+        new DifferentialDriveKinematics(Units.inchesToMeters(TRACK_WIDTH));
+    
   }
 }
