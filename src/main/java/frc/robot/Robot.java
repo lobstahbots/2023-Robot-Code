@@ -5,7 +5,6 @@
 package frc.robot;
 
 import edu.wpi.first.wpilibj.TimedRobot;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 
@@ -41,11 +40,6 @@ public class Robot extends TimedRobot {
     // commands, running already-scheduled commands, removing finished or interrupted commands,
     // and running subsystem periodic() methods. This must be called from the robot's periodic
     // block in order for anything in the Command-based framework to work.
-    SmartDashboard.putString("Arm Cartesian Coordinates", m_robotContainer.getArmPosition().getXY().toString());
-    SmartDashboard.putNumber("Arm Scoring Position Angle",
-        m_robotContainer.getArmPosition().getArmAngle().getDegrees());
-    SmartDashboard.putNumber("Elevator Scoring Position Extension",
-        m_robotContainer.getArmPosition().getElevatorExtension());
     CommandScheduler.getInstance().run();
   }
 
