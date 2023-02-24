@@ -7,6 +7,7 @@ package frc.robot;
 import com.pathplanner.lib.server.PathPlannerServer;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.networktables.NetworkTablesJNI;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -25,6 +26,7 @@ import frc.robot.Constants.UIConstants.OperatorConstants;
 import frc.robot.auton.AutonGenerator;
 import frc.robot.commands.drive.StopDriveCommand;
 import frc.robot.commands.drive.TankDriveCommand;
+import frc.robot.commands.scoring.ScoringSystemTowardsPositionCommand;
 import frc.robot.commands.scoring.ScoringSystemTowardsPositionWithRetractionCommand;
 import frc.robot.commands.scoring.TranslateScoringSystemCommand;
 import frc.robot.commands.scoring.elevator.ResetElevatorCommand;
@@ -99,11 +101,13 @@ public class RobotContainer {
   private void configureButtonBindings() {
     intakeButton.whileTrue(new SpinIntakeCommand(intake, IntakeConstants.INTAKE_VOLTAGE));
     outtakeButton.whileTrue(new SpinIntakeCommand(intake, IntakeConstants.OUTTAKE_VOLTAGE));
-    manualControlButton.whileTrue(new TranslateScoringSystemCommand(arm, elevator,
-        () -> -operatorJoystick.getRawAxis(OperatorConstants.HORIZONTAL_ARM_MOVEMENT_AXIS) * getJoystickLatency()
-            * OperatorConstants.MANUAL_CONTROL_SPEED,
-        () -> -operatorJoystick.getRawAxis(OperatorConstants.VERTICAL_ARM_MOVEMENT_AXIS) * getJoystickLatency()
-            * OperatorConstants.MANUAL_CONTROL_SPEED));
+    manualControlButton.whileTrue(new ScoringSystemTowardsPositionCommand(arm, elevator,
+        () -> ScoringPosition.fromArmElevator(Rotation2d.fromDegrees(arm.getAngle()), elevator.getExtension())
+            .translateBy(new Translation2d(
+                -operatorJoystick.getRawAxis(OperatorConstants.HORIZONTAL_ARM_MOVEMENT_AXIS) * getJoystickLatency()
+                    * OperatorConstants.MANUAL_CONTROL_SPEED,
+                -operatorJoystick.getRawAxis(OperatorConstants.VERTICAL_ARM_MOVEMENT_AXIS) * getJoystickLatency()
+                    * OperatorConstants.MANUAL_CONTROL_SPEED))));
     highGoalButton
         .whileTrue(new ScoringSystemTowardsPositionWithRetractionCommand(arm, elevator,
             ScoringPositionConstants.HIGH_GOAL_SCORING));
