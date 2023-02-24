@@ -20,8 +20,8 @@ import frc.robot.Constants.ScoringSystemConstants.ElevatorConstants;
 import frc.robot.Constants.ScoringSystemConstants.IntakeConstants;
 import frc.robot.Constants.FieldConstants;
 import frc.robot.Constants.ScoringPositionConstants;
-import frc.robot.Constants.UIConstants.DriverConstants;
-import frc.robot.Constants.UIConstants.OperatorConstants;
+import frc.robot.Constants.OIConstants.DriverConstants;
+import frc.robot.Constants.OIConstants.OperatorConstants;
 import frc.robot.auton.AutonGenerator;
 import frc.robot.commands.drive.StopDriveCommand;
 import frc.robot.commands.drive.TankDriveCommand;
@@ -33,7 +33,7 @@ import frc.robot.subsystems.Arm;
 import frc.robot.subsystems.DriveBase;
 import frc.robot.subsystems.Elevator;
 import frc.robot.subsystems.Intake;
-import lobstah.stl.io.LobstahGamepad;
+import lobstah.stl.oi.LobstahGamepad;
 
 /**
  * This class is where the bulk of the robot should be declared. Since Command-based is a "declarative" paradigm, very
