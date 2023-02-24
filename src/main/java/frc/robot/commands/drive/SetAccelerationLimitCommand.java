@@ -8,15 +8,16 @@ import java.util.function.Supplier;
 
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.wpilibj2.command.CommandBase;
-import frc.robot.ArmSystemCoordinates;
-import frc.robot.Constants.ArmPositionConstants;
+import frc.robot.ScoringPosition;
+import frc.robot.Constants.DriveConstants;
+import frc.robot.Constants.ScoringPositionConstants;
 import frc.robot.subsystems.DriveBase;
 import lobstah.stl.math.LobstahMath;
 
 /* A command to set the acceleration limit of an {@link} DriveBase. */
 public class SetAccelerationLimitCommand extends CommandBase {
   private final DriveBase driveBase;
-  private final Supplier<Translation2d> armPosition;
+  private final Supplier<ScoringPosition> armPosition;
 
   /**
    * Creates a command that repeatedly limits the {@link DriveBase} accleration based on the position of the arm.
@@ -25,7 +26,7 @@ public class SetAccelerationLimitCommand extends CommandBase {
    * @param armPosition A supplier that gives a {@link Translation2d} representing the current position of the arm in am
    *          polar coordinates.
    */
-  public SetAccelerationLimitCommand(DriveBase driveBase, Supplier<Translation2d> armPosition) {
+  public SetAccelerationLimitCommand(DriveBase driveBase, Supplier<ScoringPosition> armPosition) {
     this.driveBase = driveBase;
     this.armPosition = armPosition;
   }
@@ -36,16 +37,17 @@ public class SetAccelerationLimitCommand extends CommandBase {
    * @param driveBase The {@link DriveBase} to control
    * @param armPosition A {@link Translation2d} that represents the current position of the arm in am polar coordinates.
    */
-  public SetAccelerationLimitCommand(DriveBase driveBase, Translation2d armPosition) {
+  public SetAccelerationLimitCommand(DriveBase driveBase, ScoringPosition armPosition) {
     this(driveBase, () -> armPosition);
   }
 
   @Override
   public void execute() {
-    double rateLimit = 1 / LobstahMath.scaleNumberToClampedRange(
-        ArmSystemCoordinates.getArmDistanceToPolarPosition(ArmPositionConstants.STOWED, armPosition.get()), 0,
-        ArmPositionConstants.MAX_DISTANCE_EXTENDED,
-        0, 3);
+    double rateLimit = LobstahMath.scaleNumberToClampedRange(
+        ScoringPositionConstants.MAX_DISTANCE_EXTENDED - armPosition.get().getDistance(ScoringPositionConstants.STOWED),
+        0,
+        ScoringPositionConstants.MAX_DISTANCE_EXTENDED,
+        0, DriveConstants.ACCELERATION_RATE_LIMIT);
     driveBase.setRateLimit(rateLimit);
   }
 

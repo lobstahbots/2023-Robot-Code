@@ -228,6 +228,7 @@ public final class Constants {
     public static final ScoringPosition HIGH_GOAL_SCORING = ScoringPosition.fromXY(39.75, 50);
     public static final ScoringPosition CONE_SCORING_OFFSET = ScoringPosition.fromXY(0, -4);
     public static final ScoringPosition PLAYER_STATION_PICKUP = ScoringPosition.fromXY(10, 44.375);
+    public static final double MAX_DISTANCE_EXTENDED = HIGH_GOAL_SCORING.getDistance(STOWED);
   }
 
 

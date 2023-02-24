@@ -11,6 +11,7 @@ import edu.wpi.first.networktables.NetworkTablesJNI;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import edu.wpi.first.wpilibj2.command.button.POVButton;
@@ -23,6 +24,7 @@ import frc.robot.Constants.ScoringPositionConstants;
 import frc.robot.Constants.UIConstants.DriverConstants;
 import frc.robot.Constants.UIConstants.OperatorConstants;
 import frc.robot.auton.AutonGenerator;
+import frc.robot.commands.drive.SetAccelerationLimitCommand;
 import frc.robot.commands.drive.StopDriveCommand;
 import frc.robot.commands.drive.TankDriveCommand;
 import frc.robot.commands.scoring.ScoringSystemTowardsPositionWithRetractionCommand;
@@ -117,7 +119,8 @@ public class RobotContainer {
             ScoringPositionConstants.PLAYER_STATION_PICKUP));
 
     slowdownButton.whileTrue(new ParallelCommandGroup(
-        new SetAccelerationLimitCommand(driveBase, () -> new Translation2d(elevator.getLength(), arm.getRotation())),
+        new SetAccelerationLimitCommand(driveBase,
+            () -> ScoringPosition.fromArmElevator(Rotation2d.fromDegrees(arm.getAngle()), elevator.getExtension())),
         new TankDriveCommand(driveBase,
             () -> DriverConstants.SLOWDOWN_PERCENT * driverJoystick.getRawAxis(DriverConstants.LEFT_AXIS),
             () -> DriverConstants.SLOWDOWN_PERCENT * driverJoystick.getRawAxis(DriverConstants.RIGHT_AXIS),
@@ -194,7 +197,8 @@ public class RobotContainer {
    */
   public void setTeleopDefaultCommands() {
     driveBase.setDefaultCommand(new ParallelCommandGroup(
-        new SetAccelerationLimitCommand(driveBase, () -> new Translation2d(elevator.getLength(), arm.getRotation())),
+        new SetAccelerationLimitCommand(driveBase,
+            () -> ScoringPosition.fromArmElevator(Rotation2d.fromDegrees(arm.getAngle()), elevator.getExtension())),
         new TankDriveCommand(
             driveBase,
             () -> -driverJoystick.getRawAxis(DriverConstants.LEFT_AXIS),
