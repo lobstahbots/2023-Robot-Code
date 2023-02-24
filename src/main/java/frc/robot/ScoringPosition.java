@@ -149,14 +149,4 @@ public class ScoringPosition {
   public ScoringPosition translateBy(Translation2d translation) {
     return fromXY(position.plus(translation));
   }
-
-  /**
-   * @param xBound The upper bound of the x zone
-   * @param yBound The upper bound of the y zone
-   * 
-   * @return Whether the ScoringPosition is within the zone defined by the given x and y bounds.
-   */
-  public boolean isInsideXYZone(double xBound, double yBound) {
-    return this.getX() < xBound && this.getY() < yBound;
-  }
 }
