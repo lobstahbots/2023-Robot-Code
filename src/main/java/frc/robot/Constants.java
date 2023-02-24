@@ -139,6 +139,7 @@ public final class Constants {
     public static final Translation2d ROBOT_TO_SCORING_ORIGIN = new Translation2d(0, 0); // TODO
     public static final double RETRACT_BEFORE_ROTATING_ANGLE = 5;
     public static final double RETRACT_BEFORE_ROTATING_PRECISION = 5;
+    public static final double AVOID_BUMPERS_PRECISION = 3;
 
     /**
      * Stores constants related to the arm.
@@ -228,6 +229,10 @@ public final class Constants {
     public static final ScoringPosition HIGH_GOAL_SCORING = ScoringPosition.fromXY(39.75, 50);
     public static final ScoringPosition CONE_SCORING_OFFSET = ScoringPosition.fromXY(0, -4);
     public static final ScoringPosition PLAYER_STATION_PICKUP = ScoringPosition.fromXY(10, 44.375);
+    public static final ScoringPosition OUTSIDE_BUMPERS =
+        ScoringPosition.fromArmElevator(Rotation2d.fromDegrees(60), 0);
+    public static final double BUMPER_ZONE_X = 15;
+    public static final double BUMPER_ZONE_Y = 15;
   }
 
 
