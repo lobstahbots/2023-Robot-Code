@@ -39,6 +39,11 @@ public class RunElevatorToExtensionCommand extends CommandBase {
   }
 
   @Override
+  public void initialize() {
+    this.elevator.resetPID();
+  }
+
+  @Override
   public void execute() {
     double clampedExtension = MathUtil.clamp(extension.getAsDouble(), ElevatorConstants.MIN_EXTENSION_INCHES,
         ElevatorConstants.MAX_EXTENSION_INCHES);
