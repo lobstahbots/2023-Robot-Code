@@ -67,8 +67,8 @@ public class RobotContainer {
   private final JoystickButton lowGoalButton = operatorJoystick.button(OperatorConstants.LOW_GOAL_BTN_INDEX);
   private final JoystickButton midGoalButton = operatorJoystick.button(OperatorConstants.MID_GOAL_BTN_INDEX);
   private final JoystickButton highGoalButton = operatorJoystick.button(OperatorConstants.HIGH_GOAL_BTN_INDEX);
-  private final JoystickButton playerStationButton =
-      operatorJoystick.button(OperatorConstants.STATION_PICKUP_POV_INDEX);
+  private final POVButton playerStationButton =
+      new POVButton(operatorJoystick, OperatorConstants.STATION_PICKUP_POV_INDEX);
   private final POVButton placePieceButton = new POVButton(operatorJoystick, OperatorConstants.PLACE_CONE_POV_INDEX);
   private double lastRecordedTime = 0;
 
