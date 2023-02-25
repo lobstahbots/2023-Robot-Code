@@ -25,6 +25,8 @@ import frc.robot.Constants.ScoringSystemConstants.ArmConstants;
 public class Arm extends SubsystemBase {
 
   private final DutyCycleEncoder armEncoder;
+  private final CANSparkMax leftArmMotor;
+  private final CANSparkMax rightArmMotor;
   private final MotorControllerGroup motors;
   private final ArmFeedforward feedforward =
       new ArmFeedforward(
@@ -43,8 +45,8 @@ public class Arm extends SubsystemBase {
    * @param encoderChannel The encoder channel on the RIO
    */
   public Arm(int leftMotorID, int rightMotorID, int encoderChannel) {
-    CANSparkMax leftArmMotor = new CANSparkMax(leftMotorID, MotorType.kBrushless);
-    CANSparkMax rightArmMotor = new CANSparkMax(rightMotorID, MotorType.kBrushless);
+    this.leftArmMotor = new CANSparkMax(leftMotorID, MotorType.kBrushless);
+    this.rightArmMotor = new CANSparkMax(rightMotorID, MotorType.kBrushless);
     leftArmMotor.setIdleMode(IdleMode.kBrake);
     rightArmMotor.setIdleMode(IdleMode.kBrake);
     leftArmMotor.setInverted(false);
@@ -57,6 +59,16 @@ public class Arm extends SubsystemBase {
     armEncoder.setDistancePerRotation(ArmConstants.ARM_DEGREES_PER_ROTATION);
 
     pidController.setTolerance(ArmConstants.ROTATION_PID_TOLERANCE);
+  }
+
+  /**
+   * Sets the braking mode to the given {@link IdleMode}.
+   *
+   * @param mode The {@link IdleMode} to set the motors to
+   */
+  public void setIdleMode(IdleMode mode) {
+    leftArmMotor.setIdleMode(mode);
+    rightArmMotor.setIdleMode(mode);
   }
 
   /**

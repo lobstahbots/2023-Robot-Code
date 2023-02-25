@@ -5,11 +5,13 @@
 package frc.robot;
 
 import com.pathplanner.lib.server.PathPlannerServer;
+import com.revrobotics.CANSparkMax.IdleMode;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.networktables.NetworkTablesJNI;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import edu.wpi.first.wpilibj2.command.button.POVButton;
@@ -92,6 +94,12 @@ public class RobotContainer {
         elevator.getExtension());
   }
 
+  public boolean insideBumpers() {
+    return ScoringPosition
+        .fromArmElevator(arm.getRotation(), elevator.getExtension())
+        .isInsideBumperZone();
+  }
+
   /**
    * Use this method to define your button->command mappings.
    */
@@ -164,6 +172,16 @@ public class RobotContainer {
     SmartDashboard.putData("Crossing Position Chooser", crossingPosition);
     SmartDashboard.putData("Ending Position Chooser", endingPosition);
     SmartDashboard.putData("Teleop Target", targetPosition);
+    SmartDashboard.putData("Coast Mode", new InstantCommand(
+        () -> {
+          arm.setIdleMode(IdleMode.kCoast);
+          elevator.setIdleMode(IdleMode.kCoast);
+        }));
+    SmartDashboard.putData("Brake Mode", new InstantCommand(
+        () -> {
+          arm.setIdleMode(IdleMode.kBrake);
+          elevator.setIdleMode(IdleMode.kBrake);
+        }));
   }
 
   /**

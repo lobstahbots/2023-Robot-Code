@@ -1,6 +1,7 @@
 
 package frc.robot.commands.scoring;
 
+import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import frc.robot.ScoringPosition;
 import frc.robot.Constants.ScoringSystemConstants;
@@ -28,25 +29,32 @@ public class ScoringSystemTowardsPositionWithRetractionCommand extends Sequentia
 
     addCommands(
         // If starting position is inside bumper collision zone, first rotate to safety angle
-        new ScoringSystemToPositionCommand(arm, elevator, () -> ScoringPosition.fromArmElevator(
-            ScoringSystemConstants.BUMPER_AVOIDANCE_ANGLE, elevator.getExtension()),
+        new ScoringSystemToPositionCommand(
+            arm, elevator,
+            () -> ScoringPosition.fromArmElevator(ScoringSystemConstants.BUMPER_AVOIDANCE_ANGLE,
+                elevator.getExtension()),
             ScoringSystemConstants.BUMPER_AVOIDANCE_PRECISION)
                 .unless(() -> !ScoringPosition
                     .fromArmElevator(arm.getRotation(), elevator.getExtension())
                     .isInsideBumperZone()),
         // Retract elevator unless close enough to final angle to not need to retract before rotating.
-        new ScoringSystemToPositionCommand(arm, elevator, () -> ScoringPosition.fromArmElevator(
-            arm.getRotation(), 0), ScoringSystemConstants.BUMPER_AVOIDANCE_PRECISION),
+        new ScoringSystemToPositionCommand(
+            arm, elevator, () -> ScoringPosition.fromArmElevator(
+                arm.getRotation(), 0),
+            ScoringSystemConstants.BUMPER_AVOIDANCE_PRECISION),
         // If target position is inside bumper collision zone, after retracting, rotate to safety angle and extend to
         // target extension sequentially.
         new SequentialCommandGroup(
-            new ScoringSystemToPositionCommand(arm, elevator, () -> ScoringPosition.fromArmElevator(
+            new ScoringSystemToPositionCommand(arm, elevator, () -> ScoringPosition.fromArmElevator( // rotate
                 ScoringSystemConstants.BUMPER_AVOIDANCE_ANGLE, elevator.getExtension()),
                 ScoringSystemConstants.BUMPER_AVOIDANCE_PRECISION),
-            new ScoringSystemToPositionCommand(arm, elevator, () -> ScoringPosition.fromArmElevator(
+            new ScoringSystemToPositionCommand(arm, elevator, () -> ScoringPosition.fromArmElevator( //
                 ScoringSystemConstants.BUMPER_AVOIDANCE_ANGLE, position.getElevatorExtension()),
                 ScoringSystemConstants.BUMPER_AVOIDANCE_PRECISION)).unless(() -> !position.isInsideBumperZone()),
         // Finally, completely rotate and extend to target position.
+        new ScoringSystemToPositionCommand(arm, elevator,
+            () -> ScoringPosition.fromArmElevator(position.getArmAngle(), elevator.getExtension()),
+            ScoringSystemConstants.BUMPER_AVOIDANCE_PRECISION),
         new ScoringSystemTowardsPositionCommand(arm, elevator, position));
   }
 }
