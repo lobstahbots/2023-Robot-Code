@@ -68,10 +68,8 @@ public class RobotContainer {
   private final JoystickButton midGoalButton = operatorJoystick.button(OperatorConstants.MID_GOAL_BTN_INDEX);
   private final JoystickButton highGoalButton = operatorJoystick.button(OperatorConstants.HIGH_GOAL_BTN_INDEX);
   private final JoystickButton playerStationButton =
-      operatorJoystick.button(OperatorConstants.STATION_PICKUP_BTN_INDEX);
-  private final POVButton placePieceButton = new POVButton(operatorJoystick, OperatorConstants.PLACE_PIECE_POV_INDEX);
-  private final POVButton groundPickupButton = new POVButton(operatorJoystick, OperatorConstants.PICKUP_POV_INDEX);
-
+      operatorJoystick.button(OperatorConstants.STATION_PICKUP_POV_INDEX);
+  private final POVButton placePieceButton = new POVButton(operatorJoystick, OperatorConstants.PLACE_CONE_POV_INDEX);
   private double lastRecordedTime = 0;
 
   /**
@@ -117,8 +115,6 @@ public class RobotContainer {
     playerStationButton
         .whileTrue(new ScoringSystemTowardsPositionWithRetractionCommand(arm, elevator,
             ScoringPositionConstants.PLAYER_STATION_PICKUP));
-    groundPickupButton.whileTrue(new ScoringSystemTowardsPositionWithRetractionCommand(arm, elevator,
-    ScoringPositionConstants.GROUND_PICKUP));
 
     slowdownButton.whileTrue(new TankDriveCommand(driveBase,
         () -> DriverConstants.SLOWDOWN_PERCENT * driverJoystick.getRawAxis(DriverConstants.LEFT_AXIS),
