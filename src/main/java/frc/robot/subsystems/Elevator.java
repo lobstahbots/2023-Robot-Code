@@ -42,6 +42,15 @@ public class Elevator extends SubsystemBase {
   }
 
   /**
+   * Sets the braking mode to the given {@link IdleMode}.
+   *
+   * @param mode The {@link IdleMode} to set the motors to
+   */
+  public void setIdleMode(IdleMode mode) {
+    elevatorMotor.setIdleMode(mode);
+  }
+
+  /**
    * Sets the speed of the elevator motor. Includes a stop to keep elevator from extending or retracting beyond limits.
    * 
    * @param speed The desired extension/retraction speed.

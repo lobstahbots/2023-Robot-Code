@@ -3,7 +3,6 @@ package frc.robot.commands.scoring;
 
 import java.util.function.Supplier;
 
-import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj2.command.ParallelRaceGroup;
 import edu.wpi.first.wpilibj2.command.WaitUntilCommand;
 import frc.robot.ScoringPosition;
@@ -49,7 +48,7 @@ public class ScoringSystemToPositionCommand extends ParallelRaceGroup {
 
   private boolean isAtPosition() {
     ScoringPosition currentPosition =
-        ScoringPosition.fromArmElevator(Rotation2d.fromDegrees(arm.getAngle()), elevator.getExtension());
+        ScoringPosition.fromArmElevator(arm.getRotation(), elevator.getExtension());
     return position.get().getDistance(currentPosition) <= threshold;
   }
 }

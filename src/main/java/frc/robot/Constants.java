@@ -117,7 +117,7 @@ public final class Constants {
       public static final double JOYSTICK_DEADBAND = 0.05;
       public static final int HORIZONTAL_ARM_MOVEMENT_AXIS = 1;
       public static final int VERTICAL_ARM_MOVEMENT_AXIS = 5;
-      public static final double MANUAL_CONTROL_SPEED = 0.0025;
+      public static final double MANUAL_CONTROL_SPEED = 0.25;
 
       public static final int MANUAL_CONTROL_BUTTON_INDEX = 7;
       public static final int INTAKE_BUTTON_INDEX = 5;
@@ -138,6 +138,9 @@ public final class Constants {
     public static final Translation2d ROBOT_TO_SCORING_ORIGIN = new Translation2d(0, 0); // TODO
     public static final double RETRACT_BEFORE_ROTATING_ANGLE = 5;
     public static final double RETRACT_BEFORE_ROTATING_PRECISION = 5;
+    public static final Rotation2d BUMPER_AVOIDANCE_ANGLE = Rotation2d.fromDegrees(52);
+    public static final double BUMPER_AVOIDANCE_X = 0;
+    public static final double BUMPER_AVOIDANCE_PRECISION = 2;
 
     /**
      * Stores constants related to the arm.

@@ -9,6 +9,7 @@ import com.revrobotics.CANSparkMax.IdleMode;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 import edu.wpi.first.math.controller.ArmFeedforward;
 import edu.wpi.first.math.controller.ProfiledPIDController;
+import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.math.trajectory.TrapezoidProfile.Constraints;
 import edu.wpi.first.wpilibj.DigitalInput;
@@ -24,6 +25,8 @@ import frc.robot.Constants.ScoringSystemConstants.ArmConstants;
 public class Arm extends SubsystemBase {
 
   private final DutyCycleEncoder armEncoder;
+  private final CANSparkMax leftArmMotor;
+  private final CANSparkMax rightArmMotor;
   private final MotorControllerGroup motors;
   private final ArmFeedforward feedforward =
       new ArmFeedforward(
@@ -42,8 +45,8 @@ public class Arm extends SubsystemBase {
    * @param encoderChannel The encoder channel on the RIO
    */
   public Arm(int leftMotorID, int rightMotorID, int encoderChannel) {
-    CANSparkMax leftArmMotor = new CANSparkMax(leftMotorID, MotorType.kBrushless);
-    CANSparkMax rightArmMotor = new CANSparkMax(rightMotorID, MotorType.kBrushless);
+    this.leftArmMotor = new CANSparkMax(leftMotorID, MotorType.kBrushless);
+    this.rightArmMotor = new CANSparkMax(rightMotorID, MotorType.kBrushless);
     leftArmMotor.setIdleMode(IdleMode.kBrake);
     rightArmMotor.setIdleMode(IdleMode.kBrake);
     leftArmMotor.setInverted(false);
@@ -59,12 +62,32 @@ public class Arm extends SubsystemBase {
   }
 
   /**
+   * Sets the braking mode to the given {@link IdleMode}.
+   *
+   * @param mode The {@link IdleMode} to set the motors to
+   */
+  public void setIdleMode(IdleMode mode) {
+    leftArmMotor.setIdleMode(mode);
+    rightArmMotor.setIdleMode(mode);
+  }
+
+  /**
    * Gets angle of the arm.
    * 
    * @return The rotation of the arm in degrees. 0 = Vertical and pointing down. Positive -> towards front of robot.
    */
   public double getAngle() {
     return ArmConstants.ARM_OFFSET_DEG - armEncoder.getAbsolutePosition() * 360;
+  }
+
+  /**
+   * Gets a {@link Rotation2d} representing the current angle of the arm.
+   * 
+   * @return An {@link Rotation2d} of the rotation of the arm. 0 = Vertical and pointing down. Positive -> towards front
+   *         of robot.
+   */
+  public Rotation2d getRotation() {
+    return Rotation2d.fromDegrees(getAngle());
   }
 
   /**
