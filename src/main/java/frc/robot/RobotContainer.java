@@ -6,7 +6,6 @@ package frc.robot;
 
 import com.pathplanner.lib.server.PathPlannerServer;
 import edu.wpi.first.math.geometry.Pose2d;
-import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.networktables.NetworkTablesJNI;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -89,7 +88,7 @@ public class RobotContainer {
   }
 
   public ScoringPosition getArmPosition() {
-    return ScoringPosition.fromArmElevator(Rotation2d.fromDegrees((arm.getAngle())),
+    return ScoringPosition.fromArmElevator(arm.getRotation(),
         elevator.getExtension());
   }
 

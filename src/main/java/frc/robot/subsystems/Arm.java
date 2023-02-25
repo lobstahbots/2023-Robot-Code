@@ -9,6 +9,7 @@ import com.revrobotics.CANSparkMax.IdleMode;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 import edu.wpi.first.math.controller.ArmFeedforward;
 import edu.wpi.first.math.controller.ProfiledPIDController;
+import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.math.trajectory.TrapezoidProfile.Constraints;
 import edu.wpi.first.wpilibj.DigitalInput;
@@ -65,6 +66,16 @@ public class Arm extends SubsystemBase {
    */
   public double getAngle() {
     return ArmConstants.ARM_OFFSET_DEG - armEncoder.getAbsolutePosition() * 360;
+  }
+
+  /**
+   * Gets a {@link Rotation2d} representing the current angle of the arm.
+   * 
+   * @return An {@link Rotation2d} of the rotation of the arm. 0 = Vertical and pointing down. Positive -> towards front
+   *         of robot.
+   */
+  public Rotation2d getRotation() {
+    return Rotation2d.fromDegrees(getAngle());
   }
 
   /**
