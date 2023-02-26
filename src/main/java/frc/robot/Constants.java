@@ -120,7 +120,7 @@ public final class Constants {
       public static final double JOYSTICK_DEADBAND = 0.05;
       public static final int HORIZONTAL_ARM_MOVEMENT_AXIS = 1;
       public static final int VERTICAL_ARM_MOVEMENT_AXIS = 5;
-      public static final double MANUAL_CONTROL_SPEED = 0.25;
+      public static final double MANUAL_CONTROL_SPEED = 1.3;
 
       public static final int MANUAL_CONTROL_BUTTON_INDEX = 7;
       public static final int INTAKE_BUTTON_INDEX = 5;
@@ -180,7 +180,7 @@ public final class Constants {
      */
     public static final class ElevatorConstants {
       public static final double LENGTH_FULLY_RETRACTED = 38;
-      public static final double HOME_SPEED = 0.18;
+      public static final double HOME_SPEED = 0.75;
 
       // IO
       public static final int ENCODER_CHANNEL_A = 0;
@@ -226,7 +226,7 @@ public final class Constants {
    * Stores positions for the scoring system.
    */
   public static final class ScoringPositionConstants {
-    public static final ScoringPosition STOWED = ScoringPosition.fromArmElevator(Rotation2d.fromDegrees(35), 0);
+    public static final ScoringPosition STOWED = ScoringPosition.fromArmElevator(Rotation2d.fromDegrees(35), -0.1);
     public static final ScoringPosition GROUND_PICKUP = ScoringPosition.fromXY(16.4, 10.2);
     public static final ScoringPosition MID_GOAL_SCORING = ScoringPosition.fromXY(25, 47); // before dropping
     public static final ScoringPosition LOW_GOAL_SCORING = ScoringPosition.fromXY(16.4, 10.2);

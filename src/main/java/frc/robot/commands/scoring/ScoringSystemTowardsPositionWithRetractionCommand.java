@@ -1,7 +1,6 @@
 
 package frc.robot.commands.scoring;
 
-import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import frc.robot.ScoringPosition;
 import frc.robot.Constants.ScoringSystemConstants;
@@ -40,7 +39,7 @@ public class ScoringSystemTowardsPositionWithRetractionCommand extends Sequentia
         // Retract elevator unless close enough to final angle to not need to retract before rotating.
         new ScoringSystemToPositionCommand(
             arm, elevator, () -> ScoringPosition.fromArmElevator(
-                arm.getRotation(), 0),
+                arm.getRotation(), -0.1),
             ScoringSystemConstants.BUMPER_AVOIDANCE_PRECISION),
         // If target position is inside bumper collision zone, after retracting, rotate to safety angle and extend to
         // target extension sequentially.
