@@ -9,11 +9,14 @@ import java.util.ArrayList;
 import com.pathplanner.lib.PathConstraints;
 import com.pathplanner.lib.PathPlanner;
 import com.pathplanner.lib.PathPlannerTrajectory;
+import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import frc.robot.Constants.AutonConstants;
+import frc.robot.Constants.FieldConstants;
 import frc.robot.Constants.PathConstants;
 import frc.robot.commands.drive.PathFollowCommand;
 import frc.robot.commands.drive.StraightDriveCommand;
@@ -57,14 +60,20 @@ public class AutonGenerator {
    * @param finalPosition Which game element the path ends at.
    */
   public Command getPathFollowCommand(int initialPosition, int crossingPosition, int finalPosition) {
-    ArrayList<PathPlannerTrajectory> pathGroup = this.getPath(initialPosition, crossingPosition, finalPosition);
-    return new SequentialCommandGroup(
-        // new InstantCommand(() -> {
-        // driveBase.resetOdometry(pathGroup.get(0).getInitialPose().getTranslation(),
-        // pathGroup.get(0).getInitialPose().getRotation());
-        // }),
-        new PathFollowCommand(this.driveBase, pathGroup.get(0)),
-        new PathFollowCommand(this.driveBase, pathGroup.get(1)));
+    ArrayList<Pose2d> pathGroup = new ArrayList<>();
+    // Pose2d currentPose = driveBase.getPose();
+    // Pose2d initialPose = new Pose2d(FieldConstants.SCORING_WAYPOINTS[initialPosition].getX(),
+    // FieldConstants.SCORING_WAYPOINTS[initialPosition].getY(), new Rotation2d(0));
+    Pose2d turningPose = FieldConstants.TURNING_WAYPOINTS[crossingPosition];
+    Pose2d crossingPose = FieldConstants.CROSSING_WAYPOINTS[crossingPosition];
+    Pose2d finalPose = FieldConstants.ENDING_AUTON_POSES[finalPosition];
+    // pathGroup.add(initialPose);
+    if (initialPosition > 1 && crossingPosition == 0) {
+      pathGroup.add(turningPose);
+    }
+    pathGroup.add(crossingPose);
+    pathGroup.add(finalPose);
+    return new PathFollowCommand(driveBase, driveBase.generatePath(pathGroup));
   }
 
   /**

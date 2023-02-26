@@ -63,6 +63,20 @@ public final class Constants {
         new Pose2d(2.75, 3.85, new Rotation2d(0)), new Pose2d(2.75, 4.4, new Rotation2d(0)),
         new Pose2d(2.75, 5, new Rotation2d(0))
     };
+
+    public static final Pose2d[] TURNING_WAYPOINTS = new Pose2d[] {
+        new Pose2d(2.5, 0.77, new Rotation2d(0)), new Pose2d(2.70, 4.75, new Rotation2d(0))
+    };
+
+    public static final Pose2d[] CROSSING_WAYPOINTS = new Pose2d[] {
+        new Pose2d(5.50, 0.75, new Rotation2d(0)), new Pose2d(4.20, 4.75, new Rotation2d(0))
+    };
+
+    public static final Pose2d[] ENDING_AUTON_POSES = new Pose2d[] {
+        new Pose2d(6.15, 0.75, new Rotation2d(0)), new Pose2d(7.00, 2.14, new Rotation2d(0)),
+        new Pose2d(6.50, 6.00, new Rotation2d(0)), new Pose2d(7.60, 7.26, new Rotation2d(0))
+    };
+
     public static final double MAX_AUTO_DISTANCE_METERS = 10;
     public static final double SCORING_ZONE_DEADBAND = 0.5;
   }

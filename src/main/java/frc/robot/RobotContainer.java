@@ -30,6 +30,7 @@ import frc.robot.auton.AutonGenerator;
 import frc.robot.commands.drive.PathFollowCommand;
 import frc.robot.commands.drive.StopDriveCommand;
 import frc.robot.commands.drive.TankDriveCommand;
+import frc.robot.commands.drive.TurnToAngleCommand;
 import frc.robot.commands.scoring.ScoringSystemTowardsPositionWithRetractionCommand;
 import frc.robot.commands.scoring.TranslateScoringSystemCommand;
 import frc.robot.commands.scoring.elevator.ResetElevatorCommand;
@@ -74,6 +75,7 @@ public class RobotContainer {
   private final JoystickButton highGoalButton = operatorJoystick.button(OperatorConstants.HIGH_GOAL_BTN_INDEX);
   private final JoystickButton playerStationButton =
       operatorJoystick.button(OperatorConstants.STATION_PICKUP_BTN_INDEX);
+  private final JoystickButton turnButton = driverJoystick.button(2);
 
   private double lastRecordedTime = 0;
 
@@ -125,6 +127,8 @@ public class RobotContainer {
         () -> DriverConstants.SLOWDOWN_PERCENT * driverJoystick.getRawAxis(DriverConstants.LEFT_AXIS),
         () -> DriverConstants.SLOWDOWN_PERCENT * driverJoystick.getRawAxis(DriverConstants.RIGHT_AXIS),
         DriverConstants.SQUARED_INPUTS));
+
+    turnButton.whileTrue(new TurnToAngleCommand(driveBase, Rotation2d.fromDegrees(90), 0.5));
   }
 
   private final SendableChooser<Command> autonChooser = new SendableChooser<>();
@@ -149,8 +153,8 @@ public class RobotContainer {
     initialPosition.addOption("8", 8);
     initialPosition.setDefaultOption("0", 0);
     crossingPosition.addOption("Right of Platform", 0);
-    crossingPosition.addOption("Left of Platform", 2);
-    crossingPosition.setDefaultOption("Left of Platform", 2);
+    crossingPosition.addOption("Left of Platform", 1);
+    crossingPosition.setDefaultOption("Left of Platform", 1);
     endingPosition.addOption("Towards Player Station", 3);
     endingPosition.addOption("Slightly Left", 2);
     endingPosition.addOption("Slightly Right", 1);
