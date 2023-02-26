@@ -32,10 +32,10 @@ public final class Constants {
     public static final double MAX_ACCELERATION = 0.5;
     public static final double RAMSETE_B = 2.0;
     public static final double RAMSETE_ZETA = 0.7;
-    public static final double kS = 0.86841;
-    public static final double kV = 4.009;
-    public static final double kA = 2.6045;
-    public static final double kP = 0.0074093;
+    public static final double kS = 0.18749;
+    public static final double kV = 1.898;
+    public static final double kA = 0.55221;
+    public static final double kP = 0.24582;
     public static final double kI = 0;
     public static final double KD = 0;
     public static final double MAX_OFFSET_START = 1;
@@ -227,8 +227,8 @@ public final class Constants {
    */
   public static final class DriveConstants {
     public static final int COUNTS_PER_REV = 2048;
-    public static final double SENSOR_GEAR_RATIO = 10.71;
-    public static final double WHEEL_RADIUS_INCHES = 3;
+    public static final double SENSOR_GEAR_RATIO = 8.458646;
+    public static final double WHEEL_RADIUS_INCHES = 2.97262;
     public static final double TRACK_WIDTH = 18.75;
 
     public static final class DriveMotorCANIDs {
@@ -249,6 +249,6 @@ public final class Constants {
     public static final double ACCELERATION_RATE_LIMIT = 1.5;
     public static final DifferentialDriveKinematics KINEMATICS =
         new DifferentialDriveKinematics(Units.inchesToMeters(TRACK_WIDTH));
-    
+
   }
 }

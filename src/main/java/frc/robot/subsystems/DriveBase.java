@@ -159,17 +159,14 @@ public class DriveBase extends SubsystemBase {
    */
   public Pose2d getPose() {
     poseEstimator.update(getHeading(), getLeftEncoderDistanceMeters(), getRightEncoderDistanceMeters());
-    // EstimatedRobotPose estimatedVisionPose = this.photonVision.getCurrentPose();
-    // SmartDashboard.putString("PhotonVision Pose", estimatedVisionPose.estimatedPose.toString());
-    // poseEstimator.addVisionMeasurement(estimatedVisionPose.estimatedPose, estimatedVisionPose.timestampSeconds);
-    // try {
-    // EstimatedRobotPose estimatedVisionPose = this.photonVision.getCurrentPose();
-    // SmartDashboard.putString("PhotonVision Pose", estimatedVisionPose.estimatedPose.toString());
-    // poseEstimator.addVisionMeasurement(estimatedVisionPose.estimatedPose,
-    // estimatedVisionPose.timestampSeconds);
-    // } catch (NullPointerException npe) {
+    try {
+      EstimatedRobotPose estimatedVisionPose = this.photonVision.getCurrentPose();
+      SmartDashboard.putString("PhotonVision Pose", estimatedVisionPose.estimatedPose.toString());
+      poseEstimator.addVisionMeasurement(estimatedVisionPose.estimatedPose,
+          estimatedVisionPose.timestampSeconds);
+    } catch (NullPointerException npe) {
 
-    // }
+    }
     return poseEstimator.getEstimatedPosition();
   }
 
@@ -318,14 +315,14 @@ public class DriveBase extends SubsystemBase {
    */
   public void periodic() {
     poseEstimator.update(getHeading(), getLeftEncoderDistanceMeters(), getRightEncoderDistanceMeters());
-    // try {
-    // EstimatedRobotPose estimatedVisionPose = this.photonVision.getCurrentPose();
-    // SmartDashboard.putString("PhotonVision Pose", estimatedVisionPose.estimatedPose.toString());
-    // poseEstimator.addVisionMeasurement(estimatedVisionPose.estimatedPose,
-    // estimatedVisionPose.timestampSeconds);
-    // } catch (NullPointerException npe) {
+    try {
+      EstimatedRobotPose estimatedVisionPose = this.photonVision.getCurrentPose();
+      SmartDashboard.putString("PhotonVision Pose", estimatedVisionPose.estimatedPose.toString());
+      poseEstimator.addVisionMeasurement(estimatedVisionPose.estimatedPose,
+          estimatedVisionPose.timestampSeconds);
+    } catch (NullPointerException npe) {
 
-    // }
+    }
 
     SmartDashboard.putNumber("Gyro", this.getHeading().getDegrees());
     SmartDashboard.putString("Pose", this.getPose().toString());

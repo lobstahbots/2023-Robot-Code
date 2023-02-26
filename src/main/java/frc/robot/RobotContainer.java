@@ -4,6 +4,7 @@
 
 package frc.robot;
 
+import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.pathplanner.lib.PathConstraints;
 import com.pathplanner.lib.PathPlanner;
 import com.pathplanner.lib.server.PathPlannerServer;
@@ -223,6 +224,7 @@ public class RobotContainer {
    * setTeleopDefaultCommands().
    */
   public void setAutonDefaultCommands() {
+    driveBase.setNeutralMode(NeutralMode.Brake);
     driveBase.setDefaultCommand(new StopDriveCommand(driveBase));
   }
 
@@ -231,6 +233,7 @@ public class RobotContainer {
    * subsystems while in test mode.
    */
   public void setTestDefaultCommands() {
+    driveBase.setNeutralMode(NeutralMode.Coast);
     driveBase.setDefaultCommand(new StopDriveCommand(driveBase));
   }
 
@@ -240,5 +243,9 @@ public class RobotContainer {
    */
   public void setSimDefaultCommands() {
     driveBase.setDefaultCommand(new StopDriveCommand(driveBase));
+  }
+
+  public String getDriveBasePose() {
+    return driveBase.getPose().toString();
   }
 }
