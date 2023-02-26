@@ -11,7 +11,6 @@ import edu.wpi.first.networktables.NetworkTablesJNI;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import edu.wpi.first.wpilibj2.command.button.POVButton;
@@ -21,7 +20,6 @@ import frc.robot.Constants.ScoringSystemConstants.ArmConstants;
 import frc.robot.Constants.ScoringSystemConstants.ElevatorConstants;
 import frc.robot.Constants.ScoringSystemConstants.IntakeConstants;
 import frc.robot.Constants.FieldConstants;
-import frc.robot.Constants.ScoringPositionConstants;
 import frc.robot.Constants.OIConstants.DriverConstants;
 import frc.robot.Constants.OIConstants.OperatorConstants;
 import frc.robot.auton.AutonGenerator;
@@ -29,7 +27,6 @@ import frc.robot.commands.drive.StopDriveCommand;
 import frc.robot.commands.drive.TankDriveCommand;
 import frc.robot.commands.scoring.ScoringSystemTowardsPositionWithRetractionCommand;
 import frc.robot.commands.scoring.TranslateScoringSystemCommand;
-import frc.robot.commands.scoring.elevator.ResetElevatorCommand;
 import frc.robot.commands.scoring.intake.SpinIntakeCommand;
 import frc.robot.subsystems.Arm;
 import frc.robot.subsystems.DriveBase;
@@ -56,7 +53,7 @@ public class RobotContainer {
           ElevatorConstants.ENCODER_CHANNEL_B, ElevatorConstants.LIMIT_SWITCH_CHANNEL);
   private final Intake intake = new Intake(IntakeConstants.LEFT_MOTOR_ID, IntakeConstants.RIGHT_MOTOR_ID);
 
-  private final AutonGenerator autonGenerator = new AutonGenerator(driveBase);
+  private final AutonGenerator autonGenerator = new AutonGenerator(driveBase, arm, elevator, intake);
 
   private final LobstahGamepad driverJoystick = new LobstahGamepad(DriverConstants.DRIVER_JOYSTICK_INDEX);
   private final JoystickButton slowdownButton = driverJoystick.button(DriverConstants.SLOWDOWN_BUTTON_INDEX);
@@ -158,6 +155,10 @@ public class RobotContainer {
             endingPosition.getSelected()));
     autonChooser.addOption("Simple Auton", autonGenerator.getSimpleAutonCommand());
     autonChooser.addOption("Do Nothing Auton", new StopDriveCommand(driveBase));
+    autonChooser.addOption("Place Piece on Mid Goal Auton",
+        autonGenerator.getScoreCommand(ScoringPositionConstants.MID_GOAL_SCORING));
+    autonChooser.addOption("Place Piece on High Goal Auton",
+        autonGenerator.getScoreCommand(ScoringPositionConstants.HIGH_GOAL_SCORING));
     targetPosition.addOption("0", 0);
     targetPosition.addOption("1", 1);
     targetPosition.addOption("2", 2);
@@ -173,16 +174,6 @@ public class RobotContainer {
     SmartDashboard.putData("Crossing Position Chooser", crossingPosition);
     SmartDashboard.putData("Ending Position Chooser", endingPosition);
     SmartDashboard.putData("Teleop Target", targetPosition);
-    SmartDashboard.putData("Coast Mode", new InstantCommand(
-        () -> {
-          arm.setIdleMode(IdleMode.kCoast);
-          elevator.setIdleMode(IdleMode.kCoast);
-        }));
-    SmartDashboard.putData("Brake Mode", new InstantCommand(
-        () -> {
-          arm.setIdleMode(IdleMode.kBrake);
-          elevator.setIdleMode(IdleMode.kBrake);
-        }));
   }
 
   /**
@@ -199,7 +190,7 @@ public class RobotContainer {
    */
   public Command getAutonomousCommand() {
     return new SequentialCommandGroup(
-        new ResetElevatorCommand(elevator),
+        // new ResetElevatorCommand(elevator),
         autonChooser.getSelected());
   }
 
@@ -227,6 +218,8 @@ public class RobotContainer {
    * setTeleopDefaultCommands().
    */
   public void setAutonDefaultCommands() {
+    arm.setIdleMode(IdleMode.kBrake);
+    elevator.setIdleMode(IdleMode.kBrake);
     driveBase.setDefaultCommand(new StopDriveCommand(driveBase));
   }
 
@@ -236,6 +229,8 @@ public class RobotContainer {
    */
   public void setTestDefaultCommands() {
     driveBase.setDefaultCommand(new StopDriveCommand(driveBase));
+    arm.setIdleMode(IdleMode.kCoast);
+    elevator.setIdleMode(IdleMode.kCoast);
   }
 
   /**

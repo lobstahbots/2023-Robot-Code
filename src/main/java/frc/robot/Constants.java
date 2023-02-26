@@ -82,6 +82,9 @@ public final class Constants {
   public static final class AutonConstants {
     public static final double SIMPLE_AUTON_SPEED = 0.3;
     public static final double SIMPLE_AUTON_RUNTIME = 3.25;
+    public static final double AUTON_SCORING_TOLERANCE = 2;
+    public static final double OUTTAKE_RUNTIME = 1;
+    public static final double BACK_OFF_SPEED = -0.1;
   }
 
   public static final class VisionConstants {
@@ -213,7 +216,7 @@ public final class Constants {
       public static final int RIGHT_MOTOR_ID = 1;
 
       // Speeds
-      public static final double OUTTAKE_VOLTAGE = 2.4;
+      public static final double OUTTAKE_VOLTAGE = 1.8;
       public static final double INTAKE_VOLTAGE = -5;
       public static final double PASSIVE_INTAKE_VOLTAGE = -1.6;
     }
@@ -224,11 +227,13 @@ public final class Constants {
    */
   public static final class ScoringPositionConstants {
     public static final ScoringPosition STOWED = ScoringPosition.fromArmElevator(Rotation2d.fromDegrees(35), 0);
-    public static final ScoringPosition GROUND_PICKUP = ScoringPosition.fromXY(10, 5);
-    public static final ScoringPosition MID_GOAL_SCORING = ScoringPosition.fromXY(22.75, 38);
-    public static final ScoringPosition LOW_GOAL_SCORING = ScoringPosition.fromXY(15, 5);
-    public static final ScoringPosition HIGH_GOAL_SCORING = ScoringPosition.fromXY(39.75, 50);
-    public static final ScoringPosition CONE_SCORING_OFFSET = ScoringPosition.fromXY(0, -4);
+    public static final ScoringPosition GROUND_PICKUP = ScoringPosition.fromXY(16.4, 10.2);
+    public static final ScoringPosition MID_GOAL_SCORING = ScoringPosition.fromXY(25, 47); // before dropping
+    public static final ScoringPosition LOW_GOAL_SCORING = ScoringPosition.fromXY(16.4, 10.2);
+    public static final ScoringPosition HIGH_GOAL_SCORING = ScoringPosition.fromXY(39, 59);
+    public static final Translation2d CONE_SCORING_DROPDOWN = new Translation2d(0, -7);
+    public static final Translation2d CONE_SCORING_BACKOFF = new Translation2d(-4, -7);
+    public static final Translation2d CONE_SCORING_BACK_UP = new Translation2d(-4, 0);
     public static final ScoringPosition PLAYER_STATION_PICKUP = ScoringPosition.fromXY(10, 44.375);
   }
 
