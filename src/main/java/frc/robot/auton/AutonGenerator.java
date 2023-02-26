@@ -11,6 +11,7 @@ import com.pathplanner.lib.PathPlanner;
 import com.pathplanner.lib.PathPlannerTrajectory;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import frc.robot.Constants.AutonConstants;
 import frc.robot.Constants.PathConstants;
@@ -58,10 +59,10 @@ public class AutonGenerator {
   public Command getPathFollowCommand(int initialPosition, int crossingPosition, int finalPosition) {
     ArrayList<PathPlannerTrajectory> pathGroup = this.getPath(initialPosition, crossingPosition, finalPosition);
     return new SequentialCommandGroup(
-        // new InstantCommand(() -> {
-        // driveBase.resetOdometry(pathGroup.get(0).getInitialPose().getTranslation(),
-        // pathGroup.get(0).getInitialPose().getRotation());
-        // }),
+        new InstantCommand(() -> {
+          driveBase.resetOdometry(pathGroup.get(0).getInitialPose().getTranslation(),
+              pathGroup.get(0).getInitialPose().getRotation());
+        }),
         new PathFollowCommand(this.driveBase, pathGroup.get(0)),
         new PathFollowCommand(this.driveBase, pathGroup.get(1)));
   }
@@ -82,13 +83,13 @@ public class AutonGenerator {
         new PathConstraints(PathConstants.MAX_DRIVE_SPEED, PathConstants.MAX_ACCELERATION));
     PathPlannerTrajectory secondPath = PathPlanner.loadPath(secondPathName,
         new PathConstraints(PathConstants.MAX_DRIVE_SPEED, PathConstants.MAX_ACCELERATION));
-    if (driveBase.getDistanceToPose(firstPath.getInitialPose()).getTranslation()
-        .getNorm() > PathConstants.MAX_OFFSET_START) {
-      SmartDashboard.putNumber("Distance from start",
-          driveBase.getDistanceToPose(firstPath.getInitialPose()).getTranslation()
-              .getNorm());
-      return pathGroup;
-    }
+    // if (driveBase.getDistanceToPose(firstPath.getInitialPose()).getTranslation()
+    // .getNorm() > PathConstants.MAX_OFFSET_START) {
+    // SmartDashboard.putNumber("Distance from start",
+    // driveBase.getDistanceToPose(firstPath.getInitialPose()).getTranslation()
+    // .getNorm());
+    // return pathGroup;
+    // }
     pathGroup.add(firstPath);
     pathGroup.add(secondPath);
 

@@ -146,10 +146,10 @@ public class RobotContainer {
     initialPosition.addOption("6", 6);
     initialPosition.addOption("7", 7);
     initialPosition.addOption("8", 8);
-    initialPosition.setDefaultOption("0", 1);
+    initialPosition.setDefaultOption("0", 0);
     crossingPosition.addOption("Right of Platform", 0);
     crossingPosition.addOption("Left of Platform", 2);
-    crossingPosition.setDefaultOption("Left of Platform", 0);
+    crossingPosition.setDefaultOption("Left of Platform", 2);
     endingPosition.addOption("Towards Player Station", 3);
     endingPosition.addOption("Slightly Left", 2);
     endingPosition.addOption("Slightly Right", 1);
