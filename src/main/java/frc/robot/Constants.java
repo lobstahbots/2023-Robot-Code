@@ -230,7 +230,7 @@ public final class Constants {
     public static final ScoringPosition GROUND_PICKUP = ScoringPosition.fromXY(16.4, 10.2);
     public static final ScoringPosition MID_GOAL_SCORING = ScoringPosition.fromXY(25, 47); // before dropping
     public static final ScoringPosition LOW_GOAL_SCORING = ScoringPosition.fromXY(16.4, 10.2);
-    public static final ScoringPosition HIGH_GOAL_SCORING = ScoringPosition.fromXY(39, 59);
+    public static final ScoringPosition HIGH_GOAL_SCORING = ScoringPosition.fromXY(42, 59);
     public static final Translation2d CONE_SCORING_DROPDOWN = new Translation2d(0, -7);
     public static final Translation2d CONE_SCORING_BACKOFF = new Translation2d(-4, -7);
     public static final Translation2d CONE_SCORING_BACK_UP = new Translation2d(-4, 0);
