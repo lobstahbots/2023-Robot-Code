@@ -4,6 +4,7 @@
 
 package frc.robot.commands.scoring.elevator;
 
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.Constants.ScoringSystemConstants.ElevatorConstants;
 import frc.robot.subsystems.Elevator;
@@ -27,6 +28,7 @@ public class RetractElevatorCommand extends CommandBase {
   @Override
   public void initialize() {
     this.needsToExtend = elevator.isRetracted();
+    SmartDashboard.putBoolean("Is Retracted Already", elevator.isRetracted());
   }
 
   @Override

@@ -5,14 +5,16 @@ package frc.robot.commands.drive;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.CommandBase;
+import frc.robot.Constants.DriveConstants;
 import frc.robot.subsystems.DriveBase;
 import lobstah.stl.math.LobstahMath;
 
 public class TurnToAngleCommand extends CommandBase {
-  DriveBase driveBase;
-  Rotation2d targetAngle;
-  double turnSpeed;
-  double turnOutput;
+  private final DriveBase driveBase;
+  private final Rotation2d targetAngle;
+  private final double turnSpeed;
+  private double turnOutput;
+  private double initialTurnError;
 
   public TurnToAngleCommand(DriveBase driveBase, Rotation2d targetAngle, double turnSpeed) {
     this.driveBase = driveBase;
@@ -28,10 +30,14 @@ public class TurnToAngleCommand extends CommandBase {
         LobstahMath.calculateTurningOutput(
             driveBase.getHeading().getDegrees(),
             this.targetAngle.getDegrees()));
+    this.initialTurnError = Math.abs(driveBase.getHeading().getDegrees() - targetAngle.getDegrees());
   }
 
   @Override
   public void execute() {
+    double turnError = Math.abs(driveBase.getHeading().getDegrees() - targetAngle.getDegrees());
+
+    turnOutput *= LobstahMath.scaleNumberToRange(turnError, 0, initialTurnError, 0.1, 1);
     driveBase.tankDrive(-turnOutput, turnOutput, false);
     SmartDashboard.putNumber("Turn Output", turnOutput);
   }
