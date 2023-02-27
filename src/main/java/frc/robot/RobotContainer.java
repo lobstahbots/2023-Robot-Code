@@ -7,7 +7,6 @@ package frc.robot;
 import com.pathplanner.lib.server.PathPlannerServer;
 import com.revrobotics.CANSparkMax.IdleMode;
 import edu.wpi.first.math.geometry.Pose2d;
-import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.networktables.NetworkTablesJNI;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -16,7 +15,6 @@ import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import edu.wpi.first.wpilibj2.command.button.POVButton;
 import frc.robot.Constants.ScoringPositionConstants;
-import frc.robot.Constants.ScoringSystemConstants;
 import frc.robot.Constants.DriveConstants.DriveMotorCANIDs;
 import frc.robot.Constants.ScoringSystemConstants.ArmConstants;
 import frc.robot.Constants.ScoringSystemConstants.ElevatorConstants;
@@ -211,9 +209,6 @@ public class RobotContainer {
             () -> -driverJoystick.getRawAxis(DriverConstants.RIGHT_AXIS),
             DriverConstants.SQUARED_INPUTS));
 
-    // arm.setDefaultCommand(
-    // new ScoringSystemTowardsPositionCommand(arm, elevator,
-    // ScoringPosition.fromArmElevator(Rotation2d.fromDegrees(90), 0)));
     arm.setDefaultCommand(
         new ScoringSystemTowardsPositionCommand(arm, elevator,
             ScoringPositionConstants.STOWED));

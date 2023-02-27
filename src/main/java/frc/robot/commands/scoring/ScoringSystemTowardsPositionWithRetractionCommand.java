@@ -39,7 +39,7 @@ public class ScoringSystemTowardsPositionWithRetractionCommand extends Sequentia
         // Retract elevator unless close enough to final angle to not need to retract before rotating.
         new ScoringSystemToPositionCommand(
             arm, elevator, () -> ScoringPosition.fromArmElevator(
-                arm.getRotation(), -0.1),
+                arm.getRotation(), 0),
             ScoringSystemConstants.BUMPER_AVOIDANCE_PRECISION),
         // If target position is inside bumper collision zone, after retracting, rotate to safety angle and extend to
         // target extension sequentially.
