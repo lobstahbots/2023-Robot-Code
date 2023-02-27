@@ -210,7 +210,7 @@ public class RobotContainer {
             DriverConstants.SQUARED_INPUTS));
 
     arm.setDefaultCommand(
-        new ScoringSystemTowardsPositionCommand(arm, elevator,
+        new ScoringSystemTowardsPositionWithRetractionCommand(arm, elevator,
             ScoringPositionConstants.STOWED));
     intake.setDefaultCommand(new SpinIntakeCommand(intake, IntakeConstants.PASSIVE_INTAKE_VOLTAGE));
   }
