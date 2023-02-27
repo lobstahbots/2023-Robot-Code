@@ -4,6 +4,8 @@ package frc.robot;
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
+import frc.robot.Constants.ScoringSystemConstants;
+
 import static frc.robot.Constants.ScoringSystemConstants.*;
 
 /** Represents a possible position of the scoring system (arm, elevator, and intake). */
@@ -148,5 +150,13 @@ public class ScoringPosition {
    */
   public ScoringPosition translateBy(Translation2d translation) {
     return fromXY(position.plus(translation));
+  }
+
+  /**
+   * @return Whether the ScoringPosition is within the bumper collision zone.
+   */
+  public boolean isInsideBumperZone() {
+    return getArmAngle().getDegrees() < ScoringSystemConstants.BUMPER_AVOIDANCE_ANGLE.getDegrees()
+        && getX() > ScoringSystemConstants.BUMPER_AVOIDANCE_X;
   }
 }

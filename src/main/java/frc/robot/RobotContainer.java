@@ -8,15 +8,17 @@ import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.pathplanner.lib.PathConstraints;
 import com.pathplanner.lib.PathPlanner;
 import com.pathplanner.lib.server.PathPlannerServer;
+import com.revrobotics.CANSparkMax.IdleMode;
 import edu.wpi.first.math.geometry.Pose2d;
-import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.networktables.NetworkTablesJNI;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import edu.wpi.first.wpilibj2.command.button.POVButton;
+import frc.robot.Constants.ScoringPositionConstants;
 import frc.robot.Constants.DriveConstants.DriveMotorCANIDs;
 import frc.robot.Constants.ScoringSystemConstants.ArmConstants;
 import frc.robot.Constants.ScoringSystemConstants.ElevatorConstants;
@@ -24,8 +26,8 @@ import frc.robot.Constants.ScoringSystemConstants.IntakeConstants;
 import frc.robot.Constants.FieldConstants;
 import frc.robot.Constants.PathConstants;
 import frc.robot.Constants.ScoringPositionConstants;
-import frc.robot.Constants.UIConstants.DriverConstants;
-import frc.robot.Constants.UIConstants.OperatorConstants;
+import frc.robot.Constants.OIConstants.DriverConstants;
+import frc.robot.Constants.OIConstants.OperatorConstants;
 import frc.robot.auton.AutonGenerator;
 import frc.robot.commands.drive.PathFollowCommand;
 import frc.robot.commands.drive.StopDriveCommand;
@@ -39,7 +41,7 @@ import frc.robot.subsystems.Arm;
 import frc.robot.subsystems.DriveBase;
 import frc.robot.subsystems.Elevator;
 import frc.robot.subsystems.Intake;
-import lobstah.stl.io.LobstahGamepad;
+import lobstah.stl.oi.LobstahGamepad;
 
 /**
  * This class is where the bulk of the robot should be declared. Since Command-based is a "declarative" paradigm, very
@@ -73,10 +75,9 @@ public class RobotContainer {
   private final JoystickButton lowGoalButton = operatorJoystick.button(OperatorConstants.LOW_GOAL_BTN_INDEX);
   private final JoystickButton midGoalButton = operatorJoystick.button(OperatorConstants.MID_GOAL_BTN_INDEX);
   private final JoystickButton highGoalButton = operatorJoystick.button(OperatorConstants.HIGH_GOAL_BTN_INDEX);
-  private final JoystickButton playerStationButton =
-      operatorJoystick.button(OperatorConstants.STATION_PICKUP_BTN_INDEX);
-  private final JoystickButton turnButton = driverJoystick.button(2);
-
+  private final POVButton playerStationButton =
+      new POVButton(operatorJoystick, OperatorConstants.STATION_PICKUP_POV_INDEX);
+  private final POVButton placePieceButton = new POVButton(operatorJoystick, OperatorConstants.PLACE_CONE_POV_INDEX);
   private double lastRecordedTime = 0;
 
   /**
@@ -96,8 +97,14 @@ public class RobotContainer {
   }
 
   public ScoringPosition getArmPosition() {
-    return ScoringPosition.fromArmElevator(Rotation2d.fromDegrees((arm.getAngle())),
+    return ScoringPosition.fromArmElevator(arm.getRotation(),
         elevator.getExtension());
+  }
+
+  public boolean insideBumpers() {
+    return ScoringPosition
+        .fromArmElevator(arm.getRotation(), elevator.getExtension())
+        .isInsideBumperZone();
   }
 
   /**

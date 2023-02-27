@@ -105,9 +105,9 @@ public final class Constants {
   }
 
   /**
-   * Stores constants related to driver controls, SmartDashboard and other user interface elements.
+   * Stores constants related to driver controls, SmartDashboard and other operator interface elements.
    */
-  public static final class UIConstants {
+  public static final class OIConstants {
     public static final class DriverConstants {
       public static final int DRIVER_JOYSTICK_INDEX = 0;
       public static final boolean SQUARED_INPUTS = true;
@@ -122,7 +122,7 @@ public final class Constants {
       public static final double JOYSTICK_DEADBAND = 0.05;
       public static final int HORIZONTAL_ARM_MOVEMENT_AXIS = 1;
       public static final int VERTICAL_ARM_MOVEMENT_AXIS = 5;
-      public static final double MANUAL_CONTROL_SPEED = 0.0025;
+      public static final double MANUAL_CONTROL_SPEED = 0.25;
 
       public static final int MANUAL_CONTROL_BUTTON_INDEX = 7;
       public static final int INTAKE_BUTTON_INDEX = 5;
@@ -131,9 +131,8 @@ public final class Constants {
       public static final int LOW_GOAL_BTN_INDEX = 2;
       public static final int MID_GOAL_BTN_INDEX = 1;
       public static final int HIGH_GOAL_BTN_INDEX = 4;
-      // public static final int PLACE_CONE_BTN_INDEX = 3;
-      public static final int STATION_PICKUP_BTN_INDEX = 3;
-      // public static final int CONE_PICKUP_BTN_INDEX = 0;
+      public static final int STATION_PICKUP_POV_INDEX = 0;
+      public static final int PLACE_CONE_POV_INDEX = 180;
     }
   }
 
@@ -144,6 +143,9 @@ public final class Constants {
     public static final Translation2d ROBOT_TO_SCORING_ORIGIN = new Translation2d(0, 0); // TODO
     public static final double RETRACT_BEFORE_ROTATING_ANGLE = 5;
     public static final double RETRACT_BEFORE_ROTATING_PRECISION = 5;
+    public static final Rotation2d BUMPER_AVOIDANCE_ANGLE = Rotation2d.fromDegrees(52);
+    public static final double BUMPER_AVOIDANCE_X = 0;
+    public static final double BUMPER_AVOIDANCE_PRECISION = 2;
 
     /**
      * Stores constants related to the arm.
