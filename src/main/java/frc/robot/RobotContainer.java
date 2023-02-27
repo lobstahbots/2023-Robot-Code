@@ -31,6 +31,7 @@ import frc.robot.commands.drive.PathFollowCommand;
 import frc.robot.commands.drive.StopDriveCommand;
 import frc.robot.commands.drive.TankDriveCommand;
 import frc.robot.commands.drive.TurnToAngleCommand;
+import frc.robot.commands.scoring.ScoringSystemTowardsPositionCommand;
 import frc.robot.commands.scoring.ScoringSystemTowardsPositionWithRetractionCommand;
 import frc.robot.commands.scoring.TranslateScoringSystemCommand;
 import frc.robot.commands.scoring.elevator.ResetElevatorCommand;
@@ -60,7 +61,7 @@ public class RobotContainer {
           ElevatorConstants.ENCODER_CHANNEL_B, ElevatorConstants.LIMIT_SWITCH_CHANNEL);
   private final Intake intake = new Intake(IntakeConstants.LEFT_MOTOR_ID, IntakeConstants.RIGHT_MOTOR_ID);
 
-  private final AutonGenerator autonGenerator = new AutonGenerator(driveBase);
+  private final AutonGenerator autonGenerator = new AutonGenerator(driveBase, arm, elevator, intake);
 
   private final LobstahGamepad driverJoystick = new LobstahGamepad(DriverConstants.DRIVER_JOYSTICK_INDEX);
   private final JoystickButton slowdownButton = driverJoystick.button(DriverConstants.SLOWDOWN_BUTTON_INDEX);
@@ -173,6 +174,10 @@ public class RobotContainer {
     autonChooser.addOption("Do Nothing Auton", new StopDriveCommand(driveBase));
     autonChooser.addOption("Test Path Command", new PathFollowCommand(driveBase, PathPlanner.loadPath("New Path",
         new PathConstraints(PathConstants.MAX_DRIVE_SPEED, PathConstants.MAX_ACCELERATION))));
+    autonChooser.addOption("Place Piece on Mid Goal Auton",
+        autonGenerator.getScoreCommand(ScoringPositionConstants.MID_GOAL_SCORING));
+    autonChooser.addOption("Place Piece on High Goal Auton",
+        autonGenerator.getScoreCommand(ScoringPositionConstants.HIGH_GOAL_SCORING));
     targetPosition.addOption("0", 0);
     targetPosition.addOption("1", 1);
     targetPosition.addOption("2", 2);
@@ -224,7 +229,8 @@ public class RobotContainer {
             DriverConstants.SQUARED_INPUTS));
 
     arm.setDefaultCommand(
-        new ScoringSystemTowardsPositionWithRetractionCommand(arm, elevator, ScoringPositionConstants.STOWED));
+        new ScoringSystemTowardsPositionWithRetractionCommand(arm, elevator,
+            ScoringPositionConstants.STOWED));
     intake.setDefaultCommand(new SpinIntakeCommand(intake, IntakeConstants.PASSIVE_INTAKE_VOLTAGE));
   }
 
@@ -235,6 +241,8 @@ public class RobotContainer {
    */
   public void setAutonDefaultCommands() {
     driveBase.setNeutralMode(NeutralMode.Brake);
+    arm.setIdleMode(IdleMode.kBrake);
+    elevator.setIdleMode(IdleMode.kBrake);
     driveBase.setDefaultCommand(new StopDriveCommand(driveBase));
   }
 
@@ -245,6 +253,8 @@ public class RobotContainer {
   public void setTestDefaultCommands() {
     driveBase.setNeutralMode(NeutralMode.Coast);
     driveBase.setDefaultCommand(new StopDriveCommand(driveBase));
+    arm.setIdleMode(IdleMode.kCoast);
+    elevator.setIdleMode(IdleMode.kCoast);
   }
 
   /**
