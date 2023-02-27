@@ -1,7 +1,6 @@
 
 package frc.robot.commands.scoring;
 
-import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import frc.robot.ScoringPosition;
 import frc.robot.Constants.ScoringSystemConstants;

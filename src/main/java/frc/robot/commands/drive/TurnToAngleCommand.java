@@ -1,52 +1,43 @@
 
 package frc.robot.commands.drive;
 
-
+import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.CommandBase;
-import frc.robot.Constants.DriveConstants;
+import frc.robot.Constants.PathConstants;
 import frc.robot.subsystems.DriveBase;
-import lobstah.stl.math.LobstahMath;
 
 public class TurnToAngleCommand extends CommandBase {
   private final DriveBase driveBase;
   private final Rotation2d targetAngle;
-  private final double turnSpeed;
   private double turnOutput;
-  private double initialTurnError;
+  private final PIDController pidController = new PIDController(PathConstants.kP, PathConstants.kI, PathConstants.KD);
 
-  public TurnToAngleCommand(DriveBase driveBase, Rotation2d targetAngle, double turnSpeed) {
+
+  public TurnToAngleCommand(DriveBase driveBase, Rotation2d targetAngle, double angleTolerance) {
     this.driveBase = driveBase;
     this.targetAngle = targetAngle;
-    this.turnSpeed = turnSpeed;
+    pidController.enableContinuousInput(-180, 180);
+    pidController.setTolerance(angleTolerance);
     addRequirements(driveBase);
   }
 
   @Override
   public void initialize() {
-    this.turnOutput = Math.copySign(
-        this.turnSpeed,
-        LobstahMath.calculateTurningOutput(
-            driveBase.getHeading().getDegrees(),
-            this.targetAngle.getDegrees()));
-    this.initialTurnError = Math.abs(driveBase.getHeading().getDegrees() - targetAngle.getDegrees());
+    pidController.setSetpoint(targetAngle.getDegrees());
   }
 
   @Override
   public void execute() {
-    double turnError = Math.abs(driveBase.getHeading().getDegrees() - targetAngle.getDegrees());
-
-    turnOutput *= LobstahMath.scaleNumberToRange(turnError, 0, initialTurnError, 0.1, 1);
+    turnOutput = pidController.calculate(driveBase.getHeading().getDegrees());
     driveBase.tankDrive(-turnOutput, turnOutput, false);
     SmartDashboard.putNumber("Turn Output", turnOutput);
   }
 
   @Override
   public boolean isFinished() {
-    return Math.signum(LobstahMath.calculateTurningOutput(
-        driveBase.getHeading().getDegrees(),
-        this.targetAngle.getDegrees())) * Math.signum(turnOutput) < 0;
+    return pidController.atSetpoint();
   }
 
   @Override
