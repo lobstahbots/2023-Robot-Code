@@ -25,7 +25,7 @@ public class PathFollowCommand extends PPRamseteCommand {
     super(
         trajectory,
         driveBase::getPose,
-        new RamseteController(),
+        new RamseteController(PathConstants.RAMSETE_B, PathConstants.RAMSETE_ZETA),
         new SimpleMotorFeedforward(PathConstants.kS, PathConstants.kV, PathConstants.kA),
         DriveConstants.KINEMATICS,
         driveBase::getWheelSpeeds,

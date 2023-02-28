@@ -29,7 +29,7 @@ public final class Constants {
    */
   public static final class PathConstants {
     public static final double MAX_DRIVE_SPEED = 1;
-    public static final double MAX_ACCELERATION = 0.5;
+    public static final double MAX_ACCELERATION = 0.8;
     public static final double RAMSETE_B = 2.0;
     public static final double RAMSETE_ZETA = 0.7;
     public static final double kS = 0.18749;
