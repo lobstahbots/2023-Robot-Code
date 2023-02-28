@@ -12,7 +12,8 @@ public class TurnToAngleCommand extends CommandBase {
   private final DriveBase driveBase;
   private final Rotation2d targetAngle;
   private double turnOutput;
-  private final PIDController pidController = new PIDController(PathConstants.kP, PathConstants.kI, PathConstants.KD);
+  private final PIDController pidController =
+      new PIDController(PathConstants.TURN_P, PathConstants.TURN_I, PathConstants.TURN_D);
 
 
   public TurnToAngleCommand(DriveBase driveBase, Rotation2d targetAngle, double angleTolerance) {
@@ -32,6 +33,7 @@ public class TurnToAngleCommand extends CommandBase {
   public void execute() {
     turnOutput = pidController.calculate(driveBase.getHeading().getDegrees());
     driveBase.tankDrive(-turnOutput, turnOutput, false);
+    SmartDashboard.putData(this.pidController);
     SmartDashboard.putNumber("Turn Output", turnOutput);
   }
 

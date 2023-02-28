@@ -38,6 +38,9 @@ public final class Constants {
     public static final double kP = 0.24582;
     public static final double kI = 0;
     public static final double KD = 0;
+    public static final double TURN_P = 0.025;
+    public static final double TURN_I = 0;
+    public static final double TURN_D = 0.015;
     public static final double MAX_OFFSET_START = 1;
   }
 
@@ -46,7 +49,7 @@ public final class Constants {
    */
   public static final class FieldConstants {
     public static final Pose2d[] SCORING_WAYPOINTS = new Pose2d[] {
-        new Pose2d(1.57, 0.43, new Rotation2d(Math.toRadians(180))),
+        new Pose2d(1.57, 0.5, new Rotation2d(Math.toRadians(180))),
         new Pose2d(1.57, 1, new Rotation2d(Math.toRadians(180))),
         new Pose2d(1.57, 1.6, new Rotation2d(Math.toRadians(180))),
         new Pose2d(1.57, 2.2, new Rotation2d(Math.toRadians(180))),
@@ -54,14 +57,14 @@ public final class Constants {
         new Pose2d(1.57, 3.3, new Rotation2d(Math.toRadians(180))),
         new Pose2d(1.57, 3.85, new Rotation2d(Math.toRadians(180))),
         new Pose2d(1.57, 4.4, new Rotation2d(Math.toRadians(180))),
-        new Pose2d(1.57, 5, new Rotation2d(Math.toRadians(180)))
+        new Pose2d(1.57, 4.5, new Rotation2d(Math.toRadians(180)))
     };
     public static final Pose2d[] TRAVELING_WAYPOINTS = new Pose2d[] {
-        new Pose2d(2.75, 0.43, new Rotation2d(0)), new Pose2d(2.75, 1, new Rotation2d(0)),
-        new Pose2d(2.75, 1.6, new Rotation2d(0)), new Pose2d(2.75, 2.2, new Rotation2d(0)),
-        new Pose2d(2.75, 2.7, new Rotation2d(0)), new Pose2d(2.75, 3.3, new Rotation2d(0)),
-        new Pose2d(2.75, 3.85, new Rotation2d(0)), new Pose2d(2.75, 4.4, new Rotation2d(0)),
-        new Pose2d(2.75, 5, new Rotation2d(0))
+        new Pose2d(2.5, 0.5, new Rotation2d(0)), new Pose2d(2.5, 1, new Rotation2d(0)),
+        new Pose2d(2.5, 1.6, new Rotation2d(0)), new Pose2d(2.5, 2.2, new Rotation2d(0)),
+        new Pose2d(2.5, 2.7, new Rotation2d(0)), new Pose2d(2.5, 3.3, new Rotation2d(0)),
+        new Pose2d(2.5, 3.85, new Rotation2d(0)), new Pose2d(2.5, 4.4, new Rotation2d(0)),
+        new Pose2d(2.5, 4.5, new Rotation2d(0))
     };
 
     public static final Pose2d[] TURNING_WAYPOINTS = new Pose2d[] {
@@ -270,6 +273,5 @@ public final class Constants {
     public static final double ACCELERATION_RATE_LIMIT = 1.5;
     public static final DifferentialDriveKinematics KINEMATICS =
         new DifferentialDriveKinematics(Units.inchesToMeters(TRACK_WIDTH));
-
   }
 }

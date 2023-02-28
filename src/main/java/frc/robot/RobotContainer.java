@@ -8,8 +8,8 @@ import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.pathplanner.lib.PathConstraints;
 import com.pathplanner.lib.PathPlanner;
 import com.pathplanner.lib.server.PathPlannerServer;
+import com.revrobotics.CANSparkMax.IdleMode;
 import edu.wpi.first.math.geometry.Pose2d;
-import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.networktables.NetworkTablesJNI;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -30,8 +30,7 @@ import frc.robot.auton.AutonGenerator;
 import frc.robot.commands.drive.PathFollowCommand;
 import frc.robot.commands.drive.StopDriveCommand;
 import frc.robot.commands.drive.TankDriveCommand;
-import frc.robot.commands.drive.TurnToAngleCommand;
-import frc.robot.commands.scoring.ScoringSystemTowardsPositionCommand;
+import frc.robot.commands.drive.TargetCommand;
 import frc.robot.commands.scoring.ScoringSystemTowardsPositionWithRetractionCommand;
 import frc.robot.commands.scoring.TranslateScoringSystemCommand;
 import frc.robot.commands.scoring.elevator.ResetElevatorCommand;
@@ -107,6 +106,10 @@ public class RobotContainer {
         .isInsideBumperZone();
   }
 
+  public void resetGyro() {
+    driveBase.zeroGyro();
+  }
+
   /**
    * Use this method to define your button->command mappings.
    */
@@ -135,7 +138,8 @@ public class RobotContainer {
         () -> DriverConstants.SLOWDOWN_PERCENT * driverJoystick.getRawAxis(DriverConstants.RIGHT_AXIS),
         DriverConstants.SQUARED_INPUTS));
 
-    turnButton.whileTrue(new TurnToAngleCommand(driveBase, Rotation2d.fromDegrees(90), 1));
+    turnButton
+        .whileTrue(new TargetCommand(driveBase, () -> updateTarget()));
   }
 
   private final SendableChooser<Command> autonChooser = new SendableChooser<>();
@@ -148,7 +152,6 @@ public class RobotContainer {
    * Use this method to run tasks that configure sendables and other smartdashboard items.
    */
   public void configureSmartDash() {
-
     initialPosition.addOption("0", 0);
     initialPosition.addOption("1", 1);
     initialPosition.addOption("2", 2);
@@ -211,7 +214,6 @@ public class RobotContainer {
   public Command getAutonomousCommand() {
     return new SequentialCommandGroup(
         new ResetElevatorCommand(elevator),
-        // new InstantCommand(() -> driveBase.resetOdometry(new Translation2d(10, 2), new Rotation2d(0)), driveBase),
         autonChooser.getSelected());
   }
 

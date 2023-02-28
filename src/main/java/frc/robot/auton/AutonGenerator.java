@@ -24,6 +24,7 @@ import frc.robot.Constants.ScoringPositionConstants;
 import frc.robot.Constants.ScoringSystemConstants.IntakeConstants;
 import frc.robot.commands.drive.PathFollowCommand;
 import frc.robot.commands.drive.StraightDriveCommand;
+import frc.robot.commands.drive.TargetCommand;
 import frc.robot.commands.scoring.ScoringSystemToPositionCommand;
 import frc.robot.commands.scoring.ScoringSystemToPositionWithRetractionCommand;
 import frc.robot.commands.scoring.intake.SpinIntakeCommand;
@@ -92,20 +93,20 @@ public class AutonGenerator {
    * @param finalPosition Which game element the path ends at.
    */
   public Command getPathFollowCommand(int initialPosition, int crossingPosition, int finalPosition) {
-    ArrayList<Pose2d> pathGroup = new ArrayList<>();
-    // Pose2d currentPose = driveBase.getPose();
-    // Pose2d initialPose = new Pose2d(FieldConstants.SCORING_WAYPOINTS[initialPosition].getX(),
-    // FieldConstants.SCORING_WAYPOINTS[initialPosition].getY(), new Rotation2d(0));
-    Pose2d turningPose = FieldConstants.TURNING_WAYPOINTS[crossingPosition];
-    Pose2d crossingPose = FieldConstants.CROSSING_WAYPOINTS[crossingPosition];
-    Pose2d finalPose = FieldConstants.ENDING_AUTON_POSES[finalPosition];
-    // pathGroup.add(initialPose);
-    if (initialPosition > 1 && crossingPosition == 0) {
-      pathGroup.add(turningPose);
-    }
-    pathGroup.add(crossingPose);
-    pathGroup.add(finalPose);
-    return new PathFollowCommand(driveBase, driveBase.generatePath(pathGroup));
+    // ArrayList<Pose2d> pathGroup = new ArrayList<>();
+
+    // Pose2d turningPose = FieldConstants.TURNING_WAYPOINTS[crossingPosition];
+    // Pose2d crossingPose = FieldConstants.CROSSING_WAYPOINTS[crossingPosition];
+    // Pose2d finalPose = FieldConstants.ENDING_AUTON_POSES[finalPosition];
+    // // pathGroup.add(initialPose);
+    // if (initialPosition > 1 && crossingPosition == 0) {
+    // pathGroup.add(turningPose);
+    // }
+    // pathGroup.add(crossingPose);
+    // pathGroup.add(finalPose);
+    // return new PathFollowCommand(driveBase, driveBase.generatePath(pathGroup));
+
+    return new TargetCommand(driveBase, () -> FieldConstants.CROSSING_WAYPOINTS[crossingPosition]);
   }
 
   /**
