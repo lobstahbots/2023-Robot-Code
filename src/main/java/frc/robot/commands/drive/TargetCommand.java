@@ -61,9 +61,11 @@ public class TargetCommand extends DriveCommand {
         waypoints.add(new Pose2d(FieldConstants.TRAVELING_WAYPOINTS[i].getX(),
             FieldConstants.TRAVELING_WAYPOINTS[i].getY(), Rotation2d.fromDegrees(-90)));
       }
-      waypoints.add(targetPose);
+      // waypoints.add(targetPose);
       CommandScheduler.getInstance()
-          .schedule(new SequentialCommandGroup(new PathFollowCommand(driveBase, driveBase.generatePath(waypoints))));
+          .schedule(new SequentialCommandGroup(new PathFollowCommand(driveBase, driveBase.generatePath(waypoints)),
+              new TurnToAngleCommand(driveBase, targetPose.getRotation(), 1)),
+              new PathFollowCommand(driveBase, driveBase.generatePath(targetPose)));
 
     } else {
       int index = FieldConstants.TRAVELING_WAYPOINTS.length - 1;
@@ -80,10 +82,11 @@ public class TargetCommand extends DriveCommand {
         waypoints.add(new Pose2d(FieldConstants.TRAVELING_WAYPOINTS[i].getX(),
             FieldConstants.TRAVELING_WAYPOINTS[i].getY(), Rotation2d.fromDegrees(90)));
       }
-      waypoints.add(targetPose);
+      // waypoints.add(targetPose);
       CommandScheduler.getInstance()
-          .schedule(new SequentialCommandGroup(new PathFollowCommand(driveBase, driveBase.generatePath(waypoints))));
-      // new TurnToAngleCommand(driveBase, targetPose.getRotation(), 1)));
+          .schedule(new SequentialCommandGroup(new PathFollowCommand(driveBase, driveBase.generatePath(waypoints))),
+              new TurnToAngleCommand(driveBase, targetPose.getRotation(), 1),
+              new PathFollowCommand(driveBase, driveBase.generatePath(targetPose)));
     }
   }
 

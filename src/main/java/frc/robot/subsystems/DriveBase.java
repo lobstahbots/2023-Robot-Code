@@ -279,6 +279,14 @@ public class DriveBase extends SubsystemBase {
         .generatePath(new PathConstraints(PathConstants.MAX_DRIVE_SPEED, PathConstants.MAX_ACCELERATION), pathPoints);
   }
 
+  public PathPlannerTrajectory generatePath(Pose2d finalPose) {
+    ArrayList<PathPoint> pathPoints = new ArrayList<>();
+    pathPoints.add(new PathPoint(this.getPose().getTranslation(), this.getPose().getRotation()));
+    pathPoints.add(new PathPoint(finalPose.getTranslation(), finalPose.getRotation()));
+    return PathPlanner
+        .generatePath(new PathConstraints(PathConstants.MAX_DRIVE_SPEED, PathConstants.MAX_ACCELERATION), pathPoints);
+  }
+
   /**
    * Sets the motor speeds to 0.
    */
