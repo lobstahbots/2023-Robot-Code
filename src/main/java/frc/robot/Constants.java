@@ -41,7 +41,7 @@ public final class Constants {
     public static final double TURN_P = 0.025;
     public static final double TURN_I = 0;
     public static final double TURN_D = 0.015;
-    public static final double MAX_OFFSET_START = 1;
+    public static final double TURN_ANGLE_DEADBAND = 1;
   }
 
   /**

@@ -13,6 +13,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import frc.robot.Constants.FieldConstants;
+import frc.robot.Constants.PathConstants;
 import frc.robot.subsystems.DriveBase;
 
 /**
@@ -64,7 +65,7 @@ public class TargetCommand extends DriveCommand {
       // waypoints.add(targetPose);
       CommandScheduler.getInstance()
           .schedule(new SequentialCommandGroup(new PathFollowCommand(driveBase, driveBase.generatePath(waypoints)),
-              new TurnToAngleCommand(driveBase, targetPose.getRotation(), 1)),
+              new TurnToAngleCommand(driveBase, targetPose.getRotation(), PathConstants.TURN_ANGLE_DEADBAND)),
               new PathFollowCommand(driveBase, driveBase.generatePath(targetPose)));
 
     } else {
@@ -85,7 +86,7 @@ public class TargetCommand extends DriveCommand {
       // waypoints.add(targetPose);
       CommandScheduler.getInstance()
           .schedule(new SequentialCommandGroup(new PathFollowCommand(driveBase, driveBase.generatePath(waypoints))),
-              new TurnToAngleCommand(driveBase, targetPose.getRotation(), 1),
+              new TurnToAngleCommand(driveBase, targetPose.getRotation(), PathConstants.TURN_ANGLE_DEADBAND),
               new PathFollowCommand(driveBase, driveBase.generatePath(targetPose)));
     }
   }

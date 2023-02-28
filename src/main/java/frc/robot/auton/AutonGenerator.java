@@ -10,12 +10,8 @@ import com.pathplanner.lib.PathConstraints;
 import com.pathplanner.lib.PathPlanner;
 import com.pathplanner.lib.PathPlannerTrajectory;
 import edu.wpi.first.math.geometry.Pose2d;
-import edu.wpi.first.math.geometry.Rotation2d;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.ParallelRaceGroup;
-import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import frc.robot.ScoringPosition;
 import frc.robot.Constants.AutonConstants;
 import frc.robot.Constants.FieldConstants;
@@ -25,6 +21,7 @@ import frc.robot.Constants.ScoringSystemConstants.IntakeConstants;
 import frc.robot.commands.drive.PathFollowCommand;
 import frc.robot.commands.drive.StraightDriveCommand;
 import frc.robot.commands.drive.TargetCommand;
+import frc.robot.commands.drive.TurnToAngleCommand;
 import frc.robot.commands.scoring.ScoringSystemToPositionCommand;
 import frc.robot.commands.scoring.ScoringSystemToPositionWithRetractionCommand;
 import frc.robot.commands.scoring.intake.SpinIntakeCommand;
@@ -93,20 +90,18 @@ public class AutonGenerator {
    * @param finalPosition Which game element the path ends at.
    */
   public Command getPathFollowCommand(int initialPosition, int crossingPosition, int finalPosition) {
-    // ArrayList<Pose2d> pathGroup = new ArrayList<>();
+    if (initialPosition <= 2) {
+      crossingPosition = 0;
+    } else if (initialPosition >= 6) {
+      crossingPosition = 1;
+    }
+    Pose2d crossingPose = FieldConstants.CROSSING_WAYPOINTS[crossingPosition];
 
-    // Pose2d turningPose = FieldConstants.TURNING_WAYPOINTS[crossingPosition];
-    // Pose2d crossingPose = FieldConstants.CROSSING_WAYPOINTS[crossingPosition];
-    // Pose2d finalPose = FieldConstants.ENDING_AUTON_POSES[finalPosition];
-    // // pathGroup.add(initialPose);
-    // if (initialPosition > 1 && crossingPosition == 0) {
-    // pathGroup.add(turningPose);
-    // }
-    // pathGroup.add(crossingPose);
-    // pathGroup.add(finalPose);
-    // return new PathFollowCommand(driveBase, driveBase.generatePath(pathGroup));
-
-    return new TargetCommand(driveBase, () -> FieldConstants.CROSSING_WAYPOINTS[crossingPosition]);
+    return new TargetCommand(driveBase, () -> crossingPose)
+        .andThen(new TurnToAngleCommand(driveBase, crossingPose.getRotation(),
+            PathConstants.TURN_ANGLE_DEADBAND))
+        .andThen(
+            new PathFollowCommand(driveBase, driveBase.generatePath(FieldConstants.ENDING_AUTON_POSES[finalPosition])));
   }
 
   /**
@@ -125,13 +120,6 @@ public class AutonGenerator {
         new PathConstraints(PathConstants.MAX_DRIVE_SPEED, PathConstants.MAX_ACCELERATION));
     PathPlannerTrajectory secondPath = PathPlanner.loadPath(secondPathName,
         new PathConstraints(PathConstants.MAX_DRIVE_SPEED, PathConstants.MAX_ACCELERATION));
-    // if (driveBase.getDistanceToPose(firstPath.getInitialPose()).getTranslation()
-    // .getNorm() > PathConstants.MAX_OFFSET_START) {
-    // SmartDashboard.putNumber("Distance from start",
-    // driveBase.getDistanceToPose(firstPath.getInitialPose()).getTranslation()
-    // .getNorm());
-    // return pathGroup;
-    // }
     pathGroup.add(firstPath);
     pathGroup.add(secondPath);
 
