@@ -82,6 +82,7 @@ public final class Constants {
 
     public static final double MAX_AUTO_DISTANCE_METERS = 10;
     public static final double SCORING_ZONE_DEADBAND = 0.5;
+    public static final double SCORING_ZONE_X = 3.5;
   }
 
   /**

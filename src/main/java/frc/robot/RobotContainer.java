@@ -110,6 +110,10 @@ public class RobotContainer {
     driveBase.zeroGyro();
   }
 
+  public boolean canDriveToTarget() {
+    return driveBase.getPose().getX() <= FieldConstants.SCORING_ZONE_X;
+  }
+
   /**
    * Use this method to define your button->command mappings.
    */
@@ -139,7 +143,7 @@ public class RobotContainer {
         DriverConstants.SQUARED_INPUTS));
 
     turnButton
-        .whileTrue(new TargetCommand(driveBase, () -> updateTarget()));
+        .whileTrue(new TargetCommand(driveBase, () -> updateTarget()).unless(() -> !canDriveToTarget()));
   }
 
   private final SendableChooser<Command> autonChooser = new SendableChooser<>();
