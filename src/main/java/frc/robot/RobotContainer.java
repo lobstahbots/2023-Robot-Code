@@ -146,7 +146,7 @@ public class RobotContainer {
         .whileTrue(new TargetCommand(driveBase, () -> updateTarget()).unless(() -> !canDriveToTarget()));
 
     setPoseButton.whileTrue(new InstantCommand(
-        () -> driveBase.resetOdometry(new Translation2d(3.3, 4.71), driveBase.getHeading())));
+        () -> driveBase.resetOdometry(new Translation2d(3.3, 4.71), driveBase.getGyroAngle())));
   }
 
   private final SendableChooser<Command> autonChooser = new SendableChooser<>();

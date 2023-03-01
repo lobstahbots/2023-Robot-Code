@@ -19,7 +19,7 @@ public class TurnToAngleCommand extends CommandBase {
   public TurnToAngleCommand(DriveBase driveBase, Rotation2d targetAngle, double angleTolerance) {
     this.driveBase = driveBase;
     this.targetAngle = targetAngle;
-    pidController.enableContinuousInput(-180, 180);
+    pidController.enableContinuousInput(0, 360);
     pidController.setTolerance(angleTolerance);
     addRequirements(driveBase);
   }
@@ -31,7 +31,7 @@ public class TurnToAngleCommand extends CommandBase {
 
   @Override
   public void execute() {
-    turnOutput = pidController.calculate(driveBase.getHeading().getDegrees());
+    turnOutput = pidController.calculate(driveBase.getGyroAngle().getDegrees());
     driveBase.tankDrive(-turnOutput, turnOutput, false);
     SmartDashboard.putData(this.pidController);
     SmartDashboard.putNumber("Turn Output", turnOutput);
