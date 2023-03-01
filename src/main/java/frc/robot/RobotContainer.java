@@ -28,7 +28,6 @@ import frc.robot.commands.drive.StopDriveCommand;
 import frc.robot.commands.drive.TankDriveCommand;
 import frc.robot.commands.scoring.ScoringSystemTowardsPositionCommand;
 import frc.robot.commands.scoring.ScoringSystemTowardsPositionWithRetractionCommand;
-import frc.robot.commands.scoring.TranslateScoringSystemCommand;
 import frc.robot.commands.scoring.elevator.ResetElevatorCommand;
 import frc.robot.commands.scoring.intake.SpinIntakeCommand;
 import frc.robot.subsystems.Arm;
