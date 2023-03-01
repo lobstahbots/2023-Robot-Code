@@ -211,7 +211,6 @@ public class RobotContainer {
    */
   public Command getAutonomousCommand() {
     return new SequentialCommandGroup(
-        new InstantCommand(() -> System.out.println("cmd group ran")),
         new ResetElevatorCommand(elevator),
         autonChooser.getSelected());
   }
