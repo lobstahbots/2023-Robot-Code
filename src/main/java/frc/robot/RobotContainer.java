@@ -5,6 +5,7 @@
 package frc.robot;
 
 import com.pathplanner.lib.server.PathPlannerServer;
+import com.revrobotics.CANSparkMax.IdleMode;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
@@ -15,14 +16,14 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import edu.wpi.first.wpilibj2.command.button.POVButton;
+import frc.robot.Constants.ScoringPositionConstants;
 import frc.robot.Constants.DriveConstants.DriveMotorCANIDs;
 import frc.robot.Constants.ScoringSystemConstants.ArmConstants;
 import frc.robot.Constants.ScoringSystemConstants.ElevatorConstants;
 import frc.robot.Constants.ScoringSystemConstants.IntakeConstants;
 import frc.robot.Constants.FieldConstants;
-import frc.robot.Constants.ScoringPositionConstants;
-import frc.robot.Constants.UIConstants.DriverConstants;
-import frc.robot.Constants.UIConstants.OperatorConstants;
+import frc.robot.Constants.OIConstants.DriverConstants;
+import frc.robot.Constants.OIConstants.OperatorConstants;
 import frc.robot.auton.AutonGenerator;
 import frc.robot.commands.drive.StopDriveCommand;
 import frc.robot.commands.drive.TankDriveCommand;
@@ -34,7 +35,7 @@ import frc.robot.subsystems.Arm;
 import frc.robot.subsystems.DriveBase;
 import frc.robot.subsystems.Elevator;
 import frc.robot.subsystems.Intake;
-import lobstah.stl.io.LobstahGamepad;
+import lobstah.stl.oi.LobstahGamepad;
 
 /**
  * This class is where the bulk of the robot should be declared. Since Command-based is a "declarative" paradigm, very
@@ -55,7 +56,7 @@ public class RobotContainer {
           ElevatorConstants.ENCODER_CHANNEL_B, ElevatorConstants.LIMIT_SWITCH_CHANNEL);
   private final Intake intake = new Intake(IntakeConstants.LEFT_MOTOR_ID, IntakeConstants.RIGHT_MOTOR_ID);
 
-  private final AutonGenerator autonGenerator = new AutonGenerator(driveBase);
+  private final AutonGenerator autonGenerator = new AutonGenerator(driveBase, arm, elevator, intake);
 
   private final LobstahGamepad driverJoystick = new LobstahGamepad(DriverConstants.DRIVER_JOYSTICK_INDEX);
   private final JoystickButton slowdownButton = driverJoystick.button(DriverConstants.SLOWDOWN_BUTTON_INDEX);
@@ -68,9 +69,9 @@ public class RobotContainer {
   private final JoystickButton lowGoalButton = operatorJoystick.button(OperatorConstants.LOW_GOAL_BTN_INDEX);
   private final JoystickButton midGoalButton = operatorJoystick.button(OperatorConstants.MID_GOAL_BTN_INDEX);
   private final JoystickButton highGoalButton = operatorJoystick.button(OperatorConstants.HIGH_GOAL_BTN_INDEX);
-  private final JoystickButton playerStationButton =
-      operatorJoystick.button(OperatorConstants.STATION_PICKUP_BTN_INDEX);
-
+  private final POVButton playerStationButton =
+      new POVButton(operatorJoystick, OperatorConstants.STATION_PICKUP_POV_INDEX);
+  private final POVButton placePieceButton = new POVButton(operatorJoystick, OperatorConstants.PLACE_CONE_POV_INDEX);
   private double lastRecordedTime = 0;
 
   /**
@@ -90,8 +91,14 @@ public class RobotContainer {
   }
 
   public ScoringPosition getArmPosition() {
-    return ScoringPosition.fromArmElevator(Rotation2d.fromDegrees((arm.getAngle())),
+    return ScoringPosition.fromArmElevator(arm.getRotation(),
         elevator.getExtension());
+  }
+
+  public boolean insideBumpers() {
+    return ScoringPosition
+        .fromArmElevator(arm.getRotation(), elevator.getExtension())
+        .isInsideBumperZone();
   }
 
   /**
@@ -153,6 +160,10 @@ public class RobotContainer {
             endingPosition.getSelected()));
     autonChooser.addOption("Simple Auton", autonGenerator.getSimpleAutonCommand());
     autonChooser.addOption("Do Nothing Auton", new StopDriveCommand(driveBase));
+    autonChooser.addOption("Place Piece on Mid Goal Auton",
+        autonGenerator.getScoreCommand(ScoringPositionConstants.MID_GOAL_SCORING));
+    autonChooser.addOption("Place Piece on High Goal Auton",
+        autonGenerator.getScoreCommand(ScoringPositionConstants.HIGH_GOAL_SCORING));
     targetPosition.addOption("0", 0);
     targetPosition.addOption("1", 1);
     targetPosition.addOption("2", 2);
@@ -202,7 +213,8 @@ public class RobotContainer {
             DriverConstants.SQUARED_INPUTS));
 
     arm.setDefaultCommand(
-        new ScoringSystemTowardsPositionWithRetractionCommand(arm, elevator, ScoringPositionConstants.STOWED));
+        new ScoringSystemTowardsPositionWithRetractionCommand(arm, elevator,
+            ScoringPositionConstants.STOWED));
     intake.setDefaultCommand(new SpinIntakeCommand(intake, IntakeConstants.PASSIVE_INTAKE_VOLTAGE));
   }
 
@@ -212,6 +224,8 @@ public class RobotContainer {
    * setTeleopDefaultCommands().
    */
   public void setAutonDefaultCommands() {
+    arm.setIdleMode(IdleMode.kBrake);
+    elevator.setIdleMode(IdleMode.kBrake);
     driveBase.setDefaultCommand(new StopDriveCommand(driveBase));
   }
 
@@ -221,6 +235,8 @@ public class RobotContainer {
    */
   public void setTestDefaultCommands() {
     driveBase.setDefaultCommand(new StopDriveCommand(driveBase));
+    arm.setIdleMode(IdleMode.kCoast);
+    elevator.setIdleMode(IdleMode.kCoast);
   }
 
   /**
