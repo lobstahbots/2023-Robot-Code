@@ -27,6 +27,7 @@ public class RetractElevatorCommand extends CommandBase {
 
   @Override
   public void initialize() {
+    System.out.println("RetractElevatorCommand initialized");
     this.needsToExtend = elevator.isRetracted();
     SmartDashboard.putBoolean("Is Retracted Already", elevator.isRetracted());
   }
