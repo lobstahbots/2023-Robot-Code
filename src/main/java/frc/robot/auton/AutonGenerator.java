@@ -10,6 +10,7 @@ import com.pathplanner.lib.PathConstraints;
 import com.pathplanner.lib.PathPlanner;
 import com.pathplanner.lib.PathPlannerTrajectory;
 import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.ParallelRaceGroup;
 import frc.robot.ScoringPosition;
@@ -20,6 +21,7 @@ import frc.robot.Constants.ScoringPositionConstants;
 import frc.robot.Constants.ScoringSystemConstants.IntakeConstants;
 import frc.robot.commands.drive.PathFollowCommand;
 import frc.robot.commands.drive.StraightDriveCommand;
+import frc.robot.commands.drive.TankDriveCommand;
 import frc.robot.commands.drive.TargetCommand;
 import frc.robot.commands.drive.TurnToAngleCommand;
 import frc.robot.commands.scoring.ScoringSystemToPositionCommand;
@@ -66,7 +68,13 @@ public class AutonGenerator {
                         AutonConstants.AUTON_SCORING_TOLERANCE))))
             .andThen(
                 new ScoringSystemToPositionWithRetractionCommand(arm, elevator, ScoringPositionConstants.STOWED,
-                    AutonConstants.AUTON_SCORING_TOLERANCE));
+                    AutonConstants.AUTON_SCORING_TOLERANCE))
+            .andThen(new TimedCommand(
+                AutonConstants.DRIVE_BACK_TIME,
+                new StraightDriveCommand(
+                    driveBase,
+                    AutonConstants.DRIVE_BACK_SPEED, false)))
+            .andThen(new TurnToAngleCommand(driveBase, Rotation2d.fromDegrees(180), 1));
   }
 
   /**

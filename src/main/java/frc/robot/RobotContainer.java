@@ -10,10 +10,13 @@ import com.pathplanner.lib.PathPlanner;
 import com.pathplanner.lib.server.PathPlannerServer;
 import com.revrobotics.CANSparkMax.IdleMode;
 import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.networktables.NetworkTablesJNI;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import edu.wpi.first.wpilibj2.command.button.POVButton;
@@ -77,6 +80,7 @@ public class RobotContainer {
       new POVButton(operatorJoystick, OperatorConstants.STATION_PICKUP_POV_INDEX);
   private final POVButton placePieceButton = new POVButton(operatorJoystick, OperatorConstants.PLACE_CONE_POV_INDEX);
   private final JoystickButton turnButton = driverJoystick.button(2);
+  private final JoystickButton setPoseButton = driverJoystick.button(1);
   private double lastRecordedTime = 0;
 
   /**
@@ -95,18 +99,13 @@ public class RobotContainer {
     return 1;
   }
 
-  public ScoringPosition getArmPosition() {
-    return ScoringPosition.fromArmElevator(arm.getRotation(),
-        elevator.getExtension());
-  }
-
   public boolean insideBumpers() {
     return ScoringPosition
         .fromArmElevator(arm.getRotation(), elevator.getExtension())
         .isInsideBumperZone();
   }
 
-  public void resetGyro() {
+  public void initGyro() {
     driveBase.zeroGyro();
   }
 
@@ -130,6 +129,7 @@ public class RobotContainer {
             ScoringPositionConstants.HIGH_GOAL_SCORING));
     midGoalButton
         .whileTrue(new ScoringSystemTowardsPositionWithRetractionCommand(arm, elevator,
+
             ScoringPositionConstants.MID_GOAL_SCORING));
     lowGoalButton.whileTrue(new ScoringSystemTowardsPositionWithRetractionCommand(arm, elevator,
         ScoringPositionConstants.LOW_GOAL_SCORING));
@@ -144,6 +144,9 @@ public class RobotContainer {
 
     turnButton
         .whileTrue(new TargetCommand(driveBase, () -> updateTarget()).unless(() -> !canDriveToTarget()));
+
+    setPoseButton.whileTrue(new InstantCommand(
+        () -> driveBase.resetOdometry(new Translation2d(3.3, 4.71), driveBase.getHeading())));
   }
 
   private final SendableChooser<Command> autonChooser = new SendableChooser<>();

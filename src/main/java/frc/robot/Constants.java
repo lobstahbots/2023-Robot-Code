@@ -4,6 +4,8 @@
 
 package frc.robot;
 
+import java.util.function.DoubleSupplier;
+
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Rotation3d;
@@ -41,7 +43,7 @@ public final class Constants {
     public static final double TURN_P = 0.025;
     public static final double TURN_I = 0;
     public static final double TURN_D = 0.015;
-    public static final double TURN_ANGLE_DEADBAND = 1;
+    public static final double TURN_ANGLE_DEADBAND = 2;
   }
 
   /**
@@ -94,6 +96,8 @@ public final class Constants {
     public static final double AUTON_SCORING_TOLERANCE = 2;
     public static final double OUTTAKE_RUNTIME = 1;
     public static final double BACK_OFF_SPEED = -0.1;
+    public static final double DRIVE_BACK_SPEED = -0.3;
+    public static final double DRIVE_BACK_TIME = 0.1;
   }
 
   public static final class VisionConstants {

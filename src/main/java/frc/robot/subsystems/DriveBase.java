@@ -189,7 +189,7 @@ public class DriveBase extends SubsystemBase {
    */
   public void resetOdometry(Translation2d translation2d, Rotation2d rotation) {
     gyro.reset();
-    poseEstimator.resetPosition(new Rotation2d(), 0, 0, new Pose2d(translation2d, rotation));
+    poseEstimator.resetPosition(gyro.getRotation2d(), 0, 0, new Pose2d(translation2d, rotation));
     resetEncoders();
   }
 
@@ -227,6 +227,11 @@ public class DriveBase extends SubsystemBase {
   /** Zeroes the gyro value. */
   public void zeroGyro() {
     gyro.reset();
+  }
+
+  /** Offsets the gyro value by the current heading of the robot. */
+  public void offsetYaw() {
+    gyro.zeroYaw();
   }
 
   /**

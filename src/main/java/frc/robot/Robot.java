@@ -26,7 +26,7 @@ public class Robot extends TimedRobot {
   @Override
   public void robotInit() {
     m_robotContainer = new RobotContainer();
-    m_robotContainer.resetGyro();
+    m_robotContainer.initGyro();
   }
 
   /**
@@ -43,7 +43,6 @@ public class Robot extends TimedRobot {
     // and running subsystem periodic() methods. This must be called from the robot's periodic
     // block in order for anything in the Command-based framework to work.
     SmartDashboard.putBoolean("Inside bumper collision zone", m_robotContainer.insideBumpers());
-    SmartDashboard.putString("Arm X Y", m_robotContainer.getArmPosition().getXY().toString());
     CommandScheduler.getInstance().run();
   }
 
