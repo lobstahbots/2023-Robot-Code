@@ -290,6 +290,9 @@ public class RobotContainer {
     SmartDashboard.putData("Crossing Position Chooser", crossingPosition);
     SmartDashboard.putData("Ending Position Chooser", endingPosition);
     SmartDashboard.putBoolean("Target Selected", targetSelected);
+    SmartDashboard.putBoolean("Grid Selected", gridSelected);
+    SmartDashboard.putBoolean("Column Selected", columnSelected);
+    SmartDashboard.putBoolean("Row Selected", rowSelected);
     SmartDashboard.putBoolean("In Maxwell Mode", inMaxwellMode);
     SmartDashboard.putNumber("Selected Column", selectedTeleopTargetColumn);
     SmartDashboard.putNumber("Selected Row", selectedTeleopTargetRow);
