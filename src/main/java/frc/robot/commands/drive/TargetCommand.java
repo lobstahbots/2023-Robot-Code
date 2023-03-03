@@ -9,9 +9,7 @@ import java.util.function.Supplier;
 
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
-import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import frc.robot.Constants.FieldConstants;
 import frc.robot.Constants.PathConstants;
 import frc.robot.subsystems.DriveBase;
@@ -56,13 +54,11 @@ public class TargetCommand extends DriveCommand {
         index++;
       }
       index--;
-      SmartDashboard.putNumber("Index", index);
       ArrayList<Pose2d> waypoints = new ArrayList<>();
       for (int i = index; i >= finalWaypointIndex; i--) {
         waypoints.add(new Pose2d(FieldConstants.TRAVELING_WAYPOINTS[i].getX(),
             FieldConstants.TRAVELING_WAYPOINTS[i].getY(), Rotation2d.fromDegrees(-90)));
       }
-      // waypoints.add(targetPose);
       CommandScheduler.getInstance().schedule(new PathFollowCommand(driveBase, driveBase.generatePath(waypoints))
           .andThen(new TurnToAngleCommand(driveBase, targetPose.getRotation(), PathConstants.TURN_ANGLE_DEADBAND))
           .andThen(new PathFollowCommand(driveBase, driveBase.generatePath(targetPose)))
@@ -83,7 +79,6 @@ public class TargetCommand extends DriveCommand {
         waypoints.add(new Pose2d(FieldConstants.TRAVELING_WAYPOINTS[i].getX(),
             FieldConstants.TRAVELING_WAYPOINTS[i].getY(), Rotation2d.fromDegrees(90)));
       }
-      // waypoints.add(targetPose);
       CommandScheduler.getInstance()
           .schedule(new PathFollowCommand(driveBase, driveBase.generatePath(waypoints))
               .andThen(new TurnToAngleCommand(driveBase, targetPose.getRotation(), PathConstants.TURN_ANGLE_DEADBAND))

@@ -10,13 +10,10 @@ import com.pathplanner.lib.PathPlanner;
 import com.pathplanner.lib.server.PathPlannerServer;
 import com.revrobotics.CANSparkMax.IdleMode;
 import edu.wpi.first.math.geometry.Pose2d;
-import edu.wpi.first.math.geometry.Rotation2d;
-import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.networktables.NetworkTablesJNI;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import edu.wpi.first.wpilibj2.command.button.POVButton;
@@ -33,7 +30,6 @@ import frc.robot.auton.AutonGenerator;
 import frc.robot.commands.drive.PathFollowCommand;
 import frc.robot.commands.drive.StopDriveCommand;
 import frc.robot.commands.drive.TankDriveCommand;
-import frc.robot.commands.drive.TargetCommand;
 import frc.robot.commands.scoring.ScoringSystemTowardsPositionWithRetractionCommand;
 import frc.robot.commands.scoring.TranslateScoringSystemCommand;
 import frc.robot.commands.scoring.elevator.ResetElevatorCommand;
@@ -79,8 +75,6 @@ public class RobotContainer {
   private final POVButton playerStationButton =
       new POVButton(operatorJoystick, OperatorConstants.STATION_PICKUP_POV_INDEX);
   private final POVButton placePieceButton = new POVButton(operatorJoystick, OperatorConstants.PLACE_CONE_POV_INDEX);
-  private final JoystickButton turnButton = driverJoystick.button(2);
-  private final JoystickButton setPoseButton = driverJoystick.button(1);
   private double lastRecordedTime = 0;
 
   /**
@@ -92,6 +86,9 @@ public class RobotContainer {
     PathPlannerServer.startServer(5811);
   }
 
+  /**
+   * TODO: configure latency
+   */
   public double getJoystickLatency() {
     double latency = NetworkTablesJNI.now() - lastRecordedTime;
     lastRecordedTime = NetworkTablesJNI.now();
@@ -99,16 +96,16 @@ public class RobotContainer {
     return 1;
   }
 
-  public boolean insideBumpers() {
-    return ScoringPosition
-        .fromArmElevator(arm.getRotation(), elevator.getExtension())
-        .isInsideBumperZone();
-  }
-
+  /**
+   * Zeroes the gyro.
+   */
   public void initGyro() {
     driveBase.zeroGyro();
   }
 
+  /**
+   * @return Whether the robot is within the scoring zone.
+   */
   public boolean canDriveToTarget() {
     return driveBase.getPose().getX() <= FieldConstants.SCORING_ZONE_X;
   }
@@ -141,12 +138,6 @@ public class RobotContainer {
         () -> DriverConstants.SLOWDOWN_PERCENT * driverJoystick.getRawAxis(DriverConstants.LEFT_AXIS),
         () -> DriverConstants.SLOWDOWN_PERCENT * driverJoystick.getRawAxis(DriverConstants.RIGHT_AXIS),
         DriverConstants.SQUARED_INPUTS));
-
-    turnButton
-        .whileTrue(new TargetCommand(driveBase, () -> updateTarget()).unless(() -> !canDriveToTarget()));
-
-    setPoseButton.whileTrue(new InstantCommand(
-        () -> driveBase.resetOdometry(new Translation2d(3.3, 4.71), driveBase.getGyroAngle())));
   }
 
   private final SendableChooser<Command> autonChooser = new SendableChooser<>();
@@ -273,9 +264,5 @@ public class RobotContainer {
    */
   public void setSimDefaultCommands() {
     driveBase.setDefaultCommand(new StopDriveCommand(driveBase));
-  }
-
-  public String getDriveBasePose() {
-    return driveBase.getPose().toString();
   }
 }

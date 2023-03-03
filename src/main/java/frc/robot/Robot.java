@@ -42,7 +42,6 @@ public class Robot extends TimedRobot {
     // commands, running already-scheduled commands, removing finished or interrupted commands,
     // and running subsystem periodic() methods. This must be called from the robot's periodic
     // block in order for anything in the Command-based framework to work.
-    SmartDashboard.putBoolean("Inside bumper collision zone", m_robotContainer.insideBumpers());
     CommandScheduler.getInstance().run();
   }
 
@@ -100,9 +99,7 @@ public class Robot extends TimedRobot {
 
   /** This function is called periodically during test mode. */
   @Override
-  public void testPeriodic() {
-    SmartDashboard.putString("Odometry pose", m_robotContainer.getDriveBasePose());
-  }
+  public void testPeriodic() {}
 
   /** This function is called once when the robot simulation is first started up. */
   @Override
