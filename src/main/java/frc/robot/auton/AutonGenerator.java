@@ -51,6 +51,18 @@ public class AutonGenerator {
     this.intake = intake;
   }
 
+  public Command getScoreCommand(int row) {
+    if (row == 0) {
+      return getScoreCommand(ScoringPositionConstants.HIGH_GOAL_SCORING);
+    } else if (row == 1) {
+      return getScoreCommand(ScoringPositionConstants.MID_GOAL_SCORING);
+    } else if (row == 2) {
+      return getScoreCommand(ScoringPositionConstants.LOW_GOAL_SCORING);
+    } else {
+      return new InstantCommand();
+    }
+  }
+
   public Command getScoreCommand(ScoringPosition position) {
     return new ScoringSystemToPositionWithRetractionCommand(arm, elevator, position,
         AutonConstants.AUTON_SCORING_TOLERANCE)

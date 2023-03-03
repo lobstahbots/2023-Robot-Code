@@ -129,8 +129,12 @@ public final class Constants {
       public static final int LOW_GOAL_BTN_INDEX = 2;
       public static final int MID_GOAL_BTN_INDEX = 1;
       public static final int HIGH_GOAL_BTN_INDEX = 4;
-      public static final int STATION_PICKUP_POV_INDEX = 0;
-      public static final int PLACE_CONE_POV_INDEX = 180;
+      public static final int PLAYER_STATION_BTN_INDEX = 3;
+
+      public static final int SHIFT_SELECTED_COLUMN_LEFT_POV_INDEX = 270;
+      public static final int SHIFT_SELECTED_COLUMN_RIGHT_POV_INDEX = 90;
+      public static final int SHIFT_SELECTED_ROW_UP_POV_INDEX = 0;
+      public static final int SHIFT_SELECTED_ROW_DOWN_POV_INDEX = 180;
     }
   }
 

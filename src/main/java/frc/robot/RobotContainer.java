@@ -13,6 +13,8 @@ import edu.wpi.first.networktables.NetworkTablesJNI;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.ConditionalCommand;
+import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import edu.wpi.first.wpilibj2.command.button.POVButton;
@@ -27,6 +29,7 @@ import frc.robot.Constants.OIConstants.OperatorConstants;
 import frc.robot.auton.AutonGenerator;
 import frc.robot.commands.drive.StopDriveCommand;
 import frc.robot.commands.drive.TankDriveCommand;
+import frc.robot.commands.drive.TargetCommand;
 import frc.robot.commands.scoring.ScoringSystemTowardsPositionCommand;
 import frc.robot.commands.scoring.ScoringSystemTowardsPositionWithRetractionCommand;
 import frc.robot.commands.scoring.elevator.ResetElevatorCommand;
@@ -69,9 +72,26 @@ public class RobotContainer {
   private final JoystickButton lowGoalButton = operatorJoystick.button(OperatorConstants.LOW_GOAL_BTN_INDEX);
   private final JoystickButton midGoalButton = operatorJoystick.button(OperatorConstants.MID_GOAL_BTN_INDEX);
   private final JoystickButton highGoalButton = operatorJoystick.button(OperatorConstants.HIGH_GOAL_BTN_INDEX);
-  private final POVButton playerStationButton =
-      new POVButton(operatorJoystick, OperatorConstants.STATION_PICKUP_POV_INDEX);
-  private final POVButton placePieceButton = new POVButton(operatorJoystick, OperatorConstants.PLACE_CONE_POV_INDEX);
+  private final JoystickButton playerStationButton =
+      operatorJoystick.button(OperatorConstants.PLAYER_STATION_BTN_INDEX);
+  private final JoystickButton targetButton = operatorJoystick.button(8);
+  private final JoystickButton toggleGridSelectionSystemButton = operatorJoystick.button(9);
+  private final POVButton columnRightButton =
+      new POVButton(operatorJoystick, OperatorConstants.SHIFT_SELECTED_COLUMN_RIGHT_POV_INDEX);
+  private final POVButton columnLeftButton =
+      new POVButton(operatorJoystick, OperatorConstants.SHIFT_SELECTED_COLUMN_LEFT_POV_INDEX);
+  private final POVButton rowUpButton =
+      new POVButton(operatorJoystick, OperatorConstants.SHIFT_SELECTED_ROW_UP_POV_INDEX);
+  private final POVButton rowDownButton =
+      new POVButton(operatorJoystick, OperatorConstants.SHIFT_SELECTED_ROW_DOWN_POV_INDEX);
+  private int selectedTeleopTargetColumn = 0;
+  private int selectedTeleopTargetRow = 0;
+  private int selectedTeleopTargetGrid = 0;
+  private boolean inMaxwellMode = false;
+  private boolean targetSelected = false;
+  private boolean rowSelected = false;
+  private boolean columnSelected = false;
+  private boolean gridSelected = false;
   private double lastRecordedTime = 0;
 
   /**
@@ -108,7 +128,8 @@ public class RobotContainer {
     intakeButton.whileTrue(new SpinIntakeCommand(intake, IntakeConstants.INTAKE_VOLTAGE));
     outtakeButton.whileTrue(new SpinIntakeCommand(intake, IntakeConstants.OUTTAKE_VOLTAGE));
     manualControlButton.whileTrue(new ScoringSystemTowardsPositionCommand(arm, elevator,
-        () -> ScoringPosition.fromArmElevator(Rotation2d.fromDegrees(arm.getSetpoint()), elevator.getSetpointExtension())
+        () -> ScoringPosition
+            .fromArmElevator(Rotation2d.fromDegrees(arm.getSetpoint()), elevator.getSetpointExtension())
             .translateBy(new Translation2d(
                 -operatorJoystick.getRawAxis(OperatorConstants.HORIZONTAL_ARM_MOVEMENT_AXIS) * getJoystickLatency()
                     * OperatorConstants.MANUAL_CONTROL_SPEED,
@@ -126,6 +147,107 @@ public class RobotContainer {
         .whileTrue(new ScoringSystemTowardsPositionWithRetractionCommand(arm, elevator,
             ScoringPositionConstants.PLAYER_STATION_PICKUP));
 
+    toggleGridSelectionSystemButton.onTrue(new InstantCommand(() -> {
+      inMaxwellMode = true;
+      rowSelected = false;
+      gridSelected = false;
+      columnSelected = false;
+      targetSelected = false;
+    }));
+
+    toggleGridSelectionSystemButton.onFalse(new InstantCommand(() -> {
+      inMaxwellMode = false;
+      rowSelected = false;
+      gridSelected = false;
+      columnSelected = false;
+      targetSelected = false;
+    }));
+
+    targetButton
+        .whileTrue(new SequentialCommandGroup(new InstantCommand(() -> {
+          selectedTeleopTargetColumn = 3 * selectedTeleopTargetGrid + selectedTeleopTargetColumn;
+        }).unless(() -> !inMaxwellMode), // Convert grid/col/row format to col/row format if in Maxwell mode
+            new TargetCommand(driveBase, () -> FieldConstants.SCORING_WAYPOINTS[selectedTeleopTargetColumn])
+                .andThen(autonGenerator.getScoreCommand(selectedTeleopTargetRow)) // Path to node, place piece
+                .andThen(new InstantCommand(() -> { // Unselect everything
+                  targetSelected = false;
+                  rowSelected = false;
+                  columnSelected = false;
+                  gridSelected = false;
+                }))).unless(() -> !targetSelected));
+
+    rowDownButton.onTrue(new InstantCommand(() -> {
+      selectedTeleopTargetRow--;
+      if (selectedTeleopTargetRow < 0) {
+        selectedTeleopTargetRow = 2;
+      }
+      rowSelected = true;
+      targetSelected = rowSelected && columnSelected;
+    }));
+
+    rowUpButton.onTrue(new ConditionalCommand(new InstantCommand(() -> {
+      if (gridSelected && columnSelected) {
+        selectedTeleopTargetRow = 1;
+        rowSelected = true;
+      } else if (gridSelected) {
+        selectedTeleopTargetColumn = 1;
+        columnSelected = true;
+      } else {
+        selectedTeleopTargetGrid = 1;
+        gridSelected = true;
+      }
+      targetSelected = gridSelected && columnSelected && rowSelected;
+    }), new InstantCommand(() -> {
+      selectedTeleopTargetRow++;
+      if (selectedTeleopTargetRow > 2) {
+        selectedTeleopTargetRow = 0;
+      }
+      rowSelected = true;
+      targetSelected = rowSelected && columnSelected;
+    }), () -> inMaxwellMode));
+
+    columnLeftButton.onTrue(new ConditionalCommand(new InstantCommand(() -> {
+      if (gridSelected && columnSelected) {
+        selectedTeleopTargetRow = 0;
+        rowSelected = true;
+      } else if (gridSelected) {
+        selectedTeleopTargetColumn = 0;
+        columnSelected = true;
+      } else {
+        selectedTeleopTargetGrid = 0;
+        gridSelected = true;
+      }
+      targetSelected = gridSelected && columnSelected && rowSelected;
+    }), new InstantCommand(() -> {
+      selectedTeleopTargetColumn++;
+      if (selectedTeleopTargetColumn > 8) {
+        selectedTeleopTargetColumn = 0;
+      }
+      columnSelected = true;
+      targetSelected = rowSelected && columnSelected;
+    }), () -> inMaxwellMode));
+
+    columnRightButton.onTrue(new ConditionalCommand(new InstantCommand(() -> {
+      if (gridSelected && columnSelected) {
+        selectedTeleopTargetRow = 2;
+        rowSelected = true;
+      } else if (gridSelected) {
+        selectedTeleopTargetColumn = 2;
+        columnSelected = true;
+      } else {
+        selectedTeleopTargetGrid = 2;
+        gridSelected = true;
+      }
+      targetSelected = gridSelected && columnSelected && rowSelected;
+    }), new InstantCommand(() -> {
+      selectedTeleopTargetColumn--;
+      if (selectedTeleopTargetRow < 0) {
+        selectedTeleopTargetRow = 8;
+      }
+      columnSelected = true;
+      targetSelected = rowSelected && columnSelected;
+    }), () -> inMaxwellMode));
+
     slowdownButton.whileTrue(new TankDriveCommand(driveBase,
         () -> DriverConstants.SLOWDOWN_PERCENT * driverJoystick.getRawAxis(DriverConstants.LEFT_AXIS),
         () -> DriverConstants.SLOWDOWN_PERCENT * driverJoystick.getRawAxis(DriverConstants.RIGHT_AXIS),
@@ -136,7 +258,6 @@ public class RobotContainer {
   private final SendableChooser<Integer> initialPosition = new SendableChooser<>();
   private final SendableChooser<Integer> crossingPosition = new SendableChooser<>();
   private final SendableChooser<Integer> endingPosition = new SendableChooser<>();
-  private final SendableChooser<Integer> targetPosition = new SendableChooser<>();
 
   /**
    * Use this method to run tasks that configure sendables and other smartdashboard items.
@@ -164,28 +285,15 @@ public class RobotContainer {
         autonGenerator.getScoreCommand(ScoringPositionConstants.MID_GOAL_SCORING));
     autonChooser.addOption("Place Piece on High Goal Auton",
         autonGenerator.getScoreCommand(ScoringPositionConstants.HIGH_GOAL_SCORING));
-    targetPosition.addOption("0", 0);
-    targetPosition.addOption("1", 1);
-    targetPosition.addOption("2", 2);
-    targetPosition.addOption("3", 3);
-    targetPosition.addOption("4", 4);
-    targetPosition.addOption("5", 5);
-    targetPosition.addOption("6", 6);
-    targetPosition.addOption("7", 7);
-    targetPosition.addOption("8", 8);
-    targetPosition.setDefaultOption("0", 0);
     SmartDashboard.putData("Auton Chooser", autonChooser);
     SmartDashboard.putData("Initial Position Chooser", initialPosition);
     SmartDashboard.putData("Crossing Position Chooser", crossingPosition);
     SmartDashboard.putData("Ending Position Chooser", endingPosition);
-    SmartDashboard.putData("Teleop Target", targetPosition);
-  }
-
-  /**
-   * Updates the robot target for teleop with input from Shuffleboard.
-   */
-  public Pose2d updateTarget() {
-    return FieldConstants.SCORING_WAYPOINTS[targetPosition.getSelected()];
+    SmartDashboard.putBoolean("Target Selected", targetSelected);
+    SmartDashboard.putBoolean("In Maxwell Mode", inMaxwellMode);
+    SmartDashboard.putNumber("Selected Column", selectedTeleopTargetColumn);
+    SmartDashboard.putNumber("Selected Row", selectedTeleopTargetRow);
+    SmartDashboard.putNumber("Selected Grid", selectedTeleopTargetGrid);
   }
 
   /**
