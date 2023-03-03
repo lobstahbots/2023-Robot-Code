@@ -40,7 +40,6 @@ public class Elevator extends SubsystemBase {
     this.encoder = new Encoder(encoderChannelA, encoderChannelB, true, Encoder.EncodingType.k1X);
     encoder.setDistancePerPulse(ElevatorConstants.DISTANCE_PER_PULSE);
     this.limitSwitch = new DigitalInput(limitSwitchChannel);
-    pidController.setTolerance(0.3);
   }
 
   /**
