@@ -33,8 +33,6 @@ public class TurnToAngleCommand extends CommandBase {
   public void execute() {
     turnOutput = pidController.calculate(driveBase.getGyroAngle().getDegrees());
     driveBase.tankDrive(turnOutput, -turnOutput, false);
-    SmartDashboard.putData(this.pidController);
-    SmartDashboard.putNumber("Turn Output", turnOutput);
   }
 
   @Override

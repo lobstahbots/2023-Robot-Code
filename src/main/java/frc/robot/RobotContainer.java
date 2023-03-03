@@ -86,6 +86,9 @@ public class RobotContainer {
     PathPlannerServer.startServer(5811);
   }
 
+  /**
+   * TODO: configure latency
+   */
   public double getJoystickLatency() {
     double latency = NetworkTablesJNI.now() - lastRecordedTime;
     lastRecordedTime = NetworkTablesJNI.now();
@@ -93,16 +96,16 @@ public class RobotContainer {
     return 1;
   }
 
-  public boolean insideBumpers() {
-    return ScoringPosition
-        .fromArmElevator(arm.getRotation(), elevator.getExtension())
-        .isInsideBumperZone();
-  }
-
+  /**
+   * Zeroes the gyro.
+   */
   public void initGyro() {
     driveBase.zeroGyro();
   }
 
+  /**
+   * @return Whether the robot is within the scoring zone.
+   */
   public boolean canDriveToTarget() {
     return driveBase.getPose().getX() <= FieldConstants.SCORING_ZONE_X;
   }
@@ -260,9 +263,5 @@ public class RobotContainer {
    */
   public void setSimDefaultCommands() {
     driveBase.setDefaultCommand(new StopDriveCommand(driveBase));
-  }
-
-  public String getDriveBasePose() {
-    return driveBase.getPose().toString();
   }
 }
