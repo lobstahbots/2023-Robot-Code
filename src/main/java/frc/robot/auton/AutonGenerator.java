@@ -15,6 +15,8 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.ParallelRaceGroup;
 import frc.robot.ArmPose;
+import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
+import frc.robot.ScoringPosition;
 import frc.robot.Constants.AutonConstants;
 import frc.robot.Constants.FieldConstants;
 import frc.robot.Constants.IntakeConstants;
@@ -102,6 +104,17 @@ public class AutonGenerator {
                 driveBase,
                 AutonConstants.SIMPLE_AUTON_SPEED, false));
     return simpleAutonCommand;
+  }
+
+  public Command getDriveToPlayerStationCommand() {
+    return new SequentialCommandGroup(
+        new TurnToAngleCommand(driveBase, FieldConstants.PLAYER_STATION_PICKUP_POSE.getRotation(), 1),
+        new PathFollowCommand(driveBase, driveBase.generatePath(FieldConstants.PLAYER_STATION_PICKUP_POSE)),
+        new TurnToAngleCommand(driveBase, FieldConstants.PLAYER_STATION_PICKUP_POSE.getRotation(), 1))
+            .unless(() -> driveBase.getDistanceToPose(FieldConstants.PLAYER_STATION_PICKUP_POSE).getTranslation()
+                .getX() > FieldConstants.MAX_PLAYER_STATION_X_DISTANCE_METERS
+                && driveBase.getDistanceToPose(FieldConstants.PLAYER_STATION_PICKUP_POSE).getTranslation()
+                    .getY() > FieldConstants.MAX_PLAYER_STATION_Y_DISTANCE_METERS);
   }
 
   /**
