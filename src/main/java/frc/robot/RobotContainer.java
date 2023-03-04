@@ -213,8 +213,8 @@ public class RobotContainer {
   public Command getAutonomousCommand() {
     return new SequentialCommandGroup(
         new InstantCommand(
-            () -> driveBase.offsetGyroAngle(
-                FieldConstants.SCORING_WAYPOINTS[initialPosition.getSelected()].getRotation().getDegrees())),
+            () -> driveBase.setGyroOffset(
+                FieldConstants.SCORING_WAYPOINTS[initialPosition.getSelected()].getRotation())),
         new ResetElevatorCommand(elevator),
         autonChooser.getSelected());
   }

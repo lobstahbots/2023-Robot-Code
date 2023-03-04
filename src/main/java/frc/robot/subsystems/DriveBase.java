@@ -229,11 +229,6 @@ public class DriveBase extends SubsystemBase {
     gyro.reset();
   }
 
-  /** Offsets the gyro value by the given angle. */
-  public void offsetGyroAngle(double angle) {
-    gyro.setAngleAdjustment(angle);
-  }
-
   /**
    * Controls the left and right sides of the drive directly with voltages.
    *
