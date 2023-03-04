@@ -17,7 +17,7 @@ import frc.robot.ScoringPosition;
 import frc.robot.Constants.AutonConstants;
 import frc.robot.Constants.PathConstants;
 import frc.robot.Constants.ScoringPositionConstants;
-import frc.robot.Constants.ScoringSystemConstants.IntakeConstants;
+import frc.robot.Constants.ArmConstants.IntakeConstants;
 import frc.robot.commands.arm.ScoringSystemToPositionCommand;
 import frc.robot.commands.arm.ScoringSystemToPositionWithRetractionCommand;
 import frc.robot.commands.drive.PathFollowCommand;
@@ -25,7 +25,6 @@ import frc.robot.commands.drive.StraightDriveCommand;
 import frc.robot.commands.intake.SpinIntakeCommand;
 import frc.robot.subsystems.Arm;
 import frc.robot.subsystems.DriveBase;
-import frc.robot.subsystems.Elevator;
 import frc.robot.subsystems.Intake;
 import lobstah.stl.command.TimedCommand;
 
@@ -36,7 +35,6 @@ public class AutonGenerator {
 
   private final DriveBase driveBase;
   private final Arm arm;
-  private final Elevator elevator;
   private final Intake intake;
 
   /**
@@ -44,26 +42,25 @@ public class AutonGenerator {
    *
    * @param driveBase The drivetrain for the AutonGenerator to control.
    */
-  public AutonGenerator(DriveBase driveBase, Arm arm, Elevator elevator, Intake intake) {
+  public AutonGenerator(DriveBase driveBase, Arm arm, Intake intake) {
     this.driveBase = driveBase;
     this.arm = arm;
-    this.elevator = elevator;
     this.intake = intake;
   }
 
   public Command getScoreCommand(ScoringPosition position) {
-    return new ScoringSystemToPositionWithRetractionCommand(arm, elevator, position,
+    return new ScoringSystemToPositionWithRetractionCommand(arm, position,
         AutonConstants.AUTON_SCORING_TOLERANCE)
-            .andThen(new ScoringSystemToPositionCommand(arm, elevator,
+            .andThen(new ScoringSystemToPositionCommand(arm,
                 position.translateBy(ScoringPositionConstants.CONE_SCORING_DROPDOWN),
                 AutonConstants.AUTON_SCORING_TOLERANCE))
             .andThen(new ParallelRaceGroup(new SpinIntakeCommand(intake, IntakeConstants.OUTTAKE_VOLTAGE),
                 new TimedCommand(AutonConstants.OUTTAKE_RUNTIME,
-                    new ScoringSystemToPositionCommand(arm, elevator,
+                    new ScoringSystemToPositionCommand(arm,
                         position.translateBy(ScoringPositionConstants.CONE_SCORING_BACKOFF),
                         AutonConstants.AUTON_SCORING_TOLERANCE))))
             .andThen(
-                new ScoringSystemToPositionWithRetractionCommand(arm, elevator, ScoringPositionConstants.STOWED,
+                new ScoringSystemToPositionWithRetractionCommand(arm, ScoringPositionConstants.STOWED,
                     AutonConstants.AUTON_SCORING_TOLERANCE));
   }
 
