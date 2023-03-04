@@ -144,8 +144,7 @@ public class RobotContainer {
             ScoringPositionConstants.PLAYER_STATION_PICKUP));
     toggleMaxwellModeButton.onTrue(new InstantCommand(() -> {
       targetSelector.resetSelection(true);
-    }));
-    toggleMaxwellModeButton.onFalse(new InstantCommand(() -> {
+    })).onFalse(new InstantCommand(() -> {
       targetSelector.resetSelection(false);
     }));
     rowDownButton.onTrue(new InstantCommand(() -> {
