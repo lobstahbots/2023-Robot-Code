@@ -6,7 +6,6 @@ package frc.robot;
 
 import com.pathplanner.lib.server.PathPlannerServer;
 import com.revrobotics.CANSparkMax.IdleMode;
-import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.networktables.NetworkTablesJNI;
@@ -60,6 +59,7 @@ public class RobotContainer {
   private final Intake intake = new Intake(IntakeConstants.LEFT_MOTOR_ID, IntakeConstants.RIGHT_MOTOR_ID);
 
   private final AutonGenerator autonGenerator = new AutonGenerator(driveBase, arm, elevator, intake);
+  private final TargetSelector targetSelector = new TargetSelector();
 
   private final LobstahGamepad driverJoystick = new LobstahGamepad(DriverConstants.DRIVER_JOYSTICK_INDEX);
   private final JoystickButton slowdownButton = driverJoystick.button(DriverConstants.SLOWDOWN_BUTTON_INDEX);
@@ -84,14 +84,6 @@ public class RobotContainer {
       new POVButton(operatorJoystick, OperatorConstants.SHIFT_SELECTED_ROW_UP_POV_INDEX);
   private final POVButton rowDownButton =
       new POVButton(operatorJoystick, OperatorConstants.SHIFT_SELECTED_ROW_DOWN_POV_INDEX);
-  private int selectedTeleopTargetColumn = 0;
-  private int selectedTeleopTargetRow = 0;
-  private int selectedTeleopTargetGrid = 0;
-  private boolean inMaxwellMode = false;
-  private boolean targetSelected = false;
-  private boolean rowSelected = false;
-  private boolean columnSelected = false;
-  private boolean gridSelected = false;
   private double lastRecordedTime = 0;
 
   /**
@@ -148,105 +140,43 @@ public class RobotContainer {
             ScoringPositionConstants.PLAYER_STATION_PICKUP));
 
     toggleGridSelectionSystemButton.onTrue(new InstantCommand(() -> {
-      inMaxwellMode = true;
-      rowSelected = false;
-      gridSelected = false;
-      columnSelected = false;
-      targetSelected = false;
+      targetSelector.resetSelection(true);
     }));
 
     toggleGridSelectionSystemButton.onFalse(new InstantCommand(() -> {
-      inMaxwellMode = false;
-      rowSelected = false;
-      gridSelected = false;
-      columnSelected = false;
-      targetSelected = false;
+      targetSelector.resetSelection(false);
     }));
 
     targetButton
-        .whileTrue(new SequentialCommandGroup(new InstantCommand(() -> {
-          selectedTeleopTargetColumn = 3 * selectedTeleopTargetGrid + selectedTeleopTargetColumn;
-        }).unless(() -> !inMaxwellMode), // Convert grid/col/row format to col/row format if in Maxwell mode
-            new TargetCommand(driveBase, () -> FieldConstants.SCORING_WAYPOINTS[selectedTeleopTargetColumn])
-                .andThen(autonGenerator.getScoreCommand(selectedTeleopTargetRow)) // Path to node, place piece
+        .whileTrue(
+            new TargetCommand(driveBase, () -> FieldConstants.SCORING_WAYPOINTS[targetSelector.getColumn()])
+                .andThen(autonGenerator.getScoreCommand(targetSelector.getRow())) // Path to node, place piece
                 .andThen(new InstantCommand(() -> { // Unselect everything
-                  targetSelected = false;
-                  rowSelected = false;
-                  columnSelected = false;
-                  gridSelected = false;
-                }))).unless(() -> !targetSelected));
+                  targetSelector.resetSelection(targetSelector.getMode()); // Reset Maxwell selections, keep mode the
+                                                                           // same.
+                })));
 
     rowDownButton.onTrue(new InstantCommand(() -> {
-      selectedTeleopTargetRow--;
-      if (selectedTeleopTargetRow < 0) {
-        selectedTeleopTargetRow = 2;
-      }
-      rowSelected = true;
-      targetSelected = rowSelected && columnSelected;
+      targetSelector.changeRow(-1);
     }));
 
-    rowUpButton.onTrue(new ConditionalCommand(new InstantCommand(() -> {
-      if (gridSelected && columnSelected) {
-        selectedTeleopTargetRow = 1;
-        rowSelected = true;
-      } else if (gridSelected) {
-        selectedTeleopTargetColumn = 1;
-        columnSelected = true;
-      } else {
-        selectedTeleopTargetGrid = 1;
-        gridSelected = true;
-      }
-      targetSelected = gridSelected && columnSelected && rowSelected;
-    }), new InstantCommand(() -> {
-      selectedTeleopTargetRow++;
-      if (selectedTeleopTargetRow > 2) {
-        selectedTeleopTargetRow = 0;
-      }
-      rowSelected = true;
-      targetSelected = rowSelected && columnSelected;
-    }), () -> inMaxwellMode));
-
     columnLeftButton.onTrue(new ConditionalCommand(new InstantCommand(() -> {
-      if (gridSelected && columnSelected) {
-        selectedTeleopTargetRow = 0;
-        rowSelected = true;
-      } else if (gridSelected) {
-        selectedTeleopTargetColumn = 0;
-        columnSelected = true;
-      } else {
-        selectedTeleopTargetGrid = 0;
-        gridSelected = true;
-      }
-      targetSelected = gridSelected && columnSelected && rowSelected;
+      targetSelector.setTargetInMaxwellMode(0);
     }), new InstantCommand(() -> {
-      selectedTeleopTargetColumn++;
-      if (selectedTeleopTargetColumn > 8) {
-        selectedTeleopTargetColumn = 0;
-      }
-      columnSelected = true;
-      targetSelected = rowSelected && columnSelected;
-    }), () -> inMaxwellMode));
+      targetSelector.changeColumn(-1);
+    }), targetSelector::getMode));
+
+    rowUpButton.onTrue(new ConditionalCommand(new InstantCommand(() -> {
+      targetSelector.setTargetInMaxwellMode(1);
+    }), new InstantCommand(() -> {
+      targetSelector.changeRow(1);
+    }), targetSelector::getMode));
 
     columnRightButton.onTrue(new ConditionalCommand(new InstantCommand(() -> {
-      if (gridSelected && columnSelected) {
-        selectedTeleopTargetRow = 2;
-        rowSelected = true;
-      } else if (gridSelected) {
-        selectedTeleopTargetColumn = 2;
-        columnSelected = true;
-      } else {
-        selectedTeleopTargetGrid = 2;
-        gridSelected = true;
-      }
-      targetSelected = gridSelected && columnSelected && rowSelected;
+      targetSelector.setTargetInMaxwellMode(2);
     }), new InstantCommand(() -> {
-      selectedTeleopTargetColumn--;
-      if (selectedTeleopTargetRow < 0) {
-        selectedTeleopTargetRow = 8;
-      }
-      columnSelected = true;
-      targetSelected = rowSelected && columnSelected;
-    }), () -> inMaxwellMode));
+      targetSelector.changeColumn(1);
+    }), targetSelector::getMode));
 
     slowdownButton.whileTrue(new TankDriveCommand(driveBase,
         () -> DriverConstants.SLOWDOWN_PERCENT * driverJoystick.getRawAxis(DriverConstants.LEFT_AXIS),
@@ -289,14 +219,7 @@ public class RobotContainer {
     SmartDashboard.putData("Initial Position Chooser", initialPosition);
     SmartDashboard.putData("Crossing Position Chooser", crossingPosition);
     SmartDashboard.putData("Ending Position Chooser", endingPosition);
-    SmartDashboard.putBoolean("Target Selected", targetSelected);
-    SmartDashboard.putBoolean("Grid Selected", gridSelected);
-    SmartDashboard.putBoolean("Column Selected", columnSelected);
-    SmartDashboard.putBoolean("Row Selected", rowSelected);
-    SmartDashboard.putBoolean("In Maxwell Mode", inMaxwellMode);
-    SmartDashboard.putNumber("Selected Column", selectedTeleopTargetColumn);
-    SmartDashboard.putNumber("Selected Row", selectedTeleopTargetRow);
-    SmartDashboard.putNumber("Selected Grid", selectedTeleopTargetGrid);
+    SmartDashboard.putData("Teleop Target Selector", targetSelector);
   }
 
   /**

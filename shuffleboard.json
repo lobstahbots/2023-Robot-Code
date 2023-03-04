@@ -227,19 +227,17 @@
               "_showGlyph": false
             }
           },
-          "2,4": {
+          "3,5": {
             "size": [
               1,
               1
             ],
             "content": {
-              "_type": "Boolean Box",
-              "_source0": "network_table:///SmartDashboard/Row Selected",
-              "_title": "/SmartDashboard/Row Selected",
+              "_type": "Text View",
+              "_source0": "network_table:///SmartDashboard/Arm X Y",
+              "_title": "Arm X Y",
               "_glyph": 148,
-              "_showGlyph": false,
-              "Colors/Color when true": "#7CFC00FF",
-              "Colors/Color when false": "#8B0000FF"
+              "_showGlyph": false
             }
           },
           "3,3": {
@@ -249,23 +247,8 @@
             ],
             "content": {
               "_type": "Boolean Box",
-              "_source0": "network_table:///SmartDashboard/Target Selected",
-              "_title": "/SmartDashboard/Target Selected",
-              "_glyph": 148,
-              "_showGlyph": false,
-              "Colors/Color when true": "#7CFC00FF",
-              "Colors/Color when false": "#8B0000FF"
-            }
-          },
-          "1,4": {
-            "size": [
-              1,
-              1
-            ],
-            "content": {
-              "_type": "Boolean Box",
-              "_source0": "network_table:///SmartDashboard/Column Selected",
-              "_title": "/SmartDashboard/Column Selected",
+              "_source0": "network_table:///SmartDashboard/Inside bumper collision zone",
+              "_title": "Inside bumper collision zone",
               "_glyph": 148,
               "_showGlyph": false,
               "Colors/Color when true": "#7CFC00FF",
@@ -279,23 +262,23 @@
             ],
             "content": {
               "_type": "Boolean Box",
-              "_source0": "network_table:///SmartDashboard/Grid Selected",
-              "_title": "/SmartDashboard/Grid Selected",
+              "_source0": "network_table:///SmartDashboard/Teleop Target Selector/In Maxwell Mode",
+              "_title": "Teleop Target Selector/In Maxwell Mode",
               "_glyph": 148,
               "_showGlyph": false,
               "Colors/Color when true": "#7CFC00FF",
               "Colors/Color when false": "#8B0000FF"
             }
           },
-          "0,5": {
+          "1,4": {
             "size": [
               1,
               1
             ],
             "content": {
               "_type": "Text View",
-              "_source0": "network_table:///SmartDashboard/Selected Grid",
-              "_title": "/SmartDashboard/Selected Grid",
+              "_source0": "network_table:///SmartDashboard/Teleop Target Selector/Row Selected",
+              "_title": "Teleop Target Selector/Row Selected",
               "_glyph": 148,
               "_showGlyph": false
             }
@@ -307,8 +290,21 @@
             ],
             "content": {
               "_type": "Text View",
-              "_source0": "network_table:///SmartDashboard/Selected Column",
-              "_title": "/SmartDashboard/Selected Column",
+              "_source0": "network_table:///SmartDashboard/Teleop Target Selector/Maxwell Column",
+              "_title": "SmartDashboard/Teleop Target Selector/Maxwell Column",
+              "_glyph": 148,
+              "_showGlyph": false
+            }
+          },
+          "0,5": {
+            "size": [
+              1,
+              1
+            ],
+            "content": {
+              "_type": "Text View",
+              "_source0": "network_table:///SmartDashboard/Teleop Target Selector/Maxwell Grid",
+              "_title": "SmartDashboard/Teleop Target Selector/Maxwell Grid",
               "_glyph": 148,
               "_showGlyph": false
             }
@@ -320,8 +316,21 @@
             ],
             "content": {
               "_type": "Text View",
-              "_source0": "network_table:///SmartDashboard/Selected Row",
-              "_title": "/SmartDashboard/Selected Row",
+              "_source0": "network_table:///SmartDashboard/Teleop Target Selector/Maxwell Row",
+              "_title": "SmartDashboard/Teleop Target Selector/Maxwell Row",
+              "_glyph": 148,
+              "_showGlyph": false
+            }
+          },
+          "2,4": {
+            "size": [
+              1,
+              1
+            ],
+            "content": {
+              "_type": "Text View",
+              "_source0": "network_table:///SmartDashboard/Teleop Target Selector/Column Selected",
+              "_title": "SmartDashboard/Teleop Target Selector/Column Selected",
               "_glyph": 148,
               "_showGlyph": false
             }
