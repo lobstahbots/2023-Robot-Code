@@ -111,7 +111,8 @@ public final class Constants {
       public static final boolean SQUARED_INPUTS = true;
       public static final int LEFT_AXIS = 1;
       public static final int RIGHT_AXIS = 5;
-      public static final int SLOWDOWN_BUTTON_INDEX = 2;
+      public static final int TARGET_BTN_INDEX = 0;
+      public static final int SLOWDOWN_BTN_INDEX = 2;
       public static final double SLOWDOWN_PERCENT = 0.5;
     }
 
@@ -122,7 +123,9 @@ public final class Constants {
       public static final int VERTICAL_ARM_MOVEMENT_AXIS = 5;
       public static final double MANUAL_CONTROL_SPEED = 1.3;
 
-      public static final int MANUAL_CONTROL_BUTTON_INDEX = 7;
+      public static final int MANUAL_CONTROL_BUTTON_INDEX = 5;
+      public static final int MAXWELL_MODE_BTN_INDEX = 6;
+
       public static final int INTAKE_BUTTON_INDEX = 5;
       public static final int OUTTAKE_BUTTON_INDEX = 6;
 
@@ -130,6 +133,7 @@ public final class Constants {
       public static final int MID_GOAL_BTN_INDEX = 1;
       public static final int HIGH_GOAL_BTN_INDEX = 4;
       public static final int PLAYER_STATION_BTN_INDEX = 3;
+
 
       public static final int SHIFT_SELECTED_COLUMN_LEFT_POV_INDEX = 270;
       public static final int SHIFT_SELECTED_COLUMN_RIGHT_POV_INDEX = 90;

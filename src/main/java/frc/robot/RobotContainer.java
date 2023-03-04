@@ -62,9 +62,12 @@ public class RobotContainer {
   private final TargetSelector targetSelector = new TargetSelector();
 
   private final LobstahGamepad driverJoystick = new LobstahGamepad(DriverConstants.DRIVER_JOYSTICK_INDEX);
-  private final JoystickButton slowdownButton = driverJoystick.button(DriverConstants.SLOWDOWN_BUTTON_INDEX);
-
   private final LobstahGamepad operatorJoystick = new LobstahGamepad(OperatorConstants.OPERATOR_JOYSTICK_INDEX);
+  private final JoystickButton targetButton = driverJoystick.button(DriverConstants.TARGET_BTN_INDEX);
+
+  private final JoystickButton slowdownButton = driverJoystick.button(DriverConstants.SLOWDOWN_BTN_INDEX);
+
+
   private final JoystickButton intakeButton = operatorJoystick.button(OperatorConstants.INTAKE_BUTTON_INDEX);
   private final JoystickButton outtakeButton = operatorJoystick.button(OperatorConstants.OUTTAKE_BUTTON_INDEX);
   private final JoystickButton manualControlButton =
@@ -74,8 +77,9 @@ public class RobotContainer {
   private final JoystickButton highGoalButton = operatorJoystick.button(OperatorConstants.HIGH_GOAL_BTN_INDEX);
   private final JoystickButton playerStationButton =
       operatorJoystick.button(OperatorConstants.PLAYER_STATION_BTN_INDEX);
-  private final JoystickButton targetButton = operatorJoystick.button(8);
-  private final JoystickButton toggleGridSelectionSystemButton = operatorJoystick.button(9);
+
+  private final JoystickButton toggleMaxwellModeButton =
+      operatorJoystick.button(OperatorConstants.MAXWELL_MODE_BTN_INDEX);
   private final POVButton columnRightButton =
       new POVButton(operatorJoystick, OperatorConstants.SHIFT_SELECTED_COLUMN_RIGHT_POV_INDEX);
   private final POVButton columnLeftButton =
@@ -138,40 +142,26 @@ public class RobotContainer {
     playerStationButton
         .whileTrue(new ScoringSystemTowardsPositionWithRetractionCommand(arm, elevator,
             ScoringPositionConstants.PLAYER_STATION_PICKUP));
-
-    toggleGridSelectionSystemButton.onTrue(new InstantCommand(() -> {
+    toggleMaxwellModeButton.onTrue(new InstantCommand(() -> {
       targetSelector.resetSelection(true);
     }));
-
-    toggleGridSelectionSystemButton.onFalse(new InstantCommand(() -> {
+    toggleMaxwellModeButton.onFalse(new InstantCommand(() -> {
       targetSelector.resetSelection(false);
     }));
-
-    targetButton
-        .whileTrue(
-            new TargetCommand(driveBase, () -> FieldConstants.SCORING_WAYPOINTS[targetSelector.getColumn()])
-                .andThen(autonGenerator.getScoreCommand(targetSelector.getRow())) // Path to node, place piece
-                .andThen(new InstantCommand(() -> { // Unselect everything
-                  targetSelector.resetSelection(targetSelector.getMode()); // Reset Maxwell selections, keep mode the
-                                                                           // same.
-                })));
-
     rowDownButton.onTrue(new InstantCommand(() -> {
       targetSelector.changeRow(-1);
     }));
-
     columnLeftButton.onTrue(new ConditionalCommand(new InstantCommand(() -> {
       targetSelector.setTargetInMaxwellMode(0);
     }), new InstantCommand(() -> {
       targetSelector.changeColumn(-1);
-    }), targetSelector::getMode));
-
+    }),
+        targetSelector::getMode));
     rowUpButton.onTrue(new ConditionalCommand(new InstantCommand(() -> {
       targetSelector.setTargetInMaxwellMode(1);
     }), new InstantCommand(() -> {
       targetSelector.changeRow(1);
     }), targetSelector::getMode));
-
     columnRightButton.onTrue(new ConditionalCommand(new InstantCommand(() -> {
       targetSelector.setTargetInMaxwellMode(2);
     }), new InstantCommand(() -> {
@@ -182,6 +172,13 @@ public class RobotContainer {
         () -> DriverConstants.SLOWDOWN_PERCENT * driverJoystick.getRawAxis(DriverConstants.LEFT_AXIS),
         () -> DriverConstants.SLOWDOWN_PERCENT * driverJoystick.getRawAxis(DriverConstants.RIGHT_AXIS),
         DriverConstants.SQUARED_INPUTS));
+
+    targetButton.whileTrue(
+        new TargetCommand(driveBase, () -> FieldConstants.SCORING_WAYPOINTS[targetSelector.getColumn()])
+            .andThen(autonGenerator.getScoreCommand(targetSelector.getRow())) // Path to node, place piece
+            .andThen(new InstantCommand(() -> { // Unselect everything
+              targetSelector.resetSelection(targetSelector.getMode()); // Reset Maxwell selections, keep mode the same.
+            })));
   }
 
   private final SendableChooser<Command> autonChooser = new SendableChooser<>();
