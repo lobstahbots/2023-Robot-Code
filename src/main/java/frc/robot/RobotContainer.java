@@ -212,9 +212,6 @@ public class RobotContainer {
    */
   public Command getAutonomousCommand() {
     return new SequentialCommandGroup(
-        new InstantCommand(
-            () -> driveBase.setGyroOffset(
-                FieldConstants.SCORING_WAYPOINTS[initialPosition.getSelected()].getRotation())),
         new ResetElevatorCommand(elevator),
         autonChooser.getSelected());
   }
@@ -245,6 +242,8 @@ public class RobotContainer {
    */
   public void setAutonDefaultCommands() {
     driveBase.setNeutralMode(NeutralMode.Brake);
+    driveBase.setGyroOffset(
+        FieldConstants.SCORING_WAYPOINTS[initialPosition.getSelected()].getRotation());
     arm.setIdleMode(IdleMode.kBrake);
     elevator.setIdleMode(IdleMode.kBrake);
     driveBase.setDefaultCommand(new StopDriveCommand(driveBase));
