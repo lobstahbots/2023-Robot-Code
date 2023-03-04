@@ -14,6 +14,7 @@ import edu.wpi.first.networktables.NetworkTablesJNI;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import edu.wpi.first.wpilibj2.command.button.POVButton;
@@ -211,6 +212,9 @@ public class RobotContainer {
    */
   public Command getAutonomousCommand() {
     return new SequentialCommandGroup(
+        new InstantCommand(
+            () -> driveBase.offsetGyroAngle(
+                FieldConstants.SCORING_WAYPOINTS[initialPosition.getSelected()].getRotation().getDegrees())),
         new ResetElevatorCommand(elevator),
         autonChooser.getSelected());
   }
