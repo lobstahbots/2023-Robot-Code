@@ -83,7 +83,11 @@ public final class Constants {
         new Pose2d(6.50, 6.00, new Rotation2d(0)), new Pose2d(7.60, 7.26, new Rotation2d(0))
     };
 
+    public static final Pose2d PLAYER_STATION_PICKUP_POSE = new Pose2d(15.70, 7.00, new Rotation2d(0));
+
     public static final double MAX_AUTO_DISTANCE_METERS = 10;
+    public static final double MAX_PLAYER_STATION_X_DISTANCE_METERS = 5;
+    public static final double MAX_PLAYER_STATION_Y_DISTANCE_METERS = 2;
     public static final double SCORING_ZONE_DEADBAND = 0.5;
     public static final double SCORING_ZONE_X = 3.5;
     public static final double FIELD_LENGTH = 16.5;
