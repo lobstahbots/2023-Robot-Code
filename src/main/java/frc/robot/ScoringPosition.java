@@ -21,8 +21,8 @@ public class ScoringPosition {
         ElevatorConstants.MAX_EXTENSION_INCHES);
 
     this.position = new Translation2d(
-        -IntakeConstants.INTAKE_OFFSET.getY(),
-        -ElevatorConstants.LENGTH_FULLY_RETRACTED - elevatorExtension - IntakeConstants.INTAKE_OFFSET.getX())
+        -Constants.IntakeConstants.INTAKE_OFFSET.getY(),
+        -ElevatorConstants.LENGTH_FULLY_RETRACTED - elevatorExtension - Constants.IntakeConstants.INTAKE_OFFSET.getX())
             .rotateBy(armAngle).plus(PivotConstants.ORIGIN_TO_PIVOT);
   }
 
@@ -49,14 +49,14 @@ public class ScoringPosition {
 
     // Angle between the arm and the line intersecting the pivot and intake position
     Rotation2d armAngleFromHypotenuse =
-        new Rotation2d(Math.asin(IntakeConstants.INTAKE_OFFSET.getY() / relativeToPivot.getNorm()));
+        new Rotation2d(Math.asin(Constants.IntakeConstants.INTAKE_OFFSET.getY() / relativeToPivot.getNorm()));
     Rotation2d armAngle = relativeToPivot.getAngle().plus(Rotation2d.fromDegrees(90))
         .plus(armAngleFromHypotenuse);
 
     // Intake position relative to the pivot, with X axis aligned to the arm
     Translation2d alignedToArm = new Translation2d(relativeToPivot.getNorm(), armAngleFromHypotenuse);
     double length = alignedToArm.getX();
-    double elevatorExtension = length - ElevatorConstants.LENGTH_FULLY_RETRACTED - IntakeConstants.INTAKE_OFFSET.getX();
+    double elevatorExtension = length - ElevatorConstants.LENGTH_FULLY_RETRACTED - Constants.IntakeConstants.INTAKE_OFFSET.getX();
 
     return new ScoringPosition(armAngle, elevatorExtension);
   }

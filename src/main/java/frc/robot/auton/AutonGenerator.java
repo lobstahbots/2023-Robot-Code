@@ -14,10 +14,11 @@ import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.ParallelRaceGroup;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import frc.robot.ScoringPosition;
+import frc.robot.Constants;
 import frc.robot.Constants.AutonConstants;
+import frc.robot.Constants.IntakeConstants;
 import frc.robot.Constants.PathConstants;
 import frc.robot.Constants.ScoringPositionConstants;
-import frc.robot.Constants.ArmConstants.IntakeConstants;
 import frc.robot.commands.arm.ScoringSystemToPositionCommand;
 import frc.robot.commands.arm.ScoringSystemToPositionWithRetractionCommand;
 import frc.robot.commands.drive.PathFollowCommand;
@@ -54,7 +55,7 @@ public class AutonGenerator {
             .andThen(new ScoringSystemToPositionCommand(arm,
                 position.translateBy(ScoringPositionConstants.CONE_SCORING_DROPDOWN),
                 AutonConstants.AUTON_SCORING_TOLERANCE))
-            .andThen(new ParallelRaceGroup(new SpinIntakeCommand(intake, IntakeConstants.OUTTAKE_VOLTAGE),
+            .andThen(new ParallelRaceGroup(new SpinIntakeCommand(intake, Constants.IntakeConstants.OUTTAKE_VOLTAGE),
                 new TimedCommand(AutonConstants.OUTTAKE_RUNTIME,
                     new ScoringSystemToPositionCommand(arm,
                         position.translateBy(ScoringPositionConstants.CONE_SCORING_BACKOFF),

@@ -204,23 +204,23 @@ public final class Constants {
       public static final double G = -0.11681;
       public static final double P = 0.16023;
     }
-
+  }
+  
     /**
      * Stores constants related to the intake.
      */
     public static final class IntakeConstants {
       public static final Translation2d INTAKE_OFFSET = new Translation2d(4.281, 6.37);
-
+    
       // IO
       public static final int LEFT_MOTOR_ID = 0;
       public static final int RIGHT_MOTOR_ID = 1;
-
+    
       // Speeds
       public static final double OUTTAKE_VOLTAGE = 1.8;
       public static final double INTAKE_VOLTAGE = -5;
       public static final double PASSIVE_INTAKE_VOLTAGE = -1.6;
     }
-  }
 
   /**
    * Stores positions for the scoring system.

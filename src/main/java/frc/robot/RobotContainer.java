@@ -52,7 +52,7 @@ public class RobotContainer {
           PivotConstants.ENCODER_CHANNEL),
       new Arm.Elevator(ElevatorConstants.ELEVATOR_MOTOR_ID, ElevatorConstants.ENCODER_CHANNEL_A,
           ElevatorConstants.ENCODER_CHANNEL_B, ElevatorConstants.LIMIT_SWITCH_CHANNEL));
-  private final Intake intake = new Intake(IntakeConstants.LEFT_MOTOR_ID, IntakeConstants.RIGHT_MOTOR_ID);
+  private final Intake intake = new Intake(Constants.IntakeConstants.LEFT_MOTOR_ID, Constants.IntakeConstants.RIGHT_MOTOR_ID);
 
   private final AutonGenerator autonGenerator = new AutonGenerator(driveBase, arm, intake);
 
@@ -103,8 +103,8 @@ public class RobotContainer {
    * Use this method to define your button->command mappings.
    */
   private void configureButtonBindings() {
-    intakeButton.whileTrue(new SpinIntakeCommand(intake, IntakeConstants.INTAKE_VOLTAGE));
-    outtakeButton.whileTrue(new SpinIntakeCommand(intake, IntakeConstants.OUTTAKE_VOLTAGE));
+    intakeButton.whileTrue(new SpinIntakeCommand(intake, Constants.IntakeConstants.INTAKE_VOLTAGE));
+    outtakeButton.whileTrue(new SpinIntakeCommand(intake, Constants.IntakeConstants.OUTTAKE_VOLTAGE));
     manualControlButton.whileTrue(new ScoringSystemTowardsPositionCommand(arm,
         () -> ScoringPosition
             .fromArmElevator(Rotation2d.fromDegrees(arm.getPivot().getSetpoint()),
@@ -215,7 +215,7 @@ public class RobotContainer {
     arm.setDefaultCommand(
         new ScoringSystemTowardsPositionWithRetractionCommand(arm,
             ScoringPositionConstants.STOWED));
-    intake.setDefaultCommand(new SpinIntakeCommand(intake, IntakeConstants.PASSIVE_INTAKE_VOLTAGE));
+    intake.setDefaultCommand(new SpinIntakeCommand(intake, Constants.IntakeConstants.PASSIVE_INTAKE_VOLTAGE));
   }
 
   /**
