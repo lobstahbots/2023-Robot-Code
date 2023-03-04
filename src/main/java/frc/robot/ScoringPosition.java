@@ -4,9 +4,9 @@ package frc.robot;
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
-import frc.robot.Constants.ScoringSystemConstants;
+import frc.robot.Constants.ArmConstants;
 
-import static frc.robot.Constants.ScoringSystemConstants.*;
+import static frc.robot.Constants.ArmConstants.*;
 
 /** Represents a possible position of the scoring system (arm, elevator, and intake). */
 public class ScoringPosition {
@@ -16,14 +16,14 @@ public class ScoringPosition {
 
   private ScoringPosition(Rotation2d armAngle, double elevatorExtension) {
     this.armAngle = Rotation2d.fromDegrees(
-        MathUtil.clamp(armAngle.getDegrees(), ArmConstants.MIN_ROTATION_DEG, ArmConstants.MAX_ROTATION_DEG));
+        MathUtil.clamp(armAngle.getDegrees(), PivotConstants.MIN_ROTATION_DEG, PivotConstants.MAX_ROTATION_DEG));
     this.elevatorExtension = MathUtil.clamp(elevatorExtension, ElevatorConstants.MIN_EXTENSION_INCHES,
         ElevatorConstants.MAX_EXTENSION_INCHES);
 
     this.position = new Translation2d(
         -IntakeConstants.INTAKE_OFFSET.getY(),
         -ElevatorConstants.LENGTH_FULLY_RETRACTED - elevatorExtension - IntakeConstants.INTAKE_OFFSET.getX())
-            .rotateBy(armAngle).plus(ArmConstants.ORIGIN_TO_PIVOT);
+            .rotateBy(armAngle).plus(PivotConstants.ORIGIN_TO_PIVOT);
   }
 
   /**
@@ -45,7 +45,7 @@ public class ScoringPosition {
    * @param position The position of the intake relative to the scoring origin, in inches.
    */
   public static ScoringPosition fromXY(Translation2d position) {
-    Translation2d relativeToPivot = position.minus(ArmConstants.ORIGIN_TO_PIVOT);
+    Translation2d relativeToPivot = position.minus(PivotConstants.ORIGIN_TO_PIVOT);
 
     // Angle between the arm and the line intersecting the pivot and intake position
     Rotation2d armAngleFromHypotenuse =
@@ -156,7 +156,7 @@ public class ScoringPosition {
    * @return Whether the ScoringPosition is within the bumper collision zone.
    */
   public boolean isInsideBumperZone() {
-    return getArmAngle().getDegrees() < ScoringSystemConstants.BUMPER_AVOIDANCE_ANGLE.getDegrees()
-        && getX() > ScoringSystemConstants.BUMPER_AVOIDANCE_X;
+    return getArmAngle().getDegrees() < ArmConstants.BUMPER_AVOIDANCE_ANGLE.getDegrees()
+        && getX() > ArmConstants.BUMPER_AVOIDANCE_X;
   }
 }
