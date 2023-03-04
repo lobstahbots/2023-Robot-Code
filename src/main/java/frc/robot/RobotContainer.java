@@ -18,9 +18,7 @@ import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import edu.wpi.first.wpilibj2.command.button.POVButton;
 import frc.robot.Constants.ScoringPositionConstants;
 import frc.robot.Constants.DriveConstants.DriveMotorCANIDs;
-import frc.robot.Constants.ScoringSystemConstants.ArmConstants;
-import frc.robot.Constants.ScoringSystemConstants.ElevatorConstants;
-import frc.robot.Constants.ScoringSystemConstants.IntakeConstants;
+import frc.robot.Constants.ArmConstants.*;
 import frc.robot.Constants.FieldConstants;
 import frc.robot.Constants.OIConstants.DriverConstants;
 import frc.robot.Constants.OIConstants.OperatorConstants;
@@ -33,8 +31,8 @@ import frc.robot.commands.drive.TankDriveCommand;
 import frc.robot.commands.intake.SpinIntakeCommand;
 import frc.robot.subsystems.Arm;
 import frc.robot.subsystems.DriveBase;
-import frc.robot.subsystems.Elevator;
 import frc.robot.subsystems.Intake;
+import frc.robot.subsystems.Arm.Pivot;
 import lobstah.stl.oi.LobstahGamepad;
 
 /**
@@ -49,14 +47,14 @@ public class RobotContainer {
       DriveMotorCANIDs.RIGHT_FRONT,
       DriveMotorCANIDs.RIGHT_BACK);
 
-  private final Arm arm = new Arm(ArmConstants.LEFT_MOTOR_ID, ArmConstants.RIGHT_MOTOR_ID,
-      ArmConstants.ENCODER_CHANNEL);
-  private final Elevator elevator =
-      new Elevator(ElevatorConstants.ELEVATOR_MOTOR_ID, ElevatorConstants.ENCODER_CHANNEL_A,
-          ElevatorConstants.ENCODER_CHANNEL_B, ElevatorConstants.LIMIT_SWITCH_CHANNEL);
+  private final Arm arm = new Arm(
+      new Arm.Pivot(PivotConstants.LEFT_MOTOR_ID, PivotConstants.RIGHT_MOTOR_ID,
+          PivotConstants.ENCODER_CHANNEL),
+      new Arm.Elevator(ElevatorConstants.ELEVATOR_MOTOR_ID, ElevatorConstants.ENCODER_CHANNEL_A,
+          ElevatorConstants.ENCODER_CHANNEL_B, ElevatorConstants.LIMIT_SWITCH_CHANNEL));
   private final Intake intake = new Intake(IntakeConstants.LEFT_MOTOR_ID, IntakeConstants.RIGHT_MOTOR_ID);
 
-  private final AutonGenerator autonGenerator = new AutonGenerator(driveBase, arm, elevator, intake);
+  private final AutonGenerator autonGenerator = new AutonGenerator(driveBase, arm, intake);
 
   private final LobstahGamepad driverJoystick = new LobstahGamepad(DriverConstants.DRIVER_JOYSTICK_INDEX);
   private final JoystickButton slowdownButton = driverJoystick.button(DriverConstants.SLOWDOWN_BUTTON_INDEX);
@@ -91,13 +89,13 @@ public class RobotContainer {
   }
 
   public ScoringPosition getArmPosition() {
-    return ScoringPosition.fromArmElevator(arm.getRotation(),
-        elevator.getExtension());
+    return ScoringPosition.fromArmElevator(arm.getPivot().getRotation(),
+        arm.getElevator().getExtension());
   }
 
   public boolean insideBumpers() {
     return ScoringPosition
-        .fromArmElevator(arm.getRotation(), elevator.getExtension())
+        .fromArmElevator(arm.getPivot().getRotation(), arm.getElevator().getExtension())
         .isInsideBumperZone();
   }
 
@@ -107,24 +105,25 @@ public class RobotContainer {
   private void configureButtonBindings() {
     intakeButton.whileTrue(new SpinIntakeCommand(intake, IntakeConstants.INTAKE_VOLTAGE));
     outtakeButton.whileTrue(new SpinIntakeCommand(intake, IntakeConstants.OUTTAKE_VOLTAGE));
-    manualControlButton.whileTrue(new ScoringSystemTowardsPositionCommand(arm, elevator,
+    manualControlButton.whileTrue(new ScoringSystemTowardsPositionCommand(arm,
         () -> ScoringPosition
-            .fromArmElevator(Rotation2d.fromDegrees(arm.getSetpoint()), elevator.getSetpointExtension())
+            .fromArmElevator(Rotation2d.fromDegrees(arm.getPivot().getSetpoint()),
+                arm.getElevator().getSetpointExtension())
             .translateBy(new Translation2d(
                 -operatorJoystick.getRawAxis(OperatorConstants.HORIZONTAL_ARM_MOVEMENT_AXIS) * getJoystickLatency()
                     * OperatorConstants.MANUAL_CONTROL_SPEED,
                 -operatorJoystick.getRawAxis(OperatorConstants.VERTICAL_ARM_MOVEMENT_AXIS) * getJoystickLatency()
                     * OperatorConstants.MANUAL_CONTROL_SPEED))));
     highGoalButton
-        .whileTrue(new ScoringSystemTowardsPositionWithRetractionCommand(arm, elevator,
+        .whileTrue(new ScoringSystemTowardsPositionWithRetractionCommand(arm,
             ScoringPositionConstants.HIGH_GOAL_SCORING));
     midGoalButton
-        .whileTrue(new ScoringSystemTowardsPositionWithRetractionCommand(arm, elevator,
+        .whileTrue(new ScoringSystemTowardsPositionWithRetractionCommand(arm,
             ScoringPositionConstants.MID_GOAL_SCORING));
-    lowGoalButton.whileTrue(new ScoringSystemTowardsPositionWithRetractionCommand(arm, elevator,
+    lowGoalButton.whileTrue(new ScoringSystemTowardsPositionWithRetractionCommand(arm,
         ScoringPositionConstants.LOW_GOAL_SCORING));
     playerStationButton
-        .whileTrue(new ScoringSystemTowardsPositionWithRetractionCommand(arm, elevator,
+        .whileTrue(new ScoringSystemTowardsPositionWithRetractionCommand(arm,
             ScoringPositionConstants.PLAYER_STATION_PICKUP));
 
     slowdownButton.whileTrue(new TankDriveCommand(driveBase,
@@ -196,7 +195,7 @@ public class RobotContainer {
    */
   public Command getAutonomousCommand() {
     return new SequentialCommandGroup(
-        new ResetElevatorCommand(elevator),
+        new ResetElevatorCommand(arm),
         autonChooser.getSelected());
   }
 
@@ -214,7 +213,7 @@ public class RobotContainer {
             DriverConstants.SQUARED_INPUTS));
 
     arm.setDefaultCommand(
-        new ScoringSystemTowardsPositionWithRetractionCommand(arm, elevator,
+        new ScoringSystemTowardsPositionWithRetractionCommand(arm,
             ScoringPositionConstants.STOWED));
     intake.setDefaultCommand(new SpinIntakeCommand(intake, IntakeConstants.PASSIVE_INTAKE_VOLTAGE));
   }
@@ -225,8 +224,8 @@ public class RobotContainer {
    * setTeleopDefaultCommands().
    */
   public void setAutonDefaultCommands() {
-    arm.setIdleMode(IdleMode.kBrake);
-    elevator.setIdleMode(IdleMode.kBrake);
+    arm.getPivot().setIdleMode(IdleMode.kBrake);
+    arm.getElevator().setIdleMode(IdleMode.kBrake);
     driveBase.setDefaultCommand(new StopDriveCommand(driveBase));
   }
 
@@ -236,8 +235,8 @@ public class RobotContainer {
    */
   public void setTestDefaultCommands() {
     driveBase.setDefaultCommand(new StopDriveCommand(driveBase));
-    arm.setIdleMode(IdleMode.kCoast);
-    elevator.setIdleMode(IdleMode.kCoast);
+    arm.getPivot().setIdleMode(IdleMode.kCoast);
+    arm.getElevator().setIdleMode(IdleMode.kCoast);
   }
 
   /**
