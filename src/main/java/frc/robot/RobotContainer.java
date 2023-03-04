@@ -25,12 +25,12 @@ import frc.robot.Constants.FieldConstants;
 import frc.robot.Constants.OIConstants.DriverConstants;
 import frc.robot.Constants.OIConstants.OperatorConstants;
 import frc.robot.auton.AutonGenerator;
+import frc.robot.commands.arm.ScoringSystemTowardsPositionCommand;
+import frc.robot.commands.arm.ScoringSystemTowardsPositionWithRetractionCommand;
+import frc.robot.commands.arm.elevator.ResetElevatorCommand;
 import frc.robot.commands.drive.StopDriveCommand;
 import frc.robot.commands.drive.TankDriveCommand;
-import frc.robot.commands.scoring.ScoringSystemTowardsPositionCommand;
-import frc.robot.commands.scoring.ScoringSystemTowardsPositionWithRetractionCommand;
-import frc.robot.commands.scoring.elevator.ResetElevatorCommand;
-import frc.robot.commands.scoring.intake.SpinIntakeCommand;
+import frc.robot.commands.intake.SpinIntakeCommand;
 import frc.robot.subsystems.Arm;
 import frc.robot.subsystems.DriveBase;
 import frc.robot.subsystems.Elevator;
@@ -108,7 +108,8 @@ public class RobotContainer {
     intakeButton.whileTrue(new SpinIntakeCommand(intake, IntakeConstants.INTAKE_VOLTAGE));
     outtakeButton.whileTrue(new SpinIntakeCommand(intake, IntakeConstants.OUTTAKE_VOLTAGE));
     manualControlButton.whileTrue(new ScoringSystemTowardsPositionCommand(arm, elevator,
-        () -> ScoringPosition.fromArmElevator(Rotation2d.fromDegrees(arm.getSetpoint()), elevator.getSetpointExtension())
+        () -> ScoringPosition
+            .fromArmElevator(Rotation2d.fromDegrees(arm.getSetpoint()), elevator.getSetpointExtension())
             .translateBy(new Translation2d(
                 -operatorJoystick.getRawAxis(OperatorConstants.HORIZONTAL_ARM_MOVEMENT_AXIS) * getJoystickLatency()
                     * OperatorConstants.MANUAL_CONTROL_SPEED,

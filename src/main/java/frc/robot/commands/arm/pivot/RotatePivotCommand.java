@@ -2,53 +2,53 @@
 // Open Source Software; you can modify and/or share it under the terms of
 // the WPILib BSD license file in the root directory of this project.
 
-package frc.robot.commands.scoring.arm;
+package frc.robot.commands.arm.pivot;
 
 import java.util.function.DoubleSupplier;
 import edu.wpi.first.wpilibj2.command.CommandBase;
-import frc.robot.Constants.ScoringSystemConstants.ArmConstants;
+import frc.robot.Constants.ArmConstants.PivotConstants;
 import frc.robot.subsystems.Arm;
 
-public class RotateArmCommand extends CommandBase {
+public class RotatePivotCommand extends CommandBase {
 
-  public final Arm arm;
+  public final Arm.Pivot pivot;
   public final DoubleSupplier speed;
 
   /**
-   * Creates a command that rotates the {@link Arm} at the speed given by the supplier.
+   * Creates a command that rotates the {@link Arm.Pivot} at the speed given by the supplier.
    *
    * @param arm The {@link Arm} to control
    * @param speed Supplier for the speed at which to rotate the arm
    */
-  public RotateArmCommand(Arm arm, DoubleSupplier speed) {
-    this.arm = arm;
+  public RotatePivotCommand(Arm arm, DoubleSupplier speed) {
+    this.pivot = arm.getPivot();
     this.speed = speed;
-    addRequirements(this.arm);
+    addRequirements(arm);
   }
 
   /**
-   * Creates a command that rotates the {@link Arm} at a given speed.
+   * Creates a command that rotates the {@link Arm.Pivot} at a given speed.
    *
    * @param arm The {@link Arm} to control
    * @param speed The speed at which to rotate the arm
    */
-  public RotateArmCommand(Arm arm, double speed) {
+  public RotatePivotCommand(Arm arm, double speed) {
     this(arm, () -> speed);
   }
 
   @Override
   public void execute() {
-    if ((arm.getAngle() > ArmConstants.MAX_ROTATION_DEG && speed.getAsDouble() > 0)
-        || (arm.getAngle() < ArmConstants.MIN_ROTATION_DEG && speed.getAsDouble() < 0)) {
-      arm.setRotationSpeed(0.0);
+    if ((pivot.getAngle() > PivotConstants.MAX_ROTATION_DEG && speed.getAsDouble() > 0)
+        || (pivot.getAngle() < PivotConstants.MIN_ROTATION_DEG && speed.getAsDouble() < 0)) {
+      pivot.setRotationSpeed(0.0);
     } else {
-      arm.setRotationSpeed(speed.getAsDouble());
+      pivot.setRotationSpeed(speed.getAsDouble());
     }
   }
 
   @Override
   public void end(boolean interrupted) {
-    arm.setRotationSpeed(0.0);
+    pivot.setRotationSpeed(0.0);
   }
 
   @Override
