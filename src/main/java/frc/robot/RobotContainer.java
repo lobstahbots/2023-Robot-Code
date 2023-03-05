@@ -52,7 +52,8 @@ public class RobotContainer {
           PivotConstants.ENCODER_CHANNEL),
       new Arm.Elevator(ElevatorConstants.ELEVATOR_MOTOR_ID, ElevatorConstants.ENCODER_CHANNEL_A,
           ElevatorConstants.ENCODER_CHANNEL_B, ElevatorConstants.LIMIT_SWITCH_CHANNEL));
-  private final Intake intake = new Intake(Constants.IntakeConstants.LEFT_MOTOR_ID, Constants.IntakeConstants.RIGHT_MOTOR_ID);
+  private final Intake intake =
+      new Intake(Constants.IntakeConstants.LEFT_MOTOR_ID, Constants.IntakeConstants.RIGHT_MOTOR_ID);
 
   private final AutonGenerator autonGenerator = new AutonGenerator(driveBase, arm, intake);
 
@@ -88,13 +89,13 @@ public class RobotContainer {
     return 1;
   }
 
-  public ScoringPosition getArmPosition() {
-    return ScoringPosition.fromArmElevator(arm.getPivot().getRotation(),
+  public ArmPose getArmPosition() {
+    return ArmPose.fromArmElevator(arm.getPivot().getRotation(),
         arm.getElevator().getExtension());
   }
 
   public boolean insideBumpers() {
-    return ScoringPosition
+    return ArmPose
         .fromArmElevator(arm.getPivot().getRotation(), arm.getElevator().getExtension())
         .isInsideBumperZone();
   }
@@ -106,7 +107,7 @@ public class RobotContainer {
     intakeButton.whileTrue(new SpinIntakeCommand(intake, Constants.IntakeConstants.INTAKE_VOLTAGE));
     outtakeButton.whileTrue(new SpinIntakeCommand(intake, Constants.IntakeConstants.OUTTAKE_VOLTAGE));
     manualControlButton.whileTrue(new ScoringSystemTowardsPositionCommand(arm,
-        () -> ScoringPosition
+        () -> ArmPose
             .fromArmElevator(Rotation2d.fromDegrees(arm.getPivot().getSetpoint()),
                 arm.getElevator().getSetpointExtension())
             .translateBy(new Translation2d(

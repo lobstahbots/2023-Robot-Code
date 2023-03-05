@@ -9,12 +9,12 @@ import frc.robot.Constants.ArmConstants;
 import static frc.robot.Constants.ArmConstants.*;
 
 /** Represents a possible position of the scoring system (arm, elevator, and intake). */
-public class ScoringPosition {
+public class ArmPose {
   private final Rotation2d armAngle;
   private final double elevatorExtension;
   private final Translation2d position;
 
-  private ScoringPosition(Rotation2d armAngle, double elevatorExtension) {
+  private ArmPose(Rotation2d armAngle, double elevatorExtension) {
     this.armAngle = Rotation2d.fromDegrees(
         MathUtil.clamp(armAngle.getDegrees(), PivotConstants.MIN_ROTATION_DEG, PivotConstants.MAX_ROTATION_DEG));
     this.elevatorExtension = MathUtil.clamp(elevatorExtension, ElevatorConstants.MIN_EXTENSION_INCHES,
@@ -34,8 +34,8 @@ public class ScoringPosition {
    * @param elevatorExtension The extension of the elevator in inches. This will be clamped to the range of the
    *          elevator.
    */
-  public static ScoringPosition fromArmElevator(Rotation2d armAngle, double elevatorExtension) {
-    return new ScoringPosition(armAngle, elevatorExtension);
+  public static ArmPose fromArmElevator(Rotation2d armAngle, double elevatorExtension) {
+    return new ArmPose(armAngle, elevatorExtension);
   }
 
   /**
@@ -44,7 +44,7 @@ public class ScoringPosition {
    * 
    * @param position The position of the intake relative to the scoring origin, in inches.
    */
-  public static ScoringPosition fromXY(Translation2d position) {
+  public static ArmPose fromXY(Translation2d position) {
     Translation2d relativeToPivot = position.minus(PivotConstants.ORIGIN_TO_PIVOT);
 
     // Angle between the arm and the line intersecting the pivot and intake position
@@ -56,9 +56,10 @@ public class ScoringPosition {
     // Intake position relative to the pivot, with X axis aligned to the arm
     Translation2d alignedToArm = new Translation2d(relativeToPivot.getNorm(), armAngleFromHypotenuse);
     double length = alignedToArm.getX();
-    double elevatorExtension = length - ElevatorConstants.LENGTH_FULLY_RETRACTED - Constants.IntakeConstants.INTAKE_OFFSET.getX();
+    double elevatorExtension =
+        length - ElevatorConstants.LENGTH_FULLY_RETRACTED - Constants.IntakeConstants.INTAKE_OFFSET.getX();
 
-    return new ScoringPosition(armAngle, elevatorExtension);
+    return new ArmPose(armAngle, elevatorExtension);
   }
 
   /**
@@ -68,7 +69,7 @@ public class ScoringPosition {
    * @param x The x coordinate of the intake relative to the scoring origin, in inches.
    * @param y The y coordinate of the intake relative to the scoring origin, in inches.
    */
-  public static ScoringPosition fromXY(double x, double y) {
+  public static ArmPose fromXY(double x, double y) {
     return fromXY(new Translation2d(x, y));
   }
 
@@ -123,7 +124,7 @@ public class ScoringPosition {
    * @param other The ScoringPosition to compute the distance to
    * @return The distance between the intake positions of the two ScoringPositions, in inches.
    */
-  public double getDistance(ScoringPosition other) {
+  public double getDistance(ArmPose other) {
     return position.getDistance(other.position);
   }
 
@@ -132,7 +133,7 @@ public class ScoringPosition {
    * 
    * @return A new ScoringPosition with the arm rotated by the given rotation.
    */
-  public ScoringPosition rotateArmBy(Rotation2d rotation) {
+  public ArmPose rotateArmBy(Rotation2d rotation) {
     return fromArmElevator(armAngle.rotateBy(rotation), elevatorExtension);
   }
 
@@ -140,7 +141,7 @@ public class ScoringPosition {
    * @param extension The amount to extend the elevator by.
    * @return A new ScoringPosition with the elevator extended by the given amount.
    */
-  public ScoringPosition extendElevatorBy(double extension) {
+  public ArmPose extendElevatorBy(double extension) {
     return fromArmElevator(armAngle, elevatorExtension + extension);
   }
 
@@ -148,7 +149,7 @@ public class ScoringPosition {
    * @param translation The amount to translate the intake by, in inches.
    * @return A new ScoringPosition with the intake position translated by the given amount.
    */
-  public ScoringPosition translateBy(Translation2d translation) {
+  public ArmPose translateBy(Translation2d translation) {
     return fromXY(position.plus(translation));
   }
 

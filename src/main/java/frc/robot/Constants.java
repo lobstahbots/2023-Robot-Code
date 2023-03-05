@@ -205,36 +205,36 @@ public final class Constants {
       public static final double P = 0.16023;
     }
   }
-  
-    /**
-     * Stores constants related to the intake.
-     */
-    public static final class IntakeConstants {
-      public static final Translation2d INTAKE_OFFSET = new Translation2d(4.281, 6.37);
-    
-      // IO
-      public static final int LEFT_MOTOR_ID = 0;
-      public static final int RIGHT_MOTOR_ID = 1;
-    
-      // Speeds
-      public static final double OUTTAKE_VOLTAGE = 1.8;
-      public static final double INTAKE_VOLTAGE = -5;
-      public static final double PASSIVE_INTAKE_VOLTAGE = -1.6;
-    }
+
+  /**
+   * Stores constants related to the intake.
+   */
+  public static final class IntakeConstants {
+    public static final Translation2d INTAKE_OFFSET = new Translation2d(4.281, 6.37);
+
+    // IO
+    public static final int LEFT_MOTOR_ID = 0;
+    public static final int RIGHT_MOTOR_ID = 1;
+
+    // Speeds
+    public static final double OUTTAKE_VOLTAGE = 1.8;
+    public static final double INTAKE_VOLTAGE = -5;
+    public static final double PASSIVE_INTAKE_VOLTAGE = -1.6;
+  }
 
   /**
    * Stores positions for the scoring system.
    */
   public static final class ScoringPositionConstants {
-    public static final ScoringPosition STOWED = ScoringPosition.fromArmElevator(Rotation2d.fromDegrees(35), -0.1);
-    public static final ScoringPosition GROUND_PICKUP = ScoringPosition.fromXY(16.4, 10.2);
-    public static final ScoringPosition MID_GOAL_SCORING = ScoringPosition.fromXY(25, 47); // before dropping
-    public static final ScoringPosition LOW_GOAL_SCORING = ScoringPosition.fromXY(16.4, 10.2);
-    public static final ScoringPosition HIGH_GOAL_SCORING = ScoringPosition.fromXY(42, 59);
+    public static final ArmPose STOWED = ArmPose.fromArmElevator(Rotation2d.fromDegrees(35), -0.1);
+    public static final ArmPose GROUND_PICKUP = ArmPose.fromXY(16.4, 10.2);
+    public static final ArmPose MID_GOAL_SCORING = ArmPose.fromXY(25, 47); // before dropping
+    public static final ArmPose LOW_GOAL_SCORING = ArmPose.fromXY(16.4, 10.2);
+    public static final ArmPose HIGH_GOAL_SCORING = ArmPose.fromXY(42, 59);
     public static final Translation2d CONE_SCORING_DROPDOWN = new Translation2d(0, -7);
     public static final Translation2d CONE_SCORING_BACKOFF = new Translation2d(-4, -7);
     public static final Translation2d CONE_SCORING_BACK_UP = new Translation2d(-4, 0);
-    public static final ScoringPosition PLAYER_STATION_PICKUP = ScoringPosition.fromXY(10, 44.375);
+    public static final ArmPose PLAYER_STATION_PICKUP = ArmPose.fromXY(10, 44.375);
   }
 
 

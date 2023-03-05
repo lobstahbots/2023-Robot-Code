@@ -5,12 +5,12 @@ import java.util.function.Supplier;
 
 import edu.wpi.first.wpilibj2.command.ParallelRaceGroup;
 import edu.wpi.first.wpilibj2.command.WaitUntilCommand;
-import frc.robot.ScoringPosition;
+import frc.robot.ArmPose;
 import frc.robot.subsystems.Arm;
 
 public class ScoringSystemToPositionCommand extends ParallelRaceGroup {
   private final Arm arm;
-  private final Supplier<ScoringPosition> position;
+  private final Supplier<ArmPose> position;
   private final double threshold;
 
   /**
@@ -20,7 +20,7 @@ public class ScoringSystemToPositionCommand extends ParallelRaceGroup {
    * @param position A supplier for the position to move to
    * @param threshold The threshold in inches for the system to be considered at the correct position
    */
-  public ScoringSystemToPositionCommand(Arm arm, Supplier<ScoringPosition> position,
+  public ScoringSystemToPositionCommand(Arm arm, Supplier<ArmPose> position,
       double threshold) {
     this.arm = arm;
     this.position = position;
@@ -37,13 +37,13 @@ public class ScoringSystemToPositionCommand extends ParallelRaceGroup {
    * @param position The position to move to
    * @param threshold The threshold in inches for the system to be considered at the correct position
    */
-  public ScoringSystemToPositionCommand(Arm arm, ScoringPosition position, double threshold) {
+  public ScoringSystemToPositionCommand(Arm arm, ArmPose position, double threshold) {
     this(arm, () -> position, threshold);
   }
 
   private boolean isAtPosition() {
-    ScoringPosition currentPosition =
-        ScoringPosition.fromArmElevator(arm.getPivot().getRotation(), arm.getElevator().getExtension());
+    ArmPose currentPosition =
+        ArmPose.fromArmElevator(arm.getPivot().getRotation(), arm.getElevator().getExtension());
     return position.get().getDistance(currentPosition) <= threshold;
   }
 }

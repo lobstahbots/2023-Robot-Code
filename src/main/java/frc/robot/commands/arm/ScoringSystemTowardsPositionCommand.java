@@ -7,7 +7,7 @@ package frc.robot.commands.arm;
 import java.util.function.Supplier;
 
 import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
-import frc.robot.ScoringPosition;
+import frc.robot.ArmPose;
 import frc.robot.commands.arm.elevator.RunElevatorToExtensionCommand;
 import frc.robot.commands.arm.pivot.RotatePivotToAngleCommand;
 import frc.robot.subsystems.Arm;
@@ -19,7 +19,7 @@ public class ScoringSystemTowardsPositionCommand extends ParallelCommandGroup {
    * @param arm The {@link Arm} to control
    * @param position The position to move towards
    */
-  public ScoringSystemTowardsPositionCommand(Arm arm, ScoringPosition position) {
+  public ScoringSystemTowardsPositionCommand(Arm arm, ArmPose position) {
     this(arm, () -> position);
   }
 
@@ -29,7 +29,7 @@ public class ScoringSystemTowardsPositionCommand extends ParallelCommandGroup {
    * @param arm The {@link Arm} to control
    * @param position A supplier for the position to move towards
    */
-  public ScoringSystemTowardsPositionCommand(Arm arm, Supplier<ScoringPosition> position) {
+  public ScoringSystemTowardsPositionCommand(Arm arm, Supplier<ArmPose> position) {
     this.addCommands(new RunElevatorToExtensionCommand(arm, () -> position.get().getElevatorExtension()),
         new RotatePivotToAngleCommand(arm, () -> position.get().getArmAngle().getDegrees()));
     addRequirements(arm);
