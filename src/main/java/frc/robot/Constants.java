@@ -49,15 +49,15 @@ public final class Constants {
    */
   public static final class FieldConstants {
     public static final Pose2d[] SCORING_WAYPOINTS = new Pose2d[] {
-        new Pose2d(1.57, 0.5, new Rotation2d(Math.toRadians(180))),
-        new Pose2d(1.57, 1, new Rotation2d(Math.toRadians(180))),
-        new Pose2d(1.57, 1.6, new Rotation2d(Math.toRadians(180))),
-        new Pose2d(1.57, 2.2, new Rotation2d(Math.toRadians(180))),
-        new Pose2d(1.57, 2.7, new Rotation2d(Math.toRadians(180))),
-        new Pose2d(1.57, 3.3, new Rotation2d(Math.toRadians(180))),
-        new Pose2d(1.57, 3.85, new Rotation2d(Math.toRadians(180))),
-        new Pose2d(1.57, 4.4, new Rotation2d(Math.toRadians(180))),
-        new Pose2d(1.57, 4.5, new Rotation2d(Math.toRadians(180)))
+        new Pose2d(1.6, 0.5, Rotation2d.fromDegrees(180)),
+        new Pose2d(1.6, 1, Rotation2d.fromDegrees(180)),
+        new Pose2d(1.6, 1.6, Rotation2d.fromDegrees(180)),
+        new Pose2d(1.6, 2.2, Rotation2d.fromDegrees(180)),
+        new Pose2d(1.6, 2.7, Rotation2d.fromDegrees(180)),
+        new Pose2d(1.6, 3.3, Rotation2d.fromDegrees(180)),
+        new Pose2d(1.6, 3.85, Rotation2d.fromDegrees(180)),
+        new Pose2d(1.6, 4.4, Rotation2d.fromDegrees(180)),
+        new Pose2d(1.6, 4.5, Rotation2d.fromDegrees(180))
     };
     public static final Pose2d[] TRAVELING_WAYPOINTS = new Pose2d[] {
         new Pose2d(2.5, 0.5, new Rotation2d(0)), new Pose2d(2.5, 1, new Rotation2d(0)),

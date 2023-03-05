@@ -16,6 +16,7 @@ import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import frc.robot.Constants.FieldConstants;
 import frc.robot.Constants.PathConstants;
 import frc.robot.subsystems.DriveBase;
+import lobstah.stl.command.ConstructLaterCommand;
 
 /**
  * Drives a {@link DriveBase} through predetermined waypoints to a target to score.
@@ -99,7 +100,7 @@ public class TargetCommand extends DriveCommand {
     }
     CommandScheduler.getInstance().schedule(new PathFollowCommand(driveBase, driveBase.generatePath(waypoints))
         .andThen(new TurnToAngleCommand(driveBase, targetPose.getRotation(), PathConstants.TURN_ANGLE_DEADBAND))
-        .andThen(new PathFollowCommand(driveBase, () -> driveBase.generatePath(targetPose)))
+        .andThen(new ConstructLaterCommand(() -> new PathFollowCommand(driveBase, driveBase.generatePath(targetPose))))
         .andThen(new TurnToAngleCommand(driveBase, targetPose.getRotation(), PathConstants.TURN_ANGLE_DEADBAND)));
   }
 
