@@ -15,7 +15,7 @@ public class ArmTowardsPoseWithRetractionCommand extends SequentialCommandGroup 
    * in pivot angle exceeds a certain threshold.
    * 
    * @param arm The {@link Arm} to control
-   * @param pose The pose to move to
+   * @param pose The pose to move towards
    */
   public ArmTowardsPoseWithRetractionCommand(Arm arm, ArmPose pose) {
     this.arm = arm;

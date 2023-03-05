@@ -15,7 +15,7 @@ public class ArmToPoseWithRetractionCommand extends ParallelRaceGroup {
    * Creates a command that moves the {@link Arm} to a given pose, then finishes.
    *
    * @param arm The {@link Arm} to control
-   * @param pose A supplier for the pose to move to
+   * @param pose The pose to move to
    * @param threshold The threshold in inches for the arm to be considered at the correct pose
    */
   public ArmToPoseWithRetractionCommand(Arm arm, ArmPose pose,

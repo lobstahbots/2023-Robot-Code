@@ -17,10 +17,10 @@ public class ArmTowardsPoseCommand extends ParallelCommandGroup {
    * Creates a command that moves the {@link Arm} towards a given pose.
    *
    * @param arm The {@link Arm} to control
-   * @param position The pose to move towards
+   * @param pose The pose to move towards
    */
-  public ArmTowardsPoseCommand(Arm arm, ArmPose position) {
-    this(arm, () -> position);
+  public ArmTowardsPoseCommand(Arm arm, ArmPose pose) {
+    this(arm, () -> pose);
   }
 
   /**
