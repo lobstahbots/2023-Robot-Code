@@ -29,8 +29,7 @@ public class ArmTowardsPoseWithRetractionCommand extends SequentialCommandGroup 
             () -> ArmPose.fromAngleExtension(ArmConstants.BUMPER_AVOIDANCE_ANGLE,
                 arm.getElevator().getExtension()),
             ArmConstants.BUMPER_AVOIDANCE_PRECISION)
-                .unless(() -> !ArmPose
-                    .fromAngleExtension(arm.getPivot().getRotation(), arm.getElevator().getExtension())
+                .unless(() -> !arm.getPose()
                     .isInsideBumperZone()),
         // Retract elevator unless close enough to final angle to not need to retract before rotating.
         new ArmToPoseCommand(

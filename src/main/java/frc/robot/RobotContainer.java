@@ -118,9 +118,7 @@ public class RobotContainer {
     intakeButton.whileTrue(new SpinIntakeCommand(intake, Constants.IntakeConstants.INTAKE_VOLTAGE));
     outtakeButton.whileTrue(new SpinIntakeCommand(intake, Constants.IntakeConstants.OUTTAKE_VOLTAGE));
     manualControlButton.whileTrue(new ArmTowardsPoseCommand(arm,
-        () -> ArmPose
-            .fromAngleExtension(Rotation2d.fromDegrees(arm.getPivot().getSetpoint()),
-                arm.getElevator().getSetpointExtension())
+        () -> arm.getSetpointPose()
             .translateBy(new Translation2d(
                 -operatorJoystick.getRawAxis(OperatorConstants.HORIZONTAL_ARM_MOVEMENT_AXIS) * getJoystickLatency()
                     * OperatorConstants.MANUAL_CONTROL_SPEED,

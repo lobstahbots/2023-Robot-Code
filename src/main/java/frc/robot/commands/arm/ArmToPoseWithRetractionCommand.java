@@ -29,8 +29,6 @@ public class ArmToPoseWithRetractionCommand extends ParallelRaceGroup {
   }
 
   private boolean isAtPose() {
-    ArmPose currentPosition =
-        ArmPose.fromAngleExtension(arm.getPivot().getRotation(), arm.getElevator().getExtension());
-    return pose.getDistance(currentPosition) <= threshold;
+    return pose.getDistance(arm.getPose()) <= threshold;
   }
 }

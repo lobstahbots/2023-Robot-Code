@@ -42,8 +42,6 @@ public class ArmToPoseCommand extends ParallelRaceGroup {
   }
 
   private boolean isAtPosition() {
-    ArmPose currentPosition =
-        ArmPose.fromAngleExtension(arm.getPivot().getRotation(), arm.getElevator().getExtension());
-    return pose.get().getDistance(currentPosition) <= threshold;
+    return pose.get().getDistance(arm.getPose()) <= threshold;
   }
 }
