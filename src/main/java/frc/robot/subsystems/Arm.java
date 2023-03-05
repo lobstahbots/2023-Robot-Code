@@ -16,11 +16,12 @@ import edu.wpi.first.wpilibj.Encoder;
 import edu.wpi.first.wpilibj.motorcontrol.MotorControllerGroup;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.ArmConstants.PivotConstants;
+import frc.robot.ArmPose;
 import frc.robot.Constants.ArmConstants.ElevatorConstants;
 
 public class Arm extends SubsystemBase {
-  private Pivot pivot;
-  private Elevator elevator;
+  private final Pivot pivot;
+  private final Elevator elevator;
 
   public Arm(Pivot pivot, Elevator elevator) {
     this.pivot = pivot;
@@ -33,6 +34,15 @@ public class Arm extends SubsystemBase {
 
   public Elevator getElevator() {
     return this.elevator;
+  }
+
+  public ArmPose getPose() {
+    return ArmPose.fromAngleExtension(this.pivot.getRotation(), this.elevator.getExtension());
+  }
+
+  public ArmPose getSetpointPose() {
+    return ArmPose.fromAngleExtension(Rotation2d.fromDegrees(this.pivot.getSetpoint()),
+        this.elevator.getSetpointExtension());
   }
 
   /**
