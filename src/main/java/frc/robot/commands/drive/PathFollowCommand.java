@@ -18,15 +18,14 @@ import frc.robot.subsystems.DriveBase;
  */
 public class PathFollowCommand extends PPRamseteCommand {
 
-
   /**
    * Drives an {@link DriveBase} through the provided PathPlannerTrajectory using a Ramsete Controller.
    */
-  public PathFollowCommand(DriveBase driveBase, PathPlannerTrajectory traj) {
+  public PathFollowCommand(DriveBase driveBase, PathPlannerTrajectory trajectory) {
     super(
-        traj,
+        trajectory,
         driveBase::getPose,
-        new RamseteController(),
+        new RamseteController(PathConstants.RAMSETE_B, PathConstants.RAMSETE_ZETA),
         new SimpleMotorFeedforward(PathConstants.kS, PathConstants.kV, PathConstants.kA),
         DriveConstants.KINEMATICS,
         driveBase::getWheelSpeeds,

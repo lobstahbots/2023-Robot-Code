@@ -25,29 +25,23 @@ import edu.wpi.first.math.util.Units;
 public final class Constants {
 
   /**
-   * Stores constants related to the robot.
-   */
-  public static final class RobotConstants {
-    public static final int COUNTS_PER_REV = 2048;
-    public static final double SENSOR_GEAR_RATIO = 10.71;
-    public static final double WHEEL_RADIUS_INCHES = 6;
-    public static final double TRACK_WIDTH = 27.0;
-  }
-
-  /**
    * Stores constants related to path following.
    */
   public static final class PathConstants {
     public static final double MAX_DRIVE_SPEED = 1;
-    public static final double MAX_ACCELERATION = 1;
+    public static final double MAX_ACCELERATION = 0.8;
     public static final double RAMSETE_B = 2.0;
     public static final double RAMSETE_ZETA = 0.7;
-    public static final double kS = 0.56859;
-    public static final double kV = 2.4414;
-    public static final double kA = 0.24643;
-    public static final double kP = 0.00000094597;
+    public static final double kS = 0.18749;
+    public static final double kV = 1.898;
+    public static final double kA = 0.55221;
+    public static final double kP = 0.24582;
     public static final double kI = 0;
     public static final double KD = 0;
+    public static final double TURN_P = 0.025;
+    public static final double TURN_I = 0;
+    public static final double TURN_D = 0.015;
+    public static final double TURN_ANGLE_DEADBAND = 2;
   }
 
   /**
@@ -55,7 +49,7 @@ public final class Constants {
    */
   public static final class FieldConstants {
     public static final Pose2d[] SCORING_WAYPOINTS = new Pose2d[] {
-        new Pose2d(1.57, 0.43, new Rotation2d(Math.toRadians(180))),
+        new Pose2d(1.57, 0.5, new Rotation2d(Math.toRadians(180))),
         new Pose2d(1.57, 1, new Rotation2d(Math.toRadians(180))),
         new Pose2d(1.57, 1.6, new Rotation2d(Math.toRadians(180))),
         new Pose2d(1.57, 2.2, new Rotation2d(Math.toRadians(180))),
@@ -63,17 +57,32 @@ public final class Constants {
         new Pose2d(1.57, 3.3, new Rotation2d(Math.toRadians(180))),
         new Pose2d(1.57, 3.85, new Rotation2d(Math.toRadians(180))),
         new Pose2d(1.57, 4.4, new Rotation2d(Math.toRadians(180))),
-        new Pose2d(1.57, 5, new Rotation2d(Math.toRadians(180)))
+        new Pose2d(1.57, 4.5, new Rotation2d(Math.toRadians(180)))
     };
     public static final Pose2d[] TRAVELING_WAYPOINTS = new Pose2d[] {
-        new Pose2d(2.75, 0.43, new Rotation2d(0)), new Pose2d(2.75, 1, new Rotation2d(0)),
-        new Pose2d(2.75, 1.6, new Rotation2d(0)), new Pose2d(2.75, 2.2, new Rotation2d(0)),
-        new Pose2d(2.75, 2.7, new Rotation2d(0)), new Pose2d(2.75, 3.3, new Rotation2d(0)),
-        new Pose2d(2.75, 3.85, new Rotation2d(0)), new Pose2d(2.75, 4.4, new Rotation2d(0)),
-        new Pose2d(2.75, 5, new Rotation2d(0))
+        new Pose2d(2.5, 0.5, new Rotation2d(0)), new Pose2d(2.5, 1, new Rotation2d(0)),
+        new Pose2d(2.5, 1.6, new Rotation2d(0)), new Pose2d(2.5, 2.2, new Rotation2d(0)),
+        new Pose2d(2.5, 2.7, new Rotation2d(0)), new Pose2d(2.5, 3.3, new Rotation2d(0)),
+        new Pose2d(2.5, 3.85, new Rotation2d(0)), new Pose2d(2.5, 4.4, new Rotation2d(0)),
+        new Pose2d(2.5, 4.5, new Rotation2d(0))
     };
+
+    public static final Pose2d[] TURNING_WAYPOINTS = new Pose2d[] {
+        new Pose2d(2.5, 0.77, new Rotation2d(0)), new Pose2d(2.70, 4.75, new Rotation2d(0))
+    };
+
+    public static final Pose2d[] CROSSING_WAYPOINTS = new Pose2d[] {
+        new Pose2d(5.50, 0.75, new Rotation2d(0)), new Pose2d(4.20, 4.75, new Rotation2d(0))
+    };
+
+    public static final Pose2d[] ENDING_AUTON_POSES = new Pose2d[] {
+        new Pose2d(6.15, 0.75, new Rotation2d(0)), new Pose2d(7.00, 2.14, new Rotation2d(0)),
+        new Pose2d(6.50, 6.00, new Rotation2d(0)), new Pose2d(7.60, 7.26, new Rotation2d(0))
+    };
+
     public static final double MAX_AUTO_DISTANCE_METERS = 10;
     public static final double SCORING_ZONE_DEADBAND = 0.5;
+    public static final double SCORING_ZONE_X = 3.5;
   }
 
   /**
@@ -85,6 +94,8 @@ public final class Constants {
     public static final double AUTON_SCORING_TOLERANCE = 2;
     public static final double OUTTAKE_RUNTIME = 1;
     public static final double BACK_OFF_SPEED = -0.1;
+    public static final double DRIVE_BACK_SPEED = -0.3;
+    public static final double DRIVE_BACK_TIME = 0.1;
   }
 
   public static final class VisionConstants {
@@ -242,9 +253,10 @@ public final class Constants {
    * Stores constants related to the DriveBase.
    */
   public static final class DriveConstants {
-    public static final double ACCELERATION_RATE_LIMIT = 1.5;
-    public static final DifferentialDriveKinematics KINEMATICS =
-        new DifferentialDriveKinematics(Units.inchesToMeters(RobotConstants.TRACK_WIDTH));
+    public static final int COUNTS_PER_REV = 2048;
+    public static final double SENSOR_GEAR_RATIO = 8.458646;
+    public static final double WHEEL_RADIUS_INCHES = 2.97262;
+    public static final double TRACK_WIDTH = 18.75;
 
     public static final class DriveMotorCANIDs {
       public static final int RIGHT_FRONT = 14;
@@ -253,11 +265,16 @@ public final class Constants {
       public static final int LEFT_BACK = 11;
     }
 
-    public static final int STATOR_CURRENT_LIMIT = 50;
+    public static final int STATOR_CURRENT_LIMIT = 80;
     public static final int SUPPLY_CURRENT_LIMIT = 80;
-    public static final int STATOR_TRIGGER_THRESHOLD = 60;
-    public static final double STATOR_TRIGGER_THRESHOLD_TIME = 0.1;
-    public static final int SUPPLY_TRIGGER_THRESHOLD = 90;
+    public static final int STATOR_TRIGGER_THRESHOLD = 100;
+    public static final double STATOR_TRIGGER_THRESHOLD_TIME = 0.5;
+    public static final int SUPPLY_TRIGGER_THRESHOLD = 100;
     public static final double SUPPLY_TRIGGER_THRESHOLD_TIME = 0.5;
+    public static final double SLEW_RATE_LIMIT = 1.8;
+
+    public static final double ACCELERATION_RATE_LIMIT = 1.5;
+    public static final DifferentialDriveKinematics KINEMATICS =
+        new DifferentialDriveKinematics(Units.inchesToMeters(TRACK_WIDTH));
   }
 }

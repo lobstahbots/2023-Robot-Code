@@ -9,13 +9,13 @@ import java.util.ArrayList;
 import com.pathplanner.lib.PathConstraints;
 import com.pathplanner.lib.PathPlanner;
 import com.pathplanner.lib.PathPlannerTrajectory;
+import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.ParallelRaceGroup;
-import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import frc.robot.ArmPose;
-import frc.robot.Constants;
 import frc.robot.Constants.AutonConstants;
+import frc.robot.Constants.FieldConstants;
 import frc.robot.Constants.IntakeConstants;
 import frc.robot.Constants.PathConstants;
 import frc.robot.Constants.ArmPresets;
@@ -23,6 +23,8 @@ import frc.robot.commands.arm.ScoringSystemToPositionCommand;
 import frc.robot.commands.arm.ScoringSystemToPositionWithRetractionCommand;
 import frc.robot.commands.drive.PathFollowCommand;
 import frc.robot.commands.drive.StraightDriveCommand;
+import frc.robot.commands.drive.TargetCommand;
+import frc.robot.commands.drive.TurnToAngleCommand;
 import frc.robot.commands.intake.SpinIntakeCommand;
 import frc.robot.subsystems.Arm;
 import frc.robot.subsystems.DriveBase;
@@ -55,14 +57,20 @@ public class AutonGenerator {
             .andThen(new ScoringSystemToPositionCommand(arm,
                 position.translateBy(ArmPresets.CONE_SCORING_DROPDOWN),
                 AutonConstants.AUTON_SCORING_TOLERANCE))
-            .andThen(new ParallelRaceGroup(new SpinIntakeCommand(intake, Constants.IntakeConstants.OUTTAKE_VOLTAGE),
+            .andThen(new ParallelRaceGroup(new SpinIntakeCommand(intake, IntakeConstants.OUTTAKE_VOLTAGE),
                 new TimedCommand(AutonConstants.OUTTAKE_RUNTIME,
                     new ScoringSystemToPositionCommand(arm,
                         position.translateBy(ArmPresets.CONE_SCORING_BACKOFF),
                         AutonConstants.AUTON_SCORING_TOLERANCE))))
             .andThen(
                 new ScoringSystemToPositionWithRetractionCommand(arm, ArmPresets.STOWED,
-                    AutonConstants.AUTON_SCORING_TOLERANCE));
+                    AutonConstants.AUTON_SCORING_TOLERANCE))
+            .andThen(new TimedCommand(
+                AutonConstants.DRIVE_BACK_TIME,
+                new StraightDriveCommand(
+                    driveBase,
+                    AutonConstants.DRIVE_BACK_SPEED, false)))
+            .andThen(new TurnToAngleCommand(driveBase, Rotation2d.fromDegrees(180), 1));
   }
 
   /**
@@ -86,14 +94,18 @@ public class AutonGenerator {
    * @param finalPosition Which game element the path ends at.
    */
   public Command getPathFollowCommand(int initialPosition, int crossingPosition, int finalPosition) {
-    ArrayList<PathPlannerTrajectory> pathGroup = this.getPath(initialPosition, crossingPosition, finalPosition);
-    return new SequentialCommandGroup(
-        new InstantCommand(() -> {
-          driveBase.resetOdometry(pathGroup.get(0).getInitialPose().getTranslation(),
-              pathGroup.get(0).getInitialPose().getRotation());
-        }),
-        new PathFollowCommand(this.driveBase, pathGroup.get(0)),
-        new PathFollowCommand(this.driveBase, pathGroup.get(1)));
+    if (initialPosition <= 2) {
+      crossingPosition = 0;
+    } else if (initialPosition >= 6) {
+      crossingPosition = 1;
+    }
+    Pose2d crossingPose = FieldConstants.CROSSING_WAYPOINTS[crossingPosition];
+
+    return new TargetCommand(driveBase, () -> crossingPose)
+        .andThen(new TurnToAngleCommand(driveBase, crossingPose.getRotation(),
+            PathConstants.TURN_ANGLE_DEADBAND))
+        .andThen(
+            new PathFollowCommand(driveBase, driveBase.generatePath(FieldConstants.ENDING_AUTON_POSES[finalPosition])));
   }
 
   /**

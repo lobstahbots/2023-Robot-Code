@@ -26,6 +26,7 @@ public class Robot extends TimedRobot {
   @Override
   public void robotInit() {
     m_robotContainer = new RobotContainer();
+    m_robotContainer.initGyro();
   }
 
   /**
@@ -41,8 +42,6 @@ public class Robot extends TimedRobot {
     // commands, running already-scheduled commands, removing finished or interrupted commands,
     // and running subsystem periodic() methods. This must be called from the robot's periodic
     // block in order for anything in the Command-based framework to work.
-    SmartDashboard.putBoolean("Inside bumper collision zone", m_robotContainer.insideBumpers());
-    SmartDashboard.putString("Arm X Y", m_robotContainer.getArmPosition().getXY().toString());
     CommandScheduler.getInstance().run();
   }
 
@@ -86,7 +85,9 @@ public class Robot extends TimedRobot {
 
   /** This function is called periodically during teleop. */
   @Override
-  public void teleopPeriodic() {}
+  public void teleopPeriodic() {
+    SmartDashboard.putBoolean("Can drive to target", m_robotContainer.canDriveToTarget());
+  }
 
   /** This function is called once each time the robot enters Test mode. */
   @Override

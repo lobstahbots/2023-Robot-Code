@@ -11,6 +11,7 @@ import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import frc.robot.Constants.FieldConstants;
+import frc.robot.Constants.PathConstants;
 import frc.robot.subsystems.DriveBase;
 
 /**
@@ -46,22 +47,11 @@ public class TargetCommand extends DriveCommand {
     if (driveBase.getDistanceToPose(targetPose).getY() < 0) {
       int index = 0;
       while (driveBase.getDistanceToPose(FieldConstants.TRAVELING_WAYPOINTS[index]).getY() > 0) {
+        if (index >= FieldConstants.TRAVELING_WAYPOINTS.length - 1) {
+          index = FieldConstants.TRAVELING_WAYPOINTS.length;
+          break;
+        }
         index++;
-      }
-      index++;
-      ArrayList<Pose2d> waypoints = new ArrayList<>();
-      for (int i = index; i < finalWaypointIndex; i++) {
-        waypoints.add(new Pose2d(FieldConstants.TRAVELING_WAYPOINTS[i].getX(),
-            FieldConstants.TRAVELING_WAYPOINTS[i].getY(), Rotation2d.fromDegrees(90)));
-      }
-      waypoints.add(targetPose);
-      CommandScheduler.getInstance()
-          .schedule(new PathFollowCommand(driveBase, driveBase.generatePath(waypoints)));
-
-    } else {
-      int index = FieldConstants.TRAVELING_WAYPOINTS.length - 1;
-      while (driveBase.getDistanceToPose(FieldConstants.TRAVELING_WAYPOINTS[index]).getY() < 0) {
-        index--;
       }
       index--;
       ArrayList<Pose2d> waypoints = new ArrayList<>();
@@ -69,9 +59,31 @@ public class TargetCommand extends DriveCommand {
         waypoints.add(new Pose2d(FieldConstants.TRAVELING_WAYPOINTS[i].getX(),
             FieldConstants.TRAVELING_WAYPOINTS[i].getY(), Rotation2d.fromDegrees(-90)));
       }
-      waypoints.add(targetPose);
+      CommandScheduler.getInstance().schedule(new PathFollowCommand(driveBase, driveBase.generatePath(waypoints))
+          .andThen(new TurnToAngleCommand(driveBase, targetPose.getRotation(), PathConstants.TURN_ANGLE_DEADBAND))
+          .andThen(new PathFollowCommand(driveBase, driveBase.generatePath(targetPose)))
+          .andThen(new TurnToAngleCommand(driveBase, targetPose.getRotation(), PathConstants.TURN_ANGLE_DEADBAND)));
+
+    } else {
+      int index = FieldConstants.TRAVELING_WAYPOINTS.length - 1;
+      while (driveBase.getDistanceToPose(FieldConstants.TRAVELING_WAYPOINTS[index]).getY() < 0) {
+        if (index == 0) {
+          index = 0;
+          break;
+        }
+        index--;
+      }
+      index++;
+      ArrayList<Pose2d> waypoints = new ArrayList<>();
+      for (int i = index; i < finalWaypointIndex; i++) {
+        waypoints.add(new Pose2d(FieldConstants.TRAVELING_WAYPOINTS[i].getX(),
+            FieldConstants.TRAVELING_WAYPOINTS[i].getY(), Rotation2d.fromDegrees(90)));
+      }
       CommandScheduler.getInstance()
-          .schedule(new PathFollowCommand(driveBase, driveBase.generatePath(waypoints)));
+          .schedule(new PathFollowCommand(driveBase, driveBase.generatePath(waypoints))
+              .andThen(new TurnToAngleCommand(driveBase, targetPose.getRotation(), PathConstants.TURN_ANGLE_DEADBAND))
+              .andThen(new PathFollowCommand(driveBase, driveBase.generatePath(targetPose)))
+              .andThen(new TurnToAngleCommand(driveBase, targetPose.getRotation(), PathConstants.TURN_ANGLE_DEADBAND)));
     }
   }
 
