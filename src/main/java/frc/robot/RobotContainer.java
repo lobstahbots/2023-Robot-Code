@@ -28,8 +28,8 @@ import frc.robot.Constants.OIConstants.DriverConstants;
 import frc.robot.Constants.OIConstants.OperatorConstants;
 import frc.robot.Constants.PathConstants;
 import frc.robot.auton.AutonGenerator;
-import frc.robot.commands.arm.ScoringSystemTowardsPositionCommand;
-import frc.robot.commands.arm.ScoringSystemTowardsPositionWithRetractionCommand;
+import frc.robot.commands.arm.ArmTowardsPoseCommand;
+import frc.robot.commands.arm.ArmTowardsPoseWithRetractionCommand;
 import frc.robot.commands.arm.elevator.ResetElevatorCommand;
 import frc.robot.commands.drive.PathFollowCommand;
 import frc.robot.commands.drive.StopDriveCommand;
@@ -117,7 +117,7 @@ public class RobotContainer {
   private void configureButtonBindings() {
     intakeButton.whileTrue(new SpinIntakeCommand(intake, Constants.IntakeConstants.INTAKE_VOLTAGE));
     outtakeButton.whileTrue(new SpinIntakeCommand(intake, Constants.IntakeConstants.OUTTAKE_VOLTAGE));
-    manualControlButton.whileTrue(new ScoringSystemTowardsPositionCommand(arm,
+    manualControlButton.whileTrue(new ArmTowardsPoseCommand(arm,
         () -> ArmPose
             .fromAngleExtension(Rotation2d.fromDegrees(arm.getPivot().getSetpoint()),
                 arm.getElevator().getSetpointExtension())
@@ -127,15 +127,15 @@ public class RobotContainer {
                 -operatorJoystick.getRawAxis(OperatorConstants.VERTICAL_ARM_MOVEMENT_AXIS) * getJoystickLatency()
                     * OperatorConstants.MANUAL_CONTROL_SPEED))));
     highGoalButton
-        .whileTrue(new ScoringSystemTowardsPositionWithRetractionCommand(arm,
+        .whileTrue(new ArmTowardsPoseWithRetractionCommand(arm,
             ArmPresets.HIGH_GOAL_SCORING));
     midGoalButton
-        .whileTrue(new ScoringSystemTowardsPositionWithRetractionCommand(arm,
+        .whileTrue(new ArmTowardsPoseWithRetractionCommand(arm,
             ArmPresets.MID_GOAL_SCORING));
-    lowGoalButton.whileTrue(new ScoringSystemTowardsPositionWithRetractionCommand(arm,
+    lowGoalButton.whileTrue(new ArmTowardsPoseWithRetractionCommand(arm,
         ArmPresets.LOW_GOAL_SCORING));
     playerStationButton
-        .whileTrue(new ScoringSystemTowardsPositionWithRetractionCommand(arm,
+        .whileTrue(new ArmTowardsPoseWithRetractionCommand(arm,
             ArmPresets.PLAYER_STATION_PICKUP));
 
     slowdownButton.whileTrue(new TankDriveCommand(driveBase,
@@ -233,7 +233,7 @@ public class RobotContainer {
             DriverConstants.SQUARED_INPUTS));
 
     arm.setDefaultCommand(
-        new ScoringSystemTowardsPositionWithRetractionCommand(arm,
+        new ArmTowardsPoseWithRetractionCommand(arm,
             ArmPresets.STOWED));
     intake.setDefaultCommand(new SpinIntakeCommand(intake, Constants.IntakeConstants.PASSIVE_INTAKE_VOLTAGE));
   }

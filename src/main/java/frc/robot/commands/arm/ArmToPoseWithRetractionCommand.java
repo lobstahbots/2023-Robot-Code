@@ -6,7 +6,7 @@ import edu.wpi.first.wpilibj2.command.WaitUntilCommand;
 import frc.robot.ArmPose;
 import frc.robot.subsystems.Arm;
 
-public class ScoringSystemToPositionWithRetractionCommand extends ParallelRaceGroup {
+public class ArmToPoseWithRetractionCommand extends ParallelRaceGroup {
   private final Arm arm;
   private final ArmPose pose;
   private final double threshold;
@@ -18,13 +18,13 @@ public class ScoringSystemToPositionWithRetractionCommand extends ParallelRaceGr
    * @param pose A supplier for the pose to move to
    * @param threshold The threshold in inches for the arm to be considered at the correct pose
    */
-  public ScoringSystemToPositionWithRetractionCommand(Arm arm, ArmPose pose,
+  public ArmToPoseWithRetractionCommand(Arm arm, ArmPose pose,
       double threshold) {
     this.arm = arm;
     this.pose = pose;
     this.threshold = threshold;
 
-    this.addCommands(new ScoringSystemTowardsPositionWithRetractionCommand(arm, pose),
+    this.addCommands(new ArmTowardsPoseWithRetractionCommand(arm, pose),
         new WaitUntilCommand(this::isAtPose));
   }
 

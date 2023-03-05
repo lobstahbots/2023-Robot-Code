@@ -12,14 +12,14 @@ import frc.robot.commands.arm.elevator.RunElevatorToExtensionCommand;
 import frc.robot.commands.arm.pivot.RotatePivotToAngleCommand;
 import frc.robot.subsystems.Arm;
 
-public class ScoringSystemTowardsPositionCommand extends ParallelCommandGroup {
+public class ArmTowardsPoseCommand extends ParallelCommandGroup {
   /**
    * Creates a command that moves the {@link Arm} towards a given pose.
    *
    * @param arm The {@link Arm} to control
    * @param position The pose to move towards
    */
-  public ScoringSystemTowardsPositionCommand(Arm arm, ArmPose position) {
+  public ArmTowardsPoseCommand(Arm arm, ArmPose position) {
     this(arm, () -> position);
   }
 
@@ -29,7 +29,7 @@ public class ScoringSystemTowardsPositionCommand extends ParallelCommandGroup {
    * @param arm The {@link Arm} to control
    * @param pose A supplier for the pose to move towards
    */
-  public ScoringSystemTowardsPositionCommand(Arm arm, Supplier<ArmPose> pose) {
+  public ArmTowardsPoseCommand(Arm arm, Supplier<ArmPose> pose) {
     this.addCommands(new RunElevatorToExtensionCommand(arm, () -> pose.get().getExtension()),
         new RotatePivotToAngleCommand(arm, () -> pose.get().getAngle().getDegrees()));
     addRequirements(arm);
