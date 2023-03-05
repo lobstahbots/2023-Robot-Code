@@ -93,9 +93,13 @@ public class TargetCommand extends DriveCommand {
         }
       }
     }
+
+    if (waypoints.size() <= 0) {
+      return;
+    }
     CommandScheduler.getInstance().schedule(new PathFollowCommand(driveBase, driveBase.generatePath(waypoints))
         .andThen(new TurnToAngleCommand(driveBase, targetPose.getRotation(), PathConstants.TURN_ANGLE_DEADBAND))
-        .andThen(new PathFollowCommand(driveBase, driveBase.generatePath(targetPose)))
+        .andThen(new PathFollowCommand(driveBase, () -> driveBase.generatePath(targetPose)))
         .andThen(new TurnToAngleCommand(driveBase, targetPose.getRotation(), PathConstants.TURN_ANGLE_DEADBAND)));
   }
 
