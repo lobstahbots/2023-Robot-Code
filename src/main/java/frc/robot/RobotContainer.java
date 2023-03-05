@@ -6,6 +6,7 @@ package frc.robot;
 
 import com.pathplanner.lib.server.PathPlannerServer;
 import com.revrobotics.CANSparkMax.IdleMode;
+import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.networktables.NetworkTablesJNI;
@@ -127,9 +128,11 @@ public class RobotContainer {
         () -> ScoringPosition
             .fromArmElevator(Rotation2d.fromDegrees(arm.getSetpoint()), elevator.getSetpointExtension())
             .translateBy(new Translation2d(
-                -operatorJoystick.getRawAxis(OperatorConstants.HORIZONTAL_ARM_MOVEMENT_AXIS) * getJoystickLatency()
+                MathUtil.applyDeadband(-operatorJoystick.getRawAxis(OperatorConstants.HORIZONTAL_ARM_MOVEMENT_AXIS),
+                    OperatorConstants.MANUAL_CONTROL_DEADBAND) * getJoystickLatency()
                     * OperatorConstants.MANUAL_CONTROL_SPEED,
-                -operatorJoystick.getRawAxis(OperatorConstants.VERTICAL_ARM_MOVEMENT_AXIS) * getJoystickLatency()
+                MathUtil.applyDeadband(-operatorJoystick.getRawAxis(OperatorConstants.VERTICAL_ARM_MOVEMENT_AXIS),
+                    OperatorConstants.MANUAL_CONTROL_DEADBAND) * getJoystickLatency()
                     * OperatorConstants.MANUAL_CONTROL_SPEED))));
     highGoalButton
         .whileTrue(new ScoringSystemTowardsPositionWithRetractionCommand(arm, elevator,

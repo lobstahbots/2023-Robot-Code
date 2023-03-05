@@ -139,6 +139,7 @@ public final class Constants {
       public static final int SHIFT_SELECTED_COLUMN_RIGHT_POV_INDEX = 90;
       public static final int SHIFT_SELECTED_ROW_UP_POV_INDEX = 0;
       public static final int SHIFT_SELECTED_ROW_DOWN_POV_INDEX = 180;
+      public static final double MANUAL_CONTROL_DEADBAND = 0.05;
     }
   }
 
