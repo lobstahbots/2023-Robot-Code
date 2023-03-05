@@ -47,6 +47,7 @@ public class TargetCommand extends DriveCommand {
     if (driveBase.getDistanceToPose(targetPose).getY() < 0) {
       int index = 0;
       while (driveBase.getDistanceToPose(FieldConstants.TRAVELING_WAYPOINTS[index]).getY() > 0) {
+        System.out.println(index);
         if (index >= FieldConstants.TRAVELING_WAYPOINTS.length - 1) {
           index = FieldConstants.TRAVELING_WAYPOINTS.length;
           break;
@@ -56,8 +57,8 @@ public class TargetCommand extends DriveCommand {
       index--;
       ArrayList<Pose2d> waypoints = new ArrayList<>();
       for (int i = index; i >= finalWaypointIndex; i--) {
-        waypoints.add(new Pose2d(FieldConstants.TRAVELING_WAYPOINTS[i].getX(),
-            FieldConstants.TRAVELING_WAYPOINTS[i].getY(), Rotation2d.fromDegrees(-90)));
+        waypoints.add(driveBase.flipWaypointBasedOnAlliance(new Pose2d(FieldConstants.TRAVELING_WAYPOINTS[i].getX(),
+            FieldConstants.TRAVELING_WAYPOINTS[i].getY(), Rotation2d.fromDegrees(-90)), false));
       }
       CommandScheduler.getInstance().schedule(new PathFollowCommand(driveBase, driveBase.generatePath(waypoints))
           .andThen(new TurnToAngleCommand(driveBase, targetPose.getRotation(), PathConstants.TURN_ANGLE_DEADBAND))
@@ -67,6 +68,7 @@ public class TargetCommand extends DriveCommand {
     } else {
       int index = FieldConstants.TRAVELING_WAYPOINTS.length - 1;
       while (driveBase.getDistanceToPose(FieldConstants.TRAVELING_WAYPOINTS[index]).getY() < 0) {
+        System.out.println(index);
         if (index == 0) {
           index = 0;
           break;
@@ -76,8 +78,8 @@ public class TargetCommand extends DriveCommand {
       index++;
       ArrayList<Pose2d> waypoints = new ArrayList<>();
       for (int i = index; i < finalWaypointIndex; i++) {
-        waypoints.add(new Pose2d(FieldConstants.TRAVELING_WAYPOINTS[i].getX(),
-            FieldConstants.TRAVELING_WAYPOINTS[i].getY(), Rotation2d.fromDegrees(90)));
+        waypoints.add(driveBase.flipWaypointBasedOnAlliance(new Pose2d(FieldConstants.TRAVELING_WAYPOINTS[i].getX(),
+            FieldConstants.TRAVELING_WAYPOINTS[i].getY(), Rotation2d.fromDegrees(90)), false));
       }
       CommandScheduler.getInstance()
           .schedule(new PathFollowCommand(driveBase, driveBase.generatePath(waypoints))

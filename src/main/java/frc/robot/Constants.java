@@ -83,6 +83,7 @@ public final class Constants {
     public static final double MAX_AUTO_DISTANCE_METERS = 10;
     public static final double SCORING_ZONE_DEADBAND = 0.5;
     public static final double SCORING_ZONE_X = 3.5;
+    public static final double FIELD_LENGTH = 16.5;
   }
 
   /**
@@ -124,6 +125,7 @@ public final class Constants {
       public static final int RIGHT_AXIS = 5;
       public static final int SLOWDOWN_BUTTON_INDEX = 2;
       public static final double SLOWDOWN_PERCENT = 0.5;
+      public static final int TARGET_BTN_INDEX = 1;
     }
 
     public static final class OperatorConstants {

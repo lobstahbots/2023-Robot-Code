@@ -13,6 +13,8 @@ import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.networktables.NetworkTablesJNI;
+import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -33,6 +35,8 @@ import frc.robot.auton.AutonGenerator;
 import frc.robot.commands.drive.PathFollowCommand;
 import frc.robot.commands.drive.StopDriveCommand;
 import frc.robot.commands.drive.TankDriveCommand;
+import frc.robot.commands.drive.TargetCommand;
+import frc.robot.commands.scoring.ScoringSystemTowardsPositionCommand;
 import frc.robot.commands.scoring.ScoringSystemTowardsPositionWithRetractionCommand;
 import frc.robot.commands.scoring.elevator.ResetElevatorCommand;
 import frc.robot.commands.scoring.intake.SpinIntakeCommand;
@@ -77,6 +81,8 @@ public class RobotContainer {
   private final POVButton playerStationButton =
       new POVButton(operatorJoystick, OperatorConstants.STATION_PICKUP_POV_INDEX);
   private final POVButton placePieceButton = new POVButton(operatorJoystick, OperatorConstants.PLACE_CONE_POV_INDEX);
+  private final JoystickButton targetButton = driverJoystick.button(DriverConstants.TARGET_BTN_INDEX);
+  private final JoystickButton setPoseButton = driverJoystick.button(3);
   private double lastRecordedTime = 0;
 
   /**
@@ -109,7 +115,11 @@ public class RobotContainer {
    * @return Whether the robot is within the scoring zone.
    */
   public boolean canDriveToTarget() {
-    return driveBase.getPose().getX() <= FieldConstants.SCORING_ZONE_X;
+    if (DriverStation.getAlliance() == Alliance.Red) {
+      return driveBase.getPose().getX() >= FieldConstants.FIELD_LENGTH - FieldConstants.SCORING_ZONE_X;
+    } else {
+      return driveBase.getPose().getX() <= FieldConstants.SCORING_ZONE_X;
+    }
   }
 
   /**
@@ -119,7 +129,8 @@ public class RobotContainer {
     intakeButton.whileTrue(new SpinIntakeCommand(intake, IntakeConstants.INTAKE_VOLTAGE));
     outtakeButton.whileTrue(new SpinIntakeCommand(intake, IntakeConstants.OUTTAKE_VOLTAGE));
     manualControlButton.whileTrue(new ScoringSystemTowardsPositionCommand(arm, elevator,
-        () -> ScoringPosition.fromArmElevator(Rotation2d.fromDegrees(arm.getSetpoint()), elevator.getSetpointExtension())
+        () -> ScoringPosition
+            .fromArmElevator(Rotation2d.fromDegrees(arm.getSetpoint()), elevator.getSetpointExtension())
             .translateBy(new Translation2d(
                 -operatorJoystick.getRawAxis(OperatorConstants.HORIZONTAL_ARM_MOVEMENT_AXIS) * getJoystickLatency()
                     * OperatorConstants.MANUAL_CONTROL_SPEED,
@@ -142,6 +153,12 @@ public class RobotContainer {
         () -> DriverConstants.SLOWDOWN_PERCENT * driverJoystick.getRawAxis(DriverConstants.LEFT_AXIS),
         () -> DriverConstants.SLOWDOWN_PERCENT * driverJoystick.getRawAxis(DriverConstants.RIGHT_AXIS),
         DriverConstants.SQUARED_INPUTS));
+
+    targetButton
+        .whileTrue(new TargetCommand(driveBase, () -> updateTarget()).unless(() -> !canDriveToTarget()));
+
+    setPoseButton.whileTrue(new InstantCommand(
+        () -> driveBase.resetOdometry(new Translation2d(14.5, 0.66), driveBase.getGyroAngle())));
   }
 
   private final SendableChooser<Command> autonChooser = new SendableChooser<>();
@@ -205,7 +222,7 @@ public class RobotContainer {
    * Updates the robot target for teleop with input from Shuffleboard.
    */
   public Pose2d updateTarget() {
-    return FieldConstants.SCORING_WAYPOINTS[targetPosition.getSelected()];
+    return driveBase.flipWaypointBasedOnAlliance(FieldConstants.SCORING_WAYPOINTS[targetPosition.getSelected()], true);
   }
 
   /**

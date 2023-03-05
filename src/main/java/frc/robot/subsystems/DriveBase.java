@@ -21,6 +21,8 @@ import edu.wpi.first.math.geometry.Transform2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.estimator.DifferentialDrivePoseEstimator;
 import edu.wpi.first.math.kinematics.DifferentialDriveWheelSpeeds;
+import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.motorcontrol.MotorControllerGroup;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -168,6 +170,19 @@ public class DriveBase extends SubsystemBase {
 
     }
     return poseEstimator.getEstimatedPosition();
+  }
+
+  public Pose2d flipWaypointBasedOnAlliance(Pose2d waypoint, boolean flipRotation) {
+    if (DriverStation.getAlliance() == Alliance.Red) {
+      if (flipRotation) {
+        return new Pose2d(16.5 - waypoint.getX(), waypoint.getY(),
+            waypoint.getRotation().plus(Rotation2d.fromDegrees(180)));
+      } else {
+        return new Pose2d(16.5 - waypoint.getX(), waypoint.getY(),
+            waypoint.getRotation());
+      }
+    }
+    return waypoint;
   }
 
   /**
