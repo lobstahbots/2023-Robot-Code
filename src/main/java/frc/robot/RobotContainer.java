@@ -83,6 +83,7 @@ public class RobotContainer {
   private final POVButton placePieceButton = new POVButton(operatorJoystick, OperatorConstants.PLACE_CONE_POV_INDEX);
   private final JoystickButton targetButton = driverJoystick.button(DriverConstants.TARGET_BTN_INDEX);
   private final JoystickButton setPoseButton = driverJoystick.button(3);
+  private final JoystickButton setBluePoseButton = driverJoystick.button(4);
   private double lastRecordedTime = 0;
 
   /**
@@ -159,6 +160,8 @@ public class RobotContainer {
 
     setPoseButton.whileTrue(new InstantCommand(
         () -> driveBase.resetOdometry(new Translation2d(14.5, 0.66), driveBase.getGyroAngle())));
+    setBluePoseButton.whileTrue(new InstantCommand(
+        () -> driveBase.resetOdometry(new Translation2d(2, 0.66), driveBase.getGyroAngle())));
   }
 
   private final SendableChooser<Command> autonChooser = new SendableChooser<>();
