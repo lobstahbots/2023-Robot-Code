@@ -48,23 +48,26 @@ public final class Constants {
    * Stores constants related to this year's playing field.
    */
   public static final class FieldConstants {
+    public static final double SCORING_WAYPOINTS_X = 1.6;
+    public static final double TRAVELING_WAYPOINTS_X = 2.5;
+
     public static final Pose2d[] SCORING_WAYPOINTS = new Pose2d[] {
-        new Pose2d(1.6, 0.5, Rotation2d.fromDegrees(180)),
-        new Pose2d(1.6, 1, Rotation2d.fromDegrees(180)),
-        new Pose2d(1.6, 1.6, Rotation2d.fromDegrees(180)),
-        new Pose2d(1.6, 2.2, Rotation2d.fromDegrees(180)),
-        new Pose2d(1.6, 2.7, Rotation2d.fromDegrees(180)),
-        new Pose2d(1.6, 3.3, Rotation2d.fromDegrees(180)),
-        new Pose2d(1.6, 3.85, Rotation2d.fromDegrees(180)),
-        new Pose2d(1.6, 4.4, Rotation2d.fromDegrees(180)),
-        new Pose2d(1.6, 4.5, Rotation2d.fromDegrees(180))
+        new Pose2d(SCORING_WAYPOINTS_X, 0.5, Rotation2d.fromDegrees(180)),
+        new Pose2d(SCORING_WAYPOINTS_X, 1, Rotation2d.fromDegrees(180)),
+        new Pose2d(SCORING_WAYPOINTS_X, 1.6, Rotation2d.fromDegrees(180)),
+        new Pose2d(SCORING_WAYPOINTS_X, 2.2, Rotation2d.fromDegrees(180)),
+        new Pose2d(SCORING_WAYPOINTS_X, 2.7, Rotation2d.fromDegrees(180)),
+        new Pose2d(SCORING_WAYPOINTS_X, 3.3, Rotation2d.fromDegrees(180)),
+        new Pose2d(SCORING_WAYPOINTS_X, 3.85, Rotation2d.fromDegrees(180)),
+        new Pose2d(SCORING_WAYPOINTS_X, 4.4, Rotation2d.fromDegrees(180)),
+        new Pose2d(SCORING_WAYPOINTS_X, 4.5, Rotation2d.fromDegrees(180))
     };
     public static final Pose2d[] TRAVELING_WAYPOINTS = new Pose2d[] {
-        new Pose2d(2.5, 0.5, new Rotation2d(0)), new Pose2d(2.5, 1, new Rotation2d(0)),
-        new Pose2d(2.5, 1.6, new Rotation2d(0)), new Pose2d(2.5, 2.2, new Rotation2d(0)),
-        new Pose2d(2.5, 2.7, new Rotation2d(0)), new Pose2d(2.5, 3.3, new Rotation2d(0)),
-        new Pose2d(2.5, 3.85, new Rotation2d(0)), new Pose2d(2.5, 4.4, new Rotation2d(0)),
-        new Pose2d(2.5, 4.5, new Rotation2d(0))
+        new Pose2d(TRAVELING_WAYPOINTS_X, 0.5, new Rotation2d(0)), new Pose2d(2.5, 1, new Rotation2d(0)),
+        new Pose2d(TRAVELING_WAYPOINTS_X, 1.6, new Rotation2d(0)), new Pose2d(2.5, 2.2, new Rotation2d(0)),
+        new Pose2d(TRAVELING_WAYPOINTS_X, 2.7, new Rotation2d(0)), new Pose2d(2.5, 3.3, new Rotation2d(0)),
+        new Pose2d(TRAVELING_WAYPOINTS_X, 3.85, new Rotation2d(0)), new Pose2d(2.5, 4.4, new Rotation2d(0)),
+        new Pose2d(TRAVELING_WAYPOINTS_X, 4.5, new Rotation2d(0))
     };
 
     public static final Pose2d[] TURNING_WAYPOINTS = new Pose2d[] {
