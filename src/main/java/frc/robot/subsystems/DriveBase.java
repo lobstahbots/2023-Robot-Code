@@ -260,7 +260,7 @@ public class DriveBase extends SubsystemBase {
    * @return the robot's angle as a Rotation2d.
    */
   public Rotation2d getGyroAngle() {
-    return gyro.getRotation2d();
+    return Rotation2d.fromDegrees(gyro.getRotation2d().getDegrees() % 360);
   }
 
   /**

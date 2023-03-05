@@ -67,6 +67,9 @@ public class TargetCommand extends DriveCommand {
         for (int i = index; i < finalWaypointIndex; i++) {
           waypoints.add(driveBase.flipWaypointBasedOnAlliance(new Pose2d(FieldConstants.TRAVELING_WAYPOINTS[i].getX(),
               FieldConstants.TRAVELING_WAYPOINTS[i].getY(), Rotation2d.fromDegrees(-90)), false));
+          System.out
+              .println(driveBase.flipWaypointBasedOnAlliance(new Pose2d(FieldConstants.TRAVELING_WAYPOINTS[i].getX(),
+                  FieldConstants.TRAVELING_WAYPOINTS[i].getY(), Rotation2d.fromDegrees(-90)), false).toString());
         }
       }
       CommandScheduler.getInstance().schedule(new PathFollowCommand(driveBase, driveBase.generatePath(waypoints))
@@ -93,9 +96,11 @@ public class TargetCommand extends DriveCommand {
         }
       } else {
         for (int i = index; i >= finalWaypointIndex; i--) {
-          System.out.println(i);
           waypoints.add(driveBase.flipWaypointBasedOnAlliance(new Pose2d(FieldConstants.TRAVELING_WAYPOINTS[i].getX(),
               FieldConstants.TRAVELING_WAYPOINTS[i].getY(), Rotation2d.fromDegrees(90)), false));
+          System.out
+              .println(driveBase.flipWaypointBasedOnAlliance(new Pose2d(FieldConstants.TRAVELING_WAYPOINTS[i].getX(),
+                  FieldConstants.TRAVELING_WAYPOINTS[i].getY(), Rotation2d.fromDegrees(90)), false).toString());
         }
       }
       CommandScheduler.getInstance()

@@ -266,7 +266,8 @@ public class RobotContainer {
   public void setAutonDefaultCommands() {
     driveBase.setNeutralMode(NeutralMode.Brake);
     driveBase.setGyroOffset(
-        FieldConstants.SCORING_WAYPOINTS[initialPosition.getSelected()].getRotation());
+        driveBase.flipWaypointBasedOnAlliance(FieldConstants.SCORING_WAYPOINTS[initialPosition.getSelected()], true)
+            .getRotation());
     arm.setIdleMode(IdleMode.kBrake);
     elevator.setIdleMode(IdleMode.kBrake);
     driveBase.setDefaultCommand(new StopDriveCommand(driveBase));
