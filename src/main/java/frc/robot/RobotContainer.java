@@ -33,6 +33,7 @@ import frc.robot.auton.AutonGenerator;
 import frc.robot.commands.drive.PathFollowCommand;
 import frc.robot.commands.drive.StopDriveCommand;
 import frc.robot.commands.drive.TankDriveCommand;
+import frc.robot.commands.scoring.ScoringSystemTowardsPositionCommand;
 import frc.robot.commands.scoring.ScoringSystemTowardsPositionWithRetractionCommand;
 import frc.robot.commands.scoring.elevator.ResetElevatorCommand;
 import frc.robot.commands.scoring.intake.SpinIntakeCommand;
@@ -119,7 +120,8 @@ public class RobotContainer {
     intakeButton.whileTrue(new SpinIntakeCommand(intake, IntakeConstants.INTAKE_VOLTAGE));
     outtakeButton.whileTrue(new SpinIntakeCommand(intake, IntakeConstants.OUTTAKE_VOLTAGE));
     manualControlButton.whileTrue(new ScoringSystemTowardsPositionCommand(arm, elevator,
-        () -> ScoringPosition.fromArmElevator(Rotation2d.fromDegrees(arm.getSetpoint()), elevator.getSetpointExtension())
+        () -> ScoringPosition
+            .fromArmElevator(Rotation2d.fromDegrees(arm.getSetpoint()), elevator.getSetpointExtension())
             .translateBy(new Translation2d(
                 -operatorJoystick.getRawAxis(OperatorConstants.HORIZONTAL_ARM_MOVEMENT_AXIS) * getJoystickLatency()
                     * OperatorConstants.MANUAL_CONTROL_SPEED,
