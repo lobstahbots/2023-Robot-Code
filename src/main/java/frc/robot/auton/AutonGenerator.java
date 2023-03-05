@@ -106,15 +106,15 @@ public class AutonGenerator {
     return simpleAutonCommand;
   }
 
-  public Command getDriveToPlayerStationCommand() {
+  public Command getDriveToPlayerStationCommand(Pose2d targetPose) {
+    Pose2d waypoint = new Pose2d(targetPose.getX() - 1, targetPose.getY(), targetPose.getRotation());
     return new SequentialCommandGroup(
-        new TurnToAngleCommand(driveBase, FieldConstants.PLAYER_STATION_PICKUP_POSE.getRotation(), 1),
-        new PathFollowCommand(driveBase, driveBase.generatePath(FieldConstants.PLAYER_STATION_PICKUP_POSE)),
-        new TurnToAngleCommand(driveBase, FieldConstants.PLAYER_STATION_PICKUP_POSE.getRotation(), 1))
-            .unless(() -> driveBase.getDistanceToPose(FieldConstants.PLAYER_STATION_PICKUP_POSE).getTranslation()
-                .getX() > FieldConstants.MAX_PLAYER_STATION_X_DISTANCE_METERS
-                && driveBase.getDistanceToPose(FieldConstants.PLAYER_STATION_PICKUP_POSE).getTranslation()
-                    .getY() > FieldConstants.MAX_PLAYER_STATION_Y_DISTANCE_METERS);
+        new PathFollowCommand(driveBase, driveBase.generatePath(waypoint)),
+        new TurnToAngleCommand(driveBase, targetPose.getRotation(), 1),
+        new PathFollowCommand(driveBase, driveBase.generatePath(targetPose)),
+        new TurnToAngleCommand(driveBase, targetPose.getRotation(), 1))
+            .unless(() -> driveBase.getPose().getY() < FieldConstants.MAX_PLAYER_STATION_Y_ZONE
+                || driveBase.getPose().getX() < FieldConstants.MAX_PLAYER_STATION_X_ZONE);
   }
 
   /**
