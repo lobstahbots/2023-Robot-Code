@@ -18,7 +18,7 @@ public class RotatePivotCommand extends CommandBase {
    * Creates a command that rotates the {@link Arm.Pivot} at the speed given by the supplier.
    *
    * @param arm The {@link Arm} to control
-   * @param speed Supplier for the speed at which to rotate the arm
+   * @param speed Supplier for the speed at which to rotate the pivot
    */
   public RotatePivotCommand(Arm arm, DoubleSupplier speed) {
     this.pivot = arm.getPivot();
@@ -30,7 +30,7 @@ public class RotatePivotCommand extends CommandBase {
    * Creates a command that rotates the {@link Arm.Pivot} at a given speed.
    *
    * @param arm The {@link Arm} to control
-   * @param speed The speed at which to rotate the arm
+   * @param speed The speed at which to rotate the pivot
    */
   public RotatePivotCommand(Arm arm, double speed) {
     this(arm, () -> speed);

@@ -14,24 +14,24 @@ import frc.robot.subsystems.Arm;
 
 public class ScoringSystemTowardsPositionCommand extends ParallelCommandGroup {
   /**
-   * Creates a command that moves the {@link Arm} towards a given position.
+   * Creates a command that moves the {@link Arm} towards a given pose.
    *
    * @param arm The {@link Arm} to control
-   * @param position The position to move towards
+   * @param position The pose to move towards
    */
   public ScoringSystemTowardsPositionCommand(Arm arm, ArmPose position) {
     this(arm, () -> position);
   }
 
   /**
-   * Creates a command that moves the {@link Arm} towards a given position.
+   * Creates a command that moves the {@link Arm} towards a given pose.
    *
    * @param arm The {@link Arm} to control
-   * @param position A supplier for the position to move towards
+   * @param pose A supplier for the pose to move towards
    */
-  public ScoringSystemTowardsPositionCommand(Arm arm, Supplier<ArmPose> position) {
-    this.addCommands(new RunElevatorToExtensionCommand(arm, () -> position.get().getExtension()),
-        new RotatePivotToAngleCommand(arm, () -> position.get().getAngle().getDegrees()));
+  public ScoringSystemTowardsPositionCommand(Arm arm, Supplier<ArmPose> pose) {
+    this.addCommands(new RunElevatorToExtensionCommand(arm, () -> pose.get().getExtension()),
+        new RotatePivotToAngleCommand(arm, () -> pose.get().getAngle().getDegrees()));
     addRequirements(arm);
   }
 }

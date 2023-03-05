@@ -8,18 +8,18 @@ import frc.robot.subsystems.Arm;
 
 public class ScoringSystemTowardsPositionWithRetractionCommand extends SequentialCommandGroup {
   Arm arm;
-  ArmPose position;
+  ArmPose pose;
 
   /**
-   * Creates a command that moves the {@link Arm} towards a given position, retracting before rotating if the difference
-   * in arm angle exceeds a certain threshold.
+   * Creates a command that moves the {@link Arm} towards a given pose, retracting before rotating if the difference
+   * in pivot angle exceeds a certain threshold.
    * 
-   * @param arm
-   * @param position
+   * @param arm The {@link Arm} to control
+   * @param pose The pose to move to
    */
-  public ScoringSystemTowardsPositionWithRetractionCommand(Arm arm, ArmPose position) {
+  public ScoringSystemTowardsPositionWithRetractionCommand(Arm arm, ArmPose pose) {
     this.arm = arm;
-    this.position = position;
+    this.pose = pose;
     addRequirements(arm);
 
     addCommands(
@@ -44,12 +44,12 @@ public class ScoringSystemTowardsPositionWithRetractionCommand extends Sequentia
                 ArmConstants.BUMPER_AVOIDANCE_ANGLE, arm.getElevator().getExtension()),
                 ArmConstants.BUMPER_AVOIDANCE_PRECISION),
             new ScoringSystemToPositionCommand(arm, () -> ArmPose.fromAngleExtension( //
-                ArmConstants.BUMPER_AVOIDANCE_ANGLE, position.getExtension()),
-                ArmConstants.BUMPER_AVOIDANCE_PRECISION)).unless(() -> !position.isInsideBumperZone()),
+                ArmConstants.BUMPER_AVOIDANCE_ANGLE, pose.getExtension()),
+                ArmConstants.BUMPER_AVOIDANCE_PRECISION)).unless(() -> !pose.isInsideBumperZone()),
         // Finally, completely rotate and extend to target position.
         new ScoringSystemToPositionCommand(arm,
-            () -> ArmPose.fromAngleExtension(position.getAngle(), arm.getElevator().getExtension()),
+            () -> ArmPose.fromAngleExtension(pose.getAngle(), arm.getElevator().getExtension()),
             ArmConstants.BUMPER_AVOIDANCE_PRECISION),
-        new ScoringSystemTowardsPositionCommand(arm, position));
+        new ScoringSystemTowardsPositionCommand(arm, pose));
   }
 }

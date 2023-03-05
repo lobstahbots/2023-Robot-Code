@@ -19,7 +19,7 @@ public class RotatePivotToAngleCommand extends CommandBase {
    * Creates a command that rotates the {@link Arm.Pivot} to a given angle in degrees.
    *
    * @param arm The {@link Arm} to control
-   * @param angle A supplier for the angle in degrees to rotate the arm to
+   * @param angle A supplier for the angle in degrees to rotate the pivot to
    */
   public RotatePivotToAngleCommand(Arm arm, DoubleSupplier angleDegrees) {
     this.pivot = arm.getPivot();
@@ -31,7 +31,7 @@ public class RotatePivotToAngleCommand extends CommandBase {
    * Creates a command that rotates the {@link Arm.Pivot} to a given angle in degrees.
    *
    * @param arm The {@link Arm} to control
-   * @param angle The angle in degrees to rotate the arm to
+   * @param angle The angle in degrees to rotate the pivot to
    */
   public RotatePivotToAngleCommand(Arm arm, double angleDegrees) {
     this(arm, () -> angleDegrees);

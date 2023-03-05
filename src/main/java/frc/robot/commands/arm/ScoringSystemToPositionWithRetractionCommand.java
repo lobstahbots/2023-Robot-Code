@@ -8,29 +8,29 @@ import frc.robot.subsystems.Arm;
 
 public class ScoringSystemToPositionWithRetractionCommand extends ParallelRaceGroup {
   private final Arm arm;
-  private final ArmPose position;
+  private final ArmPose pose;
   private final double threshold;
 
   /**
-   * Creates a command that moves the {@link Arm} to a given position, then finishes.
+   * Creates a command that moves the {@link Arm} to a given pose, then finishes.
    *
    * @param arm The {@link Arm} to control
-   * @param position A supplier for the position to move to
-   * @param threshold The threshold in inches for the system to be considered at the correct position
+   * @param pose A supplier for the pose to move to
+   * @param threshold The threshold in inches for the arm to be considered at the correct pose
    */
-  public ScoringSystemToPositionWithRetractionCommand(Arm arm, ArmPose position,
+  public ScoringSystemToPositionWithRetractionCommand(Arm arm, ArmPose pose,
       double threshold) {
     this.arm = arm;
-    this.position = position;
+    this.pose = pose;
     this.threshold = threshold;
 
-    this.addCommands(new ScoringSystemTowardsPositionWithRetractionCommand(arm, position),
-        new WaitUntilCommand(this::isAtPosition));
+    this.addCommands(new ScoringSystemTowardsPositionWithRetractionCommand(arm, pose),
+        new WaitUntilCommand(this::isAtPose));
   }
 
-  private boolean isAtPosition() {
+  private boolean isAtPose() {
     ArmPose currentPosition =
         ArmPose.fromAngleExtension(arm.getPivot().getRotation(), arm.getElevator().getExtension());
-    return position.getDistance(currentPosition) <= threshold;
+    return pose.getDistance(currentPosition) <= threshold;
   }
 }

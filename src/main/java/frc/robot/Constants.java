@@ -135,7 +135,7 @@ public final class Constants {
   }
 
   /**
-   * Stores constants related the scoring system (arm, elevator, and intake).
+   * Stores constants related the arm (pivot and elevator).
    */
   public static final class ArmConstants {
     public static final Translation2d ROBOT_TO_SCORING_ORIGIN = new Translation2d(0, 0); // TODO
@@ -146,7 +146,7 @@ public final class Constants {
     public static final double BUMPER_AVOIDANCE_PRECISION = 2;
 
     /**
-     * Stores constants related to the arm.
+     * Stores constants related to pivot.
      */
     public static final class PivotConstants {
       // Geometry
