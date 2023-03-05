@@ -117,7 +117,7 @@ public class DriveBase extends SubsystemBase {
 
     resetEncoders();
     poseEstimator =
-        new DifferentialDrivePoseEstimator(DriveConstants.KINEMATICS, gyro.getRotation2d(), 0, 0, new Pose2d());
+        new DifferentialDrivePoseEstimator(DriveConstants.KINEMATICS, getGyroAngle(), 0, 0, new Pose2d());
 
     this.photonVision = new PhotonVision();
   }
@@ -158,11 +158,15 @@ public class DriveBase extends SubsystemBase {
    * @return The pose.
    */
   public Pose2d getPose() {
-    poseEstimator.update(getHeading(), getLeftEncoderDistanceMeters(), getRightEncoderDistanceMeters());
-    // Pair<Pose3d, Double> visionEstimatedPose = photonVision.getEstimatedGlobalPose();
-    // if (visionEstimatedPose.getFirst() != null) {
-    // poseEstimator.addVisionMeasurement(visionEstimatedPose.getFirst().toPose2d(), visionEstimatedPose.getSecond());
-    // }
+    poseEstimator.update(getGyroAngle(), getLeftEncoderDistanceMeters(), getRightEncoderDistanceMeters());
+    try {
+      EstimatedRobotPose estimatedVisionPose = this.photonVision.getCurrentPose();
+      SmartDashboard.putString("PhotonVision Pose", estimatedVisionPose.estimatedPose.toString());
+      poseEstimator.addVisionMeasurement(estimatedVisionPose.estimatedPose,
+          estimatedVisionPose.timestampSeconds);
+    } catch (NullPointerException npe) {
+
+    }
     return poseEstimator.getEstimatedPosition();
   }
 
@@ -184,8 +188,8 @@ public class DriveBase extends SubsystemBase {
    * @param rotation The gyro angle to use when creating a {@link Pose2d} to reset the odometry.
    */
   public void resetOdometry(Translation2d translation2d, Rotation2d rotation) {
-    gyro.reset();
-    poseEstimator.resetPosition(new Rotation2d(), 0, 0, new Pose2d(translation2d, rotation));
+    zeroGyro();
+    poseEstimator.resetPosition(getGyroAngle(), 0, 0, new Pose2d(translation2d, rotation));
     resetEncoders();
   }
 
@@ -201,14 +205,14 @@ public class DriveBase extends SubsystemBase {
    * Gets the distance of the left encoder in meters.
    */
   public double getLeftEncoderDistanceMeters() {
-    return LobstahMath.nativeUnitsToDistanceMeters(leftFrontMotor.getSelectedSensorPosition()) / 2;
+    return LobstahMath.nativeUnitsToDistanceMeters(leftFrontMotor.getSelectedSensorPosition());
   }
 
   /**
    * Gets the distance of the right encoder in meters.
    */
   public double getRightEncoderDistanceMeters() {
-    return LobstahMath.nativeUnitsToDistanceMeters(rightBackMotor.getSelectedSensorPosition()) / 2;
+    return LobstahMath.nativeUnitsToDistanceMeters(rightBackMotor.getSelectedSensorPosition());
   }
 
   /**
@@ -236,12 +240,28 @@ public class DriveBase extends SubsystemBase {
   }
 
   /**
-   * Returns the heading of the robot from 180 to -180 degrees in radians.
+   * Returns the robot's total accumulated/continuous angle as reported by the gyro.
    *
-   * @return the robot's heading in radians as a Rotation2d.
+   * @return the robot's angle as a Rotation2d.
    */
-  public Rotation2d getHeading() {
-    return new Rotation2d(Math.toRadians(gyro.getYaw()));
+  public Rotation2d getGyroAngle() {
+    return gyro.getRotation2d();
+  }
+
+  /**
+   * Set an amount with which to offset the value returned by {@link #getGyroAngle()}
+   */
+  public void setGyroOffset(Rotation2d offset) {
+    gyro.setAngleAdjustment(-offset.getDegrees());
+  }
+
+  /**
+   * Returns the currently configured gyro offset.
+   * 
+   * @see {@link #setGyroOffset()}
+   */
+  public Rotation2d getGyroOffset() {
+    return Rotation2d.fromDegrees(-gyro.getAngleAdjustment());
   }
 
   /**
@@ -271,6 +291,14 @@ public class DriveBase extends SubsystemBase {
     for (Pose2d waypoint : waypoints) {
       pathPoints.add(new PathPoint(waypoint.getTranslation(), waypoint.getRotation()));
     }
+    return PathPlanner
+        .generatePath(new PathConstraints(PathConstants.MAX_DRIVE_SPEED, PathConstants.MAX_ACCELERATION), pathPoints);
+  }
+
+  public PathPlannerTrajectory generatePath(Pose2d finalPose) {
+    ArrayList<PathPoint> pathPoints = new ArrayList<>();
+    pathPoints.add(new PathPoint(this.getPose().getTranslation(), this.getPose().getRotation()));
+    pathPoints.add(new PathPoint(finalPose.getTranslation(), finalPose.getRotation()));
     return PathPlanner
         .generatePath(new PathConstraints(PathConstants.MAX_DRIVE_SPEED, PathConstants.MAX_ACCELERATION), pathPoints);
   }
@@ -310,7 +338,7 @@ public class DriveBase extends SubsystemBase {
    * Shuffleboard.
    */
   public void periodic() {
-    poseEstimator.update(getHeading(), getLeftEncoderDistanceMeters(), getRightEncoderDistanceMeters());
+    poseEstimator.update(getGyroAngle(), getLeftEncoderDistanceMeters(), getRightEncoderDistanceMeters());
     try {
       EstimatedRobotPose estimatedVisionPose = this.photonVision.getCurrentPose();
       SmartDashboard.putString("PhotonVision Pose", estimatedVisionPose.estimatedPose.toString());
@@ -320,7 +348,7 @@ public class DriveBase extends SubsystemBase {
 
     }
 
-    SmartDashboard.putNumber("Gyro", this.getHeading().getDegrees());
+    SmartDashboard.putNumber("Gyro", this.getGyroAngle().getDegrees());
     SmartDashboard.putString("Pose", this.getPose().toString());
     SmartDashboard.putNumber("Number of Tags Visible In Front", this.photonVision.getFrontTargets().size());
     SmartDashboard.putNumber("Number of Tags Visible In Rear", this.photonVision.getRearTargets().size());

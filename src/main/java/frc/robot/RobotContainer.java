@@ -4,6 +4,9 @@
 
 package frc.robot;
 
+import com.ctre.phoenix.motorcontrol.NeutralMode;
+import com.pathplanner.lib.PathConstraints;
+import com.pathplanner.lib.PathPlanner;
 import com.pathplanner.lib.server.PathPlannerServer;
 import com.revrobotics.CANSparkMax.IdleMode;
 import edu.wpi.first.math.MathUtil;
@@ -24,9 +27,11 @@ import frc.robot.Constants.ScoringSystemConstants.ArmConstants;
 import frc.robot.Constants.ScoringSystemConstants.ElevatorConstants;
 import frc.robot.Constants.ScoringSystemConstants.IntakeConstants;
 import frc.robot.Constants.FieldConstants;
+import frc.robot.Constants.PathConstants;
 import frc.robot.Constants.OIConstants.DriverConstants;
 import frc.robot.Constants.OIConstants.OperatorConstants;
 import frc.robot.auton.AutonGenerator;
+import frc.robot.commands.drive.PathFollowCommand;
 import frc.robot.commands.drive.StopDriveCommand;
 import frc.robot.commands.drive.TankDriveCommand;
 import frc.robot.commands.drive.TargetCommand;
@@ -100,6 +105,9 @@ public class RobotContainer {
     PathPlannerServer.startServer(5811);
   }
 
+  /**
+   * TODO: configure latency
+   */
   public double getJoystickLatency() {
     double latency = NetworkTablesJNI.now() - lastRecordedTime;
     lastRecordedTime = NetworkTablesJNI.now();
@@ -107,15 +115,18 @@ public class RobotContainer {
     return 1;
   }
 
-  public ScoringPosition getArmPosition() {
-    return ScoringPosition.fromArmElevator(arm.getRotation(),
-        elevator.getExtension());
+  /**
+   * Zeroes the gyro.
+   */
+  public void initGyro() {
+    driveBase.zeroGyro();
   }
 
-  public boolean insideBumpers() {
-    return ScoringPosition
-        .fromArmElevator(arm.getRotation(), elevator.getExtension())
-        .isInsideBumperZone();
+  /**
+   * @return Whether the robot is within the scoring zone.
+   */
+  public boolean canDriveToTarget() {
+    return driveBase.getPose().getX() <= FieldConstants.SCORING_ZONE_X;
   }
 
   /**
@@ -139,6 +150,7 @@ public class RobotContainer {
             ScoringPositionConstants.HIGH_GOAL_SCORING));
     midGoalButton
         .whileTrue(new ScoringSystemTowardsPositionWithRetractionCommand(arm, elevator,
+
             ScoringPositionConstants.MID_GOAL_SCORING));
     lowGoalButton.whileTrue(new ScoringSystemTowardsPositionWithRetractionCommand(arm, elevator,
         ScoringPositionConstants.LOW_GOAL_SCORING));
@@ -192,24 +204,31 @@ public class RobotContainer {
    * Use this method to run tasks that configure sendables and other smartdashboard items.
    */
   public void configureSmartDash() {
-    initialPosition.addOption("Furthest Down", 0);
-    initialPosition.addOption("Middle", 1);
-    initialPosition.addOption("Furthest Up", 2);
-    initialPosition.setDefaultOption("Furthest Up", 1);
-    crossingPosition.addOption("Below Platform", 0);
-    crossingPosition.addOption("Middle", 1);
-    crossingPosition.addOption("Above Platform", 2);
-    crossingPosition.setDefaultOption("Middle", 1);
+    initialPosition.addOption("0", 0);
+    initialPosition.addOption("1", 1);
+    initialPosition.addOption("2", 2);
+    initialPosition.addOption("3", 3);
+    initialPosition.addOption("4", 4);
+    initialPosition.addOption("5", 5);
+    initialPosition.addOption("6", 6);
+    initialPosition.addOption("7", 7);
+    initialPosition.addOption("8", 8);
+    initialPosition.setDefaultOption("0", 0);
+    crossingPosition.addOption("Right of Platform", 0);
+    crossingPosition.addOption("Left of Platform", 1);
+    crossingPosition.setDefaultOption("Left of Platform", 1);
     endingPosition.addOption("Towards Player Station", 3);
-    endingPosition.addOption("Slightly Up", 2);
-    endingPosition.addOption("Slightly Down", 1);
-    endingPosition.addOption("Bottom Corner", 0);
-    endingPosition.setDefaultOption("Slightly Up", 2);
+    endingPosition.addOption("Slightly Left", 2);
+    endingPosition.addOption("Slightly Right", 1);
+    endingPosition.addOption("Right Side", 0);
+    endingPosition.setDefaultOption("Slightly Left", 2);
     autonChooser.addOption("Path Follow Auton",
         autonGenerator.getPathFollowCommand(initialPosition.getSelected(), crossingPosition.getSelected(),
             endingPosition.getSelected()));
     autonChooser.addOption("Simple Auton", autonGenerator.getSimpleAutonCommand());
     autonChooser.addOption("Do Nothing Auton", new StopDriveCommand(driveBase));
+    autonChooser.addOption("Test Path Command", new PathFollowCommand(driveBase, PathPlanner.loadPath("New Path",
+        new PathConstraints(PathConstants.MAX_DRIVE_SPEED, PathConstants.MAX_ACCELERATION))));
     autonChooser.addOption("Place Piece on Mid Goal Auton",
         autonGenerator.getScoreCommand(ScoringPositionConstants.MID_GOAL_SCORING));
     autonChooser.addOption("Place Piece on High Goal Auton",
@@ -257,6 +276,9 @@ public class RobotContainer {
    * setTeleopDefaultCommands().
    */
   public void setAutonDefaultCommands() {
+    driveBase.setNeutralMode(NeutralMode.Brake);
+    driveBase.setGyroOffset(
+        FieldConstants.SCORING_WAYPOINTS[initialPosition.getSelected()].getRotation());
     arm.setIdleMode(IdleMode.kBrake);
     elevator.setIdleMode(IdleMode.kBrake);
     driveBase.setDefaultCommand(new StopDriveCommand(driveBase));
@@ -267,6 +289,7 @@ public class RobotContainer {
    * subsystems while in test mode.
    */
   public void setTestDefaultCommands() {
+    driveBase.setNeutralMode(NeutralMode.Coast);
     driveBase.setDefaultCommand(new StopDriveCommand(driveBase));
     arm.setIdleMode(IdleMode.kCoast);
     elevator.setIdleMode(IdleMode.kCoast);
