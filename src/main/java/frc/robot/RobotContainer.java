@@ -16,7 +16,7 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import edu.wpi.first.wpilibj2.command.button.POVButton;
-import frc.robot.Constants.ScoringPositionConstants;
+import frc.robot.Constants.ArmPresets;
 import frc.robot.Constants.DriveConstants.DriveMotorCANIDs;
 import frc.robot.Constants.ArmConstants.*;
 import frc.robot.Constants.FieldConstants;
@@ -117,15 +117,15 @@ public class RobotContainer {
                     * OperatorConstants.MANUAL_CONTROL_SPEED))));
     highGoalButton
         .whileTrue(new ScoringSystemTowardsPositionWithRetractionCommand(arm,
-            ScoringPositionConstants.HIGH_GOAL_SCORING));
+            ArmPresets.HIGH_GOAL_SCORING));
     midGoalButton
         .whileTrue(new ScoringSystemTowardsPositionWithRetractionCommand(arm,
-            ScoringPositionConstants.MID_GOAL_SCORING));
+            ArmPresets.MID_GOAL_SCORING));
     lowGoalButton.whileTrue(new ScoringSystemTowardsPositionWithRetractionCommand(arm,
-        ScoringPositionConstants.LOW_GOAL_SCORING));
+        ArmPresets.LOW_GOAL_SCORING));
     playerStationButton
         .whileTrue(new ScoringSystemTowardsPositionWithRetractionCommand(arm,
-            ScoringPositionConstants.PLAYER_STATION_PICKUP));
+            ArmPresets.PLAYER_STATION_PICKUP));
 
     slowdownButton.whileTrue(new TankDriveCommand(driveBase,
         () -> DriverConstants.SLOWDOWN_PERCENT * driverJoystick.getRawAxis(DriverConstants.LEFT_AXIS),
@@ -162,9 +162,9 @@ public class RobotContainer {
     autonChooser.addOption("Simple Auton", autonGenerator.getSimpleAutonCommand());
     autonChooser.addOption("Do Nothing Auton", new StopDriveCommand(driveBase));
     autonChooser.addOption("Place Piece on Mid Goal Auton",
-        autonGenerator.getScoreCommand(ScoringPositionConstants.MID_GOAL_SCORING));
+        autonGenerator.getScoreCommand(ArmPresets.MID_GOAL_SCORING));
     autonChooser.addOption("Place Piece on High Goal Auton",
-        autonGenerator.getScoreCommand(ScoringPositionConstants.HIGH_GOAL_SCORING));
+        autonGenerator.getScoreCommand(ArmPresets.HIGH_GOAL_SCORING));
     targetPosition.addOption("0", 0);
     targetPosition.addOption("1", 1);
     targetPosition.addOption("2", 2);
@@ -215,7 +215,7 @@ public class RobotContainer {
 
     arm.setDefaultCommand(
         new ScoringSystemTowardsPositionWithRetractionCommand(arm,
-            ScoringPositionConstants.STOWED));
+            ArmPresets.STOWED));
     intake.setDefaultCommand(new SpinIntakeCommand(intake, Constants.IntakeConstants.PASSIVE_INTAKE_VOLTAGE));
   }
 

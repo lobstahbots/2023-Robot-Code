@@ -18,7 +18,7 @@ import frc.robot.Constants;
 import frc.robot.Constants.AutonConstants;
 import frc.robot.Constants.IntakeConstants;
 import frc.robot.Constants.PathConstants;
-import frc.robot.Constants.ScoringPositionConstants;
+import frc.robot.Constants.ArmPresets;
 import frc.robot.commands.arm.ScoringSystemToPositionCommand;
 import frc.robot.commands.arm.ScoringSystemToPositionWithRetractionCommand;
 import frc.robot.commands.drive.PathFollowCommand;
@@ -53,15 +53,15 @@ public class AutonGenerator {
     return new ScoringSystemToPositionWithRetractionCommand(arm, position,
         AutonConstants.AUTON_SCORING_TOLERANCE)
             .andThen(new ScoringSystemToPositionCommand(arm,
-                position.translateBy(ScoringPositionConstants.CONE_SCORING_DROPDOWN),
+                position.translateBy(ArmPresets.CONE_SCORING_DROPDOWN),
                 AutonConstants.AUTON_SCORING_TOLERANCE))
             .andThen(new ParallelRaceGroup(new SpinIntakeCommand(intake, Constants.IntakeConstants.OUTTAKE_VOLTAGE),
                 new TimedCommand(AutonConstants.OUTTAKE_RUNTIME,
                     new ScoringSystemToPositionCommand(arm,
-                        position.translateBy(ScoringPositionConstants.CONE_SCORING_BACKOFF),
+                        position.translateBy(ArmPresets.CONE_SCORING_BACKOFF),
                         AutonConstants.AUTON_SCORING_TOLERANCE))))
             .andThen(
-                new ScoringSystemToPositionWithRetractionCommand(arm, ScoringPositionConstants.STOWED,
+                new ScoringSystemToPositionWithRetractionCommand(arm, ArmPresets.STOWED,
                     AutonConstants.AUTON_SCORING_TOLERANCE));
   }
 

@@ -223,9 +223,9 @@ public final class Constants {
   }
 
   /**
-   * Stores positions for the scoring system.
+   * Stores preset poses for the arm.
    */
-  public static final class ScoringPositionConstants {
+  public static final class ArmPresets {
     public static final ArmPose STOWED = ArmPose.fromArmElevator(Rotation2d.fromDegrees(35), -0.1);
     public static final ArmPose GROUND_PICKUP = ArmPose.fromXY(16.4, 10.2);
     public static final ArmPose MID_GOAL_SCORING = ArmPose.fromXY(25, 47); // before dropping
