@@ -90,13 +90,13 @@ public class RobotContainer {
   }
 
   public ArmPose getArmPosition() {
-    return ArmPose.fromArmElevator(arm.getPivot().getRotation(),
+    return ArmPose.fromAngleExtension(arm.getPivot().getRotation(),
         arm.getElevator().getExtension());
   }
 
   public boolean insideBumpers() {
     return ArmPose
-        .fromArmElevator(arm.getPivot().getRotation(), arm.getElevator().getExtension())
+        .fromAngleExtension(arm.getPivot().getRotation(), arm.getElevator().getExtension())
         .isInsideBumperZone();
   }
 
@@ -108,7 +108,7 @@ public class RobotContainer {
     outtakeButton.whileTrue(new SpinIntakeCommand(intake, Constants.IntakeConstants.OUTTAKE_VOLTAGE));
     manualControlButton.whileTrue(new ScoringSystemTowardsPositionCommand(arm,
         () -> ArmPose
-            .fromArmElevator(Rotation2d.fromDegrees(arm.getPivot().getSetpoint()),
+            .fromAngleExtension(Rotation2d.fromDegrees(arm.getPivot().getSetpoint()),
                 arm.getElevator().getSetpointExtension())
             .translateBy(new Translation2d(
                 -operatorJoystick.getRawAxis(OperatorConstants.HORIZONTAL_ARM_MOVEMENT_AXIS) * getJoystickLatency()

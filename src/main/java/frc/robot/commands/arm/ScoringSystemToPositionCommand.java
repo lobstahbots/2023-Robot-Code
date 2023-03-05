@@ -43,7 +43,7 @@ public class ScoringSystemToPositionCommand extends ParallelRaceGroup {
 
   private boolean isAtPosition() {
     ArmPose currentPosition =
-        ArmPose.fromArmElevator(arm.getPivot().getRotation(), arm.getElevator().getExtension());
+        ArmPose.fromAngleExtension(arm.getPivot().getRotation(), arm.getElevator().getExtension());
     return position.get().getDistance(currentPosition) <= threshold;
   }
 }

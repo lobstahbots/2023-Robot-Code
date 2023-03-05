@@ -10,37 +10,37 @@ import static frc.robot.Constants.ArmConstants.*;
 
 /** Represents a possible pose of the arm (pivot and elevator). */
 public class ArmPose {
-  private final Rotation2d armAngle;
-  private final double elevatorExtension;
+  private final Rotation2d angle;
+  private final double extension;
   private final Translation2d position;
 
-  private ArmPose(Rotation2d armAngle, double elevatorExtension) {
-    this.armAngle = Rotation2d.fromDegrees(
-        MathUtil.clamp(armAngle.getDegrees(), PivotConstants.MIN_ROTATION_DEG, PivotConstants.MAX_ROTATION_DEG));
-    this.elevatorExtension = MathUtil.clamp(elevatorExtension, ElevatorConstants.MIN_EXTENSION_INCHES,
+  private ArmPose(Rotation2d angle, double extension) {
+    this.angle = Rotation2d.fromDegrees(
+        MathUtil.clamp(angle.getDegrees(), PivotConstants.MIN_ROTATION_DEG, PivotConstants.MAX_ROTATION_DEG));
+    this.extension = MathUtil.clamp(extension, ElevatorConstants.MIN_EXTENSION_INCHES,
         ElevatorConstants.MAX_EXTENSION_INCHES);
 
     this.position = new Translation2d(
         -Constants.IntakeConstants.INTAKE_OFFSET.getY(),
-        -ElevatorConstants.LENGTH_FULLY_RETRACTED - elevatorExtension - Constants.IntakeConstants.INTAKE_OFFSET.getX())
-            .rotateBy(armAngle).plus(PivotConstants.ORIGIN_TO_PIVOT);
+        -ElevatorConstants.LENGTH_FULLY_RETRACTED - extension - Constants.IntakeConstants.INTAKE_OFFSET.getX())
+            .rotateBy(angle).plus(PivotConstants.ORIGIN_TO_PIVOT);
   }
 
   /**
-   * Constructs an ArmPose with the provided arm angle and elevator extension.
+   * Constructs an ArmPose with the provided pivot angle and elevator extension.
    * 
-   * @param armAngle The angle of the arm. 0 = Vertical and pointing down. Positive -> towards front of robot. This will
-   *          be clamped to the range of the arm.
-   * @param elevatorExtension The extension of the elevator in inches. This will be clamped to the range of the
+   * @param angle The angle of the pivot. 0 = Vertical and pointing down. Positive -> towards front of robot. This
+   *          will be clamped to the range of the pivot.
+   * @param extension The extension of the elevator in inches. This will be clamped to the range of the
    *          elevator.
    */
-  public static ArmPose fromArmElevator(Rotation2d armAngle, double elevatorExtension) {
-    return new ArmPose(armAngle, elevatorExtension);
+  public static ArmPose fromAngleExtension(Rotation2d angle, double extension) {
+    return new ArmPose(angle, extension);
   }
 
   /**
-   * Constructs an ArmPose with an intake position relative to the scoring coordinate origin. Will be clamped to
-   * the range of the arm and elevator.
+   * Constructs an ArmPose with an intake position relative to the scoring coordinate origin. Will be clamped to the
+   * range of the pivot and elevator.
    * 
    * @param position The position of the intake relative to the scoring origin, in inches.
    */
@@ -48,23 +48,23 @@ public class ArmPose {
     Translation2d relativeToPivot = position.minus(PivotConstants.ORIGIN_TO_PIVOT);
 
     // Angle between the arm and the line intersecting the pivot and intake position
-    Rotation2d armAngleFromHypotenuse =
+    Rotation2d angleFromHypotenuse =
         new Rotation2d(Math.asin(Constants.IntakeConstants.INTAKE_OFFSET.getY() / relativeToPivot.getNorm()));
-    Rotation2d armAngle = relativeToPivot.getAngle().plus(Rotation2d.fromDegrees(90))
-        .plus(armAngleFromHypotenuse);
+    Rotation2d pivotAngle = relativeToPivot.getAngle().plus(Rotation2d.fromDegrees(90))
+        .plus(angleFromHypotenuse);
 
     // Intake position relative to the pivot, with X axis aligned to the arm
-    Translation2d alignedToArm = new Translation2d(relativeToPivot.getNorm(), armAngleFromHypotenuse);
+    Translation2d alignedToArm = new Translation2d(relativeToPivot.getNorm(), angleFromHypotenuse);
     double length = alignedToArm.getX();
-    double elevatorExtension =
+    double extension =
         length - ElevatorConstants.LENGTH_FULLY_RETRACTED - Constants.IntakeConstants.INTAKE_OFFSET.getX();
 
-    return new ArmPose(armAngle, elevatorExtension);
+    return new ArmPose(pivotAngle, extension);
   }
 
   /**
-   * Constructs an ArmPose with x and y intake coordinates relative to the scoring coordinate origin. Will be
-   * clamped to the range of the arm and elevator.
+   * Constructs an ArmPose with x and y intake coordinates relative to the scoring coordinate origin. Will be clamped to
+   * the range of the pivot and elevator.
    * 
    * @param x The x coordinate of the intake relative to the scoring origin, in inches.
    * @param y The y coordinate of the intake relative to the scoring origin, in inches.
@@ -74,12 +74,12 @@ public class ArmPose {
   }
 
   /**
-   * Gets the angle of the arm at the ArmPose.
+   * Gets the angle of the pivot at the ArmPose.
    * 
-   * @return The angle of the arm. 0 = Vertical and pointing down. Positive -> towards front of robot.
+   * @return The angle of the pivot. 0 = Vertical and pointing down. Positive -> towards front of robot.
    */
-  public Rotation2d getArmAngle() {
-    return armAngle;
+  public Rotation2d getAngle() {
+    return angle;
   }
 
   /**
@@ -87,8 +87,8 @@ public class ArmPose {
    * 
    * @return The extension of the elevator in inches.
    */
-  public double getElevatorExtension() {
-    return elevatorExtension;
+  public double getExtension() {
+    return extension;
   }
 
   /**
@@ -129,20 +129,20 @@ public class ArmPose {
   }
 
   /**
-   * @param rotation The amount to rotate the arm by. Positive -> towards front of robot when pointing down.
+   * @param rotation The amount to rotate the pivot by. Positive -> towards front of robot when pointing down.
    * 
-   * @return A new ArmPose with the arm rotated by the given rotation.
+   * @return A new ArmPose with the pivot rotated by the given rotation.
    */
-  public ArmPose rotateArmBy(Rotation2d rotation) {
-    return fromArmElevator(armAngle.rotateBy(rotation), elevatorExtension);
+  public ArmPose rotateBy(Rotation2d rotation) {
+    return fromAngleExtension(angle.rotateBy(rotation), extension);
   }
 
   /**
    * @param extension The amount to extend the elevator by.
    * @return A new ArmPose with the elevator extended by the given amount.
    */
-  public ArmPose extendElevatorBy(double extension) {
-    return fromArmElevator(armAngle, elevatorExtension + extension);
+  public ArmPose extendBy(double extension) {
+    return fromAngleExtension(angle, extension + extension);
   }
 
   /**
@@ -157,7 +157,7 @@ public class ArmPose {
    * @return Whether the ArmPose is within the bumper collision zone.
    */
   public boolean isInsideBumperZone() {
-    return getArmAngle().getDegrees() < ArmConstants.BUMPER_AVOIDANCE_ANGLE.getDegrees()
+    return getAngle().getDegrees() < ArmConstants.BUMPER_AVOIDANCE_ANGLE.getDegrees()
         && getX() > ArmConstants.BUMPER_AVOIDANCE_X;
   }
 }

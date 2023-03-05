@@ -30,8 +30,8 @@ public class ScoringSystemTowardsPositionCommand extends ParallelCommandGroup {
    * @param position A supplier for the position to move towards
    */
   public ScoringSystemTowardsPositionCommand(Arm arm, Supplier<ArmPose> position) {
-    this.addCommands(new RunElevatorToExtensionCommand(arm, () -> position.get().getElevatorExtension()),
-        new RotatePivotToAngleCommand(arm, () -> position.get().getArmAngle().getDegrees()));
+    this.addCommands(new RunElevatorToExtensionCommand(arm, () -> position.get().getExtension()),
+        new RotatePivotToAngleCommand(arm, () -> position.get().getAngle().getDegrees()));
     addRequirements(arm);
   }
 }

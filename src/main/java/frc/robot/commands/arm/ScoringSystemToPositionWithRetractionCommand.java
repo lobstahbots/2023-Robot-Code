@@ -30,7 +30,7 @@ public class ScoringSystemToPositionWithRetractionCommand extends ParallelRaceGr
 
   private boolean isAtPosition() {
     ArmPose currentPosition =
-        ArmPose.fromArmElevator(arm.getPivot().getRotation(), arm.getElevator().getExtension());
+        ArmPose.fromAngleExtension(arm.getPivot().getRotation(), arm.getElevator().getExtension());
     return position.getDistance(currentPosition) <= threshold;
   }
 }
