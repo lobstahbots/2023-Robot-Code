@@ -8,7 +8,7 @@ import frc.robot.Constants.ArmConstants;
 
 import static frc.robot.Constants.ArmConstants.*;
 
-/** Represents a possible position of the scoring system (arm, elevator, and intake). */
+/** Represents a possible pose of the arm (pivot and elevator). */
 public class ArmPose {
   private final Rotation2d armAngle;
   private final double elevatorExtension;
@@ -27,7 +27,7 @@ public class ArmPose {
   }
 
   /**
-   * Constructs a ScoringPosition with the provided arm angle and elevator extension.
+   * Constructs an ArmPose with the provided arm angle and elevator extension.
    * 
    * @param armAngle The angle of the arm. 0 = Vertical and pointing down. Positive -> towards front of robot. This will
    *          be clamped to the range of the arm.
@@ -39,7 +39,7 @@ public class ArmPose {
   }
 
   /**
-   * Constructs a ScoringPosition with an intake position relative to the scoring coordinate origin. Will be clamped to
+   * Constructs an ArmPose with an intake position relative to the scoring coordinate origin. Will be clamped to
    * the range of the arm and elevator.
    * 
    * @param position The position of the intake relative to the scoring origin, in inches.
@@ -63,7 +63,7 @@ public class ArmPose {
   }
 
   /**
-   * Constructs a ScoringPosition with x and y intake coordinates relative to the scoring coordinate origin. Will be
+   * Constructs an ArmPose with x and y intake coordinates relative to the scoring coordinate origin. Will be
    * clamped to the range of the arm and elevator.
    * 
    * @param x The x coordinate of the intake relative to the scoring origin, in inches.
@@ -74,7 +74,7 @@ public class ArmPose {
   }
 
   /**
-   * Gets the angle of the arm at the ScoringPosition.
+   * Gets the angle of the arm at the ArmPose.
    * 
    * @return The angle of the arm. 0 = Vertical and pointing down. Positive -> towards front of robot.
    */
@@ -83,7 +83,7 @@ public class ArmPose {
   }
 
   /**
-   * Gets the extension of the elevator at the ScoringPosition.
+   * Gets the extension of the elevator at the ArmPose.
    * 
    * @return The extension of the elevator in inches.
    */
@@ -92,7 +92,7 @@ public class ArmPose {
   }
 
   /**
-   * Gets the position of the intake at the ScoringPosition.
+   * Gets the position of the intake at the ArmPose.
    * 
    * @return The position of the intake relative to the scoring coordinate origin, in inches.
    */
@@ -101,7 +101,7 @@ public class ArmPose {
   }
 
   /**
-   * Gets the x coordinate of the intake at the ScoringPosition.
+   * Gets the x coordinate of the intake at the ArmPose.
    * 
    * @return The x coordinate of the intake relative to the scoring coordinate origin, in inches.
    */
@@ -110,7 +110,7 @@ public class ArmPose {
   }
 
   /**
-   * Gets the y coordinate of the intake at the ScoringPosition.
+   * Gets the y coordinate of the intake at the ArmPose.
    * 
    * @return The y coordinate of the intake relative to the scoring coordinate origin, in inches.
    */
@@ -119,10 +119,10 @@ public class ArmPose {
   }
 
   /**
-   * Gets the distance between the intake positions of two ScoringPositions.
+   * Gets the distance between the intake positions of two ArmPoses.
    * 
-   * @param other The ScoringPosition to compute the distance to
-   * @return The distance between the intake positions of the two ScoringPositions, in inches.
+   * @param other The ArmPose to compute the distance to
+   * @return The distance between the intake positions of the two ArmPose, in inches.
    */
   public double getDistance(ArmPose other) {
     return position.getDistance(other.position);
@@ -131,7 +131,7 @@ public class ArmPose {
   /**
    * @param rotation The amount to rotate the arm by. Positive -> towards front of robot when pointing down.
    * 
-   * @return A new ScoringPosition with the arm rotated by the given rotation.
+   * @return A new ArmPose with the arm rotated by the given rotation.
    */
   public ArmPose rotateArmBy(Rotation2d rotation) {
     return fromArmElevator(armAngle.rotateBy(rotation), elevatorExtension);
@@ -139,7 +139,7 @@ public class ArmPose {
 
   /**
    * @param extension The amount to extend the elevator by.
-   * @return A new ScoringPosition with the elevator extended by the given amount.
+   * @return A new ArmPose with the elevator extended by the given amount.
    */
   public ArmPose extendElevatorBy(double extension) {
     return fromArmElevator(armAngle, elevatorExtension + extension);
@@ -147,14 +147,14 @@ public class ArmPose {
 
   /**
    * @param translation The amount to translate the intake by, in inches.
-   * @return A new ScoringPosition with the intake position translated by the given amount.
+   * @return A new ArmPose with the intake position translated by the given amount.
    */
   public ArmPose translateBy(Translation2d translation) {
     return fromXY(position.plus(translation));
   }
 
   /**
-   * @return Whether the ScoringPosition is within the bumper collision zone.
+   * @return Whether the ArmPose is within the bumper collision zone.
    */
   public boolean isInsideBumperZone() {
     return getArmAngle().getDegrees() < ArmConstants.BUMPER_AVOIDANCE_ANGLE.getDegrees()
