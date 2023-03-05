@@ -159,9 +159,9 @@ public class RobotContainer {
         .whileTrue(new TargetCommand(driveBase, () -> updateTarget()).unless(() -> !canDriveToTarget()));
 
     setPoseButton.whileTrue(new InstantCommand(
-        () -> driveBase.resetOdometry(new Translation2d(14.5, 0.66), driveBase.getGyroAngle())));
+        () -> driveBase.resetOdometry(new Translation2d(14.5, 3), Rotation2d.fromDegrees(180))));
     setBluePoseButton.whileTrue(new InstantCommand(
-        () -> driveBase.resetOdometry(new Translation2d(2, 0.66), driveBase.getGyroAngle())));
+        () -> driveBase.resetOdometry(new Translation2d(2, 0.66), Rotation2d.fromDegrees(0))));
   }
 
   private final SendableChooser<Command> autonChooser = new SendableChooser<>();

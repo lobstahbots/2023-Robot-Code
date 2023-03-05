@@ -3,6 +3,8 @@ package frc.robot.subsystems;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.function.Supplier;
+
 import com.ctre.phoenix.motorcontrol.FeedbackDevice;
 import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.ctre.phoenix.motorcontrol.StatorCurrentLimitConfiguration;
@@ -19,6 +21,7 @@ import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Transform2d;
 import edu.wpi.first.math.geometry.Translation2d;
+import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.estimator.DifferentialDrivePoseEstimator;
 import edu.wpi.first.math.kinematics.DifferentialDriveWheelSpeeds;
 import edu.wpi.first.wpilibj.DriverStation;
@@ -119,7 +122,7 @@ public class DriveBase extends SubsystemBase {
 
     resetEncoders();
     poseEstimator =
-        new DifferentialDrivePoseEstimator(DriveConstants.KINEMATICS, getGyroAngle(), 0, 0, new Pose2d());
+        new DifferentialDrivePoseEstimator(DriveConstants.KINEMATICS, getGyroAngle180(), 0, 0, new Pose2d());
 
     this.photonVision = new PhotonVision();
   }
@@ -160,7 +163,7 @@ public class DriveBase extends SubsystemBase {
    * @return The pose.
    */
   public Pose2d getPose() {
-    poseEstimator.update(getGyroAngle(), getLeftEncoderDistanceMeters(), getRightEncoderDistanceMeters());
+    poseEstimator.update(getGyroAngle180(), getLeftEncoderDistanceMeters(), getRightEncoderDistanceMeters());
     try {
       EstimatedRobotPose estimatedVisionPose = this.photonVision.getCurrentPose();
       SmartDashboard.putString("PhotonVision Pose", estimatedVisionPose.estimatedPose.toString());
@@ -204,7 +207,8 @@ public class DriveBase extends SubsystemBase {
    */
   public void resetOdometry(Translation2d translation2d, Rotation2d rotation) {
     zeroGyro();
-    poseEstimator.resetPosition(getGyroAngle(), 0, 0, new Pose2d(translation2d, rotation));
+    setGyroOffset(rotation);
+    poseEstimator.resetPosition(getGyroAngle180(), 0, 0, new Pose2d(translation2d, rotation));
     resetEncoders();
   }
 
@@ -260,7 +264,11 @@ public class DriveBase extends SubsystemBase {
    * @return the robot's angle as a Rotation2d.
    */
   public Rotation2d getGyroAngle() {
-    return Rotation2d.fromDegrees(gyro.getRotation2d().getDegrees() % 360);
+    return Rotation2d.fromDegrees(gyro.getRotation2d().getDegrees());
+  }
+
+  public Rotation2d getGyroAngle180() {
+    return Rotation2d.fromDegrees(-MathUtil.inputModulus(getGyroAngle().getDegrees(), -180, 180));
   }
 
   /**
@@ -318,6 +326,14 @@ public class DriveBase extends SubsystemBase {
         .generatePath(new PathConstraints(PathConstants.MAX_DRIVE_SPEED, PathConstants.MAX_ACCELERATION), pathPoints);
   }
 
+  public PathPlannerTrajectory generatePath(Supplier<Pose2d> initialPose, Pose2d finalPose) {
+    ArrayList<PathPoint> pathPoints = new ArrayList<>();
+    pathPoints.add(new PathPoint(initialPose.get().getTranslation(), initialPose.get().getRotation()));
+    pathPoints.add(new PathPoint(finalPose.getTranslation(), finalPose.getRotation()));
+    return PathPlanner
+        .generatePath(new PathConstraints(PathConstants.MAX_DRIVE_SPEED, PathConstants.MAX_ACCELERATION), pathPoints);
+  }
+
   /**
    * Sets the motor speeds to 0.
    */
@@ -353,7 +369,7 @@ public class DriveBase extends SubsystemBase {
    * Shuffleboard.
    */
   public void periodic() {
-    poseEstimator.update(getGyroAngle(), getLeftEncoderDistanceMeters(), getRightEncoderDistanceMeters());
+    poseEstimator.update(getGyroAngle180(), getLeftEncoderDistanceMeters(), getRightEncoderDistanceMeters());
     try {
       EstimatedRobotPose estimatedVisionPose = this.photonVision.getCurrentPose();
       SmartDashboard.putString("PhotonVision Pose", estimatedVisionPose.estimatedPose.toString());
@@ -363,7 +379,7 @@ public class DriveBase extends SubsystemBase {
 
     }
 
-    SmartDashboard.putNumber("Gyro", this.getGyroAngle().getDegrees());
+    SmartDashboard.putNumber("Gyro", this.getGyroAngle180().getDegrees());
     SmartDashboard.putString("Pose", this.getPose().toString());
     SmartDashboard.putNumber("Number of Tags Visible In Front", this.photonVision.getFrontTargets().size());
     SmartDashboard.putNumber("Number of Tags Visible In Rear", this.photonVision.getRearTargets().size());
