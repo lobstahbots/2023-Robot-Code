@@ -11,7 +11,7 @@
         "vgap": 16.0,
         "titleType": 0,
         "tiles": {
-          "3,3": {
+          "4,3": {
             "size": [
               4,
               1
@@ -112,7 +112,7 @@
               "Visuals/Show value": true
             }
           },
-          "0,4": {
+          "5,4": {
             "size": [
               4,
               1
@@ -146,9 +146,9 @@
               "imageHeight": -1
             }
           },
-          "8,2": {
+          "9,4": {
             "size": [
-              2,
+              1,
               1
             ],
             "content": {
@@ -159,7 +159,7 @@
               "_showGlyph": false
             }
           },
-          "7,3": {
+          "10,2": {
             "size": [
               3,
               2
@@ -180,7 +180,7 @@
               "imageHeight": -1
             }
           },
-          "4,4": {
+          "10,4": {
             "size": [
               3,
               2
@@ -201,36 +201,7 @@
               "imageHeight": -1
             }
           },
-          "9,2": {
-            "size": [
-              2,
-              1
-            ],
-            "content": {
-              "_type": "Field",
-              "_source0": "network_table:///SmartDashboard/Field",
-              "_title": "Field",
-              "_glyph": 148,
-              "_showGlyph": false,
-              "Game/Game": "A2023_Charged_Up",
-              "Visuals/Robot Icon Size": 50.0,
-              "Visuals/Show Outside Circles": false
-            }
-          },
-          "11,2": {
-            "size": [
-              1,
-              1
-            ],
-            "content": {
-              "_type": "Text View",
-              "_source0": "network_table:///SmartDashboard/Number of Tags Visible In Rear",
-              "_title": "Number of Tags Visible In Rear",
-              "_glyph": 148,
-              "_showGlyph": false
-            }
-          },
-          "10,4": {
+          "8,2": {
             "size": [
               2,
               1
@@ -243,7 +214,7 @@
               "_showGlyph": false
             }
           },
-          "10,3": {
+          "8,3": {
             "size": [
               2,
               1
@@ -254,6 +225,122 @@
               "_title": "Elevator Extension",
               "_glyph": 148,
               "_showGlyph": false
+            }
+          },
+          "3,5": {
+            "size": [
+              1,
+              1
+            ],
+            "content": {
+              "_type": "Text View",
+              "_source0": "network_table:///SmartDashboard/Arm X Y",
+              "_title": "Arm X Y",
+              "_glyph": 148,
+              "_showGlyph": false
+            }
+          },
+          "3,3": {
+            "size": [
+              1,
+              1
+            ],
+            "content": {
+              "_type": "Boolean Box",
+              "_source0": "network_table:///SmartDashboard/Inside bumper collision zone",
+              "_title": "Inside bumper collision zone",
+              "_glyph": 148,
+              "_showGlyph": false,
+              "Colors/Color when true": "#7CFC00FF",
+              "Colors/Color when false": "#8B0000FF"
+            }
+          },
+          "0,4": {
+            "size": [
+              1,
+              1
+            ],
+            "content": {
+              "_type": "Boolean Box",
+              "_source0": "network_table:///SmartDashboard/Teleop Target Selector/In Maxwell Mode",
+              "_title": "Teleop Target Selector/In Maxwell Mode",
+              "_glyph": 148,
+              "_showGlyph": false,
+              "Colors/Color when true": "#7CFC00FF",
+              "Colors/Color when false": "#8B0000FF"
+            }
+          },
+          "1,4": {
+            "size": [
+              1,
+              1
+            ],
+            "content": {
+              "_type": "Text View",
+              "_source0": "network_table:///SmartDashboard/Teleop Target Selector/Row Selected",
+              "_title": "Teleop Target Selector/Row Selected",
+              "_glyph": 148,
+              "_showGlyph": false
+            }
+          },
+          "1,5": {
+            "9,2": {
+              "size": [
+                2,
+                1
+              ],
+              "content": {
+                "_type": "Field",
+                "_source0": "network_table:///SmartDashboard/Field",
+                "_title": "Field",
+                "_type": "Text View",
+                "_source0": "network_table:///SmartDashboard/Teleop Target Selector/Maxwell Column",
+                "_title": "SmartDashboard/Teleop Target Selector/Maxwell Column",
+                "_glyph": 148,
+                "_showGlyph": false,
+                "Game/Game": "A2023_Charged_Up",
+                "Visuals/Robot Icon Size": 50.0,
+                "Visuals/Show Outside Circles": false
+              }
+            },
+            "0,5": {
+              "size": [
+                1,
+                1
+              ],
+              "content": {
+                "_type": "Text View",
+                "_source0": "network_table:///SmartDashboard/Teleop Target Selector/Maxwell Grid",
+                "_title": "SmartDashboard/Teleop Target Selector/Maxwell Grid",
+                "_glyph": 148,
+                "_showGlyph": false
+              }
+            },
+            "2,5": {
+              "size": [
+                1,
+                1
+              ],
+              "content": {
+                "_type": "Text View",
+                "_source0": "network_table:///SmartDashboard/Teleop Target Selector/Maxwell Row",
+                "_title": "SmartDashboard/Teleop Target Selector/Maxwell Row",
+                "_glyph": 148,
+                "_showGlyph": false
+              }
+            },
+            "2,4": {
+              "size": [
+                1,
+                1
+              ],
+              "content": {
+                "_type": "Text View",
+                "_source0": "network_table:///SmartDashboard/Teleop Target Selector/Column Selected",
+                "_title": "SmartDashboard/Teleop Target Selector/Column Selected",
+                "_glyph": 148,
+                "_showGlyph": false
+              }
             }
           }
         }

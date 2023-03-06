@@ -12,6 +12,7 @@ import com.pathplanner.lib.PathPlannerTrajectory;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.ParallelRaceGroup;
 import frc.robot.ArmPose;
 import frc.robot.Constants.AutonConstants;
@@ -49,6 +50,18 @@ public class AutonGenerator {
     this.driveBase = driveBase;
     this.arm = arm;
     this.intake = intake;
+  }
+
+  public Command getScoreCommand(int row) {
+    if (row == 0) {
+      return getScoreCommand(ArmPresets.HIGH_GOAL_SCORING);
+    } else if (row == 1) {
+      return getScoreCommand(ArmPresets.MID_GOAL_SCORING);
+    } else if (row == 2) {
+      return getScoreCommand(ArmPresets.LOW_GOAL_SCORING);
+    } else {
+      return new InstantCommand();
+    }
   }
 
   public Command getScoreCommand(ArmPose position) {
