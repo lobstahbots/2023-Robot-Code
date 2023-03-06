@@ -13,6 +13,7 @@ import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
+import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import edu.wpi.first.wpilibj2.command.ParallelRaceGroup;
 import frc.robot.ArmPose;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
@@ -111,10 +112,16 @@ public class AutonGenerator {
     return new SequentialCommandGroup(
         new PathFollowCommand(driveBase, driveBase.generatePath(waypoint)),
         new TurnToAngleCommand(driveBase, targetPose.getRotation(), 1),
-        new PathFollowCommand(driveBase, driveBase.generatePath(targetPose)),
-        new TurnToAngleCommand(driveBase, targetPose.getRotation(), 1))
-            .unless(() -> driveBase.getPose().getY() < FieldConstants.MAX_PLAYER_STATION_Y_ZONE
-                || driveBase.getPose().getX() < FieldConstants.MAX_PLAYER_STATION_X_ZONE);
+        new ParallelCommandGroup(
+            new SequentialCommandGroup(new PathFollowCommand(driveBase, driveBase.generatePath(targetPose)),
+                new TurnToAngleCommand(driveBase, targetPose.getRotation(), 1)),
+            new ScoringSystemTowardsPositionCommand(arm, elevator, ScoringPositionConstants.PLAYER_STATION_PICKUP)))
+                .andThen(new ParallelCommandGroup(
+                    new ScoringSystemTowardsPositionCommand(arm, elevator,
+                        ScoringPositionConstants.PLAYER_STATION_PICKUP),
+                    new SpinIntakeCommand(intake, IntakeConstants.INTAKE_VOLTAGE)))
+                .unless(() -> driveBase.getPose().getY() < FieldConstants.MAX_PLAYER_STATION_Y_ZONE
+                    || driveBase.getPose().getX() < FieldConstants.MAX_PLAYER_STATION_X_ZONE);
   }
 
   /**
