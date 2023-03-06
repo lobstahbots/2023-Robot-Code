@@ -9,7 +9,7 @@ import com.pathplanner.lib.PathConstraints;
 import com.pathplanner.lib.PathPlanner;
 import com.pathplanner.lib.server.PathPlannerServer;
 import com.revrobotics.CANSparkMax.IdleMode;
-import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.networktables.NetworkTablesJNI;
@@ -18,6 +18,7 @@ import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.ConditionalCommand;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
@@ -66,11 +67,15 @@ public class RobotContainer {
   private final Intake intake = new Intake(IntakeConstants.LEFT_MOTOR_ID, IntakeConstants.RIGHT_MOTOR_ID);
 
   private final AutonGenerator autonGenerator = new AutonGenerator(driveBase, arm, elevator, intake);
+  private final TargetSelector targetSelector = new TargetSelector();
 
   private final LobstahGamepad driverJoystick = new LobstahGamepad(DriverConstants.DRIVER_JOYSTICK_INDEX);
-  private final JoystickButton slowdownButton = driverJoystick.button(DriverConstants.SLOWDOWN_BUTTON_INDEX);
-
   private final LobstahGamepad operatorJoystick = new LobstahGamepad(OperatorConstants.OPERATOR_JOYSTICK_INDEX);
+  private final JoystickButton targetButton = driverJoystick.button(DriverConstants.TARGET_BTN_INDEX);
+
+  private final JoystickButton slowdownButton = driverJoystick.button(DriverConstants.SLOWDOWN_BTN_INDEX);
+
+
   private final JoystickButton intakeButton = operatorJoystick.button(OperatorConstants.INTAKE_BUTTON_INDEX);
   private final JoystickButton outtakeButton = operatorJoystick.button(OperatorConstants.OUTTAKE_BUTTON_INDEX);
   private final JoystickButton manualControlButton =
@@ -78,12 +83,19 @@ public class RobotContainer {
   private final JoystickButton lowGoalButton = operatorJoystick.button(OperatorConstants.LOW_GOAL_BTN_INDEX);
   private final JoystickButton midGoalButton = operatorJoystick.button(OperatorConstants.MID_GOAL_BTN_INDEX);
   private final JoystickButton highGoalButton = operatorJoystick.button(OperatorConstants.HIGH_GOAL_BTN_INDEX);
-  private final POVButton playerStationButton =
-      new POVButton(operatorJoystick, OperatorConstants.STATION_PICKUP_POV_INDEX);
-  private final POVButton placePieceButton = new POVButton(operatorJoystick, OperatorConstants.PLACE_CONE_POV_INDEX);
-  private final JoystickButton targetButton = driverJoystick.button(DriverConstants.TARGET_BTN_INDEX);
-  private final JoystickButton setPoseButton = driverJoystick.button(3);
-  private final JoystickButton setBluePoseButton = driverJoystick.button(4);
+  private final JoystickButton playerStationButton =
+      operatorJoystick.button(OperatorConstants.PLAYER_STATION_BTN_INDEX);
+
+  private final JoystickButton toggleMaxwellModeButton =
+      operatorJoystick.button(OperatorConstants.MAXWELL_MODE_BTN_INDEX);
+  private final POVButton columnRightButton =
+      new POVButton(operatorJoystick, OperatorConstants.SHIFT_SELECTED_COLUMN_RIGHT_POV_INDEX);
+  private final POVButton columnLeftButton =
+      new POVButton(operatorJoystick, OperatorConstants.SHIFT_SELECTED_COLUMN_LEFT_POV_INDEX);
+  private final POVButton rowUpButton =
+      new POVButton(operatorJoystick, OperatorConstants.SHIFT_SELECTED_ROW_UP_POV_INDEX);
+  private final POVButton rowDownButton =
+      new POVButton(operatorJoystick, OperatorConstants.SHIFT_SELECTED_ROW_DOWN_POV_INDEX);
   private double lastRecordedTime = 0;
 
   /**
@@ -133,9 +145,11 @@ public class RobotContainer {
         () -> ScoringPosition
             .fromArmElevator(Rotation2d.fromDegrees(arm.getSetpoint()), elevator.getSetpointExtension())
             .translateBy(new Translation2d(
-                -operatorJoystick.getRawAxis(OperatorConstants.HORIZONTAL_ARM_MOVEMENT_AXIS) * getJoystickLatency()
+                MathUtil.applyDeadband(-operatorJoystick.getRawAxis(OperatorConstants.HORIZONTAL_ARM_MOVEMENT_AXIS),
+                    OperatorConstants.MANUAL_CONTROL_DEADBAND) * getJoystickLatency()
                     * OperatorConstants.MANUAL_CONTROL_SPEED,
-                -operatorJoystick.getRawAxis(OperatorConstants.VERTICAL_ARM_MOVEMENT_AXIS) * getJoystickLatency()
+                MathUtil.applyDeadband(-operatorJoystick.getRawAxis(OperatorConstants.VERTICAL_ARM_MOVEMENT_AXIS),
+                    OperatorConstants.MANUAL_CONTROL_DEADBAND) * getJoystickLatency()
                     * OperatorConstants.MANUAL_CONTROL_SPEED))));
     highGoalButton
         .whileTrue(new ScoringSystemTowardsPositionWithRetractionCommand(arm, elevator,
@@ -149,26 +163,48 @@ public class RobotContainer {
     playerStationButton
         .whileTrue(new ScoringSystemTowardsPositionWithRetractionCommand(arm, elevator,
             ScoringPositionConstants.PLAYER_STATION_PICKUP));
+    toggleMaxwellModeButton.onTrue(new InstantCommand(() -> {
+      targetSelector.resetSelection(true);
+    })).onFalse(new InstantCommand(() -> {
+      targetSelector.resetSelection(false);
+    }));
+    rowDownButton.onTrue(new InstantCommand(() -> {
+      targetSelector.changeRow(-1);
+    }));
+    columnLeftButton.onTrue(new ConditionalCommand(new InstantCommand(() -> {
+      targetSelector.setTargetInMaxwellMode(0);
+    }), new InstantCommand(() -> {
+      targetSelector.changeColumn(-1);
+    }),
+        targetSelector::getMode));
+    rowUpButton.onTrue(new ConditionalCommand(new InstantCommand(() -> {
+      targetSelector.setTargetInMaxwellMode(1);
+    }), new InstantCommand(() -> {
+      targetSelector.changeRow(1);
+    }), targetSelector::getMode));
+    columnRightButton.onTrue(new ConditionalCommand(new InstantCommand(() -> {
+      targetSelector.setTargetInMaxwellMode(2);
+    }), new InstantCommand(() -> {
+      targetSelector.changeColumn(1);
+    }), targetSelector::getMode));
 
     slowdownButton.whileTrue(new TankDriveCommand(driveBase,
         () -> DriverConstants.SLOWDOWN_PERCENT * driverJoystick.getRawAxis(DriverConstants.LEFT_AXIS),
         () -> DriverConstants.SLOWDOWN_PERCENT * driverJoystick.getRawAxis(DriverConstants.RIGHT_AXIS),
         DriverConstants.SQUARED_INPUTS));
 
-    targetButton
-        .whileTrue(new TargetCommand(driveBase, () -> updateTarget()).unless(() -> !canDriveToTarget()));
-
-    setPoseButton.whileTrue(new InstantCommand(
-        () -> driveBase.resetOdometry(new Translation2d(14.5, 3), Rotation2d.fromDegrees(180))));
-    setBluePoseButton.whileTrue(new InstantCommand(
-        () -> driveBase.resetOdometry(new Translation2d(2, 0.66), Rotation2d.fromDegrees(0))));
+    targetButton.whileTrue(
+        new TargetCommand(driveBase, () -> FieldConstants.SCORING_WAYPOINTS[targetSelector.getColumn()])
+            .andThen(autonGenerator.getScoreCommand(targetSelector.getRow())) // Path to node, place piece
+            .andThen(new InstantCommand(() -> { // Unselect everything
+              targetSelector.resetSelection(targetSelector.getMode()); // Reset Maxwell selections, keep mode the same.
+            })));
   }
 
   private final SendableChooser<Command> autonChooser = new SendableChooser<>();
   private final SendableChooser<Integer> initialPosition = new SendableChooser<>();
   private final SendableChooser<Integer> crossingPosition = new SendableChooser<>();
   private final SendableChooser<Integer> endingPosition = new SendableChooser<>();
-  private final SendableChooser<Integer> targetPosition = new SendableChooser<>();
 
   /**
    * Use this method to run tasks that configure sendables and other smartdashboard items.
@@ -203,29 +239,11 @@ public class RobotContainer {
         autonGenerator.getScoreCommand(ScoringPositionConstants.MID_GOAL_SCORING));
     autonChooser.addOption("Place Piece on High Goal Auton",
         autonGenerator.getScoreCommand(ScoringPositionConstants.HIGH_GOAL_SCORING));
-    targetPosition.addOption("0", 0);
-    targetPosition.addOption("1", 1);
-    targetPosition.addOption("2", 2);
-    targetPosition.addOption("3", 3);
-    targetPosition.addOption("4", 4);
-    targetPosition.addOption("5", 5);
-    targetPosition.addOption("6", 6);
-    targetPosition.addOption("7", 7);
-    targetPosition.addOption("8", 8);
-    targetPosition.setDefaultOption("0", 0);
     SmartDashboard.putData("Auton Chooser", autonChooser);
     SmartDashboard.putData("Initial Position Chooser", initialPosition);
     SmartDashboard.putData("Crossing Position Chooser", crossingPosition);
     SmartDashboard.putData("Ending Position Chooser", endingPosition);
-    SmartDashboard.putData("Teleop Target", targetPosition);
-    SmartDashboard.putData("Reset Elevator", new ResetElevatorCommand(elevator));
-  }
-
-  /**
-   * Updates the robot target for teleop with input from Shuffleboard.
-   */
-  public Pose2d updateTarget() {
-    return driveBase.flipWaypointBasedOnAlliance(FieldConstants.SCORING_WAYPOINTS[targetPosition.getSelected()], true);
+    SmartDashboard.putData("Teleop Target Selector", targetSelector);
   }
 
   /**
