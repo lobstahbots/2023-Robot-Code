@@ -6,13 +6,17 @@ package frc.robot.commands.arm;
 
 import java.util.function.Supplier;
 
-import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
+import edu.wpi.first.math.MathUtil;
+import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.ArmPose;
-import frc.robot.commands.arm.elevator.RunElevatorToExtensionCommand;
-import frc.robot.commands.arm.pivot.RotatePivotToAngleCommand;
+import frc.robot.Constants.ArmConstants.ElevatorConstants;
+import frc.robot.Constants.ArmConstants.PivotConstants;
 import frc.robot.subsystems.Arm;
 
-public class ArmTowardsPoseCommand extends ParallelCommandGroup {
+public class ArmTowardsPoseCommand extends CommandBase {
+  private final Arm arm;
+  private final Supplier<ArmPose> pose;
+
   /**
    * Creates a command that moves the {@link Arm} towards a given pose.
    *
@@ -30,8 +34,33 @@ public class ArmTowardsPoseCommand extends ParallelCommandGroup {
    * @param pose A supplier for the pose to move towards
    */
   public ArmTowardsPoseCommand(Arm arm, Supplier<ArmPose> pose) {
-    this.addCommands(new RunElevatorToExtensionCommand(arm, () -> pose.get().getExtension()),
-        new RotatePivotToAngleCommand(arm, () -> pose.get().getAngle().getDegrees()));
-    addRequirements(arm);
+    this.arm = arm;
+    this.pose = pose;
+  }
+
+  @Override
+  public void initialize() {
+    arm.getElevator().resetPID();
+    arm.getPivot().resetPID();
+  }
+
+  @Override
+  public void execute() {
+    double clampedExtension = MathUtil.clamp(pose.get().getExtension(), ElevatorConstants.MIN_EXTENSION_INCHES,
+        ElevatorConstants.MAX_EXTENSION_INCHES);
+    arm.getElevator().setPIDGoal(clampedExtension);
+    arm.getElevator().feedPID();
+
+    double clampedAngle =
+        MathUtil.clamp(pose.get().getAngle().getDegrees(), PivotConstants.MIN_ROTATION_DEG,
+            PivotConstants.MAX_ROTATION_DEG);
+    arm.getPivot().setPIDGoal(clampedAngle);
+    arm.getPivot().feedPID();
+  }
+
+  @Override
+  public void end(boolean interrupted) {
+    arm.getElevator().move(0);
+    arm.getPivot().setRotationSpeed(0);
   }
 }
