@@ -304,7 +304,7 @@ public class DriveBase extends SubsystemBase {
   }
 
   /**
-   * Generates a trajectory through a list of provided waypoints from the robot's position to the given target Pose.
+   * Generates a trajectory through a list of provided waypoints from the robot's position.
    * 
    * @return A PathPlannerTrajectory to follow to the target position.
    */
@@ -318,17 +318,14 @@ public class DriveBase extends SubsystemBase {
         .generatePath(new PathConstraints(PathConstants.MAX_DRIVE_SPEED, PathConstants.MAX_ACCELERATION), pathPoints);
   }
 
+  /**
+   * Generates a trajectory from the robot's position to the given target Pose.
+   * 
+   * @return A PathPlannerTrajectory to follow to the target position.
+   */
   public PathPlannerTrajectory generatePath(Pose2d finalPose) {
     ArrayList<PathPoint> pathPoints = new ArrayList<>();
     pathPoints.add(new PathPoint(this.getPose().getTranslation(), this.getPose().getRotation()));
-    pathPoints.add(new PathPoint(finalPose.getTranslation(), finalPose.getRotation()));
-    return PathPlanner
-        .generatePath(new PathConstraints(PathConstants.MAX_DRIVE_SPEED, PathConstants.MAX_ACCELERATION), pathPoints);
-  }
-
-  public PathPlannerTrajectory generatePath(Supplier<Pose2d> initialPose, Pose2d finalPose) {
-    ArrayList<PathPoint> pathPoints = new ArrayList<>();
-    pathPoints.add(new PathPoint(initialPose.get().getTranslation(), initialPose.get().getRotation()));
     pathPoints.add(new PathPoint(finalPose.getTranslation(), finalPose.getRotation()));
     return PathPlanner
         .generatePath(new PathConstraints(PathConstants.MAX_DRIVE_SPEED, PathConstants.MAX_ACCELERATION), pathPoints);

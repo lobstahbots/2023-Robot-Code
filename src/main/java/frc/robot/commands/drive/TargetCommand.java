@@ -58,7 +58,8 @@ public class TargetCommand extends DriveCommand {
         }
         index++;
       }
-      if (DriverStation.getAlliance() == Alliance.Blue) {
+      if (DriverStation.getAlliance() == Alliance.Blue) { // Indexes are traversed in opposite order depending on
+                                                          // alliance color.
         index = MathUtil.clamp(index - 1, 0, FieldConstants.TRAVELING_WAYPOINTS.length - 1);
         for (int i = index; i >= finalWaypointIndex; i--) {
           waypoints.add(driveBase.flipWaypointBasedOnAlliance(new Pose2d(FieldConstants.TRAVELING_WAYPOINTS[i].getX(),
@@ -103,7 +104,6 @@ public class TargetCommand extends DriveCommand {
         .andThen(new ConstructLaterCommand(() -> new PathFollowCommand(driveBase, driveBase.generatePath(targetPose))))
         .andThen(new TurnToAngleCommand(driveBase, targetPose.getRotation(), PathConstants.TURN_ANGLE_DEADBAND)));
   }
-
 
   @Override
   public boolean isFinished() {

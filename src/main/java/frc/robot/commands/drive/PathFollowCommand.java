@@ -4,8 +4,6 @@
 
 package frc.robot.commands.drive;
 
-import java.util.function.Supplier;
-
 import com.pathplanner.lib.PathPlannerTrajectory;
 import com.pathplanner.lib.commands.PPRamseteCommand;
 import edu.wpi.first.math.controller.PIDController;
@@ -23,21 +21,6 @@ public class PathFollowCommand extends PPRamseteCommand {
   /**
    * Drives an {@link DriveBase} through the provided PathPlannerTrajectory using a Ramsete Controller.
    */
-  public PathFollowCommand(DriveBase driveBase, Supplier<PathPlannerTrajectory> trajectory) {
-    super(
-        trajectory.get(),
-        driveBase::getPose,
-        new RamseteController(PathConstants.RAMSETE_B, PathConstants.RAMSETE_ZETA),
-        new SimpleMotorFeedforward(PathConstants.kS, PathConstants.kV, PathConstants.kA),
-        DriveConstants.KINEMATICS,
-        driveBase::getWheelSpeeds,
-        new PIDController(PathConstants.kP, PathConstants.kI, PathConstants.KD),
-        new PIDController(PathConstants.kP, PathConstants.kI, PathConstants.KD),
-        driveBase::tankDriveVoltage,
-        false,
-        driveBase);
-  }
-
   public PathFollowCommand(DriveBase driveBase, PathPlannerTrajectory trajectory) {
     super(
         trajectory,

@@ -126,7 +126,6 @@ public final class Constants {
       public static final boolean SQUARED_INPUTS = true;
       public static final int LEFT_AXIS = 1;
       public static final int RIGHT_AXIS = 5;
-      public static final int TARGET_BTN_INDEX = 0;
       public static final int SLOWDOWN_BTN_INDEX = 2;
       public static final double SLOWDOWN_PERCENT = 0.5;
       public static final int TARGET_BTN_INDEX = 1;
