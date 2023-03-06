@@ -36,6 +36,7 @@ public class ArmTowardsPoseCommand extends CommandBase {
   public ArmTowardsPoseCommand(Arm arm, Supplier<ArmPose> pose) {
     this.arm = arm;
     this.pose = pose;
+    addRequirements(arm);
   }
 
   @Override
