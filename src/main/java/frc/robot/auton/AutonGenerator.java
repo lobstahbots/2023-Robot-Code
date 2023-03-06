@@ -14,6 +14,8 @@ import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.ParallelRaceGroup;
+import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
+import edu.wpi.first.wpilibj2.command.WaitCommand;
 import frc.robot.ArmPose;
 import frc.robot.Constants.AutonConstants;
 import frc.robot.Constants.FieldConstants;
@@ -30,6 +32,7 @@ import frc.robot.commands.intake.SpinIntakeCommand;
 import frc.robot.subsystems.Arm;
 import frc.robot.subsystems.DriveBase;
 import frc.robot.subsystems.Intake;
+import lobstah.stl.command.ConstructLaterCommand;
 import lobstah.stl.command.TimedCommand;
 
 /**
@@ -50,6 +53,11 @@ public class AutonGenerator {
     this.driveBase = driveBase;
     this.arm = arm;
     this.intake = intake;
+  }
+
+  public Command getScoreAndDriveCommand(int row, int initialPosition, int crossingPosition, int finalPosition) {
+    return getScoreCommand(row).andThen(new WaitCommand(0.5))
+        .andThen(getPathFollowCommand(initialPosition, crossingPosition, finalPosition));
   }
 
   /**
@@ -87,8 +95,8 @@ public class AutonGenerator {
                 AutonConstants.DRIVE_BACK_TIME,
                 new StraightDriveCommand(
                     driveBase,
-                    AutonConstants.DRIVE_BACK_SPEED, false)))
-            .andThen(new TurnToAngleCommand(driveBase, Rotation2d.fromDegrees(180), 1));
+                    AutonConstants.DRIVE_BACK_SPEED, false)));
+    // .andThen(new TurnToAngleCommand(driveBase, Rotation2d.fromDegrees(180), 1));
   }
 
   /**
@@ -118,12 +126,13 @@ public class AutonGenerator {
       crossingPosition = 1;
     }
     Pose2d crossingPose = FieldConstants.CROSSING_WAYPOINTS[crossingPosition];
+    System.out.println(FieldConstants.ENDING_AUTON_POSES[finalPosition]);
 
-    return new TargetCommand(driveBase, () -> crossingPose)
-        .andThen(new TurnToAngleCommand(driveBase, crossingPose.getRotation(),
-            PathConstants.TURN_ANGLE_DEADBAND))
-        .andThen(
-            new PathFollowCommand(driveBase, driveBase.generatePath(FieldConstants.ENDING_AUTON_POSES[finalPosition])));
+    return new SequentialCommandGroup(new TargetCommand(driveBase, () -> crossingPose),
+        // new TurnToAngleCommand(driveBase, crossingPose.getRotation(),
+        // PathConstants.TURN_ANGLE_DEADBAND),
+        new ConstructLaterCommand(() -> new PathFollowCommand(driveBase,
+            driveBase.generatePath(FieldConstants.ENDING_AUTON_POSES[finalPosition]))));
   }
 
   /**

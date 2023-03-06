@@ -71,7 +71,7 @@ public final class Constants {
     };
 
     public static final Pose2d[] TURNING_WAYPOINTS = new Pose2d[] {
-        new Pose2d(2.5, 0.77, new Rotation2d(0)), new Pose2d(2.70, 4.75, new Rotation2d(0))
+        new Pose2d(2.5, 0.77, new Rotation2d(0)), new Pose2d(2.70, 5, new Rotation2d(0))
     };
 
     public static final Pose2d[] CROSSING_WAYPOINTS = new Pose2d[] {
@@ -99,7 +99,7 @@ public final class Constants {
     public static final double OUTTAKE_RUNTIME = 1;
     public static final double BACK_OFF_SPEED = -0.1;
     public static final double DRIVE_BACK_SPEED = -0.3;
-    public static final double DRIVE_BACK_TIME = 0.1;
+    public static final double DRIVE_BACK_TIME = 0.5;
   }
 
   public static final class VisionConstants {
@@ -255,7 +255,7 @@ public final class Constants {
     public static final ArmPose MID_GOAL_SCORING = ArmPose.fromXY(25, 47); // before dropping
     public static final ArmPose LOW_GOAL_SCORING = ArmPose.fromXY(16.4, 10.2);
     public static final ArmPose HIGH_GOAL_SCORING = ArmPose.fromXY(42, 59);
-    public static final Translation2d CONE_SCORING_DROPDOWN = new Translation2d(0, -7);
+    public static final Translation2d CONE_SCORING_DROPDOWN = new Translation2d(0, -10);
     public static final Translation2d CONE_SCORING_BACKOFF = new Translation2d(-4, -7);
     public static final Translation2d CONE_SCORING_BACK_UP = new Translation2d(-4, 0);
     public static final ArmPose PLAYER_STATION_PICKUP = ArmPose.fromXY(10, 44.375);

@@ -86,6 +86,7 @@ public class TargetCommand extends DriveCommand {
     }
 
     if (waypoints.size() <= 0) {
+      CommandScheduler.getInstance().schedule(new PathFollowCommand(driveBase, driveBase.generatePath(targetPose)));
       return;
     }
 

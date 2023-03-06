@@ -208,6 +208,7 @@ public class RobotContainer {
   private final SendableChooser<Integer> initialPosition = new SendableChooser<>();
   private final SendableChooser<Integer> crossingPosition = new SendableChooser<>();
   private final SendableChooser<Integer> endingPosition = new SendableChooser<>();
+  private final SendableChooser<Integer> scoringPosition = new SendableChooser<>();
 
   /**
    * Use this method to run tasks that configure sendables and other smartdashboard items.
@@ -231,6 +232,10 @@ public class RobotContainer {
     endingPosition.addOption("Slightly Right", 1);
     endingPosition.addOption("Right Side", 0);
     endingPosition.setDefaultOption("Slightly Left", 2);
+    scoringPosition.addOption("High Goal", 0);
+    scoringPosition.addOption("Mid Goal", 1);
+    scoringPosition.addOption("Low Goal", 2);
+    scoringPosition.setDefaultOption("High Goal", 0);
     autonChooser.addOption("Path Follow Auton",
         autonGenerator.getPathFollowCommand(initialPosition.getSelected(), crossingPosition.getSelected(),
             endingPosition.getSelected()));
@@ -240,11 +245,15 @@ public class RobotContainer {
         autonGenerator.getScoreCommand(ArmPresets.MID_GOAL_SCORING));
     autonChooser.addOption("Place Piece on High Goal Auton",
         autonGenerator.getScoreCommand(ArmPresets.HIGH_GOAL_SCORING));
+    autonChooser.addOption("Score and Drive Auton",
+        autonGenerator.getScoreAndDriveCommand(scoringPosition.getSelected(), initialPosition.getSelected(),
+            crossingPosition.getSelected(), endingPosition.getSelected()));
     SmartDashboard.putData("Auton Chooser", autonChooser);
     SmartDashboard.putData("Initial Position Chooser", initialPosition);
     SmartDashboard.putData("Crossing Position Chooser", crossingPosition);
     SmartDashboard.putData("Ending Position Chooser", endingPosition);
     SmartDashboard.putData("Teleop Target Selector", targetSelector);
+    SmartDashboard.putData("Row Selector", scoringPosition);
   }
 
   /**
@@ -256,6 +265,10 @@ public class RobotContainer {
     return new SequentialCommandGroup(
         new ResetElevatorCommand(arm),
         autonChooser.getSelected());
+  }
+
+  public void initOdometry() {
+    driveBase.initOdometry(FieldConstants.SCORING_WAYPOINTS[initialPosition.getSelected()]);
   }
 
   /**
@@ -286,7 +299,10 @@ public class RobotContainer {
     driveBase.setNeutralMode(NeutralMode.Brake);
     arm.getPivot().setIdleMode(IdleMode.kBrake);
     arm.getElevator().setIdleMode(IdleMode.kBrake);
-    driveBase.initGyro();
+    intake.setDefaultCommand(new SpinIntakeCommand(intake, Constants.IntakeConstants.PASSIVE_INTAKE_VOLTAGE));
+    arm.setDefaultCommand(
+        new ArmTowardsPoseWithRetractionCommand(arm,
+            ArmPresets.STOWED));
     driveBase.setDefaultCommand(new StopDriveCommand(driveBase));
   }
 
