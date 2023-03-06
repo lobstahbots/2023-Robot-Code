@@ -38,6 +38,8 @@ import frc.robot.commands.intake.SpinIntakeCommand;
 import frc.robot.subsystems.Arm;
 import frc.robot.subsystems.DriveBase;
 import frc.robot.subsystems.Intake;
+import frc.robot.subsystems.arm.Elevator;
+import frc.robot.subsystems.arm.Pivot;
 import lobstah.stl.oi.LobstahGamepad;
 
 /**
@@ -53,9 +55,9 @@ public class RobotContainer {
       DriveMotorCANIDs.RIGHT_BACK);
 
   private final Arm arm = new Arm(
-      new Arm.Pivot(PivotConstants.LEFT_MOTOR_ID, PivotConstants.RIGHT_MOTOR_ID,
+      new Pivot(PivotConstants.LEFT_MOTOR_ID, PivotConstants.RIGHT_MOTOR_ID,
           PivotConstants.ENCODER_CHANNEL),
-      new Arm.Elevator(ElevatorConstants.ELEVATOR_MOTOR_ID, ElevatorConstants.ENCODER_CHANNEL_A,
+      new Elevator(ElevatorConstants.ELEVATOR_MOTOR_ID, ElevatorConstants.ENCODER_CHANNEL_A,
           ElevatorConstants.ENCODER_CHANNEL_B, ElevatorConstants.LIMIT_SWITCH_CHANNEL));
   private final Intake intake =
       new Intake(Constants.IntakeConstants.LEFT_MOTOR_ID, Constants.IntakeConstants.RIGHT_MOTOR_ID);

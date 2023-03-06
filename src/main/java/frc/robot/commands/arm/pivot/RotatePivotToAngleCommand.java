@@ -10,9 +10,10 @@ import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.Constants.ArmConstants.PivotConstants;
 import frc.robot.subsystems.Arm;
+import frc.robot.subsystems.arm.Pivot;
 
 public class RotatePivotToAngleCommand extends CommandBase {
-  private final Arm.Pivot pivot;
+  private final Pivot pivot;
   private DoubleSupplier angle;
 
   /**

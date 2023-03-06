@@ -8,10 +8,11 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.Constants.ArmConstants.ElevatorConstants;
 import frc.robot.subsystems.Arm;
+import frc.robot.subsystems.arm.Elevator;
 
 public class RetractElevatorCommand extends CommandBase {
   protected boolean needsToExtend;
-  protected final Arm.Elevator elevator;
+  protected final Elevator elevator;
 
   /**
    * Creates a command that fully retracts the {@link Arm.Elevator} until the limit switch is flipped. If the limit

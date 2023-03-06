@@ -8,10 +8,11 @@ import java.util.function.DoubleSupplier;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.Constants.ArmConstants.PivotConstants;
 import frc.robot.subsystems.Arm;
+import frc.robot.subsystems.arm.Pivot;
 
 public class RotatePivotCommand extends CommandBase {
 
-  public final Arm.Pivot pivot;
+  public final Pivot pivot;
   public final DoubleSupplier speed;
 
   /**

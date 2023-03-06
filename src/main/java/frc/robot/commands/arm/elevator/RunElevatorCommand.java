@@ -9,10 +9,11 @@ import java.util.function.DoubleSupplier;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.Constants.ArmConstants.ElevatorConstants;
 import frc.robot.subsystems.Arm;
+import frc.robot.subsystems.arm.Elevator;
 
 public class RunElevatorCommand extends CommandBase {
 
-  public final Arm.Elevator elevator;
+  public final Elevator elevator;
   public final DoubleSupplier speed;
 
 
