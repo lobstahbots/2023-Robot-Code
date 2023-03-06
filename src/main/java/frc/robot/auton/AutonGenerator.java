@@ -14,6 +14,7 @@ import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.ParallelRaceGroup;
+import edu.wpi.first.wpilibj2.command.ProxyCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
 import frc.robot.ArmPose;
@@ -67,30 +68,32 @@ public class AutonGenerator {
    */
   public Command getScoreCommand(int row) {
     if (row == 0) {
-      return getScoreCommand(ArmPresets.HIGH_GOAL_SCORING);
+      return getScoreCommand(ArmPresets.HIGH_GOAL_SCORING, true);
     } else if (row == 1) {
-      return getScoreCommand(ArmPresets.MID_GOAL_SCORING);
+      return getScoreCommand(ArmPresets.MID_GOAL_SCORING, true);
     } else if (row == 2) {
-      return getScoreCommand(ArmPresets.LOW_GOAL_SCORING);
+      return getScoreCommand(ArmPresets.LOW_GOAL_SCORING, false);
     } else {
       return new InstantCommand();
     }
   }
 
-  public Command getScoreCommand(ArmPose position) {
+  public Command getScoreCommand(ArmPose position, boolean placeDown) {
     return new ArmToPoseWithRetractionCommand(arm, position,
         AutonConstants.AUTON_SCORING_TOLERANCE)
             .andThen(new ArmToPoseCommand(arm,
                 position.translateBy(ArmPresets.CONE_SCORING_DROPDOWN),
-                AutonConstants.AUTON_SCORING_TOLERANCE))
-            .andThen(new ParallelRaceGroup(new SpinIntakeCommand(intake, IntakeConstants.OUTTAKE_VOLTAGE),
-                new TimedCommand(AutonConstants.OUTTAKE_RUNTIME,
-                    new ArmToPoseCommand(arm,
-                        position.translateBy(ArmPresets.CONE_SCORING_BACKOFF),
-                        AutonConstants.AUTON_SCORING_TOLERANCE))))
+                AutonConstants.AUTON_SCORING_TOLERANCE).unless(() -> !placeDown))
             .andThen(
-                new ArmToPoseWithRetractionCommand(arm, ArmPresets.STOWED,
-                    AutonConstants.AUTON_SCORING_TOLERANCE))
+                new ParallelRaceGroup(new SpinIntakeCommand(intake, IntakeConstants.OUTTAKE_VOLTAGE).asProxy(),
+                    new TimedCommand(AutonConstants.OUTTAKE_RUNTIME,
+                        new ArmToPoseCommand(arm,
+                            position.translateBy(ArmPresets.CONE_SCORING_BACKOFF),
+                            AutonConstants.AUTON_SCORING_TOLERANCE))))
+            .andThen(
+                new ParallelRaceGroup(new SpinIntakeCommand(intake, IntakeConstants.OUTTAKE_VOLTAGE).asProxy(),
+                    new ArmToPoseWithRetractionCommand(arm, ArmPresets.STOWED,
+                        AutonConstants.AUTON_SCORING_TOLERANCE)))
             .andThen(new TimedCommand(
                 AutonConstants.DRIVE_BACK_TIME,
                 new StraightDriveCommand(

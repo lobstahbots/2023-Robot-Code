@@ -242,9 +242,9 @@ public class RobotContainer {
     autonChooser.addOption("Simple Auton", autonGenerator.getSimpleAutonCommand());
     autonChooser.addOption("Do Nothing Auton", new StopDriveCommand(driveBase));
     autonChooser.addOption("Place Piece on Mid Goal Auton",
-        autonGenerator.getScoreCommand(ArmPresets.MID_GOAL_SCORING));
+        autonGenerator.getScoreCommand(ArmPresets.MID_GOAL_SCORING, true));
     autonChooser.addOption("Place Piece on High Goal Auton",
-        autonGenerator.getScoreCommand(ArmPresets.HIGH_GOAL_SCORING));
+        autonGenerator.getScoreCommand(ArmPresets.HIGH_GOAL_SCORING, true));
     autonChooser.addOption("Score and Drive Auton",
         autonGenerator.getScoreAndDriveCommand(scoringPosition.getSelected(), initialPosition.getSelected(),
             crossingPosition.getSelected(), endingPosition.getSelected()));

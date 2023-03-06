@@ -253,7 +253,7 @@ public final class Constants {
     public static final ArmPose STOWED = ArmPose.fromAngleExtension(Rotation2d.fromDegrees(35), -0.1);
     public static final ArmPose GROUND_PICKUP = ArmPose.fromXY(16.4, 10.2);
     public static final ArmPose MID_GOAL_SCORING = ArmPose.fromXY(25, 47); // before dropping
-    public static final ArmPose LOW_GOAL_SCORING = ArmPose.fromXY(16.4, 10.2);
+    public static final ArmPose LOW_GOAL_SCORING = ArmPose.fromXY(15, 14);
     public static final ArmPose HIGH_GOAL_SCORING = ArmPose.fromXY(42, 59);
     public static final Translation2d CONE_SCORING_DROPDOWN = new Translation2d(0, -10);
     public static final Translation2d CONE_SCORING_BACKOFF = new Translation2d(-4, -7);
