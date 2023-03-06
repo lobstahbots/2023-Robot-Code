@@ -52,6 +52,11 @@ public class AutonGenerator {
     this.intake = intake;
   }
 
+  /**
+   * Creates and returns a simple autonomous routine to score a preload based on row number.
+   * 
+   * @param row The goal row. 0 -> high goal, 1 -> mid goal, 2 -> low goal
+   */
   public Command getScoreCommand(int row) {
     if (row == 0) {
       return getScoreCommand(ArmPresets.HIGH_GOAL_SCORING);

@@ -48,23 +48,26 @@ public final class Constants {
    * Stores constants related to this year's playing field.
    */
   public static final class FieldConstants {
+    public static final double SCORING_WAYPOINTS_X = 1.6;
+    public static final double TRAVELING_WAYPOINTS_X = 2.5;
+
     public static final Pose2d[] SCORING_WAYPOINTS = new Pose2d[] {
-        new Pose2d(1.57, 0.5, new Rotation2d(Math.toRadians(180))),
-        new Pose2d(1.57, 1, new Rotation2d(Math.toRadians(180))),
-        new Pose2d(1.57, 1.6, new Rotation2d(Math.toRadians(180))),
-        new Pose2d(1.57, 2.2, new Rotation2d(Math.toRadians(180))),
-        new Pose2d(1.57, 2.7, new Rotation2d(Math.toRadians(180))),
-        new Pose2d(1.57, 3.3, new Rotation2d(Math.toRadians(180))),
-        new Pose2d(1.57, 3.85, new Rotation2d(Math.toRadians(180))),
-        new Pose2d(1.57, 4.4, new Rotation2d(Math.toRadians(180))),
-        new Pose2d(1.57, 4.5, new Rotation2d(Math.toRadians(180)))
+        new Pose2d(SCORING_WAYPOINTS_X, 0.5, Rotation2d.fromDegrees(180)),
+        new Pose2d(SCORING_WAYPOINTS_X, 1, Rotation2d.fromDegrees(180)),
+        new Pose2d(SCORING_WAYPOINTS_X, 1.6, Rotation2d.fromDegrees(180)),
+        new Pose2d(SCORING_WAYPOINTS_X, 2.2, Rotation2d.fromDegrees(180)),
+        new Pose2d(SCORING_WAYPOINTS_X, 2.7, Rotation2d.fromDegrees(180)),
+        new Pose2d(SCORING_WAYPOINTS_X, 3.3, Rotation2d.fromDegrees(180)),
+        new Pose2d(SCORING_WAYPOINTS_X, 3.85, Rotation2d.fromDegrees(180)),
+        new Pose2d(SCORING_WAYPOINTS_X, 4.4, Rotation2d.fromDegrees(180)),
+        new Pose2d(SCORING_WAYPOINTS_X, 4.5, Rotation2d.fromDegrees(180))
     };
     public static final Pose2d[] TRAVELING_WAYPOINTS = new Pose2d[] {
-        new Pose2d(2.5, 0.5, new Rotation2d(0)), new Pose2d(2.5, 1, new Rotation2d(0)),
-        new Pose2d(2.5, 1.6, new Rotation2d(0)), new Pose2d(2.5, 2.2, new Rotation2d(0)),
-        new Pose2d(2.5, 2.7, new Rotation2d(0)), new Pose2d(2.5, 3.3, new Rotation2d(0)),
-        new Pose2d(2.5, 3.85, new Rotation2d(0)), new Pose2d(2.5, 4.4, new Rotation2d(0)),
-        new Pose2d(2.5, 4.5, new Rotation2d(0))
+        new Pose2d(TRAVELING_WAYPOINTS_X, 0.5, new Rotation2d(0)), new Pose2d(2.5, 1, new Rotation2d(0)),
+        new Pose2d(TRAVELING_WAYPOINTS_X, 1.6, new Rotation2d(0)), new Pose2d(2.5, 2.2, new Rotation2d(0)),
+        new Pose2d(TRAVELING_WAYPOINTS_X, 2.7, new Rotation2d(0)), new Pose2d(2.5, 3.3, new Rotation2d(0)),
+        new Pose2d(TRAVELING_WAYPOINTS_X, 3.85, new Rotation2d(0)), new Pose2d(2.5, 4.4, new Rotation2d(0)),
+        new Pose2d(TRAVELING_WAYPOINTS_X, 4.5, new Rotation2d(0))
     };
 
     public static final Pose2d[] TURNING_WAYPOINTS = new Pose2d[] {
@@ -83,6 +86,7 @@ public final class Constants {
     public static final double MAX_AUTO_DISTANCE_METERS = 10;
     public static final double SCORING_ZONE_DEADBAND = 0.5;
     public static final double SCORING_ZONE_X = 3.5;
+    public static final double FIELD_LENGTH = 16.5;
   }
 
   /**
@@ -122,9 +126,9 @@ public final class Constants {
       public static final boolean SQUARED_INPUTS = true;
       public static final int LEFT_AXIS = 1;
       public static final int RIGHT_AXIS = 5;
-      public static final int TARGET_BTN_INDEX = 0;
       public static final int SLOWDOWN_BTN_INDEX = 2;
       public static final double SLOWDOWN_PERCENT = 0.5;
+      public static final int TARGET_BTN_INDEX = 1;
     }
 
     public static final class OperatorConstants {

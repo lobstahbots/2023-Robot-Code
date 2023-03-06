@@ -32,7 +32,7 @@ public class PathFollowCommand extends PPRamseteCommand {
         new PIDController(PathConstants.kP, PathConstants.kI, PathConstants.KD),
         new PIDController(PathConstants.kP, PathConstants.kI, PathConstants.KD),
         driveBase::tankDriveVoltage,
-        true,
+        false,
         driveBase);
   }
 }

@@ -3,6 +3,8 @@ package frc.robot.subsystems;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.function.Supplier;
+
 import com.ctre.phoenix.motorcontrol.FeedbackDevice;
 import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.ctre.phoenix.motorcontrol.StatorCurrentLimitConfiguration;
@@ -19,12 +21,16 @@ import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Transform2d;
 import edu.wpi.first.math.geometry.Translation2d;
+import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.estimator.DifferentialDrivePoseEstimator;
 import edu.wpi.first.math.kinematics.DifferentialDriveWheelSpeeds;
+import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.motorcontrol.MotorControllerGroup;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.DriveConstants;
+import frc.robot.Constants.FieldConstants;
 import frc.robot.Constants.PathConstants;
 import lobstah.stl.math.LobstahMath;
 import lobstah.stl.motorcontrol.LobstahDifferentialDrive;
@@ -117,7 +123,7 @@ public class DriveBase extends SubsystemBase {
 
     resetEncoders();
     poseEstimator =
-        new DifferentialDrivePoseEstimator(DriveConstants.KINEMATICS, getGyroAngle(), 0, 0, new Pose2d());
+        new DifferentialDrivePoseEstimator(DriveConstants.KINEMATICS, getGyroAngle180(), 0, 0, new Pose2d());
 
     this.photonVision = new PhotonVision();
   }
@@ -158,7 +164,7 @@ public class DriveBase extends SubsystemBase {
    * @return The pose.
    */
   public Pose2d getPose() {
-    poseEstimator.update(getGyroAngle(), getLeftEncoderDistanceMeters(), getRightEncoderDistanceMeters());
+    poseEstimator.update(getGyroAngle180(), getLeftEncoderDistanceMeters(), getRightEncoderDistanceMeters());
     try {
       EstimatedRobotPose estimatedVisionPose = this.photonVision.getCurrentPose();
       SmartDashboard.putString("PhotonVision Pose", estimatedVisionPose.estimatedPose.toString());
@@ -168,6 +174,34 @@ public class DriveBase extends SubsystemBase {
 
     }
     return poseEstimator.getEstimatedPosition();
+  }
+
+  public Pose2d flipWaypointBasedOnAlliance(Pose2d waypoint, boolean flipRotation) {
+    if (DriverStation.getAlliance() == Alliance.Red) {
+      if (flipRotation) {
+        return new Pose2d(16.5 - waypoint.getX(), waypoint.getY(),
+            waypoint.getRotation().plus(Rotation2d.fromDegrees(180)));
+      } else {
+        return new Pose2d(16.5 - waypoint.getX(), waypoint.getY(),
+            waypoint.getRotation());
+      }
+    }
+    return waypoint;
+  }
+
+  public Pose2d flipWaypointBasedOnAlliance(Supplier<Pose2d> waypointSupplier, boolean flipRotation) {
+    Pose2d waypoint = waypointSupplier.get();
+    if (DriverStation.getAlliance() == Alliance.Red) {
+      if (flipRotation) {
+        return new Pose2d(16.5 - waypoint.getX(), waypoint.getY(),
+            Rotation2d.fromDegrees(MathUtil
+                .inputModulus(waypoint.getRotation().plus(Rotation2d.fromDegrees(180)).getDegrees(), -180, 180)));
+      } else {
+        return new Pose2d(16.5 - waypoint.getX(), waypoint.getY(),
+            waypoint.getRotation());
+      }
+    }
+    return waypoint;
   }
 
   /**
@@ -189,7 +223,8 @@ public class DriveBase extends SubsystemBase {
    */
   public void resetOdometry(Translation2d translation2d, Rotation2d rotation) {
     zeroGyro();
-    poseEstimator.resetPosition(getGyroAngle(), 0, 0, new Pose2d(translation2d, rotation));
+    setGyroOffset(rotation);
+    poseEstimator.resetPosition(getGyroAngle180(), 0, 0, new Pose2d(translation2d, rotation));
     resetEncoders();
   }
 
@@ -229,6 +264,19 @@ public class DriveBase extends SubsystemBase {
     gyro.reset();
   }
 
+  public void initGyro() {
+    try {
+      EstimatedRobotPose estimatedVisionPose = this.photonVision.getCurrentPose();
+      SmartDashboard.putString("PhotonVision Pose", estimatedVisionPose.estimatedPose.toString());
+      zeroGyro();
+      setGyroOffset(estimatedVisionPose.estimatedPose.getRotation());
+    } catch (NullPointerException npe) {
+      zeroGyro();
+      setGyroOffset(flipWaypointBasedOnAlliance(FieldConstants.SCORING_WAYPOINTS[0], true)
+          .getRotation());
+    }
+  }
+
   /**
    * Controls the left and right sides of the drive directly with voltages.
    *
@@ -249,10 +297,19 @@ public class DriveBase extends SubsystemBase {
   }
 
   /**
+   * Returns the robot's angle as reported by the gyro, clamped between -180 and 180 degrees.
+   *
+   * @return the robot's angle from -180 to 180 as a Rotation2d.
+   */
+  public Rotation2d getGyroAngle180() {
+    return Rotation2d.fromRadians(-MathUtil.angleModulus(getGyroAngle().getRadians()));
+  }
+
+  /**
    * Set an amount with which to offset the value returned by {@link #getGyroAngle()}
    */
   public void setGyroOffset(Rotation2d offset) {
-    gyro.setAngleAdjustment(-offset.getDegrees());
+    gyro.setAngleAdjustment(offset.getDegrees());
   }
 
   /**
@@ -261,7 +318,7 @@ public class DriveBase extends SubsystemBase {
    * @see {@link #setGyroOffset()}
    */
   public Rotation2d getGyroOffset() {
-    return Rotation2d.fromDegrees(-gyro.getAngleAdjustment());
+    return Rotation2d.fromDegrees(gyro.getAngleAdjustment());
   }
 
   /**
@@ -281,7 +338,7 @@ public class DriveBase extends SubsystemBase {
   }
 
   /**
-   * Generates a trajectory through a list of provided waypoints from the robot's position to the given target Pose.
+   * Generates a trajectory through a list of provided waypoints from the robot's position.
    * 
    * @return A PathPlannerTrajectory to follow to the target position.
    */
@@ -295,6 +352,11 @@ public class DriveBase extends SubsystemBase {
         .generatePath(new PathConstraints(PathConstants.MAX_DRIVE_SPEED, PathConstants.MAX_ACCELERATION), pathPoints);
   }
 
+  /**
+   * Generates a trajectory from the robot's position to the given target Pose.
+   * 
+   * @return A PathPlannerTrajectory to follow to the target position.
+   */
   public PathPlannerTrajectory generatePath(Pose2d finalPose) {
     ArrayList<PathPoint> pathPoints = new ArrayList<>();
     pathPoints.add(new PathPoint(this.getPose().getTranslation(), this.getPose().getRotation()));
@@ -338,7 +400,7 @@ public class DriveBase extends SubsystemBase {
    * Shuffleboard.
    */
   public void periodic() {
-    poseEstimator.update(getGyroAngle(), getLeftEncoderDistanceMeters(), getRightEncoderDistanceMeters());
+    poseEstimator.update(getGyroAngle180(), getLeftEncoderDistanceMeters(), getRightEncoderDistanceMeters());
     try {
       EstimatedRobotPose estimatedVisionPose = this.photonVision.getCurrentPose();
       SmartDashboard.putString("PhotonVision Pose", estimatedVisionPose.estimatedPose.toString());
@@ -348,7 +410,8 @@ public class DriveBase extends SubsystemBase {
 
     }
 
-    SmartDashboard.putNumber("Gyro", this.getGyroAngle().getDegrees());
+    SmartDashboard.putNumber("Gyro", this.getGyroAngle180().getDegrees());
+    SmartDashboard.putNumber("Gyro 180", this.getGyroAngle180().getDegrees());
     SmartDashboard.putString("Pose", this.getPose().toString());
     SmartDashboard.putNumber("Number of Tags Visible In Front", this.photonVision.getFrontTargets().size());
     SmartDashboard.putNumber("Number of Tags Visible In Rear", this.photonVision.getRearTargets().size());

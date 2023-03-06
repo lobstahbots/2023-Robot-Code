@@ -5,13 +5,14 @@
 package frc.robot;
 
 import com.ctre.phoenix.motorcontrol.NeutralMode;
-import com.pathplanner.lib.PathConstraints;
-import com.pathplanner.lib.PathPlanner;
 import com.pathplanner.lib.server.PathPlannerServer;
 import com.revrobotics.CANSparkMax.IdleMode;
 import edu.wpi.first.math.MathUtil;
+import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.networktables.NetworkTablesJNI;
+import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -27,12 +28,10 @@ import frc.robot.Constants.DriveConstants.DriveMotorCANIDs;
 import frc.robot.Constants.FieldConstants;
 import frc.robot.Constants.OIConstants.DriverConstants;
 import frc.robot.Constants.OIConstants.OperatorConstants;
-import frc.robot.Constants.PathConstants;
 import frc.robot.auton.AutonGenerator;
 import frc.robot.commands.arm.ArmTowardsPoseCommand;
 import frc.robot.commands.arm.ArmTowardsPoseWithRetractionCommand;
 import frc.robot.commands.arm.elevator.ResetElevatorCommand;
-import frc.robot.commands.drive.PathFollowCommand;
 import frc.robot.commands.drive.StopDriveCommand;
 import frc.robot.commands.drive.TankDriveCommand;
 import frc.robot.commands.drive.TargetCommand;
@@ -126,7 +125,11 @@ public class RobotContainer {
    * @return Whether the robot is within the scoring zone.
    */
   public boolean canDriveToTarget() {
-    return driveBase.getPose().getX() <= FieldConstants.SCORING_ZONE_X;
+    if (DriverStation.getAlliance() == Alliance.Red) {
+      return driveBase.getPose().getX() >= FieldConstants.FIELD_LENGTH - FieldConstants.SCORING_ZONE_X;
+    } else {
+      return driveBase.getPose().getX() <= FieldConstants.SCORING_ZONE_X;
+    }
   }
 
   /**
@@ -186,11 +189,19 @@ public class RobotContainer {
         DriverConstants.SQUARED_INPUTS));
 
     targetButton.whileTrue(
-        new TargetCommand(driveBase, () -> FieldConstants.SCORING_WAYPOINTS[targetSelector.getColumn()])
-            .andThen(autonGenerator.getScoreCommand(targetSelector.getRow())) // Path to node, place piece
-            .andThen(new InstantCommand(() -> { // Unselect everything
-              targetSelector.resetSelection(targetSelector.getMode()); // Reset Maxwell selections, keep mode the same.
-            })));
+        new TargetCommand(driveBase,
+            () -> driveBase.flipWaypointBasedOnAlliance(() -> getScoreColumn(),
+                true))
+                    .andThen(autonGenerator.getScoreCommand(targetSelector.getRow())) // Path to node, place piece
+                    .andThen(new InstantCommand(() -> { // Unselect everything
+                      targetSelector.resetSelection(targetSelector.getMode()); // Reset Maxwell selections, keep mode
+                      // the
+                      // same.
+                    })));
+  }
+
+  public Pose2d getScoreColumn() {
+    return FieldConstants.SCORING_WAYPOINTS[targetSelector.getColumn()];
   }
 
   private final SendableChooser<Command> autonChooser = new SendableChooser<>();
@@ -225,8 +236,6 @@ public class RobotContainer {
             endingPosition.getSelected()));
     autonChooser.addOption("Simple Auton", autonGenerator.getSimpleAutonCommand());
     autonChooser.addOption("Do Nothing Auton", new StopDriveCommand(driveBase));
-    autonChooser.addOption("Test Path Command", new PathFollowCommand(driveBase, PathPlanner.loadPath("New Path",
-        new PathConstraints(PathConstants.MAX_DRIVE_SPEED, PathConstants.MAX_ACCELERATION))));
     autonChooser.addOption("Place Piece on Mid Goal Auton",
         autonGenerator.getScoreCommand(ArmPresets.MID_GOAL_SCORING));
     autonChooser.addOption("Place Piece on High Goal Auton",
@@ -275,10 +284,9 @@ public class RobotContainer {
    */
   public void setAutonDefaultCommands() {
     driveBase.setNeutralMode(NeutralMode.Brake);
-    driveBase.setGyroOffset(
-        FieldConstants.SCORING_WAYPOINTS[initialPosition.getSelected()].getRotation());
     arm.getPivot().setIdleMode(IdleMode.kBrake);
     arm.getElevator().setIdleMode(IdleMode.kBrake);
+    driveBase.initGyro();
     driveBase.setDefaultCommand(new StopDriveCommand(driveBase));
   }
 
