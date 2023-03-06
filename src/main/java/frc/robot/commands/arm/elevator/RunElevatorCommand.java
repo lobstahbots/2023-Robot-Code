@@ -2,13 +2,14 @@
 // Open Source Software; you can modify and/or share it under the terms of
 // the WPILib BSD license file in the root directory of this project.
 
-package frc.robot.commands.scoring.elevator;
+package frc.robot.commands.arm.elevator;
 
 import java.util.function.DoubleSupplier;
 
 import edu.wpi.first.wpilibj2.command.CommandBase;
-import frc.robot.Constants.ScoringSystemConstants.ElevatorConstants;
-import frc.robot.subsystems.Elevator;
+import frc.robot.Constants.ArmConstants.ElevatorConstants;
+import frc.robot.subsystems.Arm;
+import frc.robot.subsystems.arm.Elevator;
 
 public class RunElevatorCommand extends CommandBase {
 
@@ -17,25 +18,25 @@ public class RunElevatorCommand extends CommandBase {
 
 
   /**
-   * Creates a command that extends/retracts the {@link Elevator} at the speed given by the supplier.
+   * Creates a command that extends/retracts the {@link Arm.Elevator} at the speed given by the supplier.
    *
-   * @param elevator The {@link Elevator} to control
+   * @param arm The {@link Arm} to control
    * @param speed Supplier for the speed at which to extend/retract the elevator
    */
-  public RunElevatorCommand(Elevator elevator, DoubleSupplier speed) {
-    this.elevator = elevator;
+  public RunElevatorCommand(Arm arm, DoubleSupplier speed) {
+    this.elevator = arm.getElevator();
     this.speed = speed;
-    addRequirements(this.elevator);
+    addRequirements(arm);
   }
 
   /**
-   * Creates a command that extends/retracts the {@link Elevator} at a given speed.
+   * Creates a command that extends/retracts the {@link Arm.Elevator} at a given speed.
    *
-   * @param elevator The {@link Elevator} to control
+   * @param arm The {@link Arm} to control
    * @param speed The speed at which to extend/retract the elevator
    */
-  public RunElevatorCommand(Elevator elevator, double speed) {
-    this(elevator, () -> speed);
+  public RunElevatorCommand(Arm arm, double speed) {
+    this(arm, () -> speed);
   }
 
   @Override

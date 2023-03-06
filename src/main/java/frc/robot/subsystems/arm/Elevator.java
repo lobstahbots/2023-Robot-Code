@@ -1,8 +1,5 @@
-// Copyright (c) FIRST and other WPILib contributors.
-// Open Source Software; you can modify and/or share it under the terms of
-// the WPILib BSD license file in the root directory of this project.
 
-package frc.robot.subsystems;
+package frc.robot.subsystems.arm;
 
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.CANSparkMax.IdleMode;
@@ -10,14 +7,13 @@ import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.Encoder;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import frc.robot.Constants.ScoringSystemConstants.ElevatorConstants;
+import frc.robot.Constants.ArmConstants.ElevatorConstants;
+
 
 /**
- * A subsystem that controls the extending elevator on the robot.
+ * A sub-subsystem that controls the extending elevator on the robot.
  */
-public class Elevator extends SubsystemBase {
+public class Elevator {
   private final CANSparkMax elevatorMotor;
   private final DigitalInput limitSwitch;
   private final PIDController pidController = new PIDController(ElevatorConstants.P, 0, 0);
@@ -139,10 +135,5 @@ public class Elevator extends SubsystemBase {
    */
   public double getLength() {
     return ElevatorConstants.LENGTH_FULLY_RETRACTED + getExtension();
-  }
-
-  @Override
-  public void periodic() {
-    SmartDashboard.putNumber("Elevator Extension", getExtension());
   }
 }
