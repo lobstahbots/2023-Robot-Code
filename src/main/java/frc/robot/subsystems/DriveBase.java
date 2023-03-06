@@ -3,6 +3,7 @@ package frc.robot.subsystems;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.function.Supplier;
 
 import com.ctre.phoenix.motorcontrol.FeedbackDevice;
 import com.ctre.phoenix.motorcontrol.NeutralMode;
@@ -29,6 +30,7 @@ import edu.wpi.first.wpilibj.motorcontrol.MotorControllerGroup;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.DriveConstants;
+import frc.robot.Constants.FieldConstants;
 import frc.robot.Constants.PathConstants;
 import lobstah.stl.math.LobstahMath;
 import lobstah.stl.motorcontrol.LobstahDifferentialDrive;
@@ -187,6 +189,21 @@ public class DriveBase extends SubsystemBase {
     return waypoint;
   }
 
+  public Pose2d flipWaypointBasedOnAlliance(Supplier<Pose2d> waypointSupplier, boolean flipRotation) {
+    Pose2d waypoint = waypointSupplier.get();
+    if (DriverStation.getAlliance() == Alliance.Red) {
+      if (flipRotation) {
+        return new Pose2d(16.5 - waypoint.getX(), waypoint.getY(),
+            Rotation2d.fromDegrees(MathUtil
+                .inputModulus(waypoint.getRotation().plus(Rotation2d.fromDegrees(180)).getDegrees(), -180, 180)));
+      } else {
+        return new Pose2d(16.5 - waypoint.getX(), waypoint.getY(),
+            waypoint.getRotation());
+      }
+    }
+    return waypoint;
+  }
+
   /**
    * Returns the current wheel speeds of the robot.
    *
@@ -247,6 +264,19 @@ public class DriveBase extends SubsystemBase {
     gyro.reset();
   }
 
+  public void initGyro() {
+    try {
+      EstimatedRobotPose estimatedVisionPose = this.photonVision.getCurrentPose();
+      SmartDashboard.putString("PhotonVision Pose", estimatedVisionPose.estimatedPose.toString());
+      zeroGyro();
+      setGyroOffset(estimatedVisionPose.estimatedPose.getRotation());
+    } catch (NullPointerException npe) {
+      zeroGyro();
+      setGyroOffset(flipWaypointBasedOnAlliance(FieldConstants.SCORING_WAYPOINTS[0], true)
+          .getRotation());
+    }
+  }
+
   /**
    * Controls the left and right sides of the drive directly with voltages.
    *
@@ -272,14 +302,14 @@ public class DriveBase extends SubsystemBase {
    * @return the robot's angle from -180 to 180 as a Rotation2d.
    */
   public Rotation2d getGyroAngle180() {
-    return Rotation2d.fromDegrees(-MathUtil.inputModulus(getGyroAngle().getDegrees(), -180, 180));
+    return Rotation2d.fromRadians(-MathUtil.angleModulus(getGyroAngle().getRadians()));
   }
 
   /**
    * Set an amount with which to offset the value returned by {@link #getGyroAngle()}
    */
   public void setGyroOffset(Rotation2d offset) {
-    gyro.setAngleAdjustment(-offset.getDegrees());
+    gyro.setAngleAdjustment(offset.getDegrees());
   }
 
   /**
@@ -288,7 +318,7 @@ public class DriveBase extends SubsystemBase {
    * @see {@link #setGyroOffset()}
    */
   public Rotation2d getGyroOffset() {
-    return Rotation2d.fromDegrees(-gyro.getAngleAdjustment());
+    return Rotation2d.fromDegrees(gyro.getAngleAdjustment());
   }
 
   /**
@@ -381,6 +411,7 @@ public class DriveBase extends SubsystemBase {
     }
 
     SmartDashboard.putNumber("Gyro", this.getGyroAngle180().getDegrees());
+    SmartDashboard.putNumber("Gyro 180", this.getGyroAngle180().getDegrees());
     SmartDashboard.putString("Pose", this.getPose().toString());
     SmartDashboard.putNumber("Number of Tags Visible In Front", this.photonVision.getFrontTargets().size());
     SmartDashboard.putNumber("Number of Tags Visible In Rear", this.photonVision.getRearTargets().size());

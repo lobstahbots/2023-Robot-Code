@@ -10,6 +10,7 @@ import com.pathplanner.lib.PathPlanner;
 import com.pathplanner.lib.server.PathPlannerServer;
 import com.revrobotics.CANSparkMax.IdleMode;
 import edu.wpi.first.math.MathUtil;
+import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.networktables.NetworkTablesJNI;
@@ -37,6 +38,7 @@ import frc.robot.commands.drive.PathFollowCommand;
 import frc.robot.commands.drive.StopDriveCommand;
 import frc.robot.commands.drive.TankDriveCommand;
 import frc.robot.commands.drive.TargetCommand;
+import frc.robot.commands.drive.TurnToAngleCommand;
 import frc.robot.commands.scoring.ScoringSystemTowardsPositionCommand;
 import frc.robot.commands.scoring.ScoringSystemTowardsPositionWithRetractionCommand;
 import frc.robot.commands.scoring.elevator.ResetElevatorCommand;
@@ -45,6 +47,7 @@ import frc.robot.subsystems.Arm;
 import frc.robot.subsystems.DriveBase;
 import frc.robot.subsystems.Elevator;
 import frc.robot.subsystems.Intake;
+import lobstah.stl.command.ConstructLaterCommand;
 import lobstah.stl.oi.LobstahGamepad;
 
 /**
@@ -194,11 +197,19 @@ public class RobotContainer {
         DriverConstants.SQUARED_INPUTS));
 
     targetButton.whileTrue(
-        new TargetCommand(driveBase, () -> FieldConstants.SCORING_WAYPOINTS[targetSelector.getColumn()])
-            .andThen(autonGenerator.getScoreCommand(targetSelector.getRow())) // Path to node, place piece
-            .andThen(new InstantCommand(() -> { // Unselect everything
-              targetSelector.resetSelection(targetSelector.getMode()); // Reset Maxwell selections, keep mode the same.
-            })));
+        new TargetCommand(driveBase,
+            () -> driveBase.flipWaypointBasedOnAlliance(() -> getScoreColumn(),
+                true))
+                    .andThen(autonGenerator.getScoreCommand(targetSelector.getRow())) // Path to node, place piece
+                    .andThen(new InstantCommand(() -> { // Unselect everything
+                      targetSelector.resetSelection(targetSelector.getMode()); // Reset Maxwell selections, keep mode
+                      // the
+                      // same.
+                    })));
+  }
+
+  public Pose2d getScoreColumn() {
+    return FieldConstants.SCORING_WAYPOINTS[targetSelector.getColumn()];
   }
 
   private final SendableChooser<Command> autonChooser = new SendableChooser<>();
@@ -233,8 +244,6 @@ public class RobotContainer {
             endingPosition.getSelected()));
     autonChooser.addOption("Simple Auton", autonGenerator.getSimpleAutonCommand());
     autonChooser.addOption("Do Nothing Auton", new StopDriveCommand(driveBase));
-    autonChooser.addOption("Test Path Command", new PathFollowCommand(driveBase, PathPlanner.loadPath("New Path",
-        new PathConstraints(PathConstants.MAX_DRIVE_SPEED, PathConstants.MAX_ACCELERATION))));
     autonChooser.addOption("Place Piece on Mid Goal Auton",
         autonGenerator.getScoreCommand(ScoringPositionConstants.MID_GOAL_SCORING));
     autonChooser.addOption("Place Piece on High Goal Auton",
@@ -283,9 +292,7 @@ public class RobotContainer {
    */
   public void setAutonDefaultCommands() {
     driveBase.setNeutralMode(NeutralMode.Brake);
-    driveBase.setGyroOffset(
-        driveBase.flipWaypointBasedOnAlliance(FieldConstants.SCORING_WAYPOINTS[initialPosition.getSelected()], true)
-            .getRotation());
+    driveBase.initGyro();
     arm.setIdleMode(IdleMode.kBrake);
     elevator.setIdleMode(IdleMode.kBrake);
     driveBase.setDefaultCommand(new StopDriveCommand(driveBase));

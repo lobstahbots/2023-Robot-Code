@@ -49,8 +49,8 @@ public class TargetCommand extends DriveCommand {
      * different depending on direction the robot is traveling.
      */
     ArrayList<Pose2d> waypoints = new ArrayList<>();
+    int index = 0;
     if (driveBase.getDistanceToPose(targetPose).getY() < 0) {
-      int index = 0;
       while (driveBase.getDistanceToPose(FieldConstants.TRAVELING_WAYPOINTS[index]).getY() > 0) {
         if (index >= FieldConstants.TRAVELING_WAYPOINTS.length - 1) {
           index = FieldConstants.TRAVELING_WAYPOINTS.length - 1;
@@ -58,22 +58,8 @@ public class TargetCommand extends DriveCommand {
         }
         index++;
       }
-      if (DriverStation.getAlliance() == Alliance.Blue) { // Indexes are traversed in opposite order depending on
-                                                          // alliance color.
-        index = MathUtil.clamp(index - 1, 0, FieldConstants.TRAVELING_WAYPOINTS.length - 1);
-        for (int i = index; i >= finalWaypointIndex; i--) {
-          waypoints.add(driveBase.flipWaypointBasedOnAlliance(new Pose2d(FieldConstants.TRAVELING_WAYPOINTS[i].getX(),
-              FieldConstants.TRAVELING_WAYPOINTS[i].getY(), Rotation2d.fromDegrees(-90)), false));
-        }
-      } else {
-        index = MathUtil.clamp(index + 1, 0, FieldConstants.TRAVELING_WAYPOINTS.length - 1);
-        for (int i = index; i < finalWaypointIndex; i++) {
-          waypoints.add(driveBase.flipWaypointBasedOnAlliance(new Pose2d(FieldConstants.TRAVELING_WAYPOINTS[i].getX(),
-              FieldConstants.TRAVELING_WAYPOINTS[i].getY(), Rotation2d.fromDegrees(90)), false));
-        }
-      }
     } else {
-      int index = FieldConstants.TRAVELING_WAYPOINTS.length - 1;
+      index = FieldConstants.TRAVELING_WAYPOINTS.length - 1;
       while (driveBase.getDistanceToPose(FieldConstants.TRAVELING_WAYPOINTS[index]).getY() < 0) {
         if (index == 0) {
           index = 0;
@@ -81,28 +67,35 @@ public class TargetCommand extends DriveCommand {
         }
         index--;
       }
-      if (DriverStation.getAlliance() == Alliance.Blue) {
-        index = MathUtil.clamp(index + 1, 0, FieldConstants.TRAVELING_WAYPOINTS.length - 1);
-        for (int i = index; i < finalWaypointIndex; i++) {
-          waypoints.add(driveBase.flipWaypointBasedOnAlliance(new Pose2d(FieldConstants.TRAVELING_WAYPOINTS[i].getX(),
-              FieldConstants.TRAVELING_WAYPOINTS[i].getY(), Rotation2d.fromDegrees(90)), false));
-        }
-      } else {
-        index = MathUtil.clamp(index - 1, 0, FieldConstants.TRAVELING_WAYPOINTS.length - 1);
-        for (int i = index; i >= finalWaypointIndex; i--) {
-          waypoints.add(driveBase.flipWaypointBasedOnAlliance(new Pose2d(FieldConstants.TRAVELING_WAYPOINTS[i].getX(),
-              FieldConstants.TRAVELING_WAYPOINTS[i].getY(), Rotation2d.fromDegrees(-90)), false));
-        }
+    }
+    if (finalWaypointIndex > index) { // Traverse indexes
+      index = MathUtil.clamp(index + 1, 0, FieldConstants.TRAVELING_WAYPOINTS.length - 1);
+      for (int i = index; i < finalWaypointIndex; i++) {
+        waypoints.add(driveBase.flipWaypointBasedOnAlliance(new Pose2d(FieldConstants.TRAVELING_WAYPOINTS[i].getX(),
+            FieldConstants.TRAVELING_WAYPOINTS[i].getY(), Rotation2d.fromDegrees(90)), false));
+      }
+    } else {
+      index = MathUtil.clamp(index - 1, 0, FieldConstants.TRAVELING_WAYPOINTS.length - 1);
+      for (int i = index; i >= finalWaypointIndex; i--) {
+        waypoints.add(driveBase.flipWaypointBasedOnAlliance(new Pose2d(FieldConstants.TRAVELING_WAYPOINTS[i].getX(),
+            FieldConstants.TRAVELING_WAYPOINTS[i].getY(), Rotation2d.fromDegrees(-90)), false));
+        System.out
+            .println(driveBase.flipWaypointBasedOnAlliance(new Pose2d(FieldConstants.TRAVELING_WAYPOINTS[i].getX(),
+                FieldConstants.TRAVELING_WAYPOINTS[i].getY(), Rotation2d.fromDegrees(-90)), false));
       }
     }
 
     if (waypoints.size() <= 0) {
       return;
     }
-    CommandScheduler.getInstance().schedule(new PathFollowCommand(driveBase, driveBase.generatePath(waypoints))
-        .andThen(new TurnToAngleCommand(driveBase, targetPose.getRotation(), PathConstants.TURN_ANGLE_DEADBAND))
-        .andThen(new ConstructLaterCommand(() -> new PathFollowCommand(driveBase, driveBase.generatePath(targetPose))))
-        .andThen(new TurnToAngleCommand(driveBase, targetPose.getRotation(), PathConstants.TURN_ANGLE_DEADBAND)));
+
+    System.out.println(targetPose.getRotation());
+    CommandScheduler.getInstance()
+        .schedule(new PathFollowCommand(driveBase, driveBase.generatePath(waypoints))
+            .andThen(new TurnToAngleCommand(driveBase, targetPose.getRotation(), PathConstants.TURN_ANGLE_DEADBAND))
+            .andThen(
+                new ConstructLaterCommand(() -> new PathFollowCommand(driveBase, driveBase.generatePath(targetPose))))
+            .andThen(new TurnToAngleCommand(driveBase, targetPose.getRotation(), PathConstants.TURN_ANGLE_DEADBAND)));
   }
 
   @Override
