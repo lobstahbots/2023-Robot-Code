@@ -263,9 +263,14 @@ public class DriveBase extends SubsystemBase {
    * @return the robot's angle as a Rotation2d.
    */
   public Rotation2d getGyroAngle() {
-    return Rotation2d.fromDegrees(gyro.getRotation2d().getDegrees());
+    return gyro.getRotation2d();
   }
 
+  /**
+   * Returns the robot's angle as reported by the gyro, clamped between -180 and 180 degrees.
+   *
+   * @return the robot's angle from -180 to 180 as a Rotation2d.
+   */
   public Rotation2d getGyroAngle180() {
     return Rotation2d.fromDegrees(-MathUtil.inputModulus(getGyroAngle().getDegrees(), -180, 180));
   }
