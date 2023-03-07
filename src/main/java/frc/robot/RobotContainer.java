@@ -157,7 +157,7 @@ public class RobotContainer {
         .whileTrue(new InstantCommand(/* TODO: Line up */).asProxy()
             .andThen(new ArmTowardsPoseWithRetractionCommand(arm, ArmPresets.PLAYER_STATION_PICKUP)
                 .alongWith(new SpinIntakeCommand(intake, IntakeConstants.INTAKE_VOLTAGE))));
-    defaultOperatorLayer.and(operatorJoystick.button(OperatorConstants.LEFT_PICKUP_BTN))
+    defaultOperatorLayer.and(operatorJoystick.button(OperatorConstants.RIGHT_PICKUP_BTN))
         .whileTrue(new InstantCommand(/* TODO: Line up */).asProxy()
             .andThen(new ArmTowardsPoseWithRetractionCommand(arm, ArmPresets.PLAYER_STATION_PICKUP)
                 .alongWith(new SpinIntakeCommand(intake, IntakeConstants.INTAKE_VOLTAGE))));
