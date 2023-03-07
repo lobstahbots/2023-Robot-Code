@@ -158,6 +158,8 @@ public final class Constants {
         public static final int INTAKE_BTN = 5;
         public static final int OUTTAKE_BTN = 6;
 
+        public static final int MANUAL_CONTROL_BTN = 6;
+        public static final double MANUAL_CONTROL_SPEED = 1.3;
         public static final int MANUAL_X_JOYSTICK_AXIS = 1;
         public static final int MANUAL_Y_JOYSTICK_AXIS = 5;
 

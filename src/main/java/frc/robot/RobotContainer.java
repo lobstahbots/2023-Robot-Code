@@ -162,7 +162,27 @@ public class RobotContainer {
             .andThen(new ArmTowardsPoseWithRetractionCommand(arm, ArmPresets.PLAYER_STATION_PICKUP)
                 .alongWith(new SpinIntakeCommand(intake, IntakeConstants.INTAKE_VOLTAGE))));
 
-    // Legacy operator controls (TODO)
+    // Legacy operator controls
+
+    legacyOperatorLayer.and(operatorJoystick.button(OperatorConstants.Legacy.LOW_GOAL_BTN))
+        .whileTrue(new ArmTowardsPoseCommand(arm, ArmPresets.GROUND_PICKUP));
+    legacyOperatorLayer.and(operatorJoystick.button(OperatorConstants.Legacy.MID_GOAL_BTN))
+        .whileTrue(new ArmTowardsPoseCommand(arm, ArmPresets.MID_GOAL_SCORING));
+    legacyOperatorLayer.and(operatorJoystick.button(OperatorConstants.Legacy.HIGH_GOAL_BTN))
+        .whileTrue(new ArmTowardsPoseCommand(arm, ArmPresets.HIGH_GOAL_SCORING));
+
+    legacyOperatorLayer.and(operatorJoystick.button(OperatorConstants.Legacy.MANUAL_CONTROL_BTN))
+        .whileTrue(new ArmTowardsPoseCommand(arm,
+            () -> arm.getSetpointPose().translateBy(new Translation2d(
+                MathUtil.applyDeadband(-operatorJoystick.getRawAxis(OperatorConstants.Legacy.MANUAL_X_JOYSTICK_AXIS),
+                    OperatorConstants.JOYSTICK_DEADBAND) * OperatorConstants.Legacy.MANUAL_CONTROL_SPEED,
+                MathUtil.applyDeadband(-operatorJoystick.getRawAxis(OperatorConstants.Legacy.MANUAL_Y_JOYSTICK_AXIS),
+                    OperatorConstants.JOYSTICK_DEADBAND) * OperatorConstants.Legacy.MANUAL_CONTROL_SPEED))));
+
+    legacyOperatorLayer.and(operatorJoystick.button(OperatorConstants.Legacy.INTAKE_BTN))
+        .whileTrue(new SpinIntakeCommand(intake, IntakeConstants.INTAKE_VOLTAGE));
+    legacyOperatorLayer.and(operatorJoystick.button(OperatorConstants.Legacy.OUTTAKE_BTN))
+        .whileTrue(new SpinIntakeCommand(intake, IntakeConstants.OUTTAKE_VOLTAGE));
   }
 
   public Pose2d getScoreColumn() {
