@@ -5,10 +5,12 @@
 package frc.robot.auton;
 
 import java.util.ArrayList;
+import java.util.function.Supplier;
 
 import com.pathplanner.lib.PathConstraints;
 import com.pathplanner.lib.PathPlanner;
 import com.pathplanner.lib.PathPlannerTrajectory;
+import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -27,7 +29,6 @@ import frc.robot.commands.arm.ArmToPoseCommand;
 import frc.robot.commands.arm.ArmToPoseWithRetractionCommand;
 import frc.robot.commands.drive.PathFollowCommand;
 import frc.robot.commands.drive.StraightDriveCommand;
-import frc.robot.commands.drive.TargetCommand;
 import frc.robot.commands.drive.TurnToAngleCommand;
 import frc.robot.commands.intake.SpinIntakeCommand;
 import frc.robot.subsystems.Arm;
@@ -99,7 +100,6 @@ public class AutonGenerator {
                 new StraightDriveCommand(
                     driveBase,
                     AutonConstants.DRIVE_BACK_SPEED, false)));
-    // .andThen(new TurnToAngleCommand(driveBase, Rotation2d.fromDegrees(180), 1));
   }
 
   /**
@@ -131,9 +131,10 @@ public class AutonGenerator {
     Pose2d crossingPose = FieldConstants.CROSSING_WAYPOINTS[crossingPosition];
     System.out.println(FieldConstants.ENDING_AUTON_POSES[finalPosition]);
 
-    return new SequentialCommandGroup(new TargetCommand(driveBase, () -> crossingPose),
-        // new TurnToAngleCommand(driveBase, crossingPose.getRotation(),
-        // PathConstants.TURN_ANGLE_DEADBAND),
+    return new SequentialCommandGroup(
+        new ConstructLaterCommand(() -> getPathToTargetCommand(driveBase, () -> crossingPose)),
+        new TurnToAngleCommand(driveBase, crossingPose.getRotation(),
+            PathConstants.TURN_ANGLE_DEADBAND),
         new ConstructLaterCommand(() -> new PathFollowCommand(driveBase,
             driveBase.generatePath(FieldConstants.ENDING_AUTON_POSES[finalPosition]))));
   }
@@ -159,6 +160,66 @@ public class AutonGenerator {
 
     return pathGroup;
 
+  }
+
+  public Command getPathToTargetCommand(DriveBase driveBase, Supplier<Pose2d> targetSupplier) {
+    Pose2d targetPose = targetSupplier.get();
+    /* Finding the waypoint closest to the target. */
+    int finalWaypointIndex = 0;
+    for (int i = 0; i < FieldConstants.TRAVELING_WAYPOINTS.length; i++) {
+      if (Math.abs(targetPose.getY() - FieldConstants.TRAVELING_WAYPOINTS[i].getY()) < Math
+          .abs(targetPose.getY() - FieldConstants.TRAVELING_WAYPOINTS[finalWaypointIndex].getY())) {
+        finalWaypointIndex = i;
+      }
+    }
+    /*
+     * Finding the starting waypoint (closest to robot) and generating a path to the final waypoint. Logic is slightly
+     * different depending on direction the robot is traveling.
+     */
+    ArrayList<Pose2d> waypoints = new ArrayList<>();
+    int index = 0;
+    if (driveBase.getDistanceToPose(targetPose).getY() < 0) {
+      while (driveBase.getDistanceToPose(FieldConstants.TRAVELING_WAYPOINTS[index]).getY() > 0) {
+        if (index >= FieldConstants.TRAVELING_WAYPOINTS.length - 1) {
+          index = FieldConstants.TRAVELING_WAYPOINTS.length - 1;
+          break;
+        }
+        index++;
+      }
+    } else {
+      index = FieldConstants.TRAVELING_WAYPOINTS.length - 1;
+      while (driveBase.getDistanceToPose(FieldConstants.TRAVELING_WAYPOINTS[index]).getY() < 0) {
+        if (index == 0) {
+          index = 0;
+          break;
+        }
+        index--;
+      }
+    }
+    if (finalWaypointIndex > index) { // Traverse indexes
+      index = MathUtil.clamp(index + 1, 0, FieldConstants.TRAVELING_WAYPOINTS.length - 1);
+      for (int i = index; i < finalWaypointIndex; i++) {
+        waypoints.add(driveBase.flipWaypointBasedOnAlliance(new Pose2d(FieldConstants.TRAVELING_WAYPOINTS[i].getX(),
+            FieldConstants.TRAVELING_WAYPOINTS[i].getY(), Rotation2d.fromDegrees(90)), false));
+      }
+    } else {
+      index = MathUtil.clamp(index - 1, 0, FieldConstants.TRAVELING_WAYPOINTS.length - 1);
+      for (int i = index; i >= finalWaypointIndex; i--) {
+        waypoints.add(driveBase.flipWaypointBasedOnAlliance(new Pose2d(FieldConstants.TRAVELING_WAYPOINTS[i].getX(),
+            FieldConstants.TRAVELING_WAYPOINTS[i].getY(), Rotation2d.fromDegrees(-90)), false));
+      }
+    }
+
+    if (waypoints.size() <= 0) {
+      return new PathFollowCommand(driveBase, driveBase.generatePath(targetPose));
+    }
+
+    return new PathFollowCommand(driveBase, driveBase.generatePath(waypoints))
+        .andThen(new TurnToAngleCommand(driveBase, targetPose.getRotation(), PathConstants.TURN_ANGLE_DEADBAND))
+        .andThen(
+            new ConstructLaterCommand(() -> new PathFollowCommand(driveBase, driveBase.generatePath(targetPose)))
+                .andThen(
+                    new TurnToAngleCommand(driveBase, targetPose.getRotation(), PathConstants.TURN_ANGLE_DEADBAND)));
   }
 
 }

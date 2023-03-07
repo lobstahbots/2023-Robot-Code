@@ -41,6 +41,7 @@ import frc.robot.subsystems.DriveBase;
 import frc.robot.subsystems.Intake;
 import frc.robot.subsystems.arm.Elevator;
 import frc.robot.subsystems.arm.Pivot;
+import lobstah.stl.command.ConstructLaterCommand;
 import lobstah.stl.oi.LobstahGamepad;
 
 /**
@@ -189,15 +190,15 @@ public class RobotContainer {
         DriverConstants.SQUARED_INPUTS));
 
     targetButton.whileTrue(
-        new TargetCommand(driveBase,
+        new ConstructLaterCommand(() -> autonGenerator.getPathToTargetCommand(driveBase,
             () -> driveBase.flipWaypointBasedOnAlliance(() -> getScoreColumn(),
                 true))
-                    .andThen(autonGenerator.getScoreCommand(targetSelector.getRow())) // Path to node, place piece
-                    .andThen(new InstantCommand(() -> { // Unselect everything
-                      targetSelector.resetSelection(targetSelector.getMode()); // Reset Maxwell selections, keep mode
-                      // the
-                      // same.
-                    })));
+            .andThen(autonGenerator.getScoreCommand(targetSelector.getRow())) // Path to node, place piece
+            .andThen(new InstantCommand(() -> { // Unselect everything
+              targetSelector.resetSelection(targetSelector.getMode()); // Reset Maxwell selections, keep mode
+              // the
+              // same.
+            }))));
   }
 
   public Pose2d getScoreColumn() {

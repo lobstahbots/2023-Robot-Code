@@ -75,11 +75,12 @@ public final class Constants {
     };
 
     public static final Pose2d[] CROSSING_WAYPOINTS = new Pose2d[] {
-        new Pose2d(5.50, 0.75, new Rotation2d(0)), new Pose2d(4.20, 4.75, new Rotation2d(0))
+        new Pose2d(5.50, 0.75, new Rotation2d(0)), new Pose2d(4.20, 5, new Rotation2d(0))
+
     };
 
     public static final Pose2d[] ENDING_AUTON_POSES = new Pose2d[] {
-        new Pose2d(6.15, 0.75, new Rotation2d(0)), new Pose2d(7.00, 2.14, new Rotation2d(0)),
+        new Pose2d(6.00, 0.93, new Rotation2d(0)), new Pose2d(6.00, 2.15, new Rotation2d(0)),
         new Pose2d(6.50, 6.00, new Rotation2d(0)), new Pose2d(7.60, 7.26, new Rotation2d(0))
     };
 
