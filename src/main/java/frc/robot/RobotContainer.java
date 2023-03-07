@@ -10,13 +10,13 @@ import com.revrobotics.CANSparkMax.IdleMode;
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Translation2d;
-import edu.wpi.first.networktables.NetworkTablesJNI;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.ConditionalCommand;
+import edu.wpi.first.wpilibj2.command.Command.InterruptionBehavior;
+import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
@@ -26,15 +26,17 @@ import frc.robot.Constants.ArmConstants.PivotConstants;
 import frc.robot.Constants.ArmPresets;
 import frc.robot.Constants.DriveConstants.DriveMotorCANIDs;
 import frc.robot.Constants.FieldConstants;
+import frc.robot.Constants.IntakeConstants;
 import frc.robot.Constants.OIConstants.DriverConstants;
 import frc.robot.Constants.OIConstants.OperatorConstants;
 import frc.robot.auton.AutonGenerator;
+import frc.robot.commands.arm.ArmToPoseCommand;
+import frc.robot.commands.arm.ArmToPoseWithRetractionCommand;
 import frc.robot.commands.arm.ArmTowardsPoseCommand;
 import frc.robot.commands.arm.ArmTowardsPoseWithRetractionCommand;
 import frc.robot.commands.arm.elevator.ResetElevatorCommand;
 import frc.robot.commands.drive.StopDriveCommand;
 import frc.robot.commands.drive.TankDriveCommand;
-import frc.robot.commands.drive.TargetCommand;
 import frc.robot.commands.intake.SpinIntakeCommand;
 import frc.robot.subsystems.Arm;
 import frc.robot.subsystems.DriveBase;
@@ -60,39 +62,15 @@ public class RobotContainer {
           PivotConstants.ENCODER_CHANNEL),
       new Elevator(ElevatorConstants.ELEVATOR_MOTOR_ID, ElevatorConstants.ENCODER_CHANNEL_A,
           ElevatorConstants.ENCODER_CHANNEL_B, ElevatorConstants.LIMIT_SWITCH_CHANNEL));
+
   private final Intake intake =
       new Intake(Constants.IntakeConstants.LEFT_MOTOR_ID, Constants.IntakeConstants.RIGHT_MOTOR_ID);
 
   private final AutonGenerator autonGenerator = new AutonGenerator(driveBase, arm, intake);
   private final TargetSelector targetSelector = new TargetSelector();
 
-  private final LobstahGamepad driverJoystick = new LobstahGamepad(DriverConstants.DRIVER_JOYSTICK_INDEX);
-  private final LobstahGamepad operatorJoystick = new LobstahGamepad(OperatorConstants.OPERATOR_JOYSTICK_INDEX);
-  private final JoystickButton targetButton = driverJoystick.button(DriverConstants.TARGET_BTN_INDEX);
-
-  private final JoystickButton slowdownButton = driverJoystick.button(DriverConstants.SLOWDOWN_BTN_INDEX);
-
-
-  private final JoystickButton intakeButton = operatorJoystick.button(OperatorConstants.INTAKE_BUTTON_INDEX);
-  private final JoystickButton outtakeButton = operatorJoystick.button(OperatorConstants.OUTTAKE_BUTTON_INDEX);
-  private final JoystickButton manualControlButton =
-      operatorJoystick.button(OperatorConstants.MANUAL_CONTROL_BUTTON_INDEX);
-  private final JoystickButton lowGoalButton = operatorJoystick.button(OperatorConstants.LOW_GOAL_BTN_INDEX);
-  private final JoystickButton midGoalButton = operatorJoystick.button(OperatorConstants.MID_GOAL_BTN_INDEX);
-  private final JoystickButton highGoalButton = operatorJoystick.button(OperatorConstants.HIGH_GOAL_BTN_INDEX);
-  private final JoystickButton playerStationButton =
-      operatorJoystick.button(OperatorConstants.PLAYER_STATION_BTN_INDEX);
-
-  private final JoystickButton toggleMaxwellModeButton =
-      operatorJoystick.button(OperatorConstants.MAXWELL_MODE_BTN_INDEX);
-  private final POVButton columnRightButton =
-      new POVButton(operatorJoystick, OperatorConstants.SHIFT_SELECTED_COLUMN_RIGHT_POV_INDEX);
-  private final POVButton columnLeftButton =
-      new POVButton(operatorJoystick, OperatorConstants.SHIFT_SELECTED_COLUMN_LEFT_POV_INDEX);
-  private final POVButton rowUpButton =
-      new POVButton(operatorJoystick, OperatorConstants.SHIFT_SELECTED_ROW_UP_POV_INDEX);
-  private final POVButton rowDownButton =
-      new POVButton(operatorJoystick, OperatorConstants.SHIFT_SELECTED_ROW_DOWN_POV_INDEX);
+  private final LobstahGamepad driverJoystick = new LobstahGamepad(DriverConstants.DRIVER_USB_INDEX);
+  private final LobstahGamepad operatorJoystick = new LobstahGamepad(OperatorConstants.OPERATOR_USB_INDEX);
 
   /**
    * The container for the robot. Contains subsystems, OI devices, and commands.
@@ -125,68 +103,59 @@ public class RobotContainer {
    * Use this method to define your button->command mappings.
    */
   private void configureButtonBindings() {
-    intakeButton.whileTrue(new SpinIntakeCommand(intake, Constants.IntakeConstants.INTAKE_VOLTAGE));
-    outtakeButton.whileTrue(new SpinIntakeCommand(intake, Constants.IntakeConstants.OUTTAKE_VOLTAGE));
-    manualControlButton.whileTrue(new ArmTowardsPoseCommand(arm,
-        () -> arm.getSetpointPose()
-            .translateBy(new Translation2d(
-                MathUtil.applyDeadband(-operatorJoystick.getRawAxis(OperatorConstants.HORIZONTAL_ARM_MOVEMENT_AXIS),
-                    OperatorConstants.MANUAL_CONTROL_DEADBAND)
-                    * OperatorConstants.MANUAL_CONTROL_SPEED,
-                MathUtil.applyDeadband(-operatorJoystick.getRawAxis(OperatorConstants.VERTICAL_ARM_MOVEMENT_AXIS),
-                    OperatorConstants.MANUAL_CONTROL_DEADBAND)
-                    * OperatorConstants.MANUAL_CONTROL_SPEED))));
-    highGoalButton
-        .whileTrue(new ArmTowardsPoseWithRetractionCommand(arm,
-            ArmPresets.HIGH_GOAL_SCORING));
-    midGoalButton
-        .whileTrue(new ArmTowardsPoseWithRetractionCommand(arm,
-            ArmPresets.MID_GOAL_SCORING));
-    lowGoalButton.whileTrue(new ArmTowardsPoseWithRetractionCommand(arm,
-        ArmPresets.LOW_GOAL_SCORING));
-    playerStationButton
-        .whileTrue(new ArmTowardsPoseWithRetractionCommand(arm,
-            ArmPresets.PLAYER_STATION_PICKUP));
-    toggleMaxwellModeButton.onTrue(new InstantCommand(() -> {
-      targetSelector.resetSelection(true);
-    })).onFalse(new InstantCommand(() -> {
-      targetSelector.resetSelection(false);
-    }));
-    rowDownButton.onTrue(new InstantCommand(() -> {
-      targetSelector.changeRow(-1);
-    }));
-    columnLeftButton.onTrue(new ConditionalCommand(new InstantCommand(() -> {
-      targetSelector.setTargetInMaxwellMode(0);
-    }), new InstantCommand(() -> {
-      targetSelector.changeColumn(-1);
-    }),
-        targetSelector::getMode));
-    rowUpButton.onTrue(new ConditionalCommand(new InstantCommand(() -> {
-      targetSelector.setTargetInMaxwellMode(1);
-    }), new InstantCommand(() -> {
-      targetSelector.changeRow(1);
-    }), targetSelector::getMode));
-    columnRightButton.onTrue(new ConditionalCommand(new InstantCommand(() -> {
-      targetSelector.setTargetInMaxwellMode(2);
-    }), new InstantCommand(() -> {
-      targetSelector.changeColumn(1);
-    }), targetSelector::getMode));
-
-    slowdownButton.whileTrue(new TankDriveCommand(driveBase,
-        () -> DriverConstants.SLOWDOWN_PERCENT * driverJoystick.getRawAxis(DriverConstants.LEFT_AXIS),
-        () -> DriverConstants.SLOWDOWN_PERCENT * driverJoystick.getRawAxis(DriverConstants.RIGHT_AXIS),
+    // Drive slowdown
+    driverJoystick.button(DriverConstants.SLOWDOWN_BTN).whileTrue(new TankDriveCommand(driveBase,
+        () -> DriverConstants.SLOWDOWN_FACTOR * driverJoystick.getRawAxis(DriverConstants.LEFT_AXIS),
+        () -> DriverConstants.SLOWDOWN_FACTOR * driverJoystick.getRawAxis(DriverConstants.RIGHT_AXIS),
         DriverConstants.SQUARED_INPUTS));
 
-    targetButton.whileTrue(
-        new TargetCommand(driveBase,
-            () -> driveBase.flipWaypointBasedOnAlliance(() -> getScoreColumn(),
-                true))
-                    .andThen(autonGenerator.getScoreCommand(targetSelector.getRow())) // Path to node, place piece
-                    .andThen(new InstantCommand(() -> { // Unselect everything
-                      targetSelector.resetSelection(targetSelector.getMode()); // Reset Maxwell selections, keep mode
-                      // the
-                      // same.
-                    })));
+    // Target selection
+    new POVButton(operatorJoystick, OperatorConstants.SHIFT_SELECTION_LEFT_POV)
+        .onTrue(new InstantCommand(() -> targetSelector.changeColumn(-1)));
+    new POVButton(operatorJoystick, OperatorConstants.SHIFT_SELECTION_RIGHT_POV)
+        .onTrue(new InstantCommand(() -> targetSelector.changeColumn(1)));
+    new POVButton(operatorJoystick, OperatorConstants.SHIFT_SELECTION_UP_POV)
+        .onTrue(new InstantCommand(() -> targetSelector.changeRow(-1)));
+    new POVButton(operatorJoystick, OperatorConstants.SHIFT_SELECTION_DOWN_POV)
+        .onTrue(new InstantCommand(() -> targetSelector.changeRow(1)));
+
+    // Scoring
+    JoystickButton scoreLineupButton = operatorJoystick.button(OperatorConstants.SCORE_LINEUP_BTN);
+    scoreLineupButton.whileTrue(
+        new InstantCommand(/* TODO: Line up */).asProxy()
+            .andThen(new ArmToPoseWithRetractionCommand(arm, null /* TODO */, 5).asProxy())
+            .andThen(new ArmTowardsPoseCommand(arm, () -> arm.getSetpointPose()).asProxy().repeatedly()));
+    operatorJoystick.button(OperatorConstants.SCORE_PLACE_BTN).and(scoreLineupButton).onTrue(
+        new ArmToPoseCommand(arm, () -> arm.getSetpointPose().translateBy(ArmPresets.CONE_SCORING_DROPDOWN), 2)
+            .andThen(new SpinIntakeCommand(intake, IntakeConstants.OUTTAKE_VOLTAGE)
+                .alongWith(Commands.waitSeconds(1).andThen(new ArmToPoseCommand(arm,
+                    () -> arm.getSetpointPose().translateBy(ArmPresets.CONE_SCORING_DROPDOWN.unaryMinus()), 5))))
+            .withInterruptBehavior(InterruptionBehavior.kCancelIncoming));
+
+    // Manual adjustment
+    operatorJoystick.button(OperatorConstants.MANUAL_ADJUSTMENT_BTN).whileTrue(new ArmTowardsPoseCommand(arm,
+        () -> arm.getSetpointPose().translateBy(new Translation2d(
+            MathUtil.applyDeadband(-operatorJoystick.getRawAxis(OperatorConstants.X_ADJUSTMENT_JOYSTICK_AXIS),
+                OperatorConstants.JOYSTICK_DEADBAND) * OperatorConstants.MANUAL_CONTROL_SPEED,
+            MathUtil.applyDeadband(-operatorJoystick.getRawAxis(OperatorConstants.Y_ADJUSTMENT_JOYSTICK_AXIS),
+                OperatorConstants.JOYSTICK_DEADBAND) * OperatorConstants.MANUAL_CONTROL_SPEED)))
+                    .withInterruptBehavior(InterruptionBehavior.kCancelIncoming));
+
+
+    // Pickup
+    operatorJoystick.button(OperatorConstants.GROUND_PICKUP_BTN)
+        .whileTrue(new SpinIntakeCommand(intake, IntakeConstants.INTAKE_VOLTAGE)
+            .alongWith(new ArmTowardsPoseWithRetractionCommand(arm, ArmPresets.GROUND_PICKUP)));
+    operatorJoystick.button(OperatorConstants.LEFT_PICKUP_BTN)
+        .whileTrue(new InstantCommand(/* TODO: Line up */).asProxy()
+            .andThen(new ArmTowardsPoseWithRetractionCommand(arm, ArmPresets.PLAYER_STATION_PICKUP)
+                .alongWith(new SpinIntakeCommand(intake, IntakeConstants.INTAKE_VOLTAGE))));
+    operatorJoystick.button(OperatorConstants.LEFT_PICKUP_BTN)
+        .whileTrue(new InstantCommand(/* TODO: Line up */).asProxy()
+            .andThen(new ArmTowardsPoseWithRetractionCommand(arm, ArmPresets.PLAYER_STATION_PICKUP)
+                .alongWith(new SpinIntakeCommand(intake, IntakeConstants.INTAKE_VOLTAGE))));
+
+    // Legacy operator controls (TODO)
   }
 
   public Pose2d getScoreColumn() {
