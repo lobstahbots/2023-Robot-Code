@@ -256,6 +256,9 @@ public class RobotContainer {
    * setAutonDefaultCommands().
    */
   public void setTeleopDefaultCommands() {
+    driveBase.setNeutralMode(NeutralMode.Brake);
+    arm.getPivot().setIdleMode(IdleMode.kBrake);
+    arm.getElevator().setIdleMode(IdleMode.kBrake);
     driveBase.setDefaultCommand(
         new TankDriveCommand(
             driveBase,
