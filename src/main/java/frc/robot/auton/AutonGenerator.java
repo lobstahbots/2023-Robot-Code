@@ -17,7 +17,6 @@ import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import edu.wpi.first.wpilibj2.command.ParallelRaceGroup;
 import frc.robot.ArmPose;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
-import frc.robot.ScoringPosition;
 import frc.robot.Constants.AutonConstants;
 import frc.robot.Constants.FieldConstants;
 import frc.robot.Constants.IntakeConstants;
@@ -25,6 +24,7 @@ import frc.robot.Constants.PathConstants;
 import frc.robot.Constants.ArmPresets;
 import frc.robot.commands.arm.ArmToPoseCommand;
 import frc.robot.commands.arm.ArmToPoseWithRetractionCommand;
+import frc.robot.commands.arm.ArmTowardsPoseCommand;
 import frc.robot.commands.drive.PathFollowCommand;
 import frc.robot.commands.drive.StraightDriveCommand;
 import frc.robot.commands.drive.TargetCommand;
@@ -33,6 +33,7 @@ import frc.robot.commands.intake.SpinIntakeCommand;
 import frc.robot.subsystems.Arm;
 import frc.robot.subsystems.DriveBase;
 import frc.robot.subsystems.Intake;
+import lobstah.stl.command.ConstructLaterCommand;
 import lobstah.stl.command.TimedCommand;
 
 /**
@@ -108,20 +109,35 @@ public class AutonGenerator {
   }
 
   public Command getDriveToPlayerStationCommand(Pose2d targetPose) {
-    Pose2d waypoint = new Pose2d(targetPose.getX() - 1, targetPose.getY(), targetPose.getRotation());
+    Pose2d waypoint = driveBase.flipWaypointBasedOnAlliance(
+        new Pose2d(targetPose.getX() - 1, targetPose.getY(), targetPose.getRotation()), true);
+    Pose2d flippedTargetPose = driveBase.flipWaypointBasedOnAlliance(targetPose, true);
+    System.out.println(flippedTargetPose.toString());
     return new SequentialCommandGroup(
-        new PathFollowCommand(driveBase, driveBase.generatePath(waypoint)),
-        new TurnToAngleCommand(driveBase, targetPose.getRotation(), 1),
-        new ParallelCommandGroup(
-            new SequentialCommandGroup(new PathFollowCommand(driveBase, driveBase.generatePath(targetPose)),
-                new TurnToAngleCommand(driveBase, targetPose.getRotation(), 1)),
-            new ScoringSystemTowardsPositionCommand(arm, elevator, ScoringPositionConstants.PLAYER_STATION_PICKUP)))
-                .andThen(new ParallelCommandGroup(
-                    new ScoringSystemTowardsPositionCommand(arm, elevator,
-                        ScoringPositionConstants.PLAYER_STATION_PICKUP),
-                    new SpinIntakeCommand(intake, IntakeConstants.INTAKE_VOLTAGE)))
-                .unless(() -> driveBase.getPose().getY() < FieldConstants.MAX_PLAYER_STATION_Y_ZONE
-                    || driveBase.getPose().getX() < FieldConstants.MAX_PLAYER_STATION_X_ZONE);
+        new ConstructLaterCommand(() -> new PathFollowCommand(driveBase, driveBase.generatePath(waypoint))),
+        new ArmToPoseCommand(arm, ArmPresets.PLAYER_STATION_PICKUP, 5),
+        new ParallelRaceGroup(
+            new SequentialCommandGroup(
+                new ConstructLaterCommand(
+                    () -> new PathFollowCommand(driveBase, driveBase.generatePath(flippedTargetPose))),
+                new TurnToAngleCommand(driveBase, Rotation2d.fromDegrees(180), 1)),
+            new ParallelCommandGroup(new ArmTowardsPoseCommand(arm, ArmPresets.PLAYER_STATION_PICKUP),
+                new SpinIntakeCommand(intake, IntakeConstants.INTAKE_VOLTAGE)))
+                    .andThen(new TimedCommand(3,
+                        new ParallelCommandGroup(new ArmTowardsPoseCommand(arm, ArmPresets.PLAYER_STATION_PICKUP),
+                            new SpinIntakeCommand(intake, IntakeConstants.INTAKE_VOLTAGE))))
+                    .andThen(new TimedCommand(1,
+                        new ParallelCommandGroup(new ArmTowardsPoseCommand(arm, ArmPresets.PLAYER_STATION_PICKUP),
+                            new StraightDriveCommand(driveBase, -0.2, false)))))
+                                // .andThen(new ParallelCommandGroup(
+                                // new ArmTowardsPoseCommand(arm,
+                                // ArmPresets.PLAYER_STATION_PICKUP),
+                                // ))
+                                .unless(() -> Math.abs(
+                                    driveBase.getDistanceToPose(flippedTargetPose)
+                                        .getX()) > FieldConstants.MAX_PLAYER_STATION_X_ZONE
+                                    || Math.abs(driveBase.getDistanceToPose(flippedTargetPose)
+                                        .getY()) > FieldConstants.MAX_PLAYER_STATION_Y_ZONE);
   }
 
   /**

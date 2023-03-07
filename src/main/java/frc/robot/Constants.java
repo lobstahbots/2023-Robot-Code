@@ -87,7 +87,7 @@ public final class Constants {
     public static final Pose2d PLAYER_STATION_PICKUP_RIGHT = new Pose2d(15.70, 6.30, new Rotation2d(0));
 
     public static final double MAX_AUTO_DISTANCE_METERS = 10;
-    public static final double MAX_PLAYER_STATION_X_ZONE = 13.2;
+    public static final double MAX_PLAYER_STATION_X_ZONE = 7;
     public static final double MAX_PLAYER_STATION_Y_ZONE = 5.5;
     public static final double SCORING_ZONE_DEADBAND = 0.5;
     public static final double SCORING_ZONE_X = 3.5;
@@ -278,7 +278,7 @@ public final class Constants {
     public static final Translation2d CONE_SCORING_DROPDOWN = new Translation2d(0, -7);
     public static final Translation2d CONE_SCORING_BACKOFF = new Translation2d(-4, -7);
     public static final Translation2d CONE_SCORING_BACK_UP = new Translation2d(-4, 0);
-    public static final ArmPose PLAYER_STATION_PICKUP = ArmPose.fromXY(10, 44.375);
+    public static final ArmPose PLAYER_STATION_PICKUP = ArmPose.fromXY(20, 44.375);
   }
 
 
