@@ -129,13 +129,13 @@ public class RobotContainer {
     Trigger scoreLineupButton = defaultOperatorLayer.and(operatorJoystick.button(OperatorConstants.SCORE_LINEUP_BTN));
     scoreLineupButton.whileTrue(
         new InstantCommand(/* TODO: Line up */).asProxy()
-            .andThen(new ArmToPoseWithRetractionCommand(arm, null /* TODO */, 5).asProxy())
+            .andThen(new ArmToPoseWithRetractionCommand(arm, null /* TODO */, 5, 0).asProxy())
             .andThen(new ArmTowardsPoseCommand(arm, () -> arm.getSetpointPose()).asProxy().repeatedly()));
     operatorJoystick.button(OperatorConstants.SCORE_PLACE_BTN).and(scoreLineupButton).onTrue(
-        new ArmToPoseCommand(arm, () -> arm.getSetpointPose().translateBy(ArmPresets.CONE_SCORING_DROPDOWN), 2)
+        new ArmToPoseCommand(arm, () -> arm.getSetpointPose().translateBy(ArmPresets.CONE_SCORING_DROPDOWN), 2, 0)
             .andThen(new SpinIntakeCommand(intake, IntakeConstants.OUTTAKE_VOLTAGE)
                 .alongWith(Commands.waitSeconds(1).andThen(new ArmToPoseCommand(arm,
-                    () -> arm.getSetpointPose().translateBy(ArmPresets.CONE_SCORING_DROPDOWN.unaryMinus()), 5))))
+                    () -> arm.getSetpointPose().translateBy(ArmPresets.CONE_SCORING_DROPDOWN.unaryMinus()), 5, 0))))
             .withInterruptBehavior(InterruptionBehavior.kCancelIncoming));
 
     // Manual adjustment

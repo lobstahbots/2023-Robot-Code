@@ -180,7 +180,8 @@ public final class Constants {
     public static final double RETRACT_BEFORE_ROTATING_PRECISION = 5;
     public static final Rotation2d BUMPER_AVOIDANCE_ANGLE = Rotation2d.fromDegrees(52);
     public static final double BUMPER_AVOIDANCE_X = 0;
-    public static final double BUMPER_AVOIDANCE_PRECISION = 2;
+    public static final double BUMPER_AVOIDANCE_EXTENSION_PRECISION = 0.2;
+    public static final double BUMPER_AVOIDANCE_ANGLE_PRECISION = 3;
 
     /**
      * Stores constants related to pivot.
