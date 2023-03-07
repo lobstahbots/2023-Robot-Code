@@ -1,13 +1,12 @@
 
 package lobstah.stl.oi;
 
-import edu.wpi.first.wpilibj.GenericHID;
-import edu.wpi.first.wpilibj2.command.button.JoystickButton;
+import edu.wpi.first.wpilibj2.command.button.CommandGenericHID;
 
 /**
- * An extension of the {@link GenericHID} class that adds some useful utilities.
+ * An extension of the {@link CommandGenericHID} class that adds some useful utilities.
  */
-public class LobstahGamepad extends GenericHID {
+public class LobstahGamepad extends CommandGenericHID {
 
   /**
    * Creates a new LobstahGamepad.
@@ -16,15 +15,5 @@ public class LobstahGamepad extends GenericHID {
    */
   public LobstahGamepad(int port) {
     super(port);
-  }
-
-  /**
-   * Creates a new {@link JoystickButton} from this controller.
-   *
-   * @param buttonNumber The button number (see {@link GenericHID#getRawButton(int)})
-   * @return The new {@link JoystickButton}
-   */
-  public JoystickButton button(int buttonNumber) {
-    return new JoystickButton(this, buttonNumber);
   }
 }

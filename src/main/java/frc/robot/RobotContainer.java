@@ -19,8 +19,7 @@ import edu.wpi.first.wpilibj2.command.Command.InterruptionBehavior;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
-import edu.wpi.first.wpilibj2.command.button.JoystickButton;
-import edu.wpi.first.wpilibj2.command.button.POVButton;
+import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.Constants.ArmConstants.ElevatorConstants;
 import frc.robot.Constants.ArmConstants.PivotConstants;
 import frc.robot.Constants.ArmPresets;
@@ -110,17 +109,17 @@ public class RobotContainer {
         DriverConstants.SQUARED_INPUTS));
 
     // Target selection
-    new POVButton(operatorJoystick, OperatorConstants.SHIFT_SELECTION_LEFT_POV)
+    operatorJoystick.pov(OperatorConstants.SHIFT_SELECTION_LEFT_POV)
         .onTrue(new InstantCommand(() -> targetSelector.changeColumn(-1)));
-    new POVButton(operatorJoystick, OperatorConstants.SHIFT_SELECTION_RIGHT_POV)
+    operatorJoystick.pov(OperatorConstants.SHIFT_SELECTION_RIGHT_POV)
         .onTrue(new InstantCommand(() -> targetSelector.changeColumn(1)));
-    new POVButton(operatorJoystick, OperatorConstants.SHIFT_SELECTION_UP_POV)
+    operatorJoystick.pov(OperatorConstants.SHIFT_SELECTION_UP_POV)
         .onTrue(new InstantCommand(() -> targetSelector.changeRow(-1)));
-    new POVButton(operatorJoystick, OperatorConstants.SHIFT_SELECTION_DOWN_POV)
+    operatorJoystick.pov(OperatorConstants.SHIFT_SELECTION_DOWN_POV)
         .onTrue(new InstantCommand(() -> targetSelector.changeRow(1)));
 
     // Scoring
-    JoystickButton scoreLineupButton = operatorJoystick.button(OperatorConstants.SCORE_LINEUP_BTN);
+    Trigger scoreLineupButton = operatorJoystick.button(OperatorConstants.SCORE_LINEUP_BTN);
     scoreLineupButton.whileTrue(
         new InstantCommand(/* TODO: Line up */).asProxy()
             .andThen(new ArmToPoseWithRetractionCommand(arm, null /* TODO */, 5).asProxy())
