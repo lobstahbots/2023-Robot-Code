@@ -93,7 +93,6 @@ public class RobotContainer {
       new POVButton(operatorJoystick, OperatorConstants.SHIFT_SELECTED_ROW_UP_POV_INDEX);
   private final POVButton rowDownButton =
       new POVButton(operatorJoystick, OperatorConstants.SHIFT_SELECTED_ROW_DOWN_POV_INDEX);
-  private double lastRecordedTime = 0;
 
   /**
    * The container for the robot. Contains subsystems, OI devices, and commands.
@@ -102,16 +101,6 @@ public class RobotContainer {
     configureSmartDash();
     configureButtonBindings();
     PathPlannerServer.startServer(5811);
-  }
-
-  /**
-   * TODO: configure latency
-   */
-  public double getJoystickLatency() {
-    double latency = NetworkTablesJNI.now() - lastRecordedTime;
-    lastRecordedTime = NetworkTablesJNI.now();
-    SmartDashboard.putNumber("Latency", latency);
-    return 1;
   }
 
   /**
@@ -142,10 +131,10 @@ public class RobotContainer {
         () -> arm.getSetpointPose()
             .translateBy(new Translation2d(
                 MathUtil.applyDeadband(-operatorJoystick.getRawAxis(OperatorConstants.HORIZONTAL_ARM_MOVEMENT_AXIS),
-                    OperatorConstants.MANUAL_CONTROL_DEADBAND) * getJoystickLatency()
+                    OperatorConstants.MANUAL_CONTROL_DEADBAND)
                     * OperatorConstants.MANUAL_CONTROL_SPEED,
                 MathUtil.applyDeadband(-operatorJoystick.getRawAxis(OperatorConstants.VERTICAL_ARM_MOVEMENT_AXIS),
-                    OperatorConstants.MANUAL_CONTROL_DEADBAND) * getJoystickLatency()
+                    OperatorConstants.MANUAL_CONTROL_DEADBAND)
                     * OperatorConstants.MANUAL_CONTROL_SPEED))));
     highGoalButton
         .whileTrue(new ArmTowardsPoseWithRetractionCommand(arm,
