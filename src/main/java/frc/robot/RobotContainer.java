@@ -19,6 +19,7 @@ import edu.wpi.first.wpilibj2.command.Command.InterruptionBehavior;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
+import edu.wpi.first.wpilibj2.command.button.InternalButton;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.Constants.ArmConstants.ElevatorConstants;
 import frc.robot.Constants.ArmConstants.PivotConstants;
@@ -108,18 +109,24 @@ public class RobotContainer {
         () -> DriverConstants.SLOWDOWN_FACTOR * driverJoystick.getRawAxis(DriverConstants.RIGHT_AXIS),
         DriverConstants.SQUARED_INPUTS));
 
+    // Operator layers
+    InternalButton legacyOperatorLayer = new InternalButton();
+    Trigger defaultOperatorLayer = legacyOperatorLayer.negate();
+    operatorJoystick.button(OperatorConstants.LEGACY_TOGGLE_BTN).onTrue(
+        new InstantCommand(() -> legacyOperatorLayer.setPressed(!legacyOperatorLayer.getAsBoolean())));
+
     // Target selection
-    operatorJoystick.pov(OperatorConstants.SHIFT_SELECTION_LEFT_POV)
+    defaultOperatorLayer.and(operatorJoystick.pov(OperatorConstants.SHIFT_SELECTION_LEFT_POV))
         .onTrue(new InstantCommand(() -> targetSelector.changeColumn(-1)));
-    operatorJoystick.pov(OperatorConstants.SHIFT_SELECTION_RIGHT_POV)
+    defaultOperatorLayer.and(operatorJoystick.pov(OperatorConstants.SHIFT_SELECTION_RIGHT_POV))
         .onTrue(new InstantCommand(() -> targetSelector.changeColumn(1)));
-    operatorJoystick.pov(OperatorConstants.SHIFT_SELECTION_UP_POV)
+    defaultOperatorLayer.and(operatorJoystick.pov(OperatorConstants.SHIFT_SELECTION_UP_POV))
         .onTrue(new InstantCommand(() -> targetSelector.changeRow(-1)));
-    operatorJoystick.pov(OperatorConstants.SHIFT_SELECTION_DOWN_POV)
+    defaultOperatorLayer.and(operatorJoystick.pov(OperatorConstants.SHIFT_SELECTION_DOWN_POV))
         .onTrue(new InstantCommand(() -> targetSelector.changeRow(1)));
 
     // Scoring
-    Trigger scoreLineupButton = operatorJoystick.button(OperatorConstants.SCORE_LINEUP_BTN);
+    Trigger scoreLineupButton = defaultOperatorLayer.and(operatorJoystick.button(OperatorConstants.SCORE_LINEUP_BTN));
     scoreLineupButton.whileTrue(
         new InstantCommand(/* TODO: Line up */).asProxy()
             .andThen(new ArmToPoseWithRetractionCommand(arm, null /* TODO */, 5).asProxy())
@@ -132,24 +139,25 @@ public class RobotContainer {
             .withInterruptBehavior(InterruptionBehavior.kCancelIncoming));
 
     // Manual adjustment
-    operatorJoystick.button(OperatorConstants.MANUAL_ADJUSTMENT_BTN).whileTrue(new ArmTowardsPoseCommand(arm,
-        () -> arm.getSetpointPose().translateBy(new Translation2d(
-            MathUtil.applyDeadband(-operatorJoystick.getRawAxis(OperatorConstants.X_ADJUSTMENT_JOYSTICK_AXIS),
-                OperatorConstants.JOYSTICK_DEADBAND) * OperatorConstants.MANUAL_CONTROL_SPEED,
-            MathUtil.applyDeadband(-operatorJoystick.getRawAxis(OperatorConstants.Y_ADJUSTMENT_JOYSTICK_AXIS),
-                OperatorConstants.JOYSTICK_DEADBAND) * OperatorConstants.MANUAL_CONTROL_SPEED)))
-                    .withInterruptBehavior(InterruptionBehavior.kCancelIncoming));
+    defaultOperatorLayer.and(operatorJoystick.button(OperatorConstants.MANUAL_ADJUSTMENT_BTN))
+        .whileTrue(new ArmTowardsPoseCommand(arm,
+            () -> arm.getSetpointPose().translateBy(new Translation2d(
+                MathUtil.applyDeadband(-operatorJoystick.getRawAxis(OperatorConstants.X_ADJUSTMENT_JOYSTICK_AXIS),
+                    OperatorConstants.JOYSTICK_DEADBAND) * OperatorConstants.MANUAL_CONTROL_SPEED,
+                MathUtil.applyDeadband(-operatorJoystick.getRawAxis(OperatorConstants.Y_ADJUSTMENT_JOYSTICK_AXIS),
+                    OperatorConstants.JOYSTICK_DEADBAND) * OperatorConstants.MANUAL_CONTROL_SPEED)))
+                        .withInterruptBehavior(InterruptionBehavior.kCancelIncoming));
 
 
     // Pickup
-    operatorJoystick.button(OperatorConstants.GROUND_PICKUP_BTN)
+    defaultOperatorLayer.and(operatorJoystick.button(OperatorConstants.GROUND_PICKUP_BTN))
         .whileTrue(new SpinIntakeCommand(intake, IntakeConstants.INTAKE_VOLTAGE)
             .alongWith(new ArmTowardsPoseWithRetractionCommand(arm, ArmPresets.GROUND_PICKUP)));
-    operatorJoystick.button(OperatorConstants.LEFT_PICKUP_BTN)
+    defaultOperatorLayer.and(operatorJoystick.button(OperatorConstants.LEFT_PICKUP_BTN))
         .whileTrue(new InstantCommand(/* TODO: Line up */).asProxy()
             .andThen(new ArmTowardsPoseWithRetractionCommand(arm, ArmPresets.PLAYER_STATION_PICKUP)
                 .alongWith(new SpinIntakeCommand(intake, IntakeConstants.INTAKE_VOLTAGE))));
-    operatorJoystick.button(OperatorConstants.LEFT_PICKUP_BTN)
+    defaultOperatorLayer.and(operatorJoystick.button(OperatorConstants.LEFT_PICKUP_BTN))
         .whileTrue(new InstantCommand(/* TODO: Line up */).asProxy()
             .andThen(new ArmTowardsPoseWithRetractionCommand(arm, ArmPresets.PLAYER_STATION_PICKUP)
                 .alongWith(new SpinIntakeCommand(intake, IntakeConstants.INTAKE_VOLTAGE))));
