@@ -261,19 +261,36 @@ public class DriveBase extends SubsystemBase {
 
   /** Zeroes the gyro value. */
   public void zeroGyro() {
+    gyro.setAngleAdjustment(0);
     gyro.reset();
   }
 
-  public void initGyro() {
-    try {
-      EstimatedRobotPose estimatedVisionPose = this.photonVision.getCurrentPose();
+  // public void initGyro() {
+  // try {
+  // EstimatedRobotPose estimatedVisionPose = this.photonVision.getCurrentPose();
+  // SmartDashboard.putString("PhotonVision Pose", estimatedVisionPose.estimatedPose.toString());
+  // zeroGyro();
+  // setGyroOffset(estimatedVisionPose.estimatedPose.getRotation());
+  // } catch (NullPointerException npe) {
+  // zeroGyro();
+  // setGyroOffset(flipWaypointBasedOnAlliance(FieldConstants.SCORING_WAYPOINTS[0], true)
+  // .getRotation());
+  // }
+  // }
+
+  public void initOdometry(Pose2d defaultPose) {
+    if (photonVision.getCurrentPose() != null) {
+      EstimatedRobotPose estimatedVisionPose = photonVision.getCurrentPose();
       SmartDashboard.putString("PhotonVision Pose", estimatedVisionPose.estimatedPose.toString());
       zeroGyro();
       setGyroOffset(estimatedVisionPose.estimatedPose.getRotation());
-    } catch (NullPointerException npe) {
+      poseEstimator.resetPosition(getGyroAngle180(), 0, 0, defaultPose);
+      resetEncoders();
+    } else {
       zeroGyro();
       setGyroOffset(flipWaypointBasedOnAlliance(FieldConstants.SCORING_WAYPOINTS[0], true)
           .getRotation());
+      poseEstimator.resetPosition(getGyroAngle180(), 0, 0, defaultPose);
     }
   }
 
