@@ -5,16 +5,24 @@
 package frc.robot.auton;
 
 import java.util.ArrayList;
+import java.util.function.Supplier;
 
 import com.pathplanner.lib.PathConstraints;
 import com.pathplanner.lib.PathPlanner;
 import com.pathplanner.lib.PathPlannerTrajectory;
+import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
+import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
+import edu.wpi.first.wpilibj2.command.ParallelDeadlineGroup;
 import edu.wpi.first.wpilibj2.command.ParallelRaceGroup;
+import edu.wpi.first.wpilibj2.command.ProxyCommand;
+import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
+import edu.wpi.first.wpilibj2.command.WaitCommand;
 import frc.robot.ArmPose;
+import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import frc.robot.Constants.AutonConstants;
 import frc.robot.Constants.FieldConstants;
 import frc.robot.Constants.IntakeConstants;
@@ -22,14 +30,16 @@ import frc.robot.Constants.PathConstants;
 import frc.robot.Constants.ArmPresets;
 import frc.robot.commands.arm.ArmToPoseCommand;
 import frc.robot.commands.arm.ArmToPoseWithRetractionCommand;
+import frc.robot.commands.arm.ArmTowardsPoseCommand;
 import frc.robot.commands.drive.PathFollowCommand;
+import frc.robot.commands.drive.StopDriveCommand;
 import frc.robot.commands.drive.StraightDriveCommand;
-import frc.robot.commands.drive.TargetCommand;
 import frc.robot.commands.drive.TurnToAngleCommand;
 import frc.robot.commands.intake.SpinIntakeCommand;
 import frc.robot.subsystems.Arm;
 import frc.robot.subsystems.DriveBase;
 import frc.robot.subsystems.Intake;
+import lobstah.stl.command.ConstructLaterCommand;
 import lobstah.stl.command.TimedCommand;
 
 /**
@@ -53,42 +63,79 @@ public class AutonGenerator {
   }
 
   /**
+   * Creates and returns an autonomous routine to score a preload based on row number, then drive following a path.
+   * 
+   * @param row A supplier for the goal row. 0 -> high goal, 1 -> mid goal, 2 -> low goal
+   * @param initialPosition The starting position of the robot
+   * @param crossingPosition Where the robot crosses out of the Community.
+   * @param finalPosition Which game element the path ends at.
+   */
+  public Command getScoreAndDriveCommand(int row, int initialPosition, int crossingPosition, int finalPosition) {
+    return getScoreCommand(row).andThen(new WaitCommand(0.5))
+        .andThen(getPathFollowCommand(initialPosition, crossingPosition, finalPosition));
+  }
+
+  /**
+   * Creates and returns a simple autonomous routine to score a preload based on row number.
+   * 
+   * @param rowSupplier A supplier for the goal row. 0 -> high goal, 1 -> mid goal, 2 -> low goal
+   */
+  public Command getScoreCommand(Supplier<Integer> rowSupplier) {
+    if (rowSupplier.get() == 0) {
+      return getScoreCommand(ArmPresets.HIGH_GOAL_SCORING, true);
+    } else if (rowSupplier.get() == 1) {
+      return getScoreCommand(ArmPresets.MID_GOAL_SCORING, true);
+    } else if (rowSupplier.get() == 2) {
+      return getScoreCommand(ArmPresets.LOW_GOAL_SCORING, false);
+    } else {
+      return new InstantCommand();
+    }
+  }
+
+  /**
    * Creates and returns a simple autonomous routine to score a preload based on row number.
    * 
    * @param row The goal row. 0 -> high goal, 1 -> mid goal, 2 -> low goal
    */
   public Command getScoreCommand(int row) {
     if (row == 0) {
-      return getScoreCommand(ArmPresets.HIGH_GOAL_SCORING);
+      return getScoreCommand(ArmPresets.HIGH_GOAL_SCORING, true);
     } else if (row == 1) {
-      return getScoreCommand(ArmPresets.MID_GOAL_SCORING);
+      return getScoreCommand(ArmPresets.MID_GOAL_SCORING, true);
     } else if (row == 2) {
-      return getScoreCommand(ArmPresets.LOW_GOAL_SCORING);
+      return getScoreCommand(ArmPresets.LOW_GOAL_SCORING, false);
     } else {
       return new InstantCommand();
     }
   }
 
-  public Command getScoreCommand(ArmPose position) {
+  /**
+   * Creates and returns a simple autonomous routine to score a preload at a given {@link ArmPose}.
+   * 
+   * @param position The ArmPose to score at.
+   * @param placeDown Whether or not to move the arm downwards while scoring.
+   */
+  public Command getScoreCommand(ArmPose position, boolean placeDown) {
     return new ArmToPoseWithRetractionCommand(arm, position,
         AutonConstants.AUTON_SCORING_TOLERANCE)
             .andThen(new ArmToPoseCommand(arm,
                 position.translateBy(ArmPresets.CONE_SCORING_DROPDOWN),
-                AutonConstants.AUTON_SCORING_TOLERANCE))
-            .andThen(new ParallelRaceGroup(new SpinIntakeCommand(intake, IntakeConstants.OUTTAKE_VOLTAGE),
-                new TimedCommand(AutonConstants.OUTTAKE_RUNTIME,
-                    new ArmToPoseCommand(arm,
-                        position.translateBy(ArmPresets.CONE_SCORING_BACKOFF),
-                        AutonConstants.AUTON_SCORING_TOLERANCE))))
+                AutonConstants.AUTON_SCORING_TOLERANCE).unless(() -> !placeDown))
             .andThen(
-                new ArmToPoseWithRetractionCommand(arm, ArmPresets.STOWED,
-                    AutonConstants.AUTON_SCORING_TOLERANCE))
+                new ParallelRaceGroup(new SpinIntakeCommand(intake, IntakeConstants.OUTTAKE_VOLTAGE).asProxy(),
+                    new TimedCommand(AutonConstants.OUTTAKE_RUNTIME,
+                        new ArmToPoseCommand(arm,
+                            position.translateBy(ArmPresets.CONE_SCORING_BACKOFF),
+                            AutonConstants.AUTON_SCORING_TOLERANCE))))
+            .andThen(
+                new ParallelRaceGroup(new SpinIntakeCommand(intake, IntakeConstants.OUTTAKE_VOLTAGE).asProxy(),
+                    new ArmToPoseWithRetractionCommand(arm, ArmPresets.STOWED,
+                        AutonConstants.AUTON_SCORING_TOLERANCE)))
             .andThen(new TimedCommand(
                 AutonConstants.DRIVE_BACK_TIME,
                 new StraightDriveCommand(
                     driveBase,
-                    AutonConstants.DRIVE_BACK_SPEED, false)))
-            .andThen(new TurnToAngleCommand(driveBase, Rotation2d.fromDegrees(180), 1));
+                    AutonConstants.DRIVE_BACK_SPEED, false)));
   }
 
   /**
@@ -105,6 +152,39 @@ public class AutonGenerator {
   }
 
   /**
+   * Creates and returns a command to path to a target side of the Driver Station and pick up a game piece.
+   * 
+   * @param targetPose The position to drive to.
+   */
+  public Command getDriveToPlayerStationCommand(Pose2d targetPose) {
+    Pose2d waypoint = driveBase.flipWaypointBasedOnAlliance(
+        new Pose2d(targetPose.getX() - 1, targetPose.getY(), targetPose.getRotation()), true);
+    Pose2d flippedTargetPose = driveBase.flipWaypointBasedOnAlliance(targetPose, true);
+    return new SequentialCommandGroup( // Drive to waypoint, then turn while raising arm
+        new ConstructLaterCommand(() -> new PathFollowCommand(driveBase, driveBase.generatePath(waypoint))),
+        new ParallelDeadlineGroup(new ArmToPoseCommand(arm, ArmPresets.PLAYER_STATION_PICKUP, 5),
+            new TurnToAngleCommand(driveBase, flippedTargetPose.getRotation(), 1)),
+        new ParallelRaceGroup( // Maintain arm angle and spin intake
+            new SequentialCommandGroup( // Meanwhile, drive to target and turn briefly to ensure correct angle
+                new ConstructLaterCommand(
+                    () -> new PathFollowCommand(driveBase, driveBase.generatePath(flippedTargetPose))),
+                new TimedCommand(0.2, new TurnToAngleCommand(driveBase, flippedTargetPose.getRotation(), 1))),
+            new ArmTowardsPoseCommand(arm, ArmPresets.PLAYER_STATION_PICKUP),
+            new SpinIntakeCommand(intake, IntakeConstants.INTAKE_VOLTAGE))
+                .andThen(new ParallelRaceGroup(new TimedCommand(1, new StopDriveCommand(driveBase)),
+                    new ParallelCommandGroup(new ArmTowardsPoseCommand(arm, ArmPresets.PLAYER_STATION_PICKUP),
+                        new SpinIntakeCommand(intake, IntakeConstants.INTAKE_VOLTAGE)))) // Hold for a second
+                .andThen(new TimedCommand(1,
+                    new ParallelCommandGroup(new ArmTowardsPoseCommand(arm, ArmPresets.PLAYER_STATION_PICKUP),
+                        new StraightDriveCommand(driveBase, -0.2, false))))) // Drive away with arm raised still
+                            .unless(() -> Math.abs(
+                                driveBase.getDistanceToPose(flippedTargetPose)
+                                    .getX()) > FieldConstants.MAX_PLAYER_STATION_X_ZONE
+                                || Math.abs(driveBase.getDistanceToPose(flippedTargetPose)
+                                    .getY()) > FieldConstants.MAX_PLAYER_STATION_Y_ZONE);
+  }
+
+  /**
    * Returns a command to follow a path.
    * 
    * @param initialPosition The starting position of the robot
@@ -118,12 +198,14 @@ public class AutonGenerator {
       crossingPosition = 1;
     }
     Pose2d crossingPose = FieldConstants.CROSSING_WAYPOINTS[crossingPosition];
+    System.out.println(FieldConstants.ENDING_AUTON_POSES[finalPosition]);
 
-    return new TargetCommand(driveBase, () -> crossingPose)
-        .andThen(new TurnToAngleCommand(driveBase, crossingPose.getRotation(),
-            PathConstants.TURN_ANGLE_DEADBAND))
-        .andThen(
-            new PathFollowCommand(driveBase, driveBase.generatePath(FieldConstants.ENDING_AUTON_POSES[finalPosition])));
+    return new SequentialCommandGroup(
+        new ConstructLaterCommand(() -> getPathToTargetCommand(driveBase, () -> crossingPose)),
+        new TurnToAngleCommand(driveBase, crossingPose.getRotation(),
+            PathConstants.TURN_ANGLE_DEADBAND),
+        new ConstructLaterCommand(() -> new PathFollowCommand(driveBase,
+            driveBase.generatePath(FieldConstants.ENDING_AUTON_POSES[finalPosition]))));
   }
 
   /**
@@ -147,6 +229,66 @@ public class AutonGenerator {
 
     return pathGroup;
 
+  }
+
+  public Command getPathToTargetCommand(DriveBase driveBase, Supplier<Pose2d> targetSupplier) {
+    Pose2d targetPose = targetSupplier.get();
+    /* Finding the waypoint closest to the target. */
+    int finalWaypointIndex = 0;
+    for (int i = 0; i < FieldConstants.TRAVELING_WAYPOINTS.length; i++) {
+      if (Math.abs(targetPose.getY() - FieldConstants.TRAVELING_WAYPOINTS[i].getY()) < Math
+          .abs(targetPose.getY() - FieldConstants.TRAVELING_WAYPOINTS[finalWaypointIndex].getY())) {
+        finalWaypointIndex = i;
+      }
+    }
+    /*
+     * Finding the starting waypoint (closest to robot) and generating a path to the final waypoint. Logic is slightly
+     * different depending on direction the robot is traveling.
+     */
+    ArrayList<Pose2d> waypoints = new ArrayList<>();
+    int index = 0;
+    if (driveBase.getDistanceToPose(targetPose).getY() < 0) {
+      while (driveBase.getDistanceToPose(FieldConstants.TRAVELING_WAYPOINTS[index]).getY() > 0) {
+        if (index >= FieldConstants.TRAVELING_WAYPOINTS.length - 1) {
+          index = FieldConstants.TRAVELING_WAYPOINTS.length - 1;
+          break;
+        }
+        index++;
+      }
+    } else {
+      index = FieldConstants.TRAVELING_WAYPOINTS.length - 1;
+      while (driveBase.getDistanceToPose(FieldConstants.TRAVELING_WAYPOINTS[index]).getY() < 0) {
+        if (index == 0) {
+          index = 0;
+          break;
+        }
+        index--;
+      }
+    }
+    if (finalWaypointIndex > index) { // Traverse indexes
+      index = MathUtil.clamp(index + 1, 0, FieldConstants.TRAVELING_WAYPOINTS.length - 1);
+      for (int i = index; i < finalWaypointIndex; i++) {
+        waypoints.add(driveBase.flipWaypointBasedOnAlliance(new Pose2d(FieldConstants.TRAVELING_WAYPOINTS[i].getX(),
+            FieldConstants.TRAVELING_WAYPOINTS[i].getY(), Rotation2d.fromDegrees(90)), false));
+      }
+    } else {
+      index = MathUtil.clamp(index - 1, 0, FieldConstants.TRAVELING_WAYPOINTS.length - 1);
+      for (int i = index; i >= finalWaypointIndex; i--) {
+        waypoints.add(driveBase.flipWaypointBasedOnAlliance(new Pose2d(FieldConstants.TRAVELING_WAYPOINTS[i].getX(),
+            FieldConstants.TRAVELING_WAYPOINTS[i].getY(), Rotation2d.fromDegrees(-90)), false));
+      }
+    }
+
+    if (waypoints.size() <= 0) {
+      return new PathFollowCommand(driveBase, driveBase.generatePath(targetPose));
+    }
+
+    return new PathFollowCommand(driveBase, driveBase.generatePath(waypoints))
+        .andThen(new TurnToAngleCommand(driveBase, targetPose.getRotation(), PathConstants.TURN_ANGLE_DEADBAND))
+        .andThen(
+            new ConstructLaterCommand(() -> new PathFollowCommand(driveBase, driveBase.generatePath(targetPose)))
+                .andThen(
+                    new TurnToAngleCommand(driveBase, targetPose.getRotation(), PathConstants.TURN_ANGLE_DEADBAND)));
   }
 
 }

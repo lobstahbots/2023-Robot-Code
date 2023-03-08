@@ -71,19 +71,25 @@ public final class Constants {
     };
 
     public static final Pose2d[] TURNING_WAYPOINTS = new Pose2d[] {
-        new Pose2d(2.5, 0.77, new Rotation2d(0)), new Pose2d(2.70, 4.75, new Rotation2d(0))
+        new Pose2d(2.5, 0.77, new Rotation2d(0)), new Pose2d(2.70, 5, new Rotation2d(0))
     };
 
     public static final Pose2d[] CROSSING_WAYPOINTS = new Pose2d[] {
-        new Pose2d(5.50, 0.75, new Rotation2d(0)), new Pose2d(4.20, 4.75, new Rotation2d(0))
+        new Pose2d(5.50, 0.75, new Rotation2d(0)), new Pose2d(4.20, 5, new Rotation2d(0))
+
     };
 
     public static final Pose2d[] ENDING_AUTON_POSES = new Pose2d[] {
-        new Pose2d(6.15, 0.75, new Rotation2d(0)), new Pose2d(7.00, 2.14, new Rotation2d(0)),
+        new Pose2d(6.00, 0.93, new Rotation2d(0)), new Pose2d(6.00, 2.15, new Rotation2d(0)),
         new Pose2d(6.50, 6.00, new Rotation2d(0)), new Pose2d(7.60, 7.26, new Rotation2d(0))
     };
 
+    public static final Pose2d PLAYER_STATION_PICKUP_LEFT = new Pose2d(16.00, 7.30, new Rotation2d(0));
+    public static final Pose2d PLAYER_STATION_PICKUP_RIGHT = new Pose2d(16.00, 6.30, new Rotation2d(0));
+
     public static final double MAX_AUTO_DISTANCE_METERS = 10;
+    public static final double MAX_PLAYER_STATION_X_ZONE = 7;
+    public static final double MAX_PLAYER_STATION_Y_ZONE = 5.5;
     public static final double SCORING_ZONE_DEADBAND = 0.5;
     public static final double SCORING_ZONE_X = 3.5;
     public static final double FIELD_LENGTH = 16.5;
@@ -99,7 +105,7 @@ public final class Constants {
     public static final double OUTTAKE_RUNTIME = 1;
     public static final double BACK_OFF_SPEED = -0.1;
     public static final double DRIVE_BACK_SPEED = -0.3;
-    public static final double DRIVE_BACK_TIME = 0.1;
+    public static final double DRIVE_BACK_TIME = 0.5;
   }
 
   public static final class VisionConstants {
@@ -122,39 +128,52 @@ public final class Constants {
    */
   public static final class OIConstants {
     public static final class DriverConstants {
-      public static final int DRIVER_JOYSTICK_INDEX = 0;
+      public static final int DRIVER_USB_INDEX = 0;
       public static final boolean SQUARED_INPUTS = true;
       public static final int LEFT_AXIS = 1;
       public static final int RIGHT_AXIS = 5;
-      public static final int SLOWDOWN_BTN_INDEX = 2;
-      public static final double SLOWDOWN_PERCENT = 0.5;
-      public static final int TARGET_BTN_INDEX = 1;
+      public static final int SLOWDOWN_BTN = 5;
+      public static final double SLOWDOWN_FACTOR = 0.5;
+      public static final int TARGET_BTN = 1;
     }
 
     public static final class OperatorConstants {
-      public static final int OPERATOR_JOYSTICK_INDEX = 1;
+      public static final int OPERATOR_USB_INDEX = 1;
       public static final double JOYSTICK_DEADBAND = 0.05;
-      public static final int HORIZONTAL_ARM_MOVEMENT_AXIS = 1;
-      public static final int VERTICAL_ARM_MOVEMENT_AXIS = 5;
+
+      public static final int MANUAL_ADJUSTMENT_BTN = 6;
       public static final double MANUAL_CONTROL_SPEED = 1.3;
+      public static final int X_ADJUSTMENT_JOYSTICK_AXIS = 0;
+      public static final int Y_ADJUSTMENT_JOYSTICK_AXIS = 1;
 
-      public static final int MANUAL_CONTROL_BUTTON_INDEX = 5;
-      public static final int MAXWELL_MODE_BTN_INDEX = 6;
+      public static final int SHIFT_SELECTION_LEFT_POV = 270;
+      public static final int SHIFT_SELECTION_RIGHT_POV = 90;
+      public static final int SHIFT_SELECTION_UP_POV = 0;
+      public static final int SHIFT_SELECTION_DOWN_POV = 180;
 
-      public static final int INTAKE_BUTTON_INDEX = 7;
-      public static final int OUTTAKE_BUTTON_INDEX = 8;
+      public static final int SCORE_LINEUP_BTN = 5;
+      public static final int SCORE_PLACE_BTN = 4;
 
-      public static final int LOW_GOAL_BTN_INDEX = 2;
-      public static final int MID_GOAL_BTN_INDEX = 1;
-      public static final int HIGH_GOAL_BTN_INDEX = 4;
-      public static final int PLAYER_STATION_BTN_INDEX = 3;
+      public static final int LEFT_PICKUP_BTN = 1;
+      public static final int RIGHT_PICKUP_BTN = 3;
+      public static final int GROUND_PICKUP_BTN = 2;
 
+      public static final int LEGACY_TOGGLE_BTN = 10;
 
-      public static final int SHIFT_SELECTED_COLUMN_LEFT_POV_INDEX = 270;
-      public static final int SHIFT_SELECTED_COLUMN_RIGHT_POV_INDEX = 90;
-      public static final int SHIFT_SELECTED_ROW_UP_POV_INDEX = 0;
-      public static final int SHIFT_SELECTED_ROW_DOWN_POV_INDEX = 180;
-      public static final double MANUAL_CONTROL_DEADBAND = 0.05;
+      public static final class Legacy {
+        public static final int INTAKE_BTN = 5;
+        public static final int OUTTAKE_BTN = 6;
+
+        public static final int MANUAL_CONTROL_BTN = 6;
+        public static final double MANUAL_CONTROL_SPEED = 1.3;
+        public static final int MANUAL_X_JOYSTICK_AXIS = 1;
+        public static final int MANUAL_Y_JOYSTICK_AXIS = 5;
+
+        public static final int LOW_GOAL_BTN = 2;
+        public static final int MID_GOAL_BTN = 3;
+        public static final int HIGH_GOAL_BTN = 4;
+        public static final int PLAYER_STATION_BTN = 1;
+      }
     }
   }
 
@@ -167,7 +186,9 @@ public final class Constants {
     public static final double RETRACT_BEFORE_ROTATING_PRECISION = 5;
     public static final Rotation2d BUMPER_AVOIDANCE_ANGLE = Rotation2d.fromDegrees(52);
     public static final double BUMPER_AVOIDANCE_X = 0;
-    public static final double BUMPER_AVOIDANCE_PRECISION = 2;
+    public static final double BUMPER_AVOIDANCE_EXTENSION_PRECISION = 0.5;
+    public static final double BUMPER_AVOIDANCE_ANGLE_PRECISION = 3;
+    public static final double SWITCH_TO_PARALLEL_ANGLE_PRECISION = 7;
 
     /**
      * Stores constants related to pivot.
@@ -254,12 +275,12 @@ public final class Constants {
     // public static final ArmPose STOWED = ArmPose.fromXY(10, 40);
     public static final ArmPose GROUND_PICKUP = ArmPose.fromXY(16.4, 10.2);
     public static final ArmPose MID_GOAL_SCORING = ArmPose.fromXY(25, 47); // before dropping
-    public static final ArmPose LOW_GOAL_SCORING = ArmPose.fromXY(16.4, 10.2);
+    public static final ArmPose LOW_GOAL_SCORING = ArmPose.fromXY(15, 14);
     public static final ArmPose HIGH_GOAL_SCORING = ArmPose.fromXY(42, 59);
-    public static final Translation2d CONE_SCORING_DROPDOWN = new Translation2d(0, -7);
+    public static final Translation2d CONE_SCORING_DROPDOWN = new Translation2d(0, -10);
     public static final Translation2d CONE_SCORING_BACKOFF = new Translation2d(-4, -7);
     public static final Translation2d CONE_SCORING_BACK_UP = new Translation2d(-4, 0);
-    public static final ArmPose PLAYER_STATION_PICKUP = ArmPose.fromXY(10, 44.375);
+    public static final ArmPose PLAYER_STATION_PICKUP = ArmPose.fromXY(18, 46);
   }
 
 
