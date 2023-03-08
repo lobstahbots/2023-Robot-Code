@@ -58,6 +58,7 @@ public class Robot extends TimedRobot {
   public void autonomousInit() {
     m_robotContainer.setAutonDefaultCommands();
     m_robotContainer.configureSmartDash();
+    m_robotContainer.initOdometry();
     m_autonomousCommand = m_robotContainer.getAutonomousCommand();
 
     // schedule the autonomous command (example)
