@@ -128,39 +128,52 @@ public final class Constants {
    */
   public static final class OIConstants {
     public static final class DriverConstants {
-      public static final int DRIVER_JOYSTICK_INDEX = 0;
+      public static final int DRIVER_USB_INDEX = 0;
       public static final boolean SQUARED_INPUTS = true;
       public static final int LEFT_AXIS = 1;
       public static final int RIGHT_AXIS = 5;
-      public static final int SLOWDOWN_BTN_INDEX = 2;
-      public static final double SLOWDOWN_PERCENT = 0.5;
-      public static final int TARGET_BTN_INDEX = 1;
+      public static final int SLOWDOWN_BTN = 5;
+      public static final double SLOWDOWN_FACTOR = 0.5;
+      public static final int TARGET_BTN = 1;
     }
 
     public static final class OperatorConstants {
-      public static final int OPERATOR_JOYSTICK_INDEX = 1;
+      public static final int OPERATOR_USB_INDEX = 1;
       public static final double JOYSTICK_DEADBAND = 0.05;
-      public static final int HORIZONTAL_ARM_MOVEMENT_AXIS = 1;
-      public static final int VERTICAL_ARM_MOVEMENT_AXIS = 5;
+
+      public static final int MANUAL_ADJUSTMENT_BTN = 6;
       public static final double MANUAL_CONTROL_SPEED = 1.3;
+      public static final int X_ADJUSTMENT_JOYSTICK_AXIS = 0;
+      public static final int Y_ADJUSTMENT_JOYSTICK_AXIS = 1;
 
-      public static final int MANUAL_CONTROL_BUTTON_INDEX = 5;
-      public static final int MAXWELL_MODE_BTN_INDEX = 6;
+      public static final int SHIFT_SELECTION_LEFT_POV = 270;
+      public static final int SHIFT_SELECTION_RIGHT_POV = 90;
+      public static final int SHIFT_SELECTION_UP_POV = 0;
+      public static final int SHIFT_SELECTION_DOWN_POV = 180;
 
-      public static final int INTAKE_BUTTON_INDEX = 5;
-      public static final int OUTTAKE_BUTTON_INDEX = 6;
+      public static final int SCORE_LINEUP_BTN = 5;
+      public static final int SCORE_PLACE_BTN = 4;
 
-      public static final int LOW_GOAL_BTN_INDEX = 2;
-      public static final int MID_GOAL_BTN_INDEX = 1;
-      public static final int HIGH_GOAL_BTN_INDEX = 4;
-      public static final int PLAYER_STATION_BTN_INDEX = 3;
+      public static final int LEFT_PICKUP_BTN = 1;
+      public static final int RIGHT_PICKUP_BTN = 3;
+      public static final int GROUND_PICKUP_BTN = 2;
 
+      public static final int LEGACY_TOGGLE_BTN = 10;
 
-      public static final int SHIFT_SELECTED_COLUMN_LEFT_POV_INDEX = 270;
-      public static final int SHIFT_SELECTED_COLUMN_RIGHT_POV_INDEX = 90;
-      public static final int SHIFT_SELECTED_ROW_UP_POV_INDEX = 0;
-      public static final int SHIFT_SELECTED_ROW_DOWN_POV_INDEX = 180;
-      public static final double MANUAL_CONTROL_DEADBAND = 0.05;
+      public static final class Legacy {
+        public static final int INTAKE_BTN = 5;
+        public static final int OUTTAKE_BTN = 6;
+
+        public static final int MANUAL_CONTROL_BTN = 6;
+        public static final double MANUAL_CONTROL_SPEED = 1.3;
+        public static final int MANUAL_X_JOYSTICK_AXIS = 1;
+        public static final int MANUAL_Y_JOYSTICK_AXIS = 5;
+
+        public static final int LOW_GOAL_BTN = 2;
+        public static final int MID_GOAL_BTN = 3;
+        public static final int HIGH_GOAL_BTN = 4;
+        public static final int PLAYER_STATION_BTN = 1;
+      }
     }
   }
 
