@@ -141,8 +141,8 @@ public final class Constants {
       public static final int MANUAL_CONTROL_BUTTON_INDEX = 5;
       public static final int MAXWELL_MODE_BTN_INDEX = 6;
 
-      public static final int INTAKE_BUTTON_INDEX = 5;
-      public static final int OUTTAKE_BUTTON_INDEX = 6;
+      public static final int INTAKE_BUTTON_INDEX = 7;
+      public static final int OUTTAKE_BUTTON_INDEX = 8;
 
       public static final int LOW_GOAL_BTN_INDEX = 2;
       public static final int MID_GOAL_BTN_INDEX = 1;
@@ -251,6 +251,7 @@ public final class Constants {
    */
   public static final class ArmPresets {
     public static final ArmPose STOWED = ArmPose.fromAngleExtension(Rotation2d.fromDegrees(35), -0.1);
+    // public static final ArmPose STOWED = ArmPose.fromXY(10, 40);
     public static final ArmPose GROUND_PICKUP = ArmPose.fromXY(16.4, 10.2);
     public static final ArmPose MID_GOAL_SCORING = ArmPose.fromXY(25, 47); // before dropping
     public static final ArmPose LOW_GOAL_SCORING = ArmPose.fromXY(16.4, 10.2);

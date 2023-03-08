@@ -29,10 +29,9 @@ public class ArmPose {
   /**
    * Constructs an ArmPose with the provided pivot angle and elevator extension.
    * 
-   * @param angle The angle of the pivot. 0 = Vertical and pointing down. Positive -> towards front of robot. This
-   *          will be clamped to the range of the pivot.
-   * @param extension The extension of the elevator in inches. This will be clamped to the range of the
-   *          elevator.
+   * @param angle The angle of the pivot. 0 = Vertical and pointing down. Positive -> towards front of robot. This will
+   *          be clamped to the range of the pivot.
+   * @param extension The extension of the elevator in inches. This will be clamped to the range of the elevator.
    */
   public static ArmPose fromAngleExtension(Rotation2d angle, double extension) {
     return new ArmPose(angle, extension);
@@ -51,7 +50,7 @@ public class ArmPose {
     Rotation2d angleFromHypotenuse =
         new Rotation2d(Math.asin(Constants.IntakeConstants.INTAKE_OFFSET.getY() / relativeToPivot.getNorm()));
     Rotation2d pivotAngle = relativeToPivot.getAngle().plus(Rotation2d.fromDegrees(90))
-        .plus(angleFromHypotenuse);
+        .plus(Rotation2d.fromDegrees(10));
 
     // Intake position relative to the pivot, with X axis aligned to the arm
     Translation2d alignedToArm = new Translation2d(relativeToPivot.getNorm(), angleFromHypotenuse);

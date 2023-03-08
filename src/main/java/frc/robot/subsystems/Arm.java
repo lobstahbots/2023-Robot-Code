@@ -33,5 +33,10 @@ public class Arm extends SubsystemBase {
         this.elevator.getSetpointExtension());
   }
 
-
+  @Override
+  public void periodic() {
+    ArmPose xy = ArmPose.fromXY(10, 20);
+    System.out.println(xy.getAngle().getDegrees());
+    System.out.println(xy.getExtension());
+  }
 }
