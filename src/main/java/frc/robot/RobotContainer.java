@@ -20,6 +20,7 @@ import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.button.InternalButton;
+import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.Constants.ArmConstants.ElevatorConstants;
 import frc.robot.Constants.ArmConstants.PivotConstants;
@@ -131,10 +132,10 @@ public class RobotContainer {
     scoreLineupButton.whileTrue(autonGenerator.getPathToTargetCommand(driveBase, () -> getScoreColumn())
         .andThen(autonGenerator.getScoreCommand(() -> targetSelector.getRow())).unless(() -> !canDriveToTarget()));
     operatorJoystick.button(OperatorConstants.SCORE_PLACE_BTN).and(scoreLineupButton).onTrue(
-        new ArmToPoseCommand(arm, () -> arm.getSetpointPose().translateBy(ArmPresets.CONE_SCORING_DROPDOWN), 2)
+        new ArmToPoseCommand(arm, () -> arm.getSetpointPose().translateBy(ArmPresets.CONE_SCORING_DROPDOWN), 2, 0)
             .andThen(new SpinIntakeCommand(intake, IntakeConstants.OUTTAKE_VOLTAGE)
                 .alongWith(Commands.waitSeconds(1).andThen(new ArmToPoseCommand(arm,
-                    () -> arm.getSetpointPose().translateBy(ArmPresets.CONE_SCORING_DROPDOWN.unaryMinus()), 5))))
+                    () -> arm.getSetpointPose().translateBy(ArmPresets.CONE_SCORING_DROPDOWN.unaryMinus()), 5, 0))))
             .withInterruptBehavior(InterruptionBehavior.kCancelIncoming));
 
     // Manual adjustment
