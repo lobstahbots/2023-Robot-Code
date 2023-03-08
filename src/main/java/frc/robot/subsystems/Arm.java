@@ -32,11 +32,4 @@ public class Arm extends SubsystemBase {
     return ArmPose.fromAngleExtension(Rotation2d.fromDegrees(this.pivot.getSetpoint()),
         this.elevator.getSetpointExtension());
   }
-
-  @Override
-  public void periodic() {
-    ArmPose xy = ArmPose.fromXY(10, 20);
-    System.out.println(xy.getAngle().getDegrees());
-    System.out.println(xy.getExtension());
-  }
 }

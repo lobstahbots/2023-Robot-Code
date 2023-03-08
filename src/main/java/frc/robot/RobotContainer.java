@@ -24,6 +24,7 @@ import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.Constants.ArmConstants.ElevatorConstants;
 import frc.robot.Constants.ArmConstants.PivotConstants;
+import frc.robot.Constants.ArmConstants;
 import frc.robot.Constants.ArmPresets;
 import frc.robot.Constants.DriveConstants.DriveMotorCANIDs;
 import frc.robot.Constants.FieldConstants;
@@ -141,12 +142,21 @@ public class RobotContainer {
     // Manual adjustment
     defaultOperatorLayer.and(operatorJoystick.button(OperatorConstants.MANUAL_ADJUSTMENT_BTN))
         .whileTrue(new ArmTowardsPoseCommand(arm,
-            () -> arm.getSetpointPose().translateBy(new Translation2d(
-                MathUtil.applyDeadband(operatorJoystick.getRawAxis(OperatorConstants.X_ADJUSTMENT_JOYSTICK_AXIS),
-                    OperatorConstants.JOYSTICK_DEADBAND) * OperatorConstants.MANUAL_CONTROL_SPEED,
-                MathUtil.applyDeadband(-operatorJoystick.getRawAxis(OperatorConstants.Y_ADJUSTMENT_JOYSTICK_AXIS),
-                    OperatorConstants.JOYSTICK_DEADBAND) * OperatorConstants.MANUAL_CONTROL_SPEED)))
-                        .withInterruptBehavior(InterruptionBehavior.kCancelIncoming));
+            () -> {
+              Translation2d adjustment = new Translation2d(
+                  MathUtil.applyDeadband(operatorJoystick.getRawAxis(OperatorConstants.X_ADJUSTMENT_JOYSTICK_AXIS),
+                      OperatorConstants.JOYSTICK_DEADBAND) * OperatorConstants.MANUAL_CONTROL_SPEED,
+                  MathUtil.applyDeadband(-operatorJoystick.getRawAxis(OperatorConstants.Y_ADJUSTMENT_JOYSTICK_AXIS),
+                      OperatorConstants.JOYSTICK_DEADBAND) * OperatorConstants.MANUAL_CONTROL_SPEED);
+              if (arm.getSetpointPose().getAngle().getDegrees() < ArmConstants.BUMPER_AVOIDANCE_ANGLE.getDegrees()) {
+                adjustment = new Translation2d(
+                    0,
+                    MathUtil.applyDeadband(-operatorJoystick.getRawAxis(OperatorConstants.Y_ADJUSTMENT_JOYSTICK_AXIS),
+                        OperatorConstants.JOYSTICK_DEADBAND) * OperatorConstants.MANUAL_CONTROL_SPEED);
+              }
+              return arm.getSetpointPose().translateBy(adjustment);
+            })
+                .withInterruptBehavior(InterruptionBehavior.kCancelIncoming));
 
 
     // Pickup

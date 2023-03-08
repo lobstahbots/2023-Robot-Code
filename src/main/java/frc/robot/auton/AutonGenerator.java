@@ -198,7 +198,6 @@ public class AutonGenerator {
       crossingPosition = 1;
     }
     Pose2d crossingPose = FieldConstants.CROSSING_WAYPOINTS[crossingPosition];
-    System.out.println(FieldConstants.ENDING_AUTON_POSES[finalPosition]);
 
     return new SequentialCommandGroup(
         new ConstructLaterCommand(() -> getPathToTargetCommand(driveBase, () -> crossingPose)),

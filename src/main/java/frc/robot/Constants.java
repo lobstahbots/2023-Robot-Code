@@ -255,7 +255,7 @@ public final class Constants {
    * Stores constants related to the intake.
    */
   public static final class IntakeConstants {
-    public static final Translation2d INTAKE_OFFSET = new Translation2d(4.281, 6.37);
+    public static final Translation2d INTAKE_OFFSET = new Translation2d(4.281, 4);
 
     // IO
     public static final int LEFT_MOTOR_ID = 0;
@@ -272,7 +272,6 @@ public final class Constants {
    */
   public static final class ArmPresets {
     public static final ArmPose STOWED = ArmPose.fromAngleExtension(Rotation2d.fromDegrees(35), -0.1);
-    // public static final ArmPose STOWED = ArmPose.fromXY(10, 40);
     public static final ArmPose GROUND_PICKUP = ArmPose.fromXY(16.4, 10.2);
     public static final ArmPose MID_GOAL_SCORING = ArmPose.fromXY(25, 47); // before dropping
     public static final ArmPose LOW_GOAL_SCORING = ArmPose.fromXY(15, 14);
