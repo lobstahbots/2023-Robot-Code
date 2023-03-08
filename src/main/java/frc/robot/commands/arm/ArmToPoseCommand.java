@@ -42,6 +42,7 @@ public class ArmToPoseCommand extends ParallelRaceGroup {
   }
 
   private boolean isAtPosition() {
+    System.out.println("Dist" + pose.get().getDistance(arm.getPose()));
     return pose.get().getDistance(arm.getPose()) <= threshold;
   }
 }

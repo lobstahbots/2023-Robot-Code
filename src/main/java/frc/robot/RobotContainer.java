@@ -43,6 +43,7 @@ import frc.robot.subsystems.DriveBase;
 import frc.robot.subsystems.Intake;
 import frc.robot.subsystems.arm.Elevator;
 import frc.robot.subsystems.arm.Pivot;
+import lobstah.stl.command.ConstructLaterCommand;
 import lobstah.stl.oi.LobstahGamepad;
 
 /**
@@ -249,6 +250,9 @@ public class RobotContainer {
    * setAutonDefaultCommands().
    */
   public void setTeleopDefaultCommands() {
+    driveBase.setNeutralMode(NeutralMode.Brake);
+    arm.getPivot().setIdleMode(IdleMode.kBrake);
+    arm.getElevator().setIdleMode(IdleMode.kBrake);
     driveBase.setDefaultCommand(
         new TankDriveCommand(
             driveBase,

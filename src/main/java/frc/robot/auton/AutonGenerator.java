@@ -13,8 +13,11 @@ import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
+import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
+import edu.wpi.first.wpilibj2.command.ParallelDeadlineGroup;
 import edu.wpi.first.wpilibj2.command.ParallelRaceGroup;
 import frc.robot.ArmPose;
+import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import frc.robot.Constants.AutonConstants;
 import frc.robot.Constants.FieldConstants;
 import frc.robot.Constants.IntakeConstants;
@@ -22,7 +25,9 @@ import frc.robot.Constants.PathConstants;
 import frc.robot.Constants.ArmPresets;
 import frc.robot.commands.arm.ArmToPoseCommand;
 import frc.robot.commands.arm.ArmToPoseWithRetractionCommand;
+import frc.robot.commands.arm.ArmTowardsPoseCommand;
 import frc.robot.commands.drive.PathFollowCommand;
+import frc.robot.commands.drive.StopDriveCommand;
 import frc.robot.commands.drive.StraightDriveCommand;
 import frc.robot.commands.drive.TargetCommand;
 import frc.robot.commands.drive.TurnToAngleCommand;
@@ -30,6 +35,7 @@ import frc.robot.commands.intake.SpinIntakeCommand;
 import frc.robot.subsystems.Arm;
 import frc.robot.subsystems.DriveBase;
 import frc.robot.subsystems.Intake;
+import lobstah.stl.command.ConstructLaterCommand;
 import lobstah.stl.command.TimedCommand;
 
 /**
@@ -102,6 +108,34 @@ public class AutonGenerator {
                 driveBase,
                 AutonConstants.SIMPLE_AUTON_SPEED, false));
     return simpleAutonCommand;
+  }
+
+  public Command getDriveToPlayerStationCommand(Pose2d targetPose) {
+    Pose2d waypoint = driveBase.flipWaypointBasedOnAlliance(
+        new Pose2d(targetPose.getX() - 1, targetPose.getY(), targetPose.getRotation()), true);
+    Pose2d flippedTargetPose = driveBase.flipWaypointBasedOnAlliance(targetPose, true);
+    return new SequentialCommandGroup( // Drive to waypoint, then turn while raising arm
+        new ConstructLaterCommand(() -> new PathFollowCommand(driveBase, driveBase.generatePath(waypoint))),
+        new ParallelDeadlineGroup(new ArmToPoseCommand(arm, ArmPresets.PLAYER_STATION_PICKUP, 5),
+            new TurnToAngleCommand(driveBase, flippedTargetPose.getRotation(), 1)),
+        new ParallelRaceGroup( // Maintain arm angle and spin intake
+            new SequentialCommandGroup( // Meanwhile, drive to target and turn briefly to ensure correct angle
+                new ConstructLaterCommand(
+                    () -> new PathFollowCommand(driveBase, driveBase.generatePath(flippedTargetPose))),
+                new TimedCommand(0.2, new TurnToAngleCommand(driveBase, flippedTargetPose.getRotation(), 1))),
+            new ArmTowardsPoseCommand(arm, ArmPresets.PLAYER_STATION_PICKUP),
+            new SpinIntakeCommand(intake, IntakeConstants.INTAKE_VOLTAGE))
+                .andThen(new ParallelRaceGroup(new TimedCommand(1, new StopDriveCommand(driveBase)),
+                    new ParallelCommandGroup(new ArmTowardsPoseCommand(arm, ArmPresets.PLAYER_STATION_PICKUP),
+                        new SpinIntakeCommand(intake, IntakeConstants.INTAKE_VOLTAGE)))) // Hold for a second
+                .andThen(new TimedCommand(1,
+                    new ParallelCommandGroup(new ArmTowardsPoseCommand(arm, ArmPresets.PLAYER_STATION_PICKUP),
+                        new StraightDriveCommand(driveBase, -0.2, false))))) // Drive away with arm raised still
+                            .unless(() -> Math.abs(
+                                driveBase.getDistanceToPose(flippedTargetPose)
+                                    .getX()) > FieldConstants.MAX_PLAYER_STATION_X_ZONE
+                                || Math.abs(driveBase.getDistanceToPose(flippedTargetPose)
+                                    .getY()) > FieldConstants.MAX_PLAYER_STATION_Y_ZONE);
   }
 
   /**
