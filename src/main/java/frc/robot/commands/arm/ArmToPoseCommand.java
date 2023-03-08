@@ -50,8 +50,8 @@ public class ArmToPoseCommand extends ParallelRaceGroup {
     this.angleThreshold = angleThreshold;
     this.extensionThreshold = extensionThreshold;
 
-    this.addCommands(new ArmTowardsPoseCommand(arm, pose),
-        new WaitUntilCommand(this::isAtPosition));
+    this.addCommands(new ArmTowardsPoseCommand(arm, pose), new WaitUntilCommand(this::isAtPosition));
+
   }
 
   /**
@@ -81,6 +81,8 @@ public class ArmToPoseCommand extends ParallelRaceGroup {
   }
 
   private boolean isAtPosition() {
+    System.out.println(Math.abs(pose.get().getExtension() - arm.getPose().getExtension()));
+    System.out.println(Math.abs(pose.get().getAngle().minus(arm.getPose().getAngle()).getDegrees()));
     return pose.get().getDistance(arm.getPose()) <= cartesianThreshold
         && Math.abs(pose.get().getExtension() - arm.getPose().getExtension()) <= extensionThreshold
         && Math.abs(pose.get().getAngle().minus(arm.getPose().getAngle()).getDegrees()) <= angleThreshold;
