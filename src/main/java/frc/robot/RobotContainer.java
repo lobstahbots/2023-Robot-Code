@@ -41,6 +41,7 @@ import frc.robot.subsystems.DriveBase;
 import frc.robot.subsystems.Intake;
 import frc.robot.subsystems.arm.Elevator;
 import frc.robot.subsystems.arm.Pivot;
+import lobstah.stl.command.ConstructLaterCommand;
 import lobstah.stl.oi.LobstahGamepad;
 
 /**
@@ -188,16 +189,7 @@ public class RobotContainer {
         () -> DriverConstants.SLOWDOWN_PERCENT * driverJoystick.getRawAxis(DriverConstants.RIGHT_AXIS),
         DriverConstants.SQUARED_INPUTS));
 
-    targetButton.whileTrue(
-        new TargetCommand(driveBase,
-            () -> driveBase.flipWaypointBasedOnAlliance(() -> getScoreColumn(),
-                true))
-                    .andThen(autonGenerator.getScoreCommand(targetSelector.getRow())) // Path to node, place piece
-                    .andThen(new InstantCommand(() -> { // Unselect everything
-                      targetSelector.resetSelection(targetSelector.getMode()); // Reset Maxwell selections, keep mode
-                      // the
-                      // same.
-                    })));
+    targetButton.whileTrue(autonGenerator.getDriveToPlayerStationCommand(FieldConstants.PLAYER_STATION_PICKUP_LEFT));
   }
 
   public Pose2d getScoreColumn() {
@@ -264,6 +256,9 @@ public class RobotContainer {
    * setAutonDefaultCommands().
    */
   public void setTeleopDefaultCommands() {
+    driveBase.setNeutralMode(NeutralMode.Brake);
+    arm.getPivot().setIdleMode(IdleMode.kBrake);
+    arm.getElevator().setIdleMode(IdleMode.kBrake);
     driveBase.setDefaultCommand(
         new TankDriveCommand(
             driveBase,
