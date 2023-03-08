@@ -62,9 +62,34 @@ public class AutonGenerator {
     this.intake = intake;
   }
 
+  /**
+   * Creates and returns an autonomous routine to score a preload based on row number, then drive following a path.
+   * 
+   * @param row A supplier for the goal row. 0 -> high goal, 1 -> mid goal, 2 -> low goal
+   * @param initialPosition The starting position of the robot
+   * @param crossingPosition Where the robot crosses out of the Community.
+   * @param finalPosition Which game element the path ends at.
+   */
   public Command getScoreAndDriveCommand(int row, int initialPosition, int crossingPosition, int finalPosition) {
     return getScoreCommand(row).andThen(new WaitCommand(0.5))
         .andThen(getPathFollowCommand(initialPosition, crossingPosition, finalPosition));
+  }
+
+  /**
+   * Creates and returns a simple autonomous routine to score a preload based on row number.
+   * 
+   * @param rowSupplier A supplier for the goal row. 0 -> high goal, 1 -> mid goal, 2 -> low goal
+   */
+  public Command getScoreCommand(Supplier<Integer> rowSupplier) {
+    if (rowSupplier.get() == 0) {
+      return getScoreCommand(ArmPresets.HIGH_GOAL_SCORING, true);
+    } else if (rowSupplier.get() == 1) {
+      return getScoreCommand(ArmPresets.MID_GOAL_SCORING, true);
+    } else if (rowSupplier.get() == 2) {
+      return getScoreCommand(ArmPresets.LOW_GOAL_SCORING, false);
+    } else {
+      return new InstantCommand();
+    }
   }
 
   /**
@@ -84,6 +109,12 @@ public class AutonGenerator {
     }
   }
 
+  /**
+   * Creates and returns a simple autonomous routine to score a preload at a given {@link ArmPose}.
+   * 
+   * @param position The ArmPose to score at.
+   * @param placeDown Whether or not to move the arm downwards while scoring.
+   */
   public Command getScoreCommand(ArmPose position, boolean placeDown) {
     return new ArmToPoseWithRetractionCommand(arm, position,
         AutonConstants.AUTON_SCORING_TOLERANCE)
@@ -120,6 +151,11 @@ public class AutonGenerator {
     return simpleAutonCommand;
   }
 
+  /**
+   * Creates and returns a command to path to a target side of the Driver Station and pick up a game piece.
+   * 
+   * @param targetPose The position to drive to.
+   */
   public Command getDriveToPlayerStationCommand(Pose2d targetPose) {
     Pose2d waypoint = driveBase.flipWaypointBasedOnAlliance(
         new Pose2d(targetPose.getX() - 1, targetPose.getY(), targetPose.getRotation()), true);

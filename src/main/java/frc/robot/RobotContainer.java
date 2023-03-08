@@ -128,10 +128,8 @@ public class RobotContainer {
 
     // Scoring
     Trigger scoreLineupButton = defaultOperatorLayer.and(operatorJoystick.button(OperatorConstants.SCORE_LINEUP_BTN));
-    scoreLineupButton.whileTrue(
-        new InstantCommand(/* TODO: Line up */).asProxy()
-            .andThen(new ArmToPoseWithRetractionCommand(arm, null /* TODO */, 5).asProxy())
-            .andThen(new ArmTowardsPoseCommand(arm, () -> arm.getSetpointPose()).asProxy().repeatedly()));
+    scoreLineupButton.whileTrue(autonGenerator.getPathToTargetCommand(driveBase, () -> getScoreColumn())
+        .andThen(autonGenerator.getScoreCommand(() -> targetSelector.getRow())).unless(() -> !canDriveToTarget()));
     operatorJoystick.button(OperatorConstants.SCORE_PLACE_BTN).and(scoreLineupButton).onTrue(
         new ArmToPoseCommand(arm, () -> arm.getSetpointPose().translateBy(ArmPresets.CONE_SCORING_DROPDOWN), 2)
             .andThen(new SpinIntakeCommand(intake, IntakeConstants.OUTTAKE_VOLTAGE)
