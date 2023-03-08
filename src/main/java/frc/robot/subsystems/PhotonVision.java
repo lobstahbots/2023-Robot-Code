@@ -58,7 +58,7 @@ public class PhotonVision extends SubsystemBase {
         new PhotonPoseEstimator(aprilTagFieldLayout, frontRightCamera,
             VisionConstants.ROBOT_TO_FRONT_RIGHT_CAMERA, 2);
 
-    // estimators.add(rearPoseEstimator);
+    estimators.add(rearPoseEstimator);
     estimators.add(frontLeftPoseEstimator);
     estimators.add(frontRightPoseEstimator);
   }
