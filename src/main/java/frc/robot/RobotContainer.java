@@ -155,13 +155,9 @@ public class RobotContainer {
         .whileTrue(new SpinIntakeCommand(intake, IntakeConstants.INTAKE_VOLTAGE)
             .alongWith(new ArmTowardsPoseWithRetractionCommand(arm, ArmPresets.GROUND_PICKUP)));
     defaultOperatorLayer.and(operatorJoystick.button(OperatorConstants.LEFT_PICKUP_BTN))
-        .whileTrue(new InstantCommand(/* TODO: Line up */).asProxy()
-            .andThen(new ArmTowardsPoseWithRetractionCommand(arm, ArmPresets.PLAYER_STATION_PICKUP)
-                .alongWith(new SpinIntakeCommand(intake, IntakeConstants.INTAKE_VOLTAGE))));
+        .whileTrue(autonGenerator.getDriveToPlayerStationCommand(FieldConstants.PLAYER_STATION_PICKUP_LEFT));
     defaultOperatorLayer.and(operatorJoystick.button(OperatorConstants.RIGHT_PICKUP_BTN))
-        .whileTrue(new InstantCommand(/* TODO: Line up */).asProxy()
-            .andThen(new ArmTowardsPoseWithRetractionCommand(arm, ArmPresets.PLAYER_STATION_PICKUP)
-                .alongWith(new SpinIntakeCommand(intake, IntakeConstants.INTAKE_VOLTAGE))));
+        .whileTrue(autonGenerator.getDriveToPlayerStationCommand(FieldConstants.PLAYER_STATION_PICKUP_RIGHT));
 
     // Legacy operator controls
 
