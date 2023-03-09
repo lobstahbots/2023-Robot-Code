@@ -165,13 +165,11 @@ public class DriveBase extends SubsystemBase {
    */
   public Pose2d getPose() {
     poseEstimator.update(getGyroAngle180(), getLeftEncoderDistanceMeters(), getRightEncoderDistanceMeters());
-    try {
+    if (this.photonVision.getCurrentPose() != null) {
       EstimatedRobotPose estimatedVisionPose = this.photonVision.getCurrentPose();
       SmartDashboard.putString("PhotonVision Pose", estimatedVisionPose.estimatedPose.toString());
       poseEstimator.addVisionMeasurement(estimatedVisionPose.estimatedPose,
           estimatedVisionPose.timestampSeconds);
-    } catch (NullPointerException npe) {
-
     }
     return poseEstimator.getEstimatedPosition();
   }
@@ -264,19 +262,6 @@ public class DriveBase extends SubsystemBase {
     gyro.setAngleAdjustment(0);
     gyro.reset();
   }
-
-  // public void initGyro() {
-  // try {
-  // EstimatedRobotPose estimatedVisionPose = this.photonVision.getCurrentPose();
-  // SmartDashboard.putString("PhotonVision Pose", estimatedVisionPose.estimatedPose.toString());
-  // zeroGyro();
-  // setGyroOffset(estimatedVisionPose.estimatedPose.getRotation());
-  // } catch (NullPointerException npe) {
-  // zeroGyro();
-  // setGyroOffset(flipWaypointBasedOnAlliance(FieldConstants.SCORING_WAYPOINTS[0], true)
-  // .getRotation());
-  // }
-  // }
 
   public void initOdometry(Pose2d defaultPose) {
     if (photonVision.getCurrentPose() != null) {
@@ -418,13 +403,11 @@ public class DriveBase extends SubsystemBase {
    */
   public void periodic() {
     poseEstimator.update(getGyroAngle180(), getLeftEncoderDistanceMeters(), getRightEncoderDistanceMeters());
-    try {
+    if (this.photonVision.getCurrentPose() != null) {
       EstimatedRobotPose estimatedVisionPose = this.photonVision.getCurrentPose();
       SmartDashboard.putString("PhotonVision Pose", estimatedVisionPose.estimatedPose.toString());
       poseEstimator.addVisionMeasurement(estimatedVisionPose.estimatedPose,
           estimatedVisionPose.timestampSeconds);
-    } catch (NullPointerException npe) {
-
     }
 
     SmartDashboard.putNumber("Gyro", this.getGyroAngle180().getDegrees());
