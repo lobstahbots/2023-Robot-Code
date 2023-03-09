@@ -168,8 +168,12 @@ public class DriveBase extends SubsystemBase {
     if (this.photonVision.getCurrentPose() != null) {
       EstimatedRobotPose estimatedVisionPose = this.photonVision.getCurrentPose();
       SmartDashboard.putString("PhotonVision Pose", estimatedVisionPose.estimatedPose.toString());
-      poseEstimator.addVisionMeasurement(estimatedVisionPose.estimatedPose,
-          estimatedVisionPose.timestampSeconds);
+      if (estimatedVisionPose.estimatedPose.getTranslation()
+          .getDistance(
+              poseEstimator.getEstimatedPosition().getTranslation()) < PathConstants.POSE_DISTANCE_METERS_FILTER) {
+        poseEstimator.addVisionMeasurement(estimatedVisionPose.estimatedPose,
+            estimatedVisionPose.timestampSeconds);
+      }
     }
     return poseEstimator.getEstimatedPosition();
   }
@@ -263,6 +267,7 @@ public class DriveBase extends SubsystemBase {
     gyro.reset();
   }
 
+  /** Initializes the robot odometry based on Photonvision pose if available, or else uses assumed starting position. */
   public void initOdometry(Pose2d defaultPose) {
     if (photonVision.getCurrentPose() != null) {
       EstimatedRobotPose estimatedVisionPose = photonVision.getCurrentPose();
@@ -406,8 +411,12 @@ public class DriveBase extends SubsystemBase {
     if (this.photonVision.getCurrentPose() != null) {
       EstimatedRobotPose estimatedVisionPose = this.photonVision.getCurrentPose();
       SmartDashboard.putString("PhotonVision Pose", estimatedVisionPose.estimatedPose.toString());
-      poseEstimator.addVisionMeasurement(estimatedVisionPose.estimatedPose,
-          estimatedVisionPose.timestampSeconds);
+      if (estimatedVisionPose.estimatedPose.getTranslation()
+          .getDistance(
+              poseEstimator.getEstimatedPosition().getTranslation()) < PathConstants.POSE_DISTANCE_METERS_FILTER) {
+        poseEstimator.addVisionMeasurement(estimatedVisionPose.estimatedPose,
+            estimatedVisionPose.timestampSeconds);
+      }
     }
 
     SmartDashboard.putNumber("Gyro", this.getGyroAngle180().getDegrees());
