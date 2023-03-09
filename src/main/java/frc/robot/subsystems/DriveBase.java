@@ -19,6 +19,7 @@ import com.pathplanner.lib.PathPlannerTrajectory;
 import com.pathplanner.lib.PathPoint;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.geometry.Transform2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.estimator.DifferentialDrivePoseEstimator;
@@ -287,6 +288,8 @@ public class DriveBase extends SubsystemBase {
       zeroGyro();
       setGyroOffset(estimatedVisionPose.estimatedPose.getRotation());
       poseEstimator.resetPosition(getGyroAngle180(), 0, 0, defaultPose);
+      poseEstimator.addVisionMeasurement(estimatedVisionPose.estimatedPose,
+          estimatedVisionPose.timestampSeconds);
       resetEncoders();
     } else {
       zeroGyro();
@@ -359,8 +362,15 @@ public class DriveBase extends SubsystemBase {
   /**
    * Returns the distance in meters from the pose of the robot to the target Pose.
    */
-  public double getDistanceToPose(Pose2d targetPose) {
+  public double getDirectDistanceToPose(Pose2d targetPose) {
     return getDistanceBetweenPoses(getPose(), targetPose);
+  }
+
+  /**
+   * Returns the distance in meters from the pose of the robot to the target Pose.
+   */
+  public Transform2d getDistanceToPose(Pose2d targetPose) {
+    return getPose().minus(targetPose);
   }
 
   /**

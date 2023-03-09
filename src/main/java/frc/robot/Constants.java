@@ -28,21 +28,21 @@ public final class Constants {
    * Stores constants related to path following.
    */
   public static final class PathConstants {
-    public static final double MAX_DRIVE_SPEED = 1;
+    public static final double MAX_DRIVE_SPEED = 0.6;
     public static final double MAX_ACCELERATION = 0.8;
     public static final double RAMSETE_B = 2.0;
     public static final double RAMSETE_ZETA = 0.7;
-    public static final double kS = 0.18749;
-    public static final double kV = 1.898;
-    public static final double kA = 0.55221;
-    public static final double kP = 0.24582;
+    public static final double kS = 0.032478;
+    public static final double kV = 5.3084;
+    public static final double kA = 1.9328;
+    public static final double kP = 1.2264;
     public static final double kI = 0;
     public static final double KD = 0;
     public static final double TURN_P = 0.025;
     public static final double TURN_I = 0;
     public static final double TURN_D = 0.015;
     public static final double TURN_ANGLE_DEADBAND = 2;
-    public static final double POSE_DISTANCE_METERS_FILTER = 2;
+    public static final double POSE_DISTANCE_METERS_FILTER = 10;
   }
 
   /**
@@ -61,14 +61,14 @@ public final class Constants {
         new Pose2d(SCORING_WAYPOINTS_X, 3.3, Rotation2d.fromDegrees(180)),
         new Pose2d(SCORING_WAYPOINTS_X, 3.85, Rotation2d.fromDegrees(180)),
         new Pose2d(SCORING_WAYPOINTS_X, 4.4, Rotation2d.fromDegrees(180)),
-        new Pose2d(SCORING_WAYPOINTS_X, 4.5, Rotation2d.fromDegrees(180))
+        new Pose2d(SCORING_WAYPOINTS_X, 5, Rotation2d.fromDegrees(180))
     };
     public static final Pose2d[] TRAVELING_WAYPOINTS = new Pose2d[] {
         new Pose2d(TRAVELING_WAYPOINTS_X, 0.5, new Rotation2d(0)), new Pose2d(2.5, 1, new Rotation2d(0)),
         new Pose2d(TRAVELING_WAYPOINTS_X, 1.6, new Rotation2d(0)), new Pose2d(2.5, 2.2, new Rotation2d(0)),
         new Pose2d(TRAVELING_WAYPOINTS_X, 2.7, new Rotation2d(0)), new Pose2d(2.5, 3.3, new Rotation2d(0)),
         new Pose2d(TRAVELING_WAYPOINTS_X, 3.85, new Rotation2d(0)), new Pose2d(2.5, 4.4, new Rotation2d(0)),
-        new Pose2d(TRAVELING_WAYPOINTS_X, 4.5, new Rotation2d(0))
+        new Pose2d(TRAVELING_WAYPOINTS_X, 5, new Rotation2d(0))
     };
 
     public static final Pose2d[] TURNING_WAYPOINTS = new Pose2d[] {
@@ -76,13 +76,25 @@ public final class Constants {
     };
 
     public static final Pose2d[] CROSSING_WAYPOINTS = new Pose2d[] {
-        new Pose2d(5.50, 0.75, new Rotation2d(0)), new Pose2d(4.20, 5, new Rotation2d(0))
+        new Pose2d(5.50, 0.75, new Rotation2d(0)), new Pose2d(4.75, 5, new Rotation2d(0))
+    };
 
+    public static final Pose2d[] RETURNING_CROSSING_WAYPOINTS = new Pose2d[] {
+        new Pose2d(5.50, 0.75, new Rotation2d(90)), new Pose2d(4.75, 5, new Rotation2d(-90))
+    };
+
+    public static final Pose2d[] ENTERING_SCORING_ZONE_WAYPOINTS = new Pose2d[] {
+        new Pose2d(2.95, 0.75, new Rotation2d(180)), new Pose2d(2.95, 5, new Rotation2d(180))
     };
 
     public static final Pose2d[] ENDING_AUTON_POSES = new Pose2d[] {
         new Pose2d(6.00, 0.93, new Rotation2d(0)), new Pose2d(6.00, 2.15, new Rotation2d(0)),
         new Pose2d(6.50, 6.00, new Rotation2d(0)), new Pose2d(7.60, 7.26, new Rotation2d(0))
+    };
+
+    public static final Pose2d[] GROUND_PICKUP_POSES = new Pose2d[] {
+        new Pose2d(7.40, 0.93, new Rotation2d(0)), new Pose2d(7.40, 2.15, new Rotation2d(0)),
+        new Pose2d(7.40, 3.37, new Rotation2d(0)), new Pose2d(7.40, 4.59, new Rotation2d(0))
     };
 
     public static final Pose2d PLAYER_STATION_PICKUP_LEFT = new Pose2d(16.00, 7.30, new Rotation2d(0));
@@ -122,7 +134,7 @@ public final class Constants {
         new Transform3d(new Translation3d(-Units.inchesToMeters(12.1585), 0.07, Units.inchesToMeters(20.749)),
             new Rotation3d(0, 0, Math.PI));
     public static final double MAINTAIN_CAMERA_CONFIDENCE_THRESHOLD = 0.7;
-    public static final double MIN_TARGET_AREA = 10;
+    public static final double MIN_TARGET_AREA = 0.3;
   }
 
   /**
