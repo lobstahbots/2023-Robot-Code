@@ -165,8 +165,8 @@ public class DriveBase extends SubsystemBase {
    */
   public Pose2d getPose() {
     poseEstimator.update(getGyroAngle180(), getLeftEncoderDistanceMeters(), getRightEncoderDistanceMeters());
-    if (this.photonVision.getCurrentPose() != null) {
-      EstimatedRobotPose estimatedVisionPose = this.photonVision.getCurrentPose();
+    EstimatedRobotPose estimatedVisionPose = this.photonVision.getCurrentPose();
+    if (estimatedVisionPose != null) {
       SmartDashboard.putString("PhotonVision Pose", estimatedVisionPose.estimatedPose.toString());
       if (estimatedVisionPose.estimatedPose.getTranslation()
           .getDistance(
@@ -269,8 +269,8 @@ public class DriveBase extends SubsystemBase {
 
   /** Initializes the robot odometry based on Photonvision pose if available, or else uses assumed starting position. */
   public void initOdometry(Pose2d defaultPose) {
-    if (photonVision.getCurrentPose() != null) {
-      EstimatedRobotPose estimatedVisionPose = photonVision.getCurrentPose();
+    EstimatedRobotPose estimatedVisionPose = photonVision.getCurrentPose();
+    if (estimatedVisionPose != null) {
       SmartDashboard.putString("PhotonVision Pose", estimatedVisionPose.estimatedPose.toString());
       zeroGyro();
       setGyroOffset(estimatedVisionPose.estimatedPose.getRotation());
@@ -408,8 +408,8 @@ public class DriveBase extends SubsystemBase {
    */
   public void periodic() {
     poseEstimator.update(getGyroAngle180(), getLeftEncoderDistanceMeters(), getRightEncoderDistanceMeters());
-    if (this.photonVision.getCurrentPose() != null) {
-      EstimatedRobotPose estimatedVisionPose = this.photonVision.getCurrentPose();
+    EstimatedRobotPose estimatedVisionPose = this.photonVision.getCurrentPose();
+    if (estimatedVisionPose != null) {
       SmartDashboard.putString("PhotonVision Pose", estimatedVisionPose.estimatedPose.toString());
       if (estimatedVisionPose.estimatedPose.getTranslation()
           .getDistance(
