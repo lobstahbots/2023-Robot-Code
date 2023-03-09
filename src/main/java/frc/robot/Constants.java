@@ -197,7 +197,7 @@ public final class Constants {
     public static final class PivotConstants {
       // Geometry
       public static final Translation2d ORIGIN_TO_PIVOT = new Translation2d(-24.343, 50);
-      public static final double PIVOT_OFFSET_DEG = 320;
+      public static final double PIVOT_OFFSET_DEG = 319;
 
       // IO
       public static final int ENCODER_CHANNEL = 3;
