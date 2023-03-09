@@ -49,9 +49,8 @@ public class ArmPose {
     // Angle between the arm and the line intersecting the pivot and intake position
     Rotation2d angleFromHypotenuse =
         new Rotation2d(Math.asin(Constants.IntakeConstants.INTAKE_OFFSET.getY() / relativeToPivot.getNorm()));
-    System.out.println(angleFromHypotenuse.getDegrees());
-    Rotation2d pivotAngle = relativeToPivot.getAngle().plus(Rotation2d.fromDegrees(90)).plus(angleFromHypotenuse);
-    // .plus(Rotation2d.fromDegrees(10));
+    Rotation2d pivotAngle = relativeToPivot.getAngle().plus(Rotation2d.fromDegrees(90))
+        .plus(angleFromHypotenuse);
 
     // Intake position relative to the pivot, with X axis aligned to the arm
     Translation2d alignedToArm = new Translation2d(relativeToPivot.getNorm(), angleFromHypotenuse);

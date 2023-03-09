@@ -256,7 +256,7 @@ public final class Constants {
    * Stores constants related to the intake.
    */
   public static final class IntakeConstants {
-    public static final Translation2d INTAKE_OFFSET = new Translation2d(4.281, 4);
+    public static final Translation2d INTAKE_OFFSET = new Translation2d(4.281, 6.37);
 
     // IO
     public static final int LEFT_MOTOR_ID = 0;
