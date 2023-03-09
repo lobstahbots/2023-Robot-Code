@@ -178,6 +178,12 @@ public class DriveBase extends SubsystemBase {
     return poseEstimator.getEstimatedPosition();
   }
 
+  /**
+   * Flips the given {@Pose2d} waypoint based on alliance color.
+   *
+   * @param waypoint The waypoint to flip
+   * @param flipRotation Whether or not to flip the pose rotation.
+   */
   public Pose2d flipWaypointBasedOnAlliance(Pose2d waypoint, boolean flipRotation) {
     if (DriverStation.getAlliance() == Alliance.Red) {
       if (flipRotation) {
@@ -191,6 +197,12 @@ public class DriveBase extends SubsystemBase {
     return waypoint;
   }
 
+  /**
+   * Flips the given {@Pose2d} waypoint based on alliance color.
+   *
+   * @param waypointSupplier A supplier for the waypoint to flip
+   * @param flipRotation Whether or not to flip the pose rotation.
+   */
   public Pose2d flipWaypointBasedOnAlliance(Supplier<Pose2d> waypointSupplier, boolean flipRotation) {
     Pose2d waypoint = waypointSupplier.get();
     if (DriverStation.getAlliance() == Alliance.Red) {
