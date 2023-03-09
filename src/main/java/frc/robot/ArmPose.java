@@ -160,4 +160,8 @@ public class ArmPose {
     return getAngle().getDegrees() < ArmConstants.BUMPER_AVOIDANCE_ANGLE.getDegrees()
         && getX() > ArmConstants.BUMPER_AVOIDANCE_X;
   }
+
+  public boolean isInsideStowedZone() {
+    return getX() < ArmConstants.BUMPER_AVOIDANCE_X;
+  }
 }

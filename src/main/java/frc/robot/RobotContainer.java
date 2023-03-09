@@ -9,12 +9,14 @@ import com.pathplanner.lib.server.PathPlannerServer;
 import com.revrobotics.CANSparkMax.IdleMode;
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.Command.InterruptionBehavior;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
@@ -143,18 +145,28 @@ public class RobotContainer {
     defaultOperatorLayer.and(operatorJoystick.button(OperatorConstants.MANUAL_ADJUSTMENT_BTN))
         .whileTrue(new ArmTowardsPoseCommand(arm,
             () -> {
-              Translation2d adjustment = new Translation2d(
+              System.out.println(arm.getSetpointPose().isInsideStowedZone());
+              if (arm.getSetpointPose().isInsideStowedZone()) {
+                return ArmPose.fromAngleExtension(arm.getSetpointPose().getAngle().plus(
+                    Rotation2d.fromDegrees(MathUtil
+                        .applyDeadband(-operatorJoystick.getRawAxis(OperatorConstants.Y_ADJUSTMENT_JOYSTICK_AXIS),
+                            OperatorConstants.JOYSTICK_DEADBAND)
+                        * OperatorConstants.MANUAL_CONTROL_SPEED)),
+                    0);
+              }
+              if (arm.getSetpointPose().getY() < ArmConstants.MIN_Y_POSITION) {
+                return arm.getSetpointPose().translateBy(new Translation2d(
+                    MathUtil.applyDeadband(operatorJoystick.getRawAxis(OperatorConstants.X_ADJUSTMENT_JOYSTICK_AXIS),
+                        OperatorConstants.JOYSTICK_DEADBAND) * OperatorConstants.MANUAL_CONTROL_SPEED,
+                    MathUtil.clamp(MathUtil.applyDeadband(
+                        -operatorJoystick.getRawAxis(OperatorConstants.Y_ADJUSTMENT_JOYSTICK_AXIS),
+                        OperatorConstants.JOYSTICK_DEADBAND) * OperatorConstants.MANUAL_CONTROL_SPEED, 0, 10)));
+              }
+              return arm.getSetpointPose().translateBy(new Translation2d(
                   MathUtil.applyDeadband(operatorJoystick.getRawAxis(OperatorConstants.X_ADJUSTMENT_JOYSTICK_AXIS),
                       OperatorConstants.JOYSTICK_DEADBAND) * OperatorConstants.MANUAL_CONTROL_SPEED,
                   MathUtil.applyDeadband(-operatorJoystick.getRawAxis(OperatorConstants.Y_ADJUSTMENT_JOYSTICK_AXIS),
-                      OperatorConstants.JOYSTICK_DEADBAND) * OperatorConstants.MANUAL_CONTROL_SPEED);
-              if (arm.getSetpointPose().getAngle().getDegrees() < ArmConstants.BUMPER_AVOIDANCE_ANGLE.getDegrees()) {
-                adjustment = new Translation2d(
-                    0,
-                    MathUtil.applyDeadband(-operatorJoystick.getRawAxis(OperatorConstants.Y_ADJUSTMENT_JOYSTICK_AXIS),
-                        OperatorConstants.JOYSTICK_DEADBAND) * OperatorConstants.MANUAL_CONTROL_SPEED);
-              }
-              return arm.getSetpointPose().translateBy(adjustment);
+                      OperatorConstants.JOYSTICK_DEADBAND) * OperatorConstants.MANUAL_CONTROL_SPEED));
             })
                 .withInterruptBehavior(InterruptionBehavior.kCancelIncoming));
 
@@ -268,6 +280,7 @@ public class RobotContainer {
    * setAutonDefaultCommands().
    */
   public void setTeleopDefaultCommands() {
+    CommandScheduler.getInstance().schedule(new ResetElevatorCommand(arm));
     driveBase.setNeutralMode(NeutralMode.Brake);
     arm.getPivot().setIdleMode(IdleMode.kBrake);
     arm.getElevator().setIdleMode(IdleMode.kBrake);
@@ -277,7 +290,6 @@ public class RobotContainer {
             () -> -driverJoystick.getRawAxis(DriverConstants.LEFT_AXIS),
             () -> -driverJoystick.getRawAxis(DriverConstants.RIGHT_AXIS),
             DriverConstants.SQUARED_INPUTS));
-
     arm.setDefaultCommand(
         new ArmTowardsPoseWithRetractionCommand(arm,
             ArmPresets.STOWED));

@@ -189,6 +189,7 @@ public final class Constants {
     public static final double BUMPER_AVOIDANCE_EXTENSION_PRECISION = 0.5;
     public static final double BUMPER_AVOIDANCE_ANGLE_PRECISION = 3;
     public static final double SWITCH_TO_PARALLEL_ANGLE_PRECISION = 7;
+    public static final double MIN_Y_POSITION = 6;
 
     /**
      * Stores constants related to pivot.
