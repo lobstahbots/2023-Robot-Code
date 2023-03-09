@@ -19,7 +19,6 @@ import com.pathplanner.lib.PathPlannerTrajectory;
 import com.pathplanner.lib.PathPoint;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
-import edu.wpi.first.math.geometry.Transform2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.estimator.DifferentialDrivePoseEstimator;
@@ -32,6 +31,7 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.DriveConstants;
 import frc.robot.Constants.FieldConstants;
 import frc.robot.Constants.PathConstants;
+import frc.robot.Constants.VisionConstants;
 import lobstah.stl.math.LobstahMath;
 import lobstah.stl.motorcontrol.LobstahDifferentialDrive;
 import frc.robot.photonvision.EstimatedRobotPose;
@@ -168,9 +168,9 @@ public class DriveBase extends SubsystemBase {
     EstimatedRobotPose estimatedVisionPose = this.photonVision.getCurrentPose();
     if (estimatedVisionPose != null) {
       SmartDashboard.putString("PhotonVision Pose", estimatedVisionPose.estimatedPose.toString());
-      if (estimatedVisionPose.estimatedPose.getTranslation()
-          .getDistance(
-              poseEstimator.getEstimatedPosition().getTranslation()) < PathConstants.POSE_DISTANCE_METERS_FILTER) {
+      if (getDistanceBetweenPoses(estimatedVisionPose.estimatedPose,
+          poseEstimator.getEstimatedPosition()) < PathConstants.POSE_DISTANCE_METERS_FILTER
+          && estimatedVisionPose.targetArea > VisionConstants.MIN_TARGET_AREA) {
         poseEstimator.addVisionMeasurement(estimatedVisionPose.estimatedPose,
             estimatedVisionPose.timestampSeconds);
       }
@@ -350,10 +350,17 @@ public class DriveBase extends SubsystemBase {
   }
 
   /**
-   * Returns the Transform2d from the pose of the robot to the target Pose.
+   * Returns the distance in meters from the initial pose to the target Pose.
    */
-  public Transform2d getDistanceToPose(Pose2d targetPose) {
-    return this.getPose().minus(targetPose);
+  public double getDistanceBetweenPoses(Pose2d initialPose, Pose2d targetPose) {
+    return initialPose.getTranslation().getDistance(targetPose.getTranslation());
+  }
+
+  /**
+   * Returns the distance in meters from the pose of the robot to the target Pose.
+   */
+  public double getDistanceToPose(Pose2d targetPose) {
+    return getDistanceBetweenPoses(getPose(), targetPose);
   }
 
   /**
@@ -423,9 +430,9 @@ public class DriveBase extends SubsystemBase {
     EstimatedRobotPose estimatedVisionPose = this.photonVision.getCurrentPose();
     if (estimatedVisionPose != null) {
       SmartDashboard.putString("PhotonVision Pose", estimatedVisionPose.estimatedPose.toString());
-      if (estimatedVisionPose.estimatedPose.getTranslation()
-          .getDistance(
-              poseEstimator.getEstimatedPosition().getTranslation()) < PathConstants.POSE_DISTANCE_METERS_FILTER) {
+      if (getDistanceBetweenPoses(estimatedVisionPose.estimatedPose,
+          poseEstimator.getEstimatedPosition()) < PathConstants.POSE_DISTANCE_METERS_FILTER
+          && estimatedVisionPose.targetArea > VisionConstants.MIN_TARGET_AREA) {
         poseEstimator.addVisionMeasurement(estimatedVisionPose.estimatedPose,
             estimatedVisionPose.timestampSeconds);
       }

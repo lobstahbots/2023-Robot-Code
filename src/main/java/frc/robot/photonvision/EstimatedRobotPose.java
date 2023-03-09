@@ -14,15 +14,19 @@ public class EstimatedRobotPose {
   /** The pose confidence */
   public final double confidence;
 
+  /** The area of the tracked target */
+  public final double targetArea;
+
   /**
    * Constructs an EstimatedRobotPose
    *
    * @param estimatedPose estimated pose
    * @param timestampSeconds timestamp of the estimate
    */
-  public EstimatedRobotPose(Pose2d estimatedPose, double timestampSeconds, double confidence) {
+  public EstimatedRobotPose(Pose2d estimatedPose, double timestampSeconds, double confidence, double targetArea) {
     this.estimatedPose = estimatedPose;
     this.timestampSeconds = timestampSeconds;
     this.confidence = confidence;
+    this.targetArea = targetArea;
   }
 }

@@ -122,6 +122,7 @@ public final class Constants {
         new Transform3d(new Translation3d(-Units.inchesToMeters(12.1585), 0.07, Units.inchesToMeters(20.749)),
             new Rotation3d(0, 0, Math.PI));
     public static final double MAINTAIN_CAMERA_CONFIDENCE_THRESHOLD = 0.7;
+    public static final double MIN_TARGET_AREA = 10;
   }
 
   /**
