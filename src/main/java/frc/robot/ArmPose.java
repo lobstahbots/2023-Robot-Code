@@ -29,10 +29,9 @@ public class ArmPose {
   /**
    * Constructs an ArmPose with the provided pivot angle and elevator extension.
    * 
-   * @param angle The angle of the pivot. 0 = Vertical and pointing down. Positive -> towards front of robot. This
-   *          will be clamped to the range of the pivot.
-   * @param extension The extension of the elevator in inches. This will be clamped to the range of the
-   *          elevator.
+   * @param angle The angle of the pivot. 0 = Vertical and pointing down. Positive -> towards front of robot. This will
+   *          be clamped to the range of the pivot.
+   * @param extension The extension of the elevator in inches. This will be clamped to the range of the elevator.
    */
   public static ArmPose fromAngleExtension(Rotation2d angle, double extension) {
     return new ArmPose(angle, extension);
@@ -159,5 +158,9 @@ public class ArmPose {
   public boolean isInsideBumperZone() {
     return getAngle().getDegrees() < ArmConstants.BUMPER_AVOIDANCE_ANGLE.getDegrees()
         && getX() > ArmConstants.BUMPER_AVOIDANCE_X;
+  }
+
+  public boolean isInsideStowedZone() {
+    return getX() < ArmConstants.BUMPER_AVOIDANCE_X;
   }
 }

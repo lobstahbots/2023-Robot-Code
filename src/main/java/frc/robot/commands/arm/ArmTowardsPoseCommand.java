@@ -47,13 +47,14 @@ public class ArmTowardsPoseCommand extends CommandBase {
 
   @Override
   public void execute() {
-    double clampedExtension = MathUtil.clamp(pose.get().getExtension(), ElevatorConstants.MIN_EXTENSION_INCHES,
+    ArmPose currentPose = pose.get();
+    double clampedExtension = MathUtil.clamp(currentPose.getExtension(), ElevatorConstants.MIN_EXTENSION_INCHES,
         ElevatorConstants.MAX_EXTENSION_INCHES);
     arm.getElevator().setPIDGoal(clampedExtension);
     arm.getElevator().feedPID();
 
     double clampedAngle =
-        MathUtil.clamp(pose.get().getAngle().getDegrees(), PivotConstants.MIN_ROTATION_DEG,
+        MathUtil.clamp(currentPose.getAngle().getDegrees(), PivotConstants.MIN_ROTATION_DEG,
             PivotConstants.MAX_ROTATION_DEG);
     arm.getPivot().setPIDGoal(clampedAngle);
     arm.getPivot().feedPID();

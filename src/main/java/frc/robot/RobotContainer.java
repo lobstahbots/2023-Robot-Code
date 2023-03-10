@@ -9,6 +9,7 @@ import com.pathplanner.lib.server.PathPlannerServer;
 import com.revrobotics.CANSparkMax.IdleMode;
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
@@ -16,12 +17,13 @@ import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Command.InterruptionBehavior;
+import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.button.InternalButton;
-import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
+import frc.robot.Constants.ArmConstants;
 import frc.robot.Constants.ArmConstants.ElevatorConstants;
 import frc.robot.Constants.ArmConstants.PivotConstants;
 import frc.robot.Constants.ArmPresets;
@@ -32,7 +34,6 @@ import frc.robot.Constants.OIConstants.DriverConstants;
 import frc.robot.Constants.OIConstants.OperatorConstants;
 import frc.robot.auton.AutonGenerator;
 import frc.robot.commands.arm.ArmToPoseCommand;
-import frc.robot.commands.arm.ArmToPoseWithRetractionCommand;
 import frc.robot.commands.arm.ArmTowardsPoseCommand;
 import frc.robot.commands.arm.ArmTowardsPoseWithRetractionCommand;
 import frc.robot.commands.arm.elevator.ResetElevatorCommand;
@@ -44,7 +45,6 @@ import frc.robot.subsystems.DriveBase;
 import frc.robot.subsystems.Intake;
 import frc.robot.subsystems.arm.Elevator;
 import frc.robot.subsystems.arm.Pivot;
-import lobstah.stl.command.ConstructLaterCommand;
 import lobstah.stl.oi.LobstahGamepad;
 
 /**
@@ -73,6 +73,8 @@ public class RobotContainer {
 
   private final LobstahGamepad driverJoystick = new LobstahGamepad(DriverConstants.DRIVER_USB_INDEX);
   private final LobstahGamepad operatorJoystick = new LobstahGamepad(OperatorConstants.OPERATOR_USB_INDEX);
+
+  private ArmPose manualTarget;
 
   /**
    * The container for the robot. Contains subsystems, OI devices, and commands.
@@ -139,14 +141,34 @@ public class RobotContainer {
             .withInterruptBehavior(InterruptionBehavior.kCancelIncoming));
 
     // Manual adjustment
+    // TODO: Shouldn't need to cache manual control target
     defaultOperatorLayer.and(operatorJoystick.button(OperatorConstants.MANUAL_ADJUSTMENT_BTN))
-        .whileTrue(new ArmTowardsPoseCommand(arm,
-            () -> arm.getSetpointPose().translateBy(new Translation2d(
-                MathUtil.applyDeadband(operatorJoystick.getRawAxis(OperatorConstants.X_ADJUSTMENT_JOYSTICK_AXIS),
-                    OperatorConstants.JOYSTICK_DEADBAND) * OperatorConstants.MANUAL_CONTROL_SPEED,
-                MathUtil.applyDeadband(-operatorJoystick.getRawAxis(OperatorConstants.Y_ADJUSTMENT_JOYSTICK_AXIS),
-                    OperatorConstants.JOYSTICK_DEADBAND) * OperatorConstants.MANUAL_CONTROL_SPEED)))
-                        .withInterruptBehavior(InterruptionBehavior.kCancelIncoming));
+        .whileTrue(new InstantCommand(() -> manualTarget = arm.getSetpointPose()).andThen(new ArmTowardsPoseCommand(arm,
+            () -> {
+              if (manualTarget.isInsideStowedZone()) {
+                manualTarget = ArmPose.fromAngleExtension(manualTarget.getAngle().plus(
+                    Rotation2d.fromDegrees(MathUtil
+                        .applyDeadband(-operatorJoystick.getRawAxis(OperatorConstants.Y_ADJUSTMENT_JOYSTICK_AXIS),
+                            OperatorConstants.JOYSTICK_DEADBAND)
+                        * OperatorConstants.MANUAL_CONTROL_SPEED)),
+                    0);
+              }
+              if (manualTarget.getY() < ArmConstants.MIN_Y_POSITION) {
+                manualTarget = manualTarget.translateBy(new Translation2d(
+                    MathUtil.applyDeadband(-operatorJoystick.getRawAxis(OperatorConstants.X_ADJUSTMENT_JOYSTICK_AXIS),
+                        OperatorConstants.JOYSTICK_DEADBAND) * OperatorConstants.MANUAL_CONTROL_SPEED,
+                    MathUtil.clamp(MathUtil.applyDeadband(
+                        -operatorJoystick.getRawAxis(OperatorConstants.Y_ADJUSTMENT_JOYSTICK_AXIS),
+                        OperatorConstants.JOYSTICK_DEADBAND) * OperatorConstants.MANUAL_CONTROL_SPEED, 0, 10)));
+              }
+              manualTarget = manualTarget.translateBy(new Translation2d(
+                  MathUtil.applyDeadband(-operatorJoystick.getRawAxis(OperatorConstants.X_ADJUSTMENT_JOYSTICK_AXIS),
+                      OperatorConstants.JOYSTICK_DEADBAND) * OperatorConstants.MANUAL_CONTROL_SPEED,
+                  MathUtil.applyDeadband(-operatorJoystick.getRawAxis(OperatorConstants.Y_ADJUSTMENT_JOYSTICK_AXIS),
+                      OperatorConstants.JOYSTICK_DEADBAND) * OperatorConstants.MANUAL_CONTROL_SPEED));
+              return manualTarget;
+            })
+                .withInterruptBehavior(InterruptionBehavior.kCancelIncoming)));
 
 
     // Pickup
@@ -168,12 +190,15 @@ public class RobotContainer {
         .whileTrue(new ArmTowardsPoseCommand(arm, ArmPresets.HIGH_GOAL_SCORING));
 
     legacyOperatorLayer.and(operatorJoystick.button(OperatorConstants.Legacy.MANUAL_CONTROL_BTN))
-        .whileTrue(new ArmTowardsPoseCommand(arm,
-            () -> arm.getSetpointPose().translateBy(new Translation2d(
-                MathUtil.applyDeadband(-operatorJoystick.getRawAxis(OperatorConstants.Legacy.MANUAL_X_JOYSTICK_AXIS),
-                    OperatorConstants.JOYSTICK_DEADBAND) * OperatorConstants.Legacy.MANUAL_CONTROL_SPEED,
-                MathUtil.applyDeadband(-operatorJoystick.getRawAxis(OperatorConstants.Legacy.MANUAL_Y_JOYSTICK_AXIS),
-                    OperatorConstants.JOYSTICK_DEADBAND) * OperatorConstants.Legacy.MANUAL_CONTROL_SPEED))));
+        .whileTrue(new InstantCommand(() -> manualTarget = arm.getSetpointPose()).andThen(new ArmTowardsPoseCommand(arm,
+            () -> {
+              manualTarget = arm.getSetpointPose().translateBy(new Translation2d(
+                  MathUtil.applyDeadband(-operatorJoystick.getRawAxis(OperatorConstants.Legacy.MANUAL_X_JOYSTICK_AXIS),
+                      OperatorConstants.JOYSTICK_DEADBAND) * OperatorConstants.Legacy.MANUAL_CONTROL_SPEED,
+                  MathUtil.applyDeadband(-operatorJoystick.getRawAxis(OperatorConstants.Legacy.MANUAL_Y_JOYSTICK_AXIS),
+                      OperatorConstants.JOYSTICK_DEADBAND) * OperatorConstants.Legacy.MANUAL_CONTROL_SPEED));
+              return manualTarget;
+            })));
 
     legacyOperatorLayer.and(operatorJoystick.button(OperatorConstants.Legacy.INTAKE_BTN))
         .whileTrue(new SpinIntakeCommand(intake, IntakeConstants.INTAKE_VOLTAGE));
@@ -244,7 +269,7 @@ public class RobotContainer {
    */
   public Command getAutonomousCommand() {
     return new SequentialCommandGroup(
-        new ResetElevatorCommand(arm),
+        new ResetElevatorCommand(arm).asProxy(),
         autonChooser.getSelected());
   }
 
@@ -258,6 +283,7 @@ public class RobotContainer {
    * setAutonDefaultCommands().
    */
   public void setTeleopDefaultCommands() {
+    CommandScheduler.getInstance().schedule(new ResetElevatorCommand(arm));
     driveBase.setNeutralMode(NeutralMode.Brake);
     arm.getPivot().setIdleMode(IdleMode.kBrake);
     arm.getElevator().setIdleMode(IdleMode.kBrake);
@@ -267,7 +293,6 @@ public class RobotContainer {
             () -> -driverJoystick.getRawAxis(DriverConstants.LEFT_AXIS),
             () -> -driverJoystick.getRawAxis(DriverConstants.RIGHT_AXIS),
             DriverConstants.SQUARED_INPUTS));
-
     arm.setDefaultCommand(
         new ArmTowardsPoseWithRetractionCommand(arm,
             ArmPresets.STOWED));

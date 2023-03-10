@@ -81,8 +81,6 @@ public class ArmToPoseCommand extends ParallelRaceGroup {
   }
 
   private boolean isAtPosition() {
-    System.out.println(Math.abs(pose.get().getExtension() - arm.getPose().getExtension()));
-    System.out.println(Math.abs(pose.get().getAngle().minus(arm.getPose().getAngle()).getDegrees()));
     return pose.get().getDistance(arm.getPose()) <= cartesianThreshold
         && Math.abs(pose.get().getExtension() - arm.getPose().getExtension()) <= extensionThreshold
         && Math.abs(pose.get().getAngle().minus(arm.getPose().getAngle()).getDegrees()) <= angleThreshold;

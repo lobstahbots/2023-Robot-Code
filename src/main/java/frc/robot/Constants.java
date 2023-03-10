@@ -143,8 +143,8 @@ public final class Constants {
 
       public static final int MANUAL_ADJUSTMENT_BTN = 6;
       public static final double MANUAL_CONTROL_SPEED = 1.3;
-      public static final int X_ADJUSTMENT_JOYSTICK_AXIS = 0;
-      public static final int Y_ADJUSTMENT_JOYSTICK_AXIS = 1;
+      public static final int X_ADJUSTMENT_JOYSTICK_AXIS = 1;
+      public static final int Y_ADJUSTMENT_JOYSTICK_AXIS = 5;
 
       public static final int SHIFT_SELECTION_LEFT_POV = 270;
       public static final int SHIFT_SELECTION_RIGHT_POV = 90;
@@ -189,6 +189,7 @@ public final class Constants {
     public static final double BUMPER_AVOIDANCE_EXTENSION_PRECISION = 0.5;
     public static final double BUMPER_AVOIDANCE_ANGLE_PRECISION = 3;
     public static final double SWITCH_TO_PARALLEL_ANGLE_PRECISION = 7;
+    public static final double MIN_Y_POSITION = 6;
 
     /**
      * Stores constants related to pivot.
@@ -196,7 +197,7 @@ public final class Constants {
     public static final class PivotConstants {
       // Geometry
       public static final Translation2d ORIGIN_TO_PIVOT = new Translation2d(-24.343, 50);
-      public static final double PIVOT_OFFSET_DEG = 320;
+      public static final double PIVOT_OFFSET_DEG = 319;
 
       // IO
       public static final int ENCODER_CHANNEL = 3;
