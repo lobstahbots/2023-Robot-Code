@@ -38,9 +38,9 @@ public final class Constants {
     public static final double kP = 1.2264;
     public static final double kI = 0;
     public static final double KD = 0;
-    public static final double TURN_P = 0.025;
+    public static final double TURN_P = 0.035;
     public static final double TURN_I = 0;
-    public static final double TURN_D = 0.015;
+    public static final double TURN_D = 0.02;
     public static final double TURN_ANGLE_DEADBAND = 2;
     public static final double POSE_DISTANCE_METERS_FILTER = 10;
   }
