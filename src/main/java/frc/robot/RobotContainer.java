@@ -73,8 +73,6 @@ public class RobotContainer {
 
   private final LobstahGamepad driverJoystick = new LobstahGamepad(DriverConstants.DRIVER_USB_INDEX);
   private final LobstahGamepad operatorJoystick = new LobstahGamepad(OperatorConstants.OPERATOR_USB_INDEX);
-  InternalButton legacyOperatorLayer = new InternalButton();
-  Trigger defaultOperatorLayer = legacyOperatorLayer.negate();
 
   private ArmPose manualTarget;
 
@@ -115,56 +113,37 @@ public class RobotContainer {
         () -> DriverConstants.SLOWDOWN_FACTOR * driverJoystick.getRawAxis(DriverConstants.RIGHT_AXIS),
         DriverConstants.SQUARED_INPUTS));
 
-    // Operator layers
-    operatorJoystick.button(OperatorConstants.LEGACY_TOGGLE_BTN).onTrue(
-        new InstantCommand(() -> legacyOperatorLayer.setPressed(!legacyOperatorLayer.getAsBoolean())));
-
-    // Target selection
-    defaultOperatorLayer.and(operatorJoystick.pov(OperatorConstants.SHIFT_SELECTION_LEFT_POV))
-        .onTrue(new InstantCommand(() -> targetSelector.changeColumn(-1)));
-    defaultOperatorLayer.and(operatorJoystick.pov(OperatorConstants.SHIFT_SELECTION_RIGHT_POV))
-        .onTrue(new InstantCommand(() -> targetSelector.changeColumn(1)));
-    defaultOperatorLayer.and(operatorJoystick.pov(OperatorConstants.SHIFT_SELECTION_UP_POV))
-        .onTrue(new InstantCommand(() -> targetSelector.changeRow(-1)));
-    defaultOperatorLayer.and(operatorJoystick.pov(OperatorConstants.SHIFT_SELECTION_DOWN_POV))
-        .onTrue(new InstantCommand(() -> targetSelector.changeRow(1)));
-
-    // Scoring
-    Trigger scoreLineupButton = defaultOperatorLayer.and(operatorJoystick.button(OperatorConstants.SCORE_LINEUP_BTN));
-    scoreLineupButton.whileTrue(autonGenerator.getPathToTargetCommand(driveBase, () -> getScoreColumn())
-        .andThen(autonGenerator.getScoreCommand(() -> targetSelector.getRow())).unless(() -> !canDriveToTarget()));
-    operatorJoystick.button(OperatorConstants.SCORE_PLACE_BTN).and(scoreLineupButton).onTrue(
-        new ArmToPoseCommand(arm, () -> arm.getSetpointPose().translateBy(ArmPresets.CONE_SCORING_DROPDOWN), 2, 0)
-            .andThen(new SpinIntakeCommand(intake, IntakeConstants.OUTTAKE_VOLTAGE)
-                .alongWith(Commands.waitSeconds(1).andThen(new ArmToPoseCommand(arm,
-                    () -> arm.getSetpointPose().translateBy(ArmPresets.CONE_SCORING_DROPDOWN.unaryMinus()), 5, 0))))
-            .withInterruptBehavior(InterruptionBehavior.kCancelIncoming));
+    // operatorJoystick.button(OperatorConstants.PLACE_DOWN_BTN).onTrue(
+    // new ArmToPoseCommand(arm, () -> arm.getSetpointPose().translateBy(ArmPresets.CONE_SCORING_DROPDOWN), 2)
+    // .andThen(new SpinIntakeCommand(intake, IntakeConstants.OUTTAKE_VOLTAGE)
+    // .alongWith(Commands.waitSeconds(1).andThen(new ArmToPoseCommand(arm,
+    // () -> arm.getSetpointPose().translateBy(ArmPresets.CONE_SCORING_DROPDOWN.unaryMinus()), 2)))));
 
     // Manual adjustment
     // TODO: Shouldn't need to cache manual control target
-    defaultOperatorLayer.and(operatorJoystick.button(OperatorConstants.MANUAL_ADJUSTMENT_BTN))
+    operatorJoystick.button(OperatorConstants.MANUAL_CONTROL_BTN)
         .whileTrue(new InstantCommand(() -> manualTarget = arm.getSetpointPose()).andThen(new ArmTowardsPoseCommand(arm,
             () -> {
               if (manualTarget.isInsideStowedZone()) {
                 manualTarget = ArmPose.fromAngleExtension(manualTarget.getAngle().plus(
                     Rotation2d.fromDegrees(MathUtil
-                        .applyDeadband(-operatorJoystick.getRawAxis(OperatorConstants.Y_ADJUSTMENT_JOYSTICK_AXIS),
+                        .applyDeadband(-operatorJoystick.getRawAxis(OperatorConstants.MANUAL_Y_JOYSTICK_AXIS),
                             OperatorConstants.JOYSTICK_DEADBAND)
                         * OperatorConstants.MANUAL_CONTROL_SPEED)),
                     0);
               }
               if (manualTarget.getY() < ArmConstants.MIN_Y_POSITION) {
                 manualTarget = manualTarget.translateBy(new Translation2d(
-                    MathUtil.applyDeadband(-operatorJoystick.getRawAxis(OperatorConstants.X_ADJUSTMENT_JOYSTICK_AXIS),
+                    MathUtil.applyDeadband(-operatorJoystick.getRawAxis(OperatorConstants.MANUAL_X_JOYSTICK_AXIS),
                         OperatorConstants.JOYSTICK_DEADBAND) * OperatorConstants.MANUAL_CONTROL_SPEED,
                     MathUtil.clamp(MathUtil.applyDeadband(
-                        -operatorJoystick.getRawAxis(OperatorConstants.Y_ADJUSTMENT_JOYSTICK_AXIS),
+                        -operatorJoystick.getRawAxis(OperatorConstants.MANUAL_Y_JOYSTICK_AXIS),
                         OperatorConstants.JOYSTICK_DEADBAND) * OperatorConstants.MANUAL_CONTROL_SPEED, 0, 10)));
               }
               manualTarget = manualTarget.translateBy(new Translation2d(
-                  MathUtil.applyDeadband(-operatorJoystick.getRawAxis(OperatorConstants.X_ADJUSTMENT_JOYSTICK_AXIS),
+                  MathUtil.applyDeadband(-operatorJoystick.getRawAxis(OperatorConstants.MANUAL_X_JOYSTICK_AXIS),
                       OperatorConstants.JOYSTICK_DEADBAND) * OperatorConstants.MANUAL_CONTROL_SPEED,
-                  MathUtil.applyDeadband(-operatorJoystick.getRawAxis(OperatorConstants.Y_ADJUSTMENT_JOYSTICK_AXIS),
+                  MathUtil.applyDeadband(-operatorJoystick.getRawAxis(OperatorConstants.MANUAL_Y_JOYSTICK_AXIS),
                       OperatorConstants.JOYSTICK_DEADBAND) * OperatorConstants.MANUAL_CONTROL_SPEED));
               return manualTarget;
             })
@@ -172,46 +151,35 @@ public class RobotContainer {
 
 
     // Pickup
-    defaultOperatorLayer.and(operatorJoystick.button(OperatorConstants.GROUND_PICKUP_BTN))
+    operatorJoystick.pov(OperatorConstants.GROUND_PICKUP_POV)
         .whileTrue(new SpinIntakeCommand(intake, IntakeConstants.INTAKE_VOLTAGE)
             .alongWith(new ArmTowardsPoseWithRetractionCommand(arm, ArmPresets.GROUND_PICKUP)));
 
     // Legacy operator controls
 
-    legacyOperatorLayer.and(operatorJoystick.button(OperatorConstants.Legacy.LOW_GOAL_BTN))
-        .whileTrue(new ArmTowardsPoseCommand(arm, ArmPresets.GROUND_PICKUP));
-    legacyOperatorLayer.and(operatorJoystick.button(OperatorConstants.Legacy.MID_GOAL_BTN))
-        .whileTrue(new ArmTowardsPoseCommand(arm, ArmPresets.MID_GOAL_SCORING));
-    legacyOperatorLayer.and(operatorJoystick.button(OperatorConstants.Legacy.HIGH_GOAL_BTN))
-        .whileTrue(new ArmTowardsPoseCommand(arm, ArmPresets.HIGH_GOAL_SCORING));
+    operatorJoystick.button(OperatorConstants.LOW_GOAL_BTN)
+        .whileTrue(new ArmTowardsPoseWithRetractionCommand(arm, ArmPresets.GROUND_PICKUP));
+    operatorJoystick.button(OperatorConstants.MID_GOAL_BTN)
+        .whileTrue(new ArmTowardsPoseWithRetractionCommand(arm, ArmPresets.MID_GOAL_SCORING));
+    operatorJoystick.button(OperatorConstants.HIGH_GOAL_BTN)
+        .whileTrue(new ArmTowardsPoseWithRetractionCommand(arm, ArmPresets.HIGH_GOAL_SCORING));
 
-    legacyOperatorLayer.and(operatorJoystick.button(OperatorConstants.Legacy.MANUAL_CONTROL_BTN))
-        .whileTrue(new InstantCommand(() -> manualTarget = arm.getSetpointPose()).andThen(new ArmTowardsPoseCommand(arm,
-            () -> {
-              manualTarget = arm.getSetpointPose().translateBy(new Translation2d(
-                  MathUtil.applyDeadband(-operatorJoystick.getRawAxis(OperatorConstants.Legacy.MANUAL_X_JOYSTICK_AXIS),
-                      OperatorConstants.JOYSTICK_DEADBAND) * OperatorConstants.Legacy.MANUAL_CONTROL_SPEED,
-                  MathUtil.applyDeadband(-operatorJoystick.getRawAxis(OperatorConstants.Legacy.MANUAL_Y_JOYSTICK_AXIS),
-                      OperatorConstants.JOYSTICK_DEADBAND) * OperatorConstants.Legacy.MANUAL_CONTROL_SPEED));
-              return manualTarget;
-            })));
-
-    legacyOperatorLayer.and(operatorJoystick.button(OperatorConstants.Legacy.INTAKE_BTN))
+    operatorJoystick.button(OperatorConstants.INTAKE_BTN)
         .whileTrue(new SpinIntakeCommand(intake, IntakeConstants.INTAKE_VOLTAGE));
-    legacyOperatorLayer.and(operatorJoystick.button(OperatorConstants.Legacy.OUTTAKE_BTN))
+    operatorJoystick.button(OperatorConstants.OUTTAKE_BTN)
         .whileTrue(new SpinIntakeCommand(intake, IntakeConstants.OUTTAKE_VOLTAGE));
   }
 
   public void configurePlayerStationButtons() {
     if (DriverStation.getAlliance() == Alliance.Blue) {
-      defaultOperatorLayer.and(operatorJoystick.button(OperatorConstants.LEFT_PICKUP_BTN))
+      operatorJoystick.pov(OperatorConstants.LEFT_PICKUP_POV)
           .whileTrue(autonGenerator.getDriveToPlayerStationCommand(FieldConstants.PLAYER_STATION_PICKUP_LEFT));
-      defaultOperatorLayer.and(operatorJoystick.button(OperatorConstants.RIGHT_PICKUP_BTN))
+      operatorJoystick.pov(OperatorConstants.RIGHT_PICKUP_POV)
           .whileTrue(autonGenerator.getDriveToPlayerStationCommand(FieldConstants.PLAYER_STATION_PICKUP_RIGHT));
     } else {
-      defaultOperatorLayer.and(operatorJoystick.button(OperatorConstants.LEFT_PICKUP_BTN))
+      operatorJoystick.pov(OperatorConstants.LEFT_PICKUP_POV)
           .whileTrue(autonGenerator.getDriveToPlayerStationCommand(FieldConstants.PLAYER_STATION_PICKUP_RIGHT));
-      defaultOperatorLayer.and(operatorJoystick.button(OperatorConstants.RIGHT_PICKUP_BTN))
+      operatorJoystick.pov(OperatorConstants.RIGHT_PICKUP_POV)
           .whileTrue(autonGenerator.getDriveToPlayerStationCommand(FieldConstants.PLAYER_STATION_PICKUP_LEFT));
     }
   }

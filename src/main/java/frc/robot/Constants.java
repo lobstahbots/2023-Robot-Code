@@ -155,39 +155,22 @@ public final class Constants {
       public static final int OPERATOR_USB_INDEX = 1;
       public static final double JOYSTICK_DEADBAND = 0.05;
 
-      public static final int MANUAL_ADJUSTMENT_BTN = 6;
+      public static final int INTAKE_BTN = 5;
+      public static final int OUTTAKE_BTN = 6;
+
+      public static final int MANUAL_CONTROL_BTN = 7;
       public static final double MANUAL_CONTROL_SPEED = 1.3;
-      public static final int X_ADJUSTMENT_JOYSTICK_AXIS = 1;
-      public static final int Y_ADJUSTMENT_JOYSTICK_AXIS = 5;
+      public static final int MANUAL_X_JOYSTICK_AXIS = 1;
+      public static final int MANUAL_Y_JOYSTICK_AXIS = 5;
 
-      public static final int SHIFT_SELECTION_LEFT_POV = 270;
-      public static final int SHIFT_SELECTION_RIGHT_POV = 90;
-      public static final int SHIFT_SELECTION_UP_POV = 0;
-      public static final int SHIFT_SELECTION_DOWN_POV = 180;
+      public static final int LEFT_PICKUP_POV = 270;
+      public static final int RIGHT_PICKUP_POV = 90;
+      public static final int GROUND_PICKUP_POV = 180;
 
-      public static final int SCORE_LINEUP_BTN = 5;
-      public static final int SCORE_PLACE_BTN = 4;
-
-      public static final int LEFT_PICKUP_BTN = 1;
-      public static final int RIGHT_PICKUP_BTN = 3;
-      public static final int GROUND_PICKUP_BTN = 2;
-
-      public static final int LEGACY_TOGGLE_BTN = 10;
-
-      public static final class Legacy {
-        public static final int INTAKE_BTN = 5;
-        public static final int OUTTAKE_BTN = 6;
-
-        public static final int MANUAL_CONTROL_BTN = 6;
-        public static final double MANUAL_CONTROL_SPEED = 1.3;
-        public static final int MANUAL_X_JOYSTICK_AXIS = 1;
-        public static final int MANUAL_Y_JOYSTICK_AXIS = 5;
-
-        public static final int LOW_GOAL_BTN = 2;
-        public static final int MID_GOAL_BTN = 3;
-        public static final int HIGH_GOAL_BTN = 4;
-        public static final int PLAYER_STATION_BTN = 1;
-      }
+      public static final int LOW_GOAL_BTN = 2;
+      public static final int MID_GOAL_BTN = 3;
+      public static final int HIGH_GOAL_BTN = 4;
+      public static final int PLACE_DOWN_BTN = 1;
     }
   }
 

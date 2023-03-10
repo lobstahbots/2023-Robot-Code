@@ -206,7 +206,7 @@ public class AutonGenerator {
                         () -> new PathFollowCommand(driveBase, driveBase.generatePath(flippedTargetPose))),
                     new TimedCommand(0.2, new TurnToAngleCommand(driveBase, flippedTargetPose.getRotation(), 1))),
                 new ArmTowardsPoseCommand(arm, ArmPresets.PLAYER_STATION_PICKUP))
-                    .andThen(new ParallelRaceGroup(new TimedCommand(1, new StopDriveCommand(driveBase)),
+                    .andThen(new ParallelRaceGroup(new TimedCommand(0.25, new StopDriveCommand(driveBase)),
                         new ArmTowardsPoseCommand(arm, ArmPresets.PLAYER_STATION_PICKUP))) // Hold for a second
                     .andThen(new TimedCommand(1.0, new ParallelCommandGroup(
                         new ArmTowardsPoseCommand(arm, ArmPresets.PLAYER_STATION_PICKUP),
