@@ -128,7 +128,7 @@ public class PhotonPoseEstimator {
                   .get()
                   .transformBy(lowestAmbiguityTarget.getBestCameraToTarget().inverse())
                   .transformBy(robotToCamera.inverse()).toPose2d(),
-              result.getTimestampSeconds(), 0));
+              result.getTimestampSeconds(), 0, lowestAmbiguityTarget.getArea()));
     } else {
       double confidence = LobstahMath.scaleNumberToClampedRange(0.2 - lowestAmbiguityScore, 0, 0.2, 0, 1);
       return Optional.of(
@@ -137,7 +137,7 @@ public class PhotonPoseEstimator {
                   .get()
                   .transformBy(lowestAmbiguityTarget.getBestCameraToTarget().inverse())
                   .transformBy(robotToCamera.inverse()).toPose2d(),
-              result.getTimestampSeconds(), confidence));
+              result.getTimestampSeconds(), confidence, lowestAmbiguityTarget.getArea()));
     }
   }
 

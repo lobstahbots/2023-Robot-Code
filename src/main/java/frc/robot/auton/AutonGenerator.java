@@ -31,6 +31,7 @@ import frc.robot.Constants.ArmPresets;
 import frc.robot.commands.arm.ArmToPoseCommand;
 import frc.robot.commands.arm.ArmToPoseWithRetractionCommand;
 import frc.robot.commands.arm.ArmTowardsPoseCommand;
+import frc.robot.commands.arm.ArmTowardsPoseWithRetractionCommand;
 import frc.robot.commands.drive.PathFollowCommand;
 import frc.robot.commands.drive.StopDriveCommand;
 import frc.robot.commands.drive.StraightDriveCommand;
@@ -62,6 +63,11 @@ public class AutonGenerator {
     this.intake = intake;
   }
 
+
+  public Command getDoNothingCommand() {
+    return new StopDriveCommand(driveBase);
+  }
+
   /**
    * Creates and returns an autonomous routine to score a preload based on row number, then drive following a path.
    * 
@@ -72,7 +78,36 @@ public class AutonGenerator {
    */
   public Command getScoreAndDriveCommand(int row, int initialPosition, int crossingPosition, int finalPosition) {
     return getScoreCommand(row).andThen(new WaitCommand(0.5))
-        .andThen(getPathFollowCommand(initialPosition, crossingPosition, finalPosition));
+        .andThen(
+            getPathFollowCommand(initialPosition, crossingPosition, finalPosition));
+    // .andThen(new ConstructLaterCommand(() -> getGroundPickupCommand(1, 0, 0)))
+    // .andThen(new ArmToPoseWithRetractionCommand(arm, ArmPresets.STOWED, 1));
+    // .andThen(new ConstructLaterCommand(() -> getReturnCommand(1, 0)));
+  }
+
+  public Command getGroundPickupCommand(int scorePiece, int finalPosition, int row) {
+    return new ParallelRaceGroup(
+        new ConstructLaterCommand(
+            () -> new PathFollowCommand(driveBase,
+                driveBase.generatePath(FieldConstants.GROUND_PICKUP_POSES[scorePiece])).andThen(new WaitCommand(0.5))),
+        new ArmTowardsPoseWithRetractionCommand(arm, ArmPresets.GROUND_PICKUP),
+        new SpinIntakeCommand(intake, IntakeConstants.INTAKE_VOLTAGE));
+  }
+
+  public Command getReturnCommand(int finalPosition, int row) {
+    return new TimedCommand(1,
+        new TurnToAngleCommand(driveBase, FieldConstants.SCORING_WAYPOINTS[finalPosition].getRotation(), 1)).andThen(
+            new ConstructLaterCommand(() -> new PathFollowCommand(driveBase,
+                driveBase.generatePath(FieldConstants.RETURNING_CROSSING_WAYPOINTS[0]))))
+            .andThen(new TimedCommand(0.5,
+                new TurnToAngleCommand(driveBase, FieldConstants.SCORING_WAYPOINTS[finalPosition].getRotation(), 1)))
+            .andThen(new ConstructLaterCommand(() -> new PathFollowCommand(driveBase,
+                driveBase.generatePath(FieldConstants.ENTERING_SCORING_ZONE_WAYPOINTS[0]))))
+            .andThen(new ConstructLaterCommand(
+                () -> getPathToTargetCommand(driveBase, () -> FieldConstants.SCORING_WAYPOINTS[finalPosition])))
+            .andThen(new TimedCommand(0.5,
+                new TurnToAngleCommand(driveBase, FieldConstants.SCORING_WAYPOINTS[finalPosition].getRotation(), 1)))
+            .andThen(getScoreCommand(row));
   }
 
   /**
@@ -160,23 +195,22 @@ public class AutonGenerator {
     Pose2d waypoint = driveBase.flipWaypointBasedOnAlliance(
         new Pose2d(targetPose.getX() - 1, targetPose.getY(), targetPose.getRotation()), true);
     Pose2d flippedTargetPose = driveBase.flipWaypointBasedOnAlliance(targetPose, true);
-    return new SequentialCommandGroup( // Drive to waypoint, then turn while raising arm
-        new ConstructLaterCommand(() -> new PathFollowCommand(driveBase, driveBase.generatePath(waypoint))),
-        new ParallelDeadlineGroup(new ArmToPoseCommand(arm, ArmPresets.PLAYER_STATION_PICKUP, 5),
-            new TurnToAngleCommand(driveBase, flippedTargetPose.getRotation(), 1)),
-        new ParallelRaceGroup( // Maintain arm angle and spin intake
-            new SequentialCommandGroup( // Meanwhile, drive to target and turn briefly to ensure correct angle
-                new ConstructLaterCommand(
-                    () -> new PathFollowCommand(driveBase, driveBase.generatePath(flippedTargetPose))),
-                new TimedCommand(0.2, new TurnToAngleCommand(driveBase, flippedTargetPose.getRotation(), 1))),
-            new ArmTowardsPoseCommand(arm, ArmPresets.PLAYER_STATION_PICKUP),
-            new SpinIntakeCommand(intake, IntakeConstants.INTAKE_VOLTAGE))
-                .andThen(new ParallelRaceGroup(new TimedCommand(1, new StopDriveCommand(driveBase)),
-                    new ParallelCommandGroup(new ArmTowardsPoseCommand(arm, ArmPresets.PLAYER_STATION_PICKUP),
-                        new SpinIntakeCommand(intake, IntakeConstants.INTAKE_VOLTAGE)))) // Hold for a second
-                .andThen(new TimedCommand(1,
-                    new ParallelCommandGroup(new ArmTowardsPoseCommand(arm, ArmPresets.PLAYER_STATION_PICKUP),
-                        new StraightDriveCommand(driveBase, -0.2, false))))) // Drive away with arm raised still
+    return new ParallelRaceGroup(new SpinIntakeCommand(intake, IntakeConstants.INTAKE_VOLTAGE),
+        new SequentialCommandGroup( // Drive to waypoint, then turn while raising arm
+            new ConstructLaterCommand(() -> new PathFollowCommand(driveBase, driveBase.generatePath(waypoint))),
+            new ParallelDeadlineGroup(new ArmToPoseCommand(arm, ArmPresets.PLAYER_STATION_PICKUP, 5),
+                new TurnToAngleCommand(driveBase, flippedTargetPose.getRotation(), 1)),
+            new ParallelRaceGroup( // Maintain arm angle and spin intake
+                new SequentialCommandGroup( // Meanwhile, drive to target and turn briefly to ensure correct angle
+                    new ConstructLaterCommand(
+                        () -> new PathFollowCommand(driveBase, driveBase.generatePath(flippedTargetPose))),
+                    new TimedCommand(0.2, new TurnToAngleCommand(driveBase, flippedTargetPose.getRotation(), 1))),
+                new ArmTowardsPoseCommand(arm, ArmPresets.PLAYER_STATION_PICKUP))
+                    .andThen(new ParallelRaceGroup(new TimedCommand(1, new StopDriveCommand(driveBase)),
+                        new ArmTowardsPoseCommand(arm, ArmPresets.PLAYER_STATION_PICKUP))) // Hold for a second
+                    .andThen(new TimedCommand(1.0, new ParallelCommandGroup(
+                        new ArmTowardsPoseCommand(arm, ArmPresets.PLAYER_STATION_PICKUP),
+                        new StraightDriveCommand(driveBase, -0.3, false)))))) // Drive away with arm raised still
                             .unless(() -> Math.abs(
                                 driveBase.getDistanceToPose(flippedTargetPose)
                                     .getX()) > FieldConstants.MAX_PLAYER_STATION_X_ZONE
@@ -202,9 +236,10 @@ public class AutonGenerator {
     return new SequentialCommandGroup(
         new ConstructLaterCommand(() -> getPathToTargetCommand(driveBase, () -> crossingPose)),
         new TurnToAngleCommand(driveBase, crossingPose.getRotation(),
-            PathConstants.TURN_ANGLE_DEADBAND),
-        new ConstructLaterCommand(() -> new PathFollowCommand(driveBase,
-            driveBase.generatePath(FieldConstants.ENDING_AUTON_POSES[finalPosition]))));
+            PathConstants.TURN_ANGLE_DEADBAND));
+    // new ConstructLaterCommand(() -> getPathToTargetCommand(driveBase, () -> crossingPose)));
+    // new ConstructLaterCommand(() -> new PathFollowCommand(driveBase,
+    // driveBase.generatePath(FieldConstants.ENDING_AUTON_POSES[finalPosition]))));
   }
 
   /**

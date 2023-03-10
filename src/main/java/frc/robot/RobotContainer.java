@@ -73,6 +73,8 @@ public class RobotContainer {
 
   private final LobstahGamepad driverJoystick = new LobstahGamepad(DriverConstants.DRIVER_USB_INDEX);
   private final LobstahGamepad operatorJoystick = new LobstahGamepad(OperatorConstants.OPERATOR_USB_INDEX);
+  InternalButton legacyOperatorLayer = new InternalButton();
+  Trigger defaultOperatorLayer = legacyOperatorLayer.negate();
 
   private ArmPose manualTarget;
 
@@ -114,8 +116,6 @@ public class RobotContainer {
         DriverConstants.SQUARED_INPUTS));
 
     // Operator layers
-    InternalButton legacyOperatorLayer = new InternalButton();
-    Trigger defaultOperatorLayer = legacyOperatorLayer.negate();
     operatorJoystick.button(OperatorConstants.LEGACY_TOGGLE_BTN).onTrue(
         new InstantCommand(() -> legacyOperatorLayer.setPressed(!legacyOperatorLayer.getAsBoolean())));
 
@@ -175,10 +175,6 @@ public class RobotContainer {
     defaultOperatorLayer.and(operatorJoystick.button(OperatorConstants.GROUND_PICKUP_BTN))
         .whileTrue(new SpinIntakeCommand(intake, IntakeConstants.INTAKE_VOLTAGE)
             .alongWith(new ArmTowardsPoseWithRetractionCommand(arm, ArmPresets.GROUND_PICKUP)));
-    defaultOperatorLayer.and(operatorJoystick.button(OperatorConstants.LEFT_PICKUP_BTN))
-        .whileTrue(autonGenerator.getDriveToPlayerStationCommand(FieldConstants.PLAYER_STATION_PICKUP_LEFT));
-    defaultOperatorLayer.and(operatorJoystick.button(OperatorConstants.RIGHT_PICKUP_BTN))
-        .whileTrue(autonGenerator.getDriveToPlayerStationCommand(FieldConstants.PLAYER_STATION_PICKUP_RIGHT));
 
     // Legacy operator controls
 
@@ -204,6 +200,20 @@ public class RobotContainer {
         .whileTrue(new SpinIntakeCommand(intake, IntakeConstants.INTAKE_VOLTAGE));
     legacyOperatorLayer.and(operatorJoystick.button(OperatorConstants.Legacy.OUTTAKE_BTN))
         .whileTrue(new SpinIntakeCommand(intake, IntakeConstants.OUTTAKE_VOLTAGE));
+  }
+
+  public void configurePlayerStationButtons() {
+    if (DriverStation.getAlliance() == Alliance.Blue) {
+      defaultOperatorLayer.and(operatorJoystick.button(OperatorConstants.LEFT_PICKUP_BTN))
+          .whileTrue(autonGenerator.getDriveToPlayerStationCommand(FieldConstants.PLAYER_STATION_PICKUP_LEFT));
+      defaultOperatorLayer.and(operatorJoystick.button(OperatorConstants.RIGHT_PICKUP_BTN))
+          .whileTrue(autonGenerator.getDriveToPlayerStationCommand(FieldConstants.PLAYER_STATION_PICKUP_RIGHT));
+    } else {
+      defaultOperatorLayer.and(operatorJoystick.button(OperatorConstants.LEFT_PICKUP_BTN))
+          .whileTrue(autonGenerator.getDriveToPlayerStationCommand(FieldConstants.PLAYER_STATION_PICKUP_RIGHT));
+      defaultOperatorLayer.and(operatorJoystick.button(OperatorConstants.RIGHT_PICKUP_BTN))
+          .whileTrue(autonGenerator.getDriveToPlayerStationCommand(FieldConstants.PLAYER_STATION_PICKUP_LEFT));
+    }
   }
 
   public Pose2d getScoreColumn() {
@@ -247,10 +257,6 @@ public class RobotContainer {
             endingPosition.getSelected()));
     autonChooser.addOption("Simple Auton", autonGenerator.getSimpleAutonCommand());
     autonChooser.addOption("Do Nothing Auton", new StopDriveCommand(driveBase));
-    autonChooser.addOption("Place Piece on Mid Goal Auton",
-        autonGenerator.getScoreCommand(ArmPresets.MID_GOAL_SCORING, true));
-    autonChooser.addOption("Place Piece on High Goal Auton",
-        autonGenerator.getScoreCommand(ArmPresets.HIGH_GOAL_SCORING, true));
     autonChooser.addOption("Score and Drive Auton",
         autonGenerator.getScoreAndDriveCommand(scoringPosition.getSelected(), initialPosition.getSelected(),
             crossingPosition.getSelected(), endingPosition.getSelected()));

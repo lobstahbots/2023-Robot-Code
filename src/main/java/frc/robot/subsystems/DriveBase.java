@@ -32,6 +32,7 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.DriveConstants;
 import frc.robot.Constants.FieldConstants;
 import frc.robot.Constants.PathConstants;
+import frc.robot.Constants.VisionConstants;
 import lobstah.stl.math.LobstahMath;
 import lobstah.stl.motorcontrol.LobstahDifferentialDrive;
 import frc.robot.photonvision.EstimatedRobotPose;
@@ -165,17 +166,23 @@ public class DriveBase extends SubsystemBase {
    */
   public Pose2d getPose() {
     poseEstimator.update(getGyroAngle180(), getLeftEncoderDistanceMeters(), getRightEncoderDistanceMeters());
-    try {
-      EstimatedRobotPose estimatedVisionPose = this.photonVision.getCurrentPose();
+    EstimatedRobotPose estimatedVisionPose = this.photonVision.getCurrentPose();
+    if (estimatedVisionPose != null) {
       SmartDashboard.putString("PhotonVision Pose", estimatedVisionPose.estimatedPose.toString());
-      poseEstimator.addVisionMeasurement(estimatedVisionPose.estimatedPose,
-          estimatedVisionPose.timestampSeconds);
-    } catch (NullPointerException npe) {
-
+      if (estimatedVisionPose.targetArea > VisionConstants.MIN_TARGET_AREA) {
+        poseEstimator.addVisionMeasurement(estimatedVisionPose.estimatedPose,
+            estimatedVisionPose.timestampSeconds);
+      }
     }
     return poseEstimator.getEstimatedPosition();
   }
 
+  /**
+   * Flips the given {@Pose2d} waypoint based on alliance color.
+   *
+   * @param waypoint The waypoint to flip
+   * @param flipRotation Whether or not to flip the pose rotation.
+   */
   public Pose2d flipWaypointBasedOnAlliance(Pose2d waypoint, boolean flipRotation) {
     if (DriverStation.getAlliance() == Alliance.Red) {
       if (flipRotation) {
@@ -189,6 +196,12 @@ public class DriveBase extends SubsystemBase {
     return waypoint;
   }
 
+  /**
+   * Flips the given {@Pose2d} waypoint based on alliance color.
+   *
+   * @param waypointSupplier A supplier for the waypoint to flip
+   * @param flipRotation Whether or not to flip the pose rotation.
+   */
   public Pose2d flipWaypointBasedOnAlliance(Supplier<Pose2d> waypointSupplier, boolean flipRotation) {
     Pose2d waypoint = waypointSupplier.get();
     if (DriverStation.getAlliance() == Alliance.Red) {
@@ -265,26 +278,16 @@ public class DriveBase extends SubsystemBase {
     gyro.reset();
   }
 
-  // public void initGyro() {
-  // try {
-  // EstimatedRobotPose estimatedVisionPose = this.photonVision.getCurrentPose();
-  // SmartDashboard.putString("PhotonVision Pose", estimatedVisionPose.estimatedPose.toString());
-  // zeroGyro();
-  // setGyroOffset(estimatedVisionPose.estimatedPose.getRotation());
-  // } catch (NullPointerException npe) {
-  // zeroGyro();
-  // setGyroOffset(flipWaypointBasedOnAlliance(FieldConstants.SCORING_WAYPOINTS[0], true)
-  // .getRotation());
-  // }
-  // }
-
+  /** Initializes the robot odometry based on Photonvision pose if available, or else uses assumed starting position. */
   public void initOdometry(Pose2d defaultPose) {
-    if (photonVision.getCurrentPose() != null) {
-      EstimatedRobotPose estimatedVisionPose = photonVision.getCurrentPose();
+    EstimatedRobotPose estimatedVisionPose = photonVision.getCurrentPose();
+    if (estimatedVisionPose != null) {
       SmartDashboard.putString("PhotonVision Pose", estimatedVisionPose.estimatedPose.toString());
       zeroGyro();
       setGyroOffset(estimatedVisionPose.estimatedPose.getRotation());
       poseEstimator.resetPosition(getGyroAngle180(), 0, 0, defaultPose);
+      poseEstimator.addVisionMeasurement(estimatedVisionPose.estimatedPose,
+          estimatedVisionPose.timestampSeconds);
       resetEncoders();
     } else {
       zeroGyro();
@@ -348,10 +351,24 @@ public class DriveBase extends SubsystemBase {
   }
 
   /**
-   * Returns the Transform2d from the pose of the robot to the target Pose.
+   * Returns the distance in meters from the initial pose to the target Pose.
+   */
+  public double getDistanceBetweenPoses(Pose2d initialPose, Pose2d targetPose) {
+    return initialPose.getTranslation().getDistance(targetPose.getTranslation());
+  }
+
+  /**
+   * Returns the distance in meters from the pose of the robot to the target Pose.
+   */
+  public double getDirectDistanceToPose(Pose2d targetPose) {
+    return getDistanceBetweenPoses(getPose(), targetPose);
+  }
+
+  /**
+   * Returns the distance in meters from the pose of the robot to the target Pose.
    */
   public Transform2d getDistanceToPose(Pose2d targetPose) {
-    return this.getPose().minus(targetPose);
+    return getPose().minus(targetPose);
   }
 
   /**
@@ -418,13 +435,13 @@ public class DriveBase extends SubsystemBase {
    */
   public void periodic() {
     poseEstimator.update(getGyroAngle180(), getLeftEncoderDistanceMeters(), getRightEncoderDistanceMeters());
-    try {
-      EstimatedRobotPose estimatedVisionPose = this.photonVision.getCurrentPose();
+    EstimatedRobotPose estimatedVisionPose = this.photonVision.getCurrentPose();
+    if (estimatedVisionPose != null) {
       SmartDashboard.putString("PhotonVision Pose", estimatedVisionPose.estimatedPose.toString());
-      poseEstimator.addVisionMeasurement(estimatedVisionPose.estimatedPose,
-          estimatedVisionPose.timestampSeconds);
-    } catch (NullPointerException npe) {
-
+      if (estimatedVisionPose.targetArea > VisionConstants.MIN_TARGET_AREA) {
+        poseEstimator.addVisionMeasurement(estimatedVisionPose.estimatedPose,
+            estimatedVisionPose.timestampSeconds);
+      }
     }
 
     SmartDashboard.putNumber("Gyro", this.getGyroAngle180().getDegrees());
