@@ -169,9 +169,7 @@ public class DriveBase extends SubsystemBase {
     EstimatedRobotPose estimatedVisionPose = this.photonVision.getCurrentPose();
     if (estimatedVisionPose != null) {
       SmartDashboard.putString("PhotonVision Pose", estimatedVisionPose.estimatedPose.toString());
-      if (getDistanceBetweenPoses(estimatedVisionPose.estimatedPose,
-          poseEstimator.getEstimatedPosition()) < PathConstants.POSE_DISTANCE_METERS_FILTER
-          && estimatedVisionPose.targetArea > VisionConstants.MIN_TARGET_AREA) {
+      if (estimatedVisionPose.targetArea > VisionConstants.MIN_TARGET_AREA) {
         poseEstimator.addVisionMeasurement(estimatedVisionPose.estimatedPose,
             estimatedVisionPose.timestampSeconds);
       }
@@ -440,9 +438,7 @@ public class DriveBase extends SubsystemBase {
     EstimatedRobotPose estimatedVisionPose = this.photonVision.getCurrentPose();
     if (estimatedVisionPose != null) {
       SmartDashboard.putString("PhotonVision Pose", estimatedVisionPose.estimatedPose.toString());
-      if (getDistanceBetweenPoses(estimatedVisionPose.estimatedPose,
-          poseEstimator.getEstimatedPosition()) < PathConstants.POSE_DISTANCE_METERS_FILTER
-          && estimatedVisionPose.targetArea > VisionConstants.MIN_TARGET_AREA) {
+      if (estimatedVisionPose.targetArea > VisionConstants.MIN_TARGET_AREA) {
         poseEstimator.addVisionMeasurement(estimatedVisionPose.estimatedPose,
             estimatedVisionPose.timestampSeconds);
       }

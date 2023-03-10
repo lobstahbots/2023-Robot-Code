@@ -67,7 +67,7 @@ public final class Constants {
         new Pose2d(TRAVELING_WAYPOINTS_X, 0.5, new Rotation2d(0)), new Pose2d(2.5, 1, new Rotation2d(0)),
         new Pose2d(TRAVELING_WAYPOINTS_X, 1.6, new Rotation2d(0)), new Pose2d(2.5, 2.2, new Rotation2d(0)),
         new Pose2d(TRAVELING_WAYPOINTS_X, 2.7, new Rotation2d(0)), new Pose2d(2.5, 3.3, new Rotation2d(0)),
-        new Pose2d(TRAVELING_WAYPOINTS_X, 3.85, new Rotation2d(0)), new Pose2d(2.5, 4.4, new Rotation2d(0)),
+        new Pose2d(TRAVELING_WAYPOINTS_X, 3.85, new Rotation2d(0)), new Pose2d(2.5, 4.7, new Rotation2d(0)),
         new Pose2d(TRAVELING_WAYPOINTS_X, 5, new Rotation2d(0))
     };
 
