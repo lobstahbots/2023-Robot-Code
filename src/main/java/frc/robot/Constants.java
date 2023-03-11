@@ -163,14 +163,22 @@ public final class Constants {
       public static final int MANUAL_X_JOYSTICK_AXIS = 1;
       public static final int MANUAL_Y_JOYSTICK_AXIS = 5;
 
-      public static final int LEFT_PICKUP_POV = 270;
-      public static final int RIGHT_PICKUP_POV = 90;
-      public static final int GROUND_PICKUP_POV = 180;
+      // public static final int LEFT_PICKUP_POV = 270;
+      // public static final int RIGHT_PICKUP_POV = 90;
+      // public static final int GROUND_PICKUP_POV = 180;
 
-      public static final int LOW_GOAL_BTN = 2;
-      public static final int MID_GOAL_BTN = 3;
-      public static final int HIGH_GOAL_BTN = 4;
-      public static final int PLACE_DOWN_BTN = 1;
+      public static final int LOW_GOAL_POV = 180;
+      public static final int MID_GOAL_POV = 90;
+      public static final int HIGH_GOAL_POV = 0;
+
+      public static final int LEFT_PICKUP_BTN = 1;
+      public static final int RIGHT_PICKUP_BTN = 3;
+      public static final int GROUND_PICKUP_BTN = 2;
+
+      // public static final int LOW_GOAL_BTN = 2;
+      // public static final int MID_GOAL_BTN = 3;
+      // public static final int HIGH_GOAL_BTN = 4;
+      // public static final int PLACE_DOWN_BTN = 1;
     }
   }
 

@@ -152,17 +152,17 @@ public class RobotContainer {
 
 
     // Pickup
-    operatorJoystick.pov(OperatorConstants.GROUND_PICKUP_POV)
+    operatorJoystick.button(OperatorConstants.GROUND_PICKUP_BTN)
         .whileTrue(new SpinIntakeCommand(intake, IntakeConstants.INTAKE_VOLTAGE)
             .alongWith(new ArmTowardsPoseWithRetractionCommand(arm, ArmPresets.GROUND_PICKUP)));
 
     // Legacy operator controls
 
-    operatorJoystick.button(OperatorConstants.LOW_GOAL_BTN)
+    operatorJoystick.pov(OperatorConstants.LOW_GOAL_POV)
         .whileTrue(new ArmTowardsPoseWithRetractionCommand(arm, ArmPresets.GROUND_PICKUP));
-    operatorJoystick.button(OperatorConstants.MID_GOAL_BTN)
+    operatorJoystick.pov(OperatorConstants.MID_GOAL_POV)
         .whileTrue(new ArmTowardsPoseWithRetractionCommand(arm, ArmPresets.MID_GOAL_SCORING));
-    operatorJoystick.button(OperatorConstants.HIGH_GOAL_BTN)
+    operatorJoystick.pov(OperatorConstants.HIGH_GOAL_POV)
         .whileTrue(new ArmTowardsPoseWithRetractionCommand(arm, ArmPresets.HIGH_GOAL_SCORING));
 
     operatorJoystick.button(OperatorConstants.INTAKE_BTN)
@@ -176,14 +176,14 @@ public class RobotContainer {
    */
   public void configurePlayerStationButtons() {
     if (DriverStation.getAlliance() == Alliance.Blue) {
-      operatorJoystick.pov(OperatorConstants.LEFT_PICKUP_POV)
+      operatorJoystick.button(OperatorConstants.LEFT_PICKUP_BTN)
           .whileTrue(autonGenerator.getDriveToPlayerStationCommand(FieldConstants.PLAYER_STATION_PICKUP_LEFT));
-      operatorJoystick.pov(OperatorConstants.RIGHT_PICKUP_POV)
+      operatorJoystick.button(OperatorConstants.RIGHT_PICKUP_BTN)
           .whileTrue(autonGenerator.getDriveToPlayerStationCommand(FieldConstants.PLAYER_STATION_PICKUP_RIGHT));
     } else {
-      operatorJoystick.pov(OperatorConstants.LEFT_PICKUP_POV)
+      operatorJoystick.button(OperatorConstants.LEFT_PICKUP_BTN)
           .whileTrue(autonGenerator.getDriveToPlayerStationCommand(FieldConstants.PLAYER_STATION_PICKUP_RIGHT));
-      operatorJoystick.pov(OperatorConstants.RIGHT_PICKUP_POV)
+      operatorJoystick.button(OperatorConstants.RIGHT_PICKUP_BTN)
           .whileTrue(autonGenerator.getDriveToPlayerStationCommand(FieldConstants.PLAYER_STATION_PICKUP_LEFT));
     }
   }
