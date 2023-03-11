@@ -270,7 +270,9 @@ public class RobotContainer {
   }
 
   public void initOdometry() {
-    driveBase.initOdometry(FieldConstants.SCORING_WAYPOINTS[initialPosition.getSelected()]);
+    driveBase.initOdometry(
+        driveBase.flipWaypointBasedOnAlliance(
+            FieldConstants.SCORING_WAYPOINTS[flipColumnBasedOnAlliance(initialPosition.getSelected())], true));
   }
 
   /**

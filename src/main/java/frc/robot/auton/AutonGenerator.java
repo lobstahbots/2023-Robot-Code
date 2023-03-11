@@ -13,6 +13,8 @@ import com.pathplanner.lib.PathPlannerTrajectory;
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
@@ -236,6 +238,10 @@ public class AutonGenerator {
    * @param finalPosition Which game element the path ends at.
    */
   public Command getPathFollowCommand(int initialPosition, int crossingPosition, int finalPosition) {
+    if (DriverStation.getAlliance() == Alliance.Red) {
+      initialPosition = 8 - initialPosition;
+    }
+
     if (initialPosition <= 2) {
       crossingPosition = 0;
     } else if (initialPosition >= 6) {

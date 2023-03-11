@@ -296,8 +296,7 @@ public class DriveBase extends SubsystemBase {
       resetEncoders();
     } else {
       zeroGyro();
-      setGyroOffset(flipWaypointBasedOnAlliance(FieldConstants.SCORING_WAYPOINTS[0], true)
-          .getRotation());
+      setGyroOffset(defaultPose.getRotation());
       poseEstimator.resetPosition(getGyroAngle180(), 0, 0, defaultPose);
     }
   }
