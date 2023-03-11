@@ -32,7 +32,6 @@ import frc.robot.Constants.FieldConstants;
 import frc.robot.Constants.IntakeConstants;
 import frc.robot.Constants.OIConstants.DriverConstants;
 import frc.robot.Constants.OIConstants.OperatorConstants;
-import frc.robot.auton.AutonChooser;
 import frc.robot.auton.AutonGenerator;
 import frc.robot.commands.arm.ArmToPoseCommand;
 import frc.robot.commands.arm.ArmTowardsPoseCommand;
@@ -212,13 +211,52 @@ public class RobotContainer {
     }
   }
 
-  private final AutonChooser autonChooser = new AutonChooser();
+  private final SendableChooser<Command> autonChooser = new SendableChooser<>();
+  private final SendableChooser<Integer> initialPosition = new SendableChooser<>();
+  private final SendableChooser<Integer> crossingPosition = new SendableChooser<>();
+  private final SendableChooser<Integer> endingPosition = new SendableChooser<>();
+  private final SendableChooser<Integer> scoringPosition = new SendableChooser<>();
 
   /**
    * Use this method to run tasks that configure sendables and other smartdashboard items.
    */
   public void configureSmartDash() {
+    initialPosition.addOption("0", 0);
+    initialPosition.addOption("1", 1);
+    initialPosition.addOption("2", 2);
+    initialPosition.addOption("3", 3);
+    initialPosition.addOption("4", 4);
+    initialPosition.addOption("5", 5);
+    initialPosition.addOption("6", 6);
+    initialPosition.addOption("7", 7);
+    initialPosition.addOption("8", 8);
+    initialPosition.setDefaultOption("0", 0);
+    crossingPosition.addOption("Right of Platform", 0);
+    crossingPosition.addOption("Left of Platform", 1);
+    crossingPosition.setDefaultOption("Left of Platform", 1);
+    endingPosition.addOption("Towards Player Station", 3);
+    endingPosition.addOption("Slightly Left", 2);
+    endingPosition.addOption("Slightly Right", 1);
+    endingPosition.addOption("Right Side", 0);
+    endingPosition.setDefaultOption("Slightly Left", 2);
+    scoringPosition.addOption("High Goal", 0);
+    scoringPosition.addOption("Mid Goal", 1);
+    scoringPosition.addOption("Low Goal", 2);
+    scoringPosition.setDefaultOption("High Goal", 0);
+    autonChooser.addOption("Path Follow Auton",
+        autonGenerator.getPathFollowCommand(initialPosition.getSelected(), crossingPosition.getSelected(),
+            endingPosition.getSelected()));
+    autonChooser.addOption("Simple Auton", autonGenerator.getSimpleAutonCommand());
+    autonChooser.addOption("Do Nothing Auton", new StopDriveCommand(driveBase));
+    autonChooser.addOption("Score and Drive Auton",
+        autonGenerator.getScoreAndDriveCommand(scoringPosition.getSelected(), initialPosition.getSelected(),
+            crossingPosition.getSelected(), endingPosition.getSelected()));
     SmartDashboard.putData("Auton Chooser", autonChooser);
+    SmartDashboard.putData("Initial Position Chooser", initialPosition);
+    SmartDashboard.putData("Crossing Position Chooser", crossingPosition);
+    SmartDashboard.putData("Ending Position Chooser", endingPosition);
+    SmartDashboard.putData("Teleop Target Selector", targetSelector);
+    SmartDashboard.putData("Row Selector", scoringPosition);
   }
 
   /**
@@ -227,34 +265,15 @@ public class RobotContainer {
    * @return the command to run in autonomous
    */
   public Command getAutonomousCommand() {
-    Command selected = null;
-    switch (autonChooser.getRoutine()) {
-      case "Line":
-        selected = autonGenerator.getPathFollowCommand(autonChooser.getStartingColumn(), autonChooser.getCrossingSide(),
-            0);
-      case "Score":
-        selected = autonGenerator.getScoreCommand(autonChooser.getRow());
-        break;
-      case "Score + Line":
-        selected = autonGenerator.getScoreAndDriveCommand(autonChooser.getRow(), autonChooser.getStartingColumn(),
-            autonChooser.getCrossingSide(),
-            0);
-        break;
-      default:
-        DriverStation.reportError("Invalid autonomous routine selected!", true);
-      case "None":
-        selected = new StopDriveCommand(driveBase);
-
-    }
     return new SequentialCommandGroup(
         new ResetElevatorCommand(arm).asProxy(),
-        selected);
+        autonChooser.getSelected());
   }
 
   public void initOdometry() {
     driveBase.initOdometry(
         driveBase.flipWaypointBasedOnAlliance(
-            FieldConstants.SCORING_WAYPOINTS[flipColumnBasedOnAlliance(autonChooser.getStartingColumn())], true));
+            FieldConstants.SCORING_WAYPOINTS[flipColumnBasedOnAlliance(initialPosition.getSelected())], true));
   }
 
   /**
