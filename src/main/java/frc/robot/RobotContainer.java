@@ -266,7 +266,7 @@ public class RobotContainer {
    */
   public Command getAutonomousCommand() {
     return new SequentialCommandGroup(
-        new ResetElevatorCommand(arm).asProxy(),
+        new ResetElevatorCommand(arm),
         autonChooser.getSelected());
   }
 
