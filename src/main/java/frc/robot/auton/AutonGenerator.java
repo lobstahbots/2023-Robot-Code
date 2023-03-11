@@ -142,14 +142,14 @@ public class AutonGenerator {
   /**
    * Creates and returns a simple autonomous routine to score a preload based on row number.
    * 
-   * @param row The goal row. 0 -> high goal, 1 -> mid goal, 2 -> low goal
+   * @param row The goal row. 2 -> high goal, 1 -> mid goal, 0 -> low goal
    */
   public Command getScoreCommand(int row) {
-    if (row == 0) {
+    if (row == 2) {
       return getScoreCommand(ArmPresets.HIGH_GOAL_SCORING, true);
     } else if (row == 1) {
       return getScoreCommand(ArmPresets.MID_GOAL_SCORING, true);
-    } else if (row == 2) {
+    } else if (row == 0) {
       return getScoreCommand(ArmPresets.LOW_GOAL_SCORING, false);
     } else {
       return new InstantCommand();
