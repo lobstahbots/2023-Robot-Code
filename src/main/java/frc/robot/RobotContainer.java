@@ -199,17 +199,18 @@ public class RobotContainer {
 
   /**
    * Flips the selected column based on alliance color.
-  public int flipColumnBasedOnAlliance(int column) {
    */
+
+  public int flipColumnBasedOnAlliance(int column) {
     if (column > 8 || column < 0) {
       return 0;
     }
     if (DriverStation.getAlliance() == Alliance.Red) {
       return 8 - column;
     } else {
-  }
-    }
       return column;
+    }
+  }
 
   private final AutonChooser autonChooser = new AutonChooser();
 
