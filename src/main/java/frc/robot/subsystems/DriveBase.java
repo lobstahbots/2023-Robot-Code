@@ -53,6 +53,7 @@ public class DriveBase extends SubsystemBase {
   private final DifferentialDrivePoseEstimator poseEstimator;
   private final PhotonVision photonVision;
   private final AHRS gyro = new AHRS();
+  private boolean hasSeenTag = false;
 
   /**
    * Constructs a DriveBase with a {@link TalonFX} at each of the given CAN IDs.
@@ -170,6 +171,12 @@ public class DriveBase extends SubsystemBase {
     if (estimatedVisionPose != null) {
       SmartDashboard.putString("PhotonVision Pose", estimatedVisionPose.estimatedPose.toString());
       if (estimatedVisionPose.targetArea > VisionConstants.MIN_TARGET_AREA) {
+        if (!hasSeenTag) {
+          setGyroOffset(estimatedVisionPose.estimatedPose.getRotation().minus(getGyroAngle()));
+          SmartDashboard.putNumber("New offset",
+              estimatedVisionPose.estimatedPose.getRotation().minus(getGyroAngle()).getDegrees());
+          hasSeenTag = true;
+        }
         poseEstimator.addVisionMeasurement(estimatedVisionPose.estimatedPose,
             estimatedVisionPose.timestampSeconds);
       }
@@ -285,9 +292,9 @@ public class DriveBase extends SubsystemBase {
       SmartDashboard.putString("PhotonVision Pose", estimatedVisionPose.estimatedPose.toString());
       zeroGyro();
       setGyroOffset(estimatedVisionPose.estimatedPose.getRotation());
-      poseEstimator.resetPosition(getGyroAngle180(), 0, 0, defaultPose);
-      poseEstimator.addVisionMeasurement(estimatedVisionPose.estimatedPose,
-          estimatedVisionPose.timestampSeconds);
+      poseEstimator.resetPosition(poseEstimator.getEstimatedPosition().getRotation(), 0, 0,
+          poseEstimator.getEstimatedPosition());
+      hasSeenTag = true;
       resetEncoders();
     } else {
       zeroGyro();
@@ -439,6 +446,12 @@ public class DriveBase extends SubsystemBase {
     if (estimatedVisionPose != null) {
       SmartDashboard.putString("PhotonVision Pose", estimatedVisionPose.estimatedPose.toString());
       if (estimatedVisionPose.targetArea > VisionConstants.MIN_TARGET_AREA) {
+        if (!hasSeenTag) {
+          setGyroOffset(estimatedVisionPose.estimatedPose.getRotation().minus(getGyroAngle()));
+          SmartDashboard.putNumber("New offset",
+              estimatedVisionPose.estimatedPose.getRotation().minus(getGyroAngle()).getDegrees());
+          hasSeenTag = true;
+        }
         poseEstimator.addVisionMeasurement(estimatedVisionPose.estimatedPose,
             estimatedVisionPose.timestampSeconds);
       }
