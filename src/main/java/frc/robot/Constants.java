@@ -238,7 +238,7 @@ public final class Constants {
      */
     public static final class ElevatorConstants {
       public static final double LENGTH_FULLY_RETRACTED = 38;
-      public static final double HOME_SPEED = 0.75;
+      public static final double HOME_SPEED = 0.65;
 
       // IO
       public static final int ENCODER_CHANNEL_A = 0;

@@ -253,6 +253,8 @@ public class RobotContainer {
     autonChooser.addOption("Score and Drive Auton",
         autonGenerator.getScoreAndDriveCommand(scoringPosition.getSelected(), initialPosition.getSelected(),
             crossingPosition.getSelected(), endingPosition.getSelected()));
+    autonChooser.addOption("Score Auton",
+        autonGenerator.getScoreCommand(scoringPosition.getSelected()));
     SmartDashboard.putData("Auton Chooser", autonChooser);
     SmartDashboard.putData("Initial Position Chooser", initialPosition);
     SmartDashboard.putData("Crossing Position Chooser", crossingPosition);
