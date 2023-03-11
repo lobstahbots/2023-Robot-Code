@@ -45,6 +45,7 @@ import frc.robot.subsystems.DriveBase;
 import frc.robot.subsystems.Intake;
 import frc.robot.subsystems.arm.Elevator;
 import frc.robot.subsystems.arm.Pivot;
+import lobstah.stl.command.ConstructLaterCommand;
 import lobstah.stl.oi.LobstahGamepad;
 
 /**
@@ -170,6 +171,9 @@ public class RobotContainer {
         .whileTrue(new SpinIntakeCommand(intake, IntakeConstants.OUTTAKE_VOLTAGE));
   }
 
+  /**
+   * Configures "left" and "right" Player station buttons depending on alliance color.
+   */
   public void configurePlayerStationButtons() {
     if (DriverStation.getAlliance() == Alliance.Blue) {
       operatorJoystick.pov(OperatorConstants.LEFT_PICKUP_POV)
@@ -184,8 +188,26 @@ public class RobotContainer {
     }
   }
 
+  /**
+   * @return The target pose based on the selected color alliance.
+   */
   public Pose2d getScoreColumn() {
-    return FieldConstants.SCORING_WAYPOINTS[targetSelector.getColumn()];
+    return driveBase.flipWaypointBasedOnAlliance(
+        FieldConstants.SCORING_WAYPOINTS[flipColumnBasedOnAlliance(targetSelector.getColumn())], true);
+  }
+
+  /**
+   * Flips the selected column based on alliance color.
+   */
+  public int flipColumnBasedOnAlliance(int column) {
+    if (column > 8 || column < 0) {
+      return 0;
+    }
+    if (DriverStation.getAlliance() == Alliance.Red) {
+      return 8 - column;
+    } else {
+      return column;
+    }
   }
 
   private final SendableChooser<Command> autonChooser = new SendableChooser<>();

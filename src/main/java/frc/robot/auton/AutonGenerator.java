@@ -18,11 +18,9 @@ import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import edu.wpi.first.wpilibj2.command.ParallelDeadlineGroup;
 import edu.wpi.first.wpilibj2.command.ParallelRaceGroup;
-import edu.wpi.first.wpilibj2.command.ProxyCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
 import frc.robot.ArmPose;
-import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import frc.robot.Constants.AutonConstants;
 import frc.robot.Constants.FieldConstants;
 import frc.robot.Constants.IntakeConstants;
@@ -89,25 +87,37 @@ public class AutonGenerator {
     return new ParallelRaceGroup(
         new ConstructLaterCommand(
             () -> new PathFollowCommand(driveBase,
-                driveBase.generatePath(FieldConstants.GROUND_PICKUP_POSES[scorePiece])).andThen(new WaitCommand(0.5))),
+                driveBase.generatePath(
+                    driveBase.flipWaypointBasedOnAlliance(FieldConstants.GROUND_PICKUP_POSES[scorePiece], true)))
+                        .andThen(new WaitCommand(0.5))),
         new ArmTowardsPoseWithRetractionCommand(arm, ArmPresets.GROUND_PICKUP),
         new SpinIntakeCommand(intake, IntakeConstants.INTAKE_VOLTAGE));
   }
 
   public Command getReturnCommand(int finalPosition, int row) {
     return new TimedCommand(1,
-        new TurnToAngleCommand(driveBase, FieldConstants.SCORING_WAYPOINTS[finalPosition].getRotation(), 1)).andThen(
-            new ConstructLaterCommand(() -> new PathFollowCommand(driveBase,
-                driveBase.generatePath(FieldConstants.RETURNING_CROSSING_WAYPOINTS[0]))))
-            .andThen(new TimedCommand(0.5,
-                new TurnToAngleCommand(driveBase, FieldConstants.SCORING_WAYPOINTS[finalPosition].getRotation(), 1)))
-            .andThen(new ConstructLaterCommand(() -> new PathFollowCommand(driveBase,
-                driveBase.generatePath(FieldConstants.ENTERING_SCORING_ZONE_WAYPOINTS[0]))))
-            .andThen(new ConstructLaterCommand(
-                () -> getPathToTargetCommand(driveBase, () -> FieldConstants.SCORING_WAYPOINTS[finalPosition])))
-            .andThen(new TimedCommand(0.5,
-                new TurnToAngleCommand(driveBase, FieldConstants.SCORING_WAYPOINTS[finalPosition].getRotation(), 1)))
-            .andThen(getScoreCommand(row));
+        new TurnToAngleCommand(driveBase,
+            driveBase.flipWaypointBasedOnAlliance(FieldConstants.SCORING_WAYPOINTS[finalPosition], true).getRotation(),
+            1)).andThen(
+                new ConstructLaterCommand(() -> new PathFollowCommand(driveBase,
+                    driveBase.generatePath(
+                        driveBase.flipWaypointBasedOnAlliance(FieldConstants.RETURNING_CROSSING_WAYPOINTS[0], true)))))
+                .andThen(new TimedCommand(0.5,
+                    new TurnToAngleCommand(driveBase, FieldConstants.SCORING_WAYPOINTS[finalPosition].getRotation(),
+                        1)))
+                .andThen(new ConstructLaterCommand(() -> new PathFollowCommand(driveBase,
+                    driveBase.generatePath(driveBase
+                        .flipWaypointBasedOnAlliance(FieldConstants.ENTERING_SCORING_ZONE_WAYPOINTS[0], true)))))
+                .andThen(new ConstructLaterCommand(
+                    () -> getPathToTargetCommand(driveBase,
+                        () -> driveBase.flipWaypointBasedOnAlliance(FieldConstants.SCORING_WAYPOINTS[finalPosition],
+                            true))))
+                .andThen(new TimedCommand(0.5,
+                    new TurnToAngleCommand(driveBase,
+                        driveBase.flipWaypointBasedOnAlliance(FieldConstants.SCORING_WAYPOINTS[finalPosition], true)
+                            .getRotation(),
+                        1)))
+                .andThen(getScoreCommand(row));
   }
 
   /**
@@ -231,7 +241,8 @@ public class AutonGenerator {
     } else if (initialPosition >= 6) {
       crossingPosition = 1;
     }
-    Pose2d crossingPose = FieldConstants.CROSSING_WAYPOINTS[crossingPosition];
+    Pose2d crossingPose =
+        driveBase.flipWaypointBasedOnAlliance(FieldConstants.CROSSING_WAYPOINTS[crossingPosition], true);
 
     return new SequentialCommandGroup(
         new ConstructLaterCommand(() -> getPathToTargetCommand(driveBase, () -> crossingPose)),

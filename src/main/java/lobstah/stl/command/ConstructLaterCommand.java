@@ -15,6 +15,7 @@ public class ConstructLaterCommand extends CommandBase {
 
   public ConstructLaterCommand(Supplier<Command> commandSupplier) {
     this.commandSupplier = commandSupplier;
+    m_requirements.addAll(commandSupplier.get().getRequirements());
   }
 
   @Override
