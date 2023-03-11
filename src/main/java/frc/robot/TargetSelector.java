@@ -25,12 +25,8 @@ public class TargetSelector implements Sendable {
   @Override
   public void initSendable(SendableBuilder builder) {
     builder.setSmartDashboardType("Teleop Target Selector");
-    builder.addBooleanProperty("In Maxwell Mode", this::getMode, null);
     builder.addIntegerProperty("Row Selected", this::getRow, null);
     builder.addIntegerProperty("Column Selected", this::getColumn, null);
-    builder.addIntegerProperty("Maxwell Grid", this::getMaxwellGrid, null);
-    builder.addIntegerProperty("Maxwell Column", this::getMaxwellColumn, null);
-    builder.addIntegerProperty("Maxwell Row", this::getMaxwellRow, null);
   }
 
   /**
