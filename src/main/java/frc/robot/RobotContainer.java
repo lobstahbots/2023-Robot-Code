@@ -164,6 +164,8 @@ public class RobotContainer {
         .whileTrue(new ArmTowardsPoseWithRetractionCommand(arm, ArmPresets.MID_GOAL_SCORING));
     operatorJoystick.pov(OperatorConstants.HIGH_GOAL_POV)
         .whileTrue(new ArmTowardsPoseWithRetractionCommand(arm, ArmPresets.HIGH_GOAL_SCORING));
+    operatorJoystick.pov(OperatorConstants.PLAYER_STATION_POV)
+        .whileTrue(new ArmTowardsPoseWithRetractionCommand(arm, ArmPresets.PLAYER_STATION_PICKUP));
 
     operatorJoystick.button(OperatorConstants.INTAKE_BTN)
         .whileTrue(new SpinIntakeCommand(intake, IntakeConstants.INTAKE_VOLTAGE));
