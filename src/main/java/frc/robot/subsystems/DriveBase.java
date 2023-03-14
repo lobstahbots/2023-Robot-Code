@@ -173,8 +173,6 @@ public class DriveBase extends SubsystemBase {
       if (estimatedVisionPose.targetArea > VisionConstants.MIN_TARGET_AREA) {
         if (!hasSeenTag) {
           setGyroOffset(estimatedVisionPose.estimatedPose.getRotation().minus(getGyroAngle()));
-          SmartDashboard.putNumber("New offset",
-              estimatedVisionPose.estimatedPose.getRotation().minus(getGyroAngle()).getDegrees());
           hasSeenTag = true;
         }
         poseEstimator.addVisionMeasurement(estimatedVisionPose.estimatedPose,
@@ -298,8 +296,7 @@ public class DriveBase extends SubsystemBase {
       resetEncoders();
     } else {
       zeroGyro();
-      setGyroOffset(flipWaypointBasedOnAlliance(FieldConstants.SCORING_WAYPOINTS[0], true)
-          .getRotation());
+      setGyroOffset(defaultPose.getRotation());
       poseEstimator.resetPosition(getGyroAngle180(), 0, 0, defaultPose);
     }
   }
@@ -448,8 +445,6 @@ public class DriveBase extends SubsystemBase {
       if (estimatedVisionPose.targetArea > VisionConstants.MIN_TARGET_AREA) {
         if (!hasSeenTag) {
           setGyroOffset(estimatedVisionPose.estimatedPose.getRotation().minus(getGyroAngle()));
-          SmartDashboard.putNumber("New offset",
-              estimatedVisionPose.estimatedPose.getRotation().minus(getGyroAngle()).getDegrees());
           hasSeenTag = true;
         }
         poseEstimator.addVisionMeasurement(estimatedVisionPose.estimatedPose,

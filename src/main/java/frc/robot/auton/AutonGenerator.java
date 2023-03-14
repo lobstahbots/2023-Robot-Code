@@ -13,6 +13,9 @@ import com.pathplanner.lib.PathPlannerTrajectory;
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.DriverStation.Alliance;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
@@ -216,7 +219,7 @@ public class AutonGenerator {
                         () -> new PathFollowCommand(driveBase, driveBase.generatePath(flippedTargetPose))),
                     new TimedCommand(0.2, new TurnToAngleCommand(driveBase, flippedTargetPose.getRotation(), 1))),
                 new ArmTowardsPoseCommand(arm, ArmPresets.PLAYER_STATION_PICKUP))
-                    .andThen(new ParallelRaceGroup(new TimedCommand(1, new StopDriveCommand(driveBase)),
+                    .andThen(new ParallelRaceGroup(new TimedCommand(0.25, new StopDriveCommand(driveBase)),
                         new ArmTowardsPoseCommand(arm, ArmPresets.PLAYER_STATION_PICKUP))) // Hold for a second
                     .andThen(new TimedCommand(1.0, new ParallelCommandGroup(
                         new ArmTowardsPoseCommand(arm, ArmPresets.PLAYER_STATION_PICKUP),
@@ -236,6 +239,10 @@ public class AutonGenerator {
    * @param finalPosition Which game element the path ends at.
    */
   public Command getPathFollowCommand(int initialPosition, int crossingPosition, int finalPosition) {
+    if (DriverStation.getAlliance() == Alliance.Red) {
+      initialPosition = 8 - initialPosition;
+    }
+
     if (initialPosition <= 2) {
       crossingPosition = 0;
     } else if (initialPosition >= 6) {
