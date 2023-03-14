@@ -172,7 +172,10 @@ public class DriveBase extends SubsystemBase {
       SmartDashboard.putString("PhotonVision Pose", estimatedVisionPose.estimatedPose.toString());
       if (estimatedVisionPose.targetArea > VisionConstants.MIN_TARGET_AREA) {
         if (!hasSeenTag) {
-          setGyroOffset(estimatedVisionPose.estimatedPose.getRotation().minus(getGyroAngle()));
+          SmartDashboard.putBoolean("Has Seen Tag", false);
+          setGyroOffset(estimatedVisionPose.estimatedPose.getRotation().plus(getGyroAngle()));
+          SmartDashboard.putNumber("New Gyro Offset",
+              estimatedVisionPose.estimatedPose.getRotation().plus(getGyroAngle()).getDegrees());
           hasSeenTag = true;
         }
         poseEstimator.addVisionMeasurement(estimatedVisionPose.estimatedPose,
@@ -293,11 +296,14 @@ public class DriveBase extends SubsystemBase {
       poseEstimator.resetPosition(poseEstimator.getEstimatedPosition().getRotation(), 0, 0,
           poseEstimator.getEstimatedPosition());
       hasSeenTag = true;
+      SmartDashboard.putBoolean("Has Seen Tag", true);
       resetEncoders();
     } else {
       zeroGyro();
       setGyroOffset(defaultPose.getRotation());
       poseEstimator.resetPosition(getGyroAngle180(), 0, 0, defaultPose);
+      SmartDashboard.putBoolean("Has Seen Tag", false);
+      hasSeenTag = false;
     }
   }
 
@@ -376,31 +382,58 @@ public class DriveBase extends SubsystemBase {
   }
 
   /**
-   * Generates a trajectory through a list of provided waypoints from the robot's position.
+   * Generates a trajectory through a list of provided waypoints from the robot's position, assumed driving forwards.
    * 
    * @return A PathPlannerTrajectory to follow to the target position.
    */
   public PathPlannerTrajectory generatePath(List<Pose2d> waypoints) {
+    return generatePath(waypoints, false);
+  }
+
+
+  /**
+   * Generates a trajectory through a list of provided waypoints from the robot's position, assumed driving forwards.
+   * 
+   * @return A PathPlannerTrajectory to follow to the target position.
+   */
+  public PathPlannerTrajectory generatePath(Pose2d finalPose) {
+    return generatePath(finalPose, false);
+  }
+
+  /**
+   * Generates a trajectory through a list of provided waypoints from the robot's position.
+   * 
+   * @param waypoints A list of waypoints to generate a trajectory through.
+   * @param isReversed Whether the trajectory should be driven backwards.
+   * 
+   * @return A PathPlannerTrajectory to follow to the target position.
+   */
+  public PathPlannerTrajectory generatePath(List<Pose2d> waypoints, boolean isReversed) {
     ArrayList<PathPoint> pathPoints = new ArrayList<>();
     pathPoints.add(new PathPoint(this.getPose().getTranslation(), this.getPose().getRotation()));
     for (Pose2d waypoint : waypoints) {
       pathPoints.add(new PathPoint(waypoint.getTranslation(), waypoint.getRotation()));
     }
     return PathPlanner
-        .generatePath(new PathConstraints(PathConstants.MAX_DRIVE_SPEED, PathConstants.MAX_ACCELERATION), pathPoints);
+        .generatePath(new PathConstraints(PathConstants.MAX_DRIVE_SPEED, PathConstants.MAX_ACCELERATION), isReversed,
+            pathPoints);
   }
 
   /**
    * Generates a trajectory from the robot's position to the given target Pose.
    * 
+   * @param finalPose The final pose of the trajectory.
+   * @param isReversed Whether the trajectory should be driven backwards.
+   * 
    * @return A PathPlannerTrajectory to follow to the target position.
    */
-  public PathPlannerTrajectory generatePath(Pose2d finalPose) {
+  public PathPlannerTrajectory generatePath(Pose2d finalPose, boolean isReversed) {
     ArrayList<PathPoint> pathPoints = new ArrayList<>();
     pathPoints.add(new PathPoint(this.getPose().getTranslation(), this.getPose().getRotation()));
     pathPoints.add(new PathPoint(finalPose.getTranslation(), finalPose.getRotation()));
     return PathPlanner
-        .generatePath(new PathConstraints(PathConstants.MAX_DRIVE_SPEED, PathConstants.MAX_ACCELERATION), pathPoints);
+        .generatePath(new PathConstraints(PathConstants.MAX_DRIVE_SPEED, PathConstants.MAX_ACCELERATION), isReversed,
+            pathPoints);
   }
 
   /**
@@ -444,7 +477,10 @@ public class DriveBase extends SubsystemBase {
       SmartDashboard.putString("PhotonVision Pose", estimatedVisionPose.estimatedPose.toString());
       if (estimatedVisionPose.targetArea > VisionConstants.MIN_TARGET_AREA) {
         if (!hasSeenTag) {
-          setGyroOffset(estimatedVisionPose.estimatedPose.getRotation().minus(getGyroAngle()));
+          SmartDashboard.putBoolean("Has Seen Tag", false);
+          setGyroOffset(estimatedVisionPose.estimatedPose.getRotation().plus(getGyroAngle()));
+          SmartDashboard.putNumber("New Gyro Offset",
+              estimatedVisionPose.estimatedPose.getRotation().plus(getGyroAngle()).getDegrees());
           hasSeenTag = true;
         }
         poseEstimator.addVisionMeasurement(estimatedVisionPose.estimatedPose,
@@ -454,8 +490,11 @@ public class DriveBase extends SubsystemBase {
 
     SmartDashboard.putNumber("Gyro", this.getGyroAngle180().getDegrees());
     SmartDashboard.putNumber("Gyro 180", this.getGyroAngle180().getDegrees());
+    SmartDashboard.putNumber("Gyro Offset", getGyroOffset().getDegrees());
     SmartDashboard.putString("Pose", this.getPose().toString());
     SmartDashboard.putNumber("Number of Tags Visible In Front", this.photonVision.getFrontTargets().size());
     SmartDashboard.putNumber("Number of Tags Visible In Rear", this.photonVision.getRearTargets().size());
+
+    SmartDashboard.putBoolean("Has seen tag", hasSeenTag);
   }
 }

@@ -17,6 +17,7 @@ import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.ConditionalCommand;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import edu.wpi.first.wpilibj2.command.ParallelDeadlineGroup;
@@ -207,10 +208,26 @@ public class AutonGenerator {
   public Command getDriveToPlayerStationCommand(Pose2d targetPose) {
     Pose2d waypoint = driveBase.flipWaypointBasedOnAlliance(
         new Pose2d(targetPose.getX() - 1, targetPose.getY(), targetPose.getRotation()), true);
+
+    Pose2d squeezePoint = driveBase.flipWaypointBasedOnAlliance(
+        new Pose2d(targetPose.getX() - 0.4, targetPose.getY(), targetPose.getRotation()), true);
+
+    Pose2d endingWaypoint = driveBase.flipWaypointBasedOnAlliance(
+        new Pose2d(targetPose.getX() - 1, targetPose.getY(), Rotation2d.fromDegrees(0)), true);
+
     Pose2d flippedTargetPose = driveBase.flipWaypointBasedOnAlliance(targetPose, true);
     return new ParallelRaceGroup(new SpinIntakeCommand(intake, IntakeConstants.INTAKE_VOLTAGE),
         new SequentialCommandGroup( // Drive to waypoint, then turn while raising arm
-            new ConstructLaterCommand(() -> new PathFollowCommand(driveBase, driveBase.generatePath(waypoint))),
+            new ConstructLaterCommand(
+                () -> new ConditionalCommand(new PathFollowCommand(driveBase, driveBase.generatePath(squeezePoint)),
+                    new PathFollowCommand(driveBase, driveBase.generatePath(waypoint)),
+                    () -> {
+                      if (DriverStation.getAlliance() == Alliance.Blue) {
+                        return driveBase.getPose().getX() > waypoint.getX();
+                      } else {
+                        return driveBase.getPose().getX() < waypoint.getX();
+                      }
+                    })),
             new ParallelDeadlineGroup(new ArmToPoseCommand(arm, ArmPresets.PLAYER_STATION_PICKUP, 5),
                 new TurnToAngleCommand(driveBase, flippedTargetPose.getRotation(), 1)),
             new ParallelRaceGroup( // Maintain arm angle and spin intake
@@ -221,14 +238,19 @@ public class AutonGenerator {
                 new ArmTowardsPoseCommand(arm, ArmPresets.PLAYER_STATION_PICKUP))
                     .andThen(new ParallelRaceGroup(new TimedCommand(0.25, new StopDriveCommand(driveBase)),
                         new ArmTowardsPoseCommand(arm, ArmPresets.PLAYER_STATION_PICKUP))) // Hold for a second
-                    .andThen(new TimedCommand(1.0, new ParallelCommandGroup(
+                    .andThen(new ParallelCommandGroup(
                         new ArmTowardsPoseCommand(arm, ArmPresets.PLAYER_STATION_PICKUP),
-                        new StraightDriveCommand(driveBase, -0.3, false)))))) // Drive away with arm raised still
-                            .unless(() -> Math.abs(
-                                driveBase.getDistanceToPose(flippedTargetPose)
-                                    .getX()) > FieldConstants.MAX_PLAYER_STATION_X_ZONE
-                                || Math.abs(driveBase.getDistanceToPose(flippedTargetPose)
-                                    .getY()) > FieldConstants.MAX_PLAYER_STATION_Y_ZONE);
+                        new ConstructLaterCommand(
+                            () -> new PathFollowCommand(driveBase, driveBase.generatePath(endingWaypoint, true))))))) // Drive
+                                // away
+                                // with arm
+                                // raised
+                                // still
+                                .unless(() -> Math.abs(
+                                    driveBase.getDistanceToPose(flippedTargetPose)
+                                        .getX()) > FieldConstants.MAX_PLAYER_STATION_X_ZONE
+                                    || Math.abs(driveBase.getDistanceToPose(flippedTargetPose)
+                                        .getY()) > FieldConstants.MAX_PLAYER_STATION_Y_ZONE);
   }
 
   /**
