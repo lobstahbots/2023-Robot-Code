@@ -273,11 +273,15 @@ public final class Constants {
     // IO
     public static final int LEFT_MOTOR_ID = 0;
     public static final int RIGHT_MOTOR_ID = 1;
+    public static final int LEFT_MOTOR_PD_CHANNEL = 0; // TODO
+    public static final int RIGHT_MOTOR_PD_CHANNEL = 0; // TODO
 
     // Speeds
     public static final double OUTTAKE_VOLTAGE = 1.8;
     public static final double INTAKE_VOLTAGE = -5;
     public static final double PASSIVE_INTAKE_VOLTAGE = -1.6;
+
+    public static final double STOPPED_CURRENT_THRESHOLD = 0; // TODO
   }
 
   /**
