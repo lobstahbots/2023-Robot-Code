@@ -22,14 +22,15 @@ public class Pivot {
   private final CANSparkMax leftPivotMotor;
   private final CANSparkMax rightPivotMotor;
   private final MotorControllerGroup motors;
-  private final ArmFeedforward feedforward =
+  private final ArmFeedforward armFeedforward =
       new ArmFeedforward(
           PivotConstants.S_VOLTS, PivotConstants.G_VOLTS,
           PivotConstants.V_VOLT_SECOND_PER_RAD, PivotConstants.A_VOLT_SECOND_SQUARED_PER_RAD);
   private final Constraints constraints = new TrapezoidProfile.Constraints(
       PivotConstants.MAX_VELOCITY_DEG_PER_SEC,
       PivotConstants.MAX_ACCELERATION_DEG_PER_SEC_SQUARED);
-  private final ProfiledPIDController pidController = new ProfiledPIDController(PivotConstants.P, 0, 0, constraints);
+  private final ProfiledPIDController pidController =
+      new ProfiledPIDController(PivotConstants.P, 0, PivotConstants.D, constraints);
 
   /**
    * Constructs an Pivot with an {@link CANSparkMax} at the motor IDs and {@link DutyCycleEncoder} at the encoder
@@ -88,11 +89,11 @@ public class Pivot {
   /**
    * Gets PID setpoint of the pivot.
    * 
-   * @return The setpoint angle of the pivot in degrees. 0 = Vertical and pointing down. Positive -> towards front of
-   *         robot.
+   * @return The setpoint state of the pivot with position in degrees and velocity in degrees per second. 0 = Vertical
+   *         and pointing down. Positive -> towards front of robot.
    */
-  public double getSetpoint() {
-    return pidController.getSetpoint().position;
+  public TrapezoidProfile.State getSetpoint() {
+    return pidController.getSetpoint();
   }
 
   /**
@@ -109,6 +110,20 @@ public class Pivot {
     motors.set(speed);
   }
 
+  /**
+   * Sets voltage of the pivot motors. Includes stop to keep arm from moving beyond limits.
+   * 
+   * @param voltage The desired voltage
+   */
+  public void setVoltage(double voltage) {
+    if (getAngle() < PivotConstants.MIN_ROTATION_DEG && motors.get() < 0
+        || getAngle() > PivotConstants.MAX_ROTATION_DEG && motors.get() > 0) {
+      motors.setVoltage(0);
+      return;
+    }
+    motors.setVoltage(voltage);
+  }
+
 
   /**
    * Resets PID controller error.
@@ -116,6 +131,7 @@ public class Pivot {
   public void resetPID() {
     pidController.reset(getAngle());
   }
+
 
   /**
    * Sets setpoint angle of the PID controller.
@@ -136,9 +152,18 @@ public class Pivot {
   }
 
   /**
-   * Feeds the PID input to the motors.
+   * Feeds the PID input to the feedforward.
    */
   public void feedPID() {
-    setRotationSpeed(pidController.calculate(getAngle()));
+    useOutput(pidController.calculate(getAngle()), getSetpoint());
+  }
+
+
+  /**
+   * Sets the voltage of the motors based on calculated output from PID controller and feedforward.
+   */
+  public void useOutput(double output, TrapezoidProfile.State setpoint) {
+    double feedforward = armFeedforward.calculate(Math.toRadians(setpoint.position), setpoint.velocity);
+    setVoltage(output + feedforward);
   }
 }

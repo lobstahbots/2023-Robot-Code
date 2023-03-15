@@ -29,7 +29,7 @@ public class Arm extends SubsystemBase {
   }
 
   public ArmPose getSetpointPose() {
-    return ArmPose.fromAngleExtension(Rotation2d.fromDegrees(this.pivot.getSetpoint()),
+    return ArmPose.fromAngleExtension(Rotation2d.fromDegrees(this.pivot.getSetpoint().position),
         this.elevator.getSetpointExtension());
   }
 }
