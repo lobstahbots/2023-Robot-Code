@@ -284,7 +284,7 @@ public final class Constants {
    * Stores preset poses for the arm.
    */
   public static final class ArmPresets {
-    public static final ArmPose STOWED = ArmPose.fromAngleExtension(Rotation2d.fromDegrees(35), -0.1);
+    public static final ArmPose STOWED = ArmPose.fromAngleExtension(Rotation2d.fromDegrees(36), -0.1);
     public static final ArmPose GROUND_PICKUP = ArmPose.fromXY(16.4, 10.2);
     public static final ArmPose MID_GOAL_SCORING = ArmPose.fromXY(25, 47); // before dropping
     public static final ArmPose LOW_GOAL_SCORING = ArmPose.fromXY(15, 14);
