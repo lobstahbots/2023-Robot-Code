@@ -27,6 +27,7 @@ public class Robot extends TimedRobot {
   public void robotInit() {
     m_robotContainer = new RobotContainer();
     m_robotContainer.initGyro();
+    m_robotContainer.configureSmartDash();
   }
 
   /**
@@ -59,7 +60,6 @@ public class Robot extends TimedRobot {
   public void autonomousInit() {
     m_robotContainer.setAutonDefaultCommands();
     m_robotContainer.configurePlayerStationButtons();
-    m_robotContainer.configureSmartDash();
     m_robotContainer.initOdometry();
     m_autonomousCommand = m_robotContainer.getAutonomousCommand();
 

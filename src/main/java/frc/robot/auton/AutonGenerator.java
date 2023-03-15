@@ -53,6 +53,14 @@ public class AutonGenerator {
   private final Arm arm;
   private final Intake intake;
 
+  public enum Auton {
+    SCORE_AND_DRIVE, DRIVE, SCORE, DO_NOTHING
+  }
+
+  public enum CrossingPosition {
+    LEFT, RIGHT
+  }
+
   /**
    * Constructs an AutonGenerator with a {@link DriveBase}.
    *
