@@ -15,7 +15,6 @@ import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.ConditionalCommand;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
@@ -211,9 +210,6 @@ public class AutonGenerator {
 
     Pose2d squeezePoint = driveBase.flipWaypointBasedOnAlliance(
         new Pose2d(targetPose.getX() - 0.4, targetPose.getY(), targetPose.getRotation()), true);
-
-    Pose2d endingWaypoint = driveBase.flipWaypointBasedOnAlliance(
-        new Pose2d(targetPose.getX() - 1, targetPose.getY(), Rotation2d.fromDegrees(0)), true);
 
     Pose2d flippedTargetPose = driveBase.flipWaypointBasedOnAlliance(targetPose, true);
     return new ParallelRaceGroup(new SpinIntakeCommand(intake, IntakeConstants.INTAKE_VOLTAGE),

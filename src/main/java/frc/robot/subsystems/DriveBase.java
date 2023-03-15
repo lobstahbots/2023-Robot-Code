@@ -30,7 +30,6 @@ import edu.wpi.first.wpilibj.motorcontrol.MotorControllerGroup;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.DriveConstants;
-import frc.robot.Constants.FieldConstants;
 import frc.robot.Constants.PathConstants;
 import frc.robot.Constants.VisionConstants;
 import lobstah.stl.math.LobstahMath;
@@ -172,10 +171,7 @@ public class DriveBase extends SubsystemBase {
       SmartDashboard.putString("PhotonVision Pose", estimatedVisionPose.estimatedPose.toString());
       if (estimatedVisionPose.targetArea > VisionConstants.MIN_TARGET_AREA) {
         if (!hasSeenTag) {
-          SmartDashboard.putBoolean("Has Seen Tag", false);
           setGyroOffset(estimatedVisionPose.estimatedPose.getRotation().plus(getGyroAngle()));
-          SmartDashboard.putNumber("New Gyro Offset",
-              estimatedVisionPose.estimatedPose.getRotation().plus(getGyroAngle()).getDegrees());
           hasSeenTag = true;
         }
         poseEstimator.addVisionMeasurement(estimatedVisionPose.estimatedPose,
@@ -480,10 +476,7 @@ public class DriveBase extends SubsystemBase {
       SmartDashboard.putString("PhotonVision Pose", estimatedVisionPose.estimatedPose.toString());
       if (estimatedVisionPose.targetArea > VisionConstants.MIN_TARGET_AREA) {
         if (!hasSeenTag) {
-          SmartDashboard.putBoolean("Has Seen Tag", false);
           setGyroOffset(estimatedVisionPose.estimatedPose.getRotation().plus(getGyroAngle()));
-          SmartDashboard.putNumber("New Gyro Offset",
-              estimatedVisionPose.estimatedPose.getRotation().plus(getGyroAngle()).getDegrees());
           hasSeenTag = true;
         }
         poseEstimator.addVisionMeasurement(estimatedVisionPose.estimatedPose,
