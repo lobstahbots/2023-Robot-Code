@@ -387,7 +387,7 @@ public class DriveBase extends SubsystemBase {
    * @return A PathPlannerTrajectory to follow to the target position.
    */
   public PathPlannerTrajectory generatePath(List<Pose2d> waypoints) {
-    return generatePath(waypoints, false);
+    return generatePath(false, waypoints);
   }
 
 
@@ -396,19 +396,19 @@ public class DriveBase extends SubsystemBase {
    * 
    * @return A PathPlannerTrajectory to follow to the target position.
    */
-  public PathPlannerTrajectory generatePath(Pose2d finalPose) {
-    return generatePath(finalPose, false);
+  public PathPlannerTrajectory generatePath(Pose2d... waypoints) {
+    return generatePath(false, waypoints);
   }
 
   /**
    * Generates a trajectory through a list of provided waypoints from the robot's position.
    * 
-   * @param waypoints A list of waypoints to generate a trajectory through.
    * @param isReversed Whether the trajectory should be driven backwards.
+   * @param waypoints A list of waypoints to generate a trajectory through.
    * 
    * @return A PathPlannerTrajectory to follow to the target position.
    */
-  public PathPlannerTrajectory generatePath(List<Pose2d> waypoints, boolean isReversed) {
+  public PathPlannerTrajectory generatePath(boolean isReversed, List<Pose2d> waypoints) {
     ArrayList<PathPoint> pathPoints = new ArrayList<>();
     pathPoints.add(new PathPoint(this.getPose().getTranslation(), this.getPose().getRotation()));
     for (Pose2d waypoint : waypoints) {
@@ -420,19 +420,22 @@ public class DriveBase extends SubsystemBase {
   }
 
   /**
-   * Generates a trajectory from the robot's position to the given target Pose.
+   * Generates a trajectory through the provided waypoints from the robot's position to the target pose.
    * 
-   * @param finalPose The final pose of the trajectory.
    * @param isReversed Whether the trajectory should be driven backwards.
+   * @param waypoints The waypoints to generate a trajectory through.
    * 
    * @return A PathPlannerTrajectory to follow to the target position.
    */
-  public PathPlannerTrajectory generatePath(Pose2d finalPose, boolean isReversed) {
+  public PathPlannerTrajectory generatePath(boolean isReversed, Pose2d... waypoints) {
     ArrayList<PathPoint> pathPoints = new ArrayList<>();
     pathPoints.add(new PathPoint(this.getPose().getTranslation(), this.getPose().getRotation()));
-    pathPoints.add(new PathPoint(finalPose.getTranslation(), finalPose.getRotation()));
+    for (Pose2d pose : waypoints) {
+      pathPoints.add(new PathPoint(pose.getTranslation(), pose.getRotation()));
+    }
     return PathPlanner
-        .generatePath(new PathConstraints(PathConstants.MAX_DRIVE_SPEED, PathConstants.MAX_ACCELERATION), isReversed,
+        .generatePath(new PathConstraints(PathConstants.MAX_DRIVE_SPEED, PathConstants.MAX_ACCELERATION),
+            isReversed,
             pathPoints);
   }
 

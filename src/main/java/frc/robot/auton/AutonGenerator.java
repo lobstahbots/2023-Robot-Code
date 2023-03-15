@@ -240,17 +240,16 @@ public class AutonGenerator {
                         new ArmTowardsPoseCommand(arm, ArmPresets.PLAYER_STATION_PICKUP))) // Hold for a second
                     .andThen(new ParallelCommandGroup(
                         new ArmTowardsPoseCommand(arm, ArmPresets.PLAYER_STATION_PICKUP),
-                        new ConstructLaterCommand(
-                            () -> new PathFollowCommand(driveBase, driveBase.generatePath(endingWaypoint, true))))))) // Drive
-                                // away
-                                // with arm
-                                // raised
-                                // still
-                                .unless(() -> Math.abs(
-                                    driveBase.getDistanceToPose(flippedTargetPose)
-                                        .getX()) > FieldConstants.MAX_PLAYER_STATION_X_ZONE
-                                    || Math.abs(driveBase.getDistanceToPose(flippedTargetPose)
-                                        .getY()) > FieldConstants.MAX_PLAYER_STATION_Y_ZONE);
+                        new TimedCommand(1, new StraightDriveCommand(driveBase, -0.3, false)))))) // Drive
+                            // away
+                            // with arm
+                            // raised
+                            // still
+                            .unless(() -> Math.abs(
+                                driveBase.getDistanceToPose(flippedTargetPose)
+                                    .getX()) > FieldConstants.MAX_PLAYER_STATION_X_ZONE
+                                || Math.abs(driveBase.getDistanceToPose(flippedTargetPose)
+                                    .getY()) > FieldConstants.MAX_PLAYER_STATION_Y_ZONE);
   }
 
   /**
