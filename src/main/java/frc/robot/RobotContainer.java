@@ -18,11 +18,8 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Command.InterruptionBehavior;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
-import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
-import edu.wpi.first.wpilibj2.command.button.InternalButton;
-import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.Constants.ArmConstants;
 import frc.robot.Constants.ArmConstants.ElevatorConstants;
 import frc.robot.Constants.ArmConstants.PivotConstants;
@@ -33,7 +30,6 @@ import frc.robot.Constants.IntakeConstants;
 import frc.robot.Constants.OIConstants.DriverConstants;
 import frc.robot.Constants.OIConstants.OperatorConstants;
 import frc.robot.auton.AutonGenerator;
-import frc.robot.commands.arm.ArmToPoseCommand;
 import frc.robot.commands.arm.ArmTowardsPoseCommand;
 import frc.robot.commands.arm.ArmTowardsPoseWithRetractionCommand;
 import frc.robot.commands.arm.ResetElevatorCommand;
@@ -45,7 +41,6 @@ import frc.robot.subsystems.DriveBase;
 import frc.robot.subsystems.Intake;
 import frc.robot.subsystems.arm.Elevator;
 import frc.robot.subsystems.arm.Pivot;
-import lobstah.stl.command.ConstructLaterCommand;
 import lobstah.stl.oi.LobstahGamepad;
 
 /**
