@@ -79,7 +79,6 @@ public class AutonGenerator {
    */
   public Command getScoreAndDriveCommand(int row, int initialPosition, int crossingPosition, int finalPosition) {
     return getScoreCommand(row).andThen(new WaitCommand(0.5))
-        .andThen(new TimedCommand(1, new StraightDriveCommand(driveBase, -0.3, false)))
         .andThen(
             getPathFollowCommand(initialPosition, crossingPosition, finalPosition));
     // .andThen(new ConstructLaterCommand(() -> getGroundPickupCommand(1, 0, 0)))
