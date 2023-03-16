@@ -36,7 +36,7 @@ import frc.robot.auton.AutonGenerator;
 import frc.robot.commands.arm.ArmToPoseCommand;
 import frc.robot.commands.arm.ArmTowardsPoseCommand;
 import frc.robot.commands.arm.ArmTowardsPoseWithRetractionCommand;
-import frc.robot.commands.arm.elevator.ResetElevatorCommand;
+import frc.robot.commands.arm.ResetElevatorCommand;
 import frc.robot.commands.drive.StopDriveCommand;
 import frc.robot.commands.drive.TankDriveCommand;
 import frc.robot.commands.intake.SpinIntakeCommand;
