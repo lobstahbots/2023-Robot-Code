@@ -44,4 +44,8 @@ public class Intake extends SubsystemBase {
     intakeMotors.setVoltage(voltage);
   }
 
+  public void stopMotors() {
+    intakeMotors.stopMotor();
+  }
+
 }
