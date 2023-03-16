@@ -269,12 +269,9 @@ public class AutonGenerator {
         driveBase.flipWaypointBasedOnAlliance(FieldConstants.CROSSING_WAYPOINTS[crossingPosition], true);
 
     return new SequentialCommandGroup(
-        new ConstructLaterCommand(() -> getPathToTargetCommand(driveBase, () -> crossingPose)),
-        new TurnToAngleCommand(driveBase, crossingPose.getRotation(),
-            PathConstants.TURN_ANGLE_DEADBAND));
-    // new ConstructLaterCommand(() -> getPathToTargetCommand(driveBase, () -> crossingPose)));
-    // new ConstructLaterCommand(() -> new PathFollowCommand(driveBase,
-    // driveBase.generatePath(FieldConstants.ENDING_AUTON_POSES[finalPosition]))));
+        new TimedCommand(AutonConstants.DRIVE_BACK_TIME,
+            new StraightDriveCommand(driveBase, AutonConstants.DRIVE_BACK_SPEED, false)),
+        new ConstructLaterCommand(() -> getPathToTargetCommand(driveBase, () -> crossingPose)));
   }
 
   /**
@@ -335,7 +332,7 @@ public class AutonGenerator {
       }
     }
     if (finalWaypointIndex > index) { // Traverse indexes
-      index = MathUtil.clamp(index + 1, 0, FieldConstants.TRAVELING_WAYPOINTS.length - 1);
+      index = MathUtil.clamp(index, 0, FieldConstants.TRAVELING_WAYPOINTS.length - 1);
       for (int i = index; i < finalWaypointIndex; i++) {
         waypoints.add(driveBase.flipWaypointBasedOnAlliance(new Pose2d(FieldConstants.TRAVELING_WAYPOINTS[i].getX(),
             FieldConstants.TRAVELING_WAYPOINTS[i].getY(), Rotation2d.fromDegrees(90)), false));
@@ -354,10 +351,9 @@ public class AutonGenerator {
 
     return new PathFollowCommand(driveBase, driveBase.generatePath(waypoints))
         .andThen(new TurnToAngleCommand(driveBase, targetPose.getRotation(), PathConstants.TURN_ANGLE_DEADBAND))
+        .andThen(new WaitCommand(0.25))
         .andThen(
-            new ConstructLaterCommand(() -> new PathFollowCommand(driveBase, driveBase.generatePath(targetPose)))
-                .andThen(
-                    new TurnToAngleCommand(driveBase, targetPose.getRotation(), PathConstants.TURN_ANGLE_DEADBAND)));
+            new ConstructLaterCommand(() -> new PathFollowCommand(driveBase, driveBase.generatePath(targetPose))));
   }
 
 }

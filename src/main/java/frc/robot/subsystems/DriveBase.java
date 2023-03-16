@@ -171,7 +171,7 @@ public class DriveBase extends SubsystemBase {
       SmartDashboard.putString("PhotonVision Pose", estimatedVisionPose.estimatedPose.toString());
       if (estimatedVisionPose.targetArea > VisionConstants.MIN_TARGET_AREA) {
         if (!hasSeenTag) {
-          setGyroOffset(estimatedVisionPose.estimatedPose.getRotation().plus(getGyroAngle()));
+          setGyroOffset(estimatedVisionPose.estimatedPose.getRotation());
           hasSeenTag = true;
         }
         poseEstimator.addVisionMeasurement(estimatedVisionPose.estimatedPose,
@@ -292,13 +292,11 @@ public class DriveBase extends SubsystemBase {
       poseEstimator.resetPosition(poseEstimator.getEstimatedPosition().getRotation(), 0, 0,
           poseEstimator.getEstimatedPosition());
       hasSeenTag = true;
-      SmartDashboard.putBoolean("Has Seen Tag", true);
       resetEncoders();
     } else {
       zeroGyro();
       setGyroOffset(defaultPose.getRotation());
       poseEstimator.resetPosition(getGyroAngle180(), 0, 0, defaultPose);
-      SmartDashboard.putBoolean("Has Seen Tag", false);
       hasSeenTag = false;
     }
   }
@@ -476,7 +474,7 @@ public class DriveBase extends SubsystemBase {
       SmartDashboard.putString("PhotonVision Pose", estimatedVisionPose.estimatedPose.toString());
       if (estimatedVisionPose.targetArea > VisionConstants.MIN_TARGET_AREA) {
         if (!hasSeenTag) {
-          setGyroOffset(estimatedVisionPose.estimatedPose.getRotation().plus(getGyroAngle()));
+          setGyroOffset(estimatedVisionPose.estimatedPose.getRotation());
           hasSeenTag = true;
         }
         poseEstimator.addVisionMeasurement(estimatedVisionPose.estimatedPose,
@@ -490,7 +488,6 @@ public class DriveBase extends SubsystemBase {
     SmartDashboard.putString("Pose", this.getPose().toString());
     SmartDashboard.putNumber("Number of Tags Visible In Front", this.photonVision.getFrontTargets().size());
     SmartDashboard.putNumber("Number of Tags Visible In Rear", this.photonVision.getRearTargets().size());
-
     SmartDashboard.putBoolean("Has seen tag", hasSeenTag);
   }
 }
