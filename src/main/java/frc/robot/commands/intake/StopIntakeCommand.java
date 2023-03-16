@@ -10,7 +10,7 @@ import frc.robot.subsystems.Intake;
 /**
  * Repeatedly sets the {@link Intake} speed to 0.
  */
-public class StopSpinIntakeCommand extends CommandBase {
+public class StopIntakeCommand extends CommandBase {
 
   public final Intake intake;
 
@@ -19,7 +19,7 @@ public class StopSpinIntakeCommand extends CommandBase {
    *
    * @param intake The {@link Intake} to control
    */
-  public StopSpinIntakeCommand(Intake intake) {
+  public StopIntakeCommand(Intake intake) {
     this.intake = intake;
     addRequirements(this.intake);
   }
