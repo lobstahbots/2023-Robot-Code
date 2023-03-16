@@ -26,7 +26,7 @@ public class StopSpinIntakeCommand extends CommandBase {
 
   @Override
   public void execute() {
-    intake.setSpinVoltage(0);
+    intake.stopMotors();
   }
 
   @Override
