@@ -171,19 +171,8 @@ public class AutonGenerator {
                 AutonConstants.AUTON_SCORING_TOLERANCE).unless(() -> !placeDown))
             .andThen(
                 new ParallelRaceGroup(new SpinIntakeCommand(intake, IntakeConstants.OUTTAKE_VOLTAGE).asProxy(),
-                    new TimedCommand(AutonConstants.OUTTAKE_RUNTIME,
-                        new ArmToPoseCommand(arm,
-                            position.translateBy(ArmPresets.CONE_SCORING_BACKOFF),
-                            AutonConstants.AUTON_SCORING_TOLERANCE))))
-            .andThen(
-                new ParallelRaceGroup(new SpinIntakeCommand(intake, IntakeConstants.OUTTAKE_VOLTAGE).asProxy(),
                     new ArmToPoseWithRetractionCommand(arm, ArmPresets.STOWED,
-                        AutonConstants.AUTON_SCORING_TOLERANCE)))
-            .andThen(new TimedCommand(
-                AutonConstants.DRIVE_BACK_TIME,
-                new StraightDriveCommand(
-                    driveBase,
-                    AutonConstants.DRIVE_BACK_SPEED, false)));
+                        AutonConstants.AUTON_SCORING_TOLERANCE)));
   }
 
   /**
