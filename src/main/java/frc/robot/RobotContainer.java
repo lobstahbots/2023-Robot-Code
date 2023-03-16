@@ -264,37 +264,11 @@ public class RobotContainer {
    */
   public Command getAutonomousCommand() {
     Command autonCommand;
-    int crossingSide;
 
-    if (DriverStation.getAlliance() == Alliance.Blue) {
-      switch (crossingPosition.getSelected()) {
-        case LEFT:
-          crossingSide = 1;
-          break;
-        case RIGHT:
-          crossingSide = 0;
-          break;
-        default:
-          crossingSide = 0;
-          break;
-      }
-    } else {
-      switch (crossingPosition.getSelected()) {
-        case LEFT:
-          crossingSide = 0;
-          break;
-        case RIGHT:
-          crossingSide = 1;
-          break;
-        default:
-          crossingSide = 0;
-          break;
-      }
-    }
     switch (autonChooser.getSelected()) {
       case DRIVE:
         autonCommand =
-            autonGenerator.getPathFollowCommand(initialPosition.getSelected(), crossingSide,
+            autonGenerator.getPathFollowCommand(initialPosition.getSelected(), crossingPosition.getSelected(),
                 endingPosition.getSelected());
         break;
       case SCORE:
@@ -303,7 +277,7 @@ public class RobotContainer {
       case SCORE_AND_DRIVE:
         autonCommand =
             autonGenerator.getScoreAndDriveCommand(scoringPosition.getSelected(), initialPosition.getSelected(),
-                crossingSide, endingPosition.getSelected());
+                crossingPosition.getSelected(), endingPosition.getSelected());
         break;
       case DO_NOTHING:
         autonCommand = new StopDriveCommand(driveBase);

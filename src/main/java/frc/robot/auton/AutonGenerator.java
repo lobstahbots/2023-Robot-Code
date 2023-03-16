@@ -85,7 +85,8 @@ public class AutonGenerator {
    * @param crossingPosition Where the robot crosses out of the Community.
    * @param finalPosition Which game element the path ends at.
    */
-  public Command getScoreAndDriveCommand(int row, int initialPosition, int crossingPosition, int finalPosition) {
+  public Command getScoreAndDriveCommand(int row, int initialPosition, CrossingPosition crossingPosition,
+      int finalPosition) {
     return getScoreCommand(row).andThen(new WaitCommand(0.5))
         .andThen(
             getPathFollowCommand(initialPosition, crossingPosition, finalPosition));
@@ -246,18 +247,32 @@ public class AutonGenerator {
    * @param crossingPosition Where the robot crosses out of the Community.
    * @param finalPosition Which game element the path ends at.
    */
-  public Command getPathFollowCommand(int initialPosition, int crossingPosition, int finalPosition) {
+  public Command getPathFollowCommand(int initialPosition, CrossingPosition crossingPosition, int finalPosition) {
     if (DriverStation.getAlliance() == Alliance.Red) {
       initialPosition = 8 - initialPosition;
     }
 
     if (initialPosition <= 2) {
-      crossingPosition = 0;
+      crossingPosition = CrossingPosition.RIGHT;
     } else if (initialPosition >= 6) {
-      crossingPosition = 1;
+      crossingPosition = CrossingPosition.LEFT;
     }
-    Pose2d crossingPose =
-        driveBase.flipWaypointBasedOnAlliance(FieldConstants.CROSSING_WAYPOINTS[crossingPosition], true);
+
+    Pose2d crossingPose;
+
+    if (DriverStation.getAlliance() == Alliance.Blue) {
+      if (crossingPosition == CrossingPosition.LEFT) {
+        crossingPose = driveBase.flipWaypointBasedOnAlliance(FieldConstants.CROSSING_WAYPOINTS[1], true);
+      } else {
+        crossingPose = driveBase.flipWaypointBasedOnAlliance(FieldConstants.CROSSING_WAYPOINTS[0], true);
+      }
+    } else {
+      if (crossingPosition == CrossingPosition.LEFT) {
+        crossingPose = driveBase.flipWaypointBasedOnAlliance(FieldConstants.CROSSING_WAYPOINTS[0], true);
+      } else {
+        crossingPose = driveBase.flipWaypointBasedOnAlliance(FieldConstants.CROSSING_WAYPOINTS[1], true);
+      }
+    }
 
     return new SequentialCommandGroup(
         new ConstructLaterCommand(() -> getPathToTargetCommand(driveBase, () -> crossingPose)),
