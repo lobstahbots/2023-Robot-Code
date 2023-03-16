@@ -79,6 +79,7 @@ public class AutonGenerator {
    */
   public Command getScoreAndDriveCommand(int row, int initialPosition, int crossingPosition, int finalPosition) {
     return getScoreCommand(row).andThen(new WaitCommand(0.5))
+        .andThen(new TimedCommand(1, new StraightDriveCommand(driveBase, -0.3, false)))
         .andThen(
             getPathFollowCommand(initialPosition, crossingPosition, finalPosition));
     // .andThen(new ConstructLaterCommand(() -> getGroundPickupCommand(1, 0, 0)))
@@ -171,19 +172,8 @@ public class AutonGenerator {
                 AutonConstants.AUTON_SCORING_TOLERANCE).unless(() -> !placeDown))
             .andThen(
                 new ParallelRaceGroup(new SpinIntakeCommand(intake, IntakeConstants.OUTTAKE_VOLTAGE).asProxy(),
-                    new TimedCommand(AutonConstants.OUTTAKE_RUNTIME,
-                        new ArmToPoseCommand(arm,
-                            position.translateBy(ArmPresets.CONE_SCORING_BACKOFF),
-                            AutonConstants.AUTON_SCORING_TOLERANCE))))
-            .andThen(
-                new ParallelRaceGroup(new SpinIntakeCommand(intake, IntakeConstants.OUTTAKE_VOLTAGE).asProxy(),
                     new ArmToPoseWithRetractionCommand(arm, ArmPresets.STOWED,
-                        AutonConstants.AUTON_SCORING_TOLERANCE)))
-            .andThen(new TimedCommand(
-                AutonConstants.DRIVE_BACK_TIME,
-                new StraightDriveCommand(
-                    driveBase,
-                    AutonConstants.DRIVE_BACK_SPEED, false)));
+                        AutonConstants.AUTON_SCORING_TOLERANCE)));
   }
 
   /**
