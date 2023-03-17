@@ -403,18 +403,12 @@ public class DriveBase extends SubsystemBase {
    * @return A PathPlannerTrajectory to follow to the target position.
    */
   public PathPlannerTrajectory generatePath(boolean isReversed, List<Pose2d> waypoints) {
-    ArrayList<PathPoint> pathPoints = new ArrayList<>();
-    pathPoints.add(new PathPoint(this.getPose().getTranslation(), this.getPose().getRotation()));
-    for (Pose2d waypoint : waypoints) {
-      pathPoints.add(new PathPoint(waypoint.getTranslation(), waypoint.getRotation()));
-    }
-    return PathPlanner
-        .generatePath(new PathConstraints(PathConstants.MAX_DRIVE_SPEED, PathConstants.MAX_ACCELERATION), isReversed,
-            pathPoints);
+    return generatePath(isReversed, PathConstants.MAX_DRIVE_SPEED, PathConstants.MAX_ACCELERATION,
+        waypoints);
   }
 
   /**
-   * Generates a trajectory through the provided waypoints from the robot's position to the target pose.
+   * Generates a trajectory through a list of provided waypoints from the robot's position.
    * 
    * @param isReversed Whether the trajectory should be driven backwards.
    * @param waypoints The waypoints to generate a trajectory through.
@@ -422,13 +416,51 @@ public class DriveBase extends SubsystemBase {
    * @return A PathPlannerTrajectory to follow to the target position.
    */
   public PathPlannerTrajectory generatePath(boolean isReversed, Pose2d... waypoints) {
+    return generatePath(isReversed, PathConstants.MAX_DRIVE_SPEED, PathConstants.MAX_ACCELERATION,
+        waypoints);
+  }
+
+  /**
+   * Generates a trajectory through a list of provided waypoints from the robot's position.
+   * 
+   * @param isReversed Whether the trajectory should be driven backwards.
+   * @param maxDriveSpeed The maximum drive speed following the trajectory
+   * @param maxAcceleration The maximum acceleration following the trajectory
+   * @param waypoints A list of waypoints to generate a trajectory through.
+   * 
+   * @return A PathPlannerTrajectory to follow to the target position.
+   */
+  public PathPlannerTrajectory generatePath(boolean isReversed, double maxDriveSpeed, double maxAcceleration,
+      List<Pose2d> waypoints) {
+    ArrayList<PathPoint> pathPoints = new ArrayList<>();
+    pathPoints.add(new PathPoint(this.getPose().getTranslation(), this.getPose().getRotation()));
+    for (Pose2d waypoint : waypoints) {
+      pathPoints.add(new PathPoint(waypoint.getTranslation(), waypoint.getRotation()));
+    }
+    return PathPlanner
+        .generatePath(new PathConstraints(maxDriveSpeed, maxAcceleration), isReversed,
+            pathPoints);
+  }
+
+  /**
+   * Generates a trajectory through the provided waypoints from the robot's position to the target pose.
+   * 
+   * @param isReversed Whether the trajectory should be driven backwards.
+   * @param maxDriveSpeed The maximum drive speed following the trajectory
+   * @param maxAcceleration The maximum acceleration following the trajectory
+   * @param waypoints The waypoints to generate a trajectory through.
+   * 
+   * @return A PathPlannerTrajectory to follow to the target position.
+   */
+  public PathPlannerTrajectory generatePath(boolean isReversed, double maxDriveSpeed, double maxAcceleration,
+      Pose2d... waypoints) {
     ArrayList<PathPoint> pathPoints = new ArrayList<>();
     pathPoints.add(new PathPoint(this.getPose().getTranslation(), this.getPose().getRotation()));
     for (Pose2d pose : waypoints) {
       pathPoints.add(new PathPoint(pose.getTranslation(), pose.getRotation()));
     }
     return PathPlanner
-        .generatePath(new PathConstraints(PathConstants.MAX_DRIVE_SPEED, PathConstants.MAX_ACCELERATION),
+        .generatePath(new PathConstraints(maxDriveSpeed, maxAcceleration),
             isReversed,
             pathPoints);
   }

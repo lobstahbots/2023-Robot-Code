@@ -340,9 +340,10 @@ public class AutonGenerator {
 
     return new PathFollowCommand(driveBase, driveBase.generatePath(waypoints))
         .andThen(new TurnToAngleCommand(driveBase, targetPose.getRotation(), PathConstants.TURN_ANGLE_DEADBAND))
-        .andThen(new WaitCommand(0.25))
+        // .andThen(new WaitCommand(0.25))
         .andThen(
-            new ConstructLaterCommand(() -> new PathFollowCommand(driveBase, driveBase.generatePath(targetPose))));
+            new ConstructLaterCommand(
+                () -> new PathFollowCommand(driveBase, driveBase.generatePath(false, 1.5, 1, targetPose))));
   }
 
 }
