@@ -237,7 +237,7 @@ public class RobotContainer {
     scoringPosition.addOption("Low Goal", 2);
     scoringPosition.setDefaultOption("High Goal", 0);
     autonChooser.addOption("Path Follow Auton",
-        autonGenerator.getPathFollowCommand(initialPosition.getSelected(), crossingPosition.getSelected(),
+        autonGenerator.getStage1AutonPathCommand(initialPosition.getSelected(), crossingPosition.getSelected(),
             endingPosition.getSelected()));
     autonChooser.addOption("Simple Auton", autonGenerator.getSimpleAutonCommand());
     autonChooser.addOption("Do Nothing Auton", new DriveBaseStopCommand(driveBase));
