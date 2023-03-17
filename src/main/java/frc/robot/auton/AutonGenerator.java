@@ -16,7 +16,6 @@ import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.ConditionalCommand;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import edu.wpi.first.wpilibj2.command.ParallelDeadlineGroup;
@@ -195,46 +194,29 @@ public class AutonGenerator {
    */
   public Command getDriveToPlayerStationCommand(Pose2d targetPose) {
     Pose2d waypoint = driveBase.flipWaypointBasedOnAlliance(
-        new Pose2d(targetPose.getX() - 1, targetPose.getY(), targetPose.getRotation()), true);
-
-    Pose2d squeezePoint = driveBase.flipWaypointBasedOnAlliance(
-        new Pose2d(targetPose.getX() - 0.4, targetPose.getY(), targetPose.getRotation()), true);
+        new Pose2d(targetPose.getX() - 0.7, targetPose.getY(), targetPose.getRotation()), true);
 
     Pose2d flippedTargetPose = driveBase.flipWaypointBasedOnAlliance(targetPose, true);
     return new ParallelRaceGroup(new SpinIntakeCommand(intake, IntakeConstants.INTAKE_VOLTAGE),
         new SequentialCommandGroup( // Drive to waypoint, then turn while raising arm
-            new ConstructLaterCommand(
-                () -> new ConditionalCommand(new PathFollowCommand(driveBase, driveBase.generatePath(squeezePoint)),
-                    new PathFollowCommand(driveBase, driveBase.generatePath(waypoint)),
-                    () -> {
-                      if (DriverStation.getAlliance() == Alliance.Blue) {
-                        return driveBase.getPose().getX() > waypoint.getX();
-                      } else {
-                        return driveBase.getPose().getX() < waypoint.getX();
-                      }
-                    })),
-            new ParallelDeadlineGroup(new ArmToPoseCommand(arm, ArmPresets.PLAYER_STATION_PICKUP, 5),
-                new TurnToAngleCommand(driveBase, flippedTargetPose.getRotation(), 1)),
-            new ParallelRaceGroup( // Maintain arm angle and spin intake
-                new SequentialCommandGroup( // Meanwhile, drive to target and turn briefly to ensure correct angle
-                    new ConstructLaterCommand(
-                        () -> new PathFollowCommand(driveBase, driveBase.generatePath(flippedTargetPose))),
-                    new TimedCommand(0.2, new TurnToAngleCommand(driveBase, flippedTargetPose.getRotation(), 1))),
-                new ArmTowardsPoseCommand(arm, ArmPresets.PLAYER_STATION_PICKUP))
-                    .andThen(new ParallelRaceGroup(new TimedCommand(0.25, new StopDriveCommand(driveBase)),
-                        new ArmTowardsPoseCommand(arm, ArmPresets.PLAYER_STATION_PICKUP))) // Hold for a second
-                    .andThen(new ParallelCommandGroup(
-                        new ArmTowardsPoseCommand(arm, ArmPresets.PLAYER_STATION_PICKUP),
-                        new TimedCommand(1, new StraightDriveCommand(driveBase, -0.3, false)))))) // Drive
-                            // away
-                            // with arm
-                            // raised
-                            // still
-                            .unless(() -> Math.abs(
-                                driveBase.getDistanceToPose(flippedTargetPose)
-                                    .getX()) > FieldConstants.MAX_PLAYER_STATION_X_ZONE
-                                || Math.abs(driveBase.getDistanceToPose(flippedTargetPose)
-                                    .getY()) > FieldConstants.MAX_PLAYER_STATION_Y_ZONE);
+            new ConstructLaterCommand(() -> new PathFollowCommand(driveBase, driveBase.generatePath(waypoint))),
+            new ParallelDeadlineGroup(new ArmToPoseCommand(arm, ArmPresets.PLAYER_STATION_PICKUP, 5)),
+            new ParallelRaceGroup( // Maintain arm angle and drive to target
+                new ConstructLaterCommand(
+                    () -> new PathFollowCommand(driveBase, driveBase.generatePath(flippedTargetPose))),
+                new ArmTowardsPoseCommand(arm, ArmPresets.PLAYER_STATION_PICKUP)),
+            new ParallelRaceGroup(new TimedCommand(0.25, new StopDriveCommand(driveBase)), // Hold for a second
+                new ArmTowardsPoseCommand(arm, ArmPresets.PLAYER_STATION_PICKUP)),
+            new ParallelRaceGroup( // Drive away with arm raised still
+                new ArmTowardsPoseCommand(arm, ArmPresets.PLAYER_STATION_PICKUP),
+                new TimedCommand(1,
+                    new StraightDriveCommand(driveBase, AutonConstants.DRIVE_BACK_SPEED, false))),
+            new ArmToPoseCommand(arm, ArmPresets.STOWED, 1)))
+                .unless(() -> Math.abs(
+                    driveBase.getDistanceToPose(flippedTargetPose)
+                        .getX()) > FieldConstants.MAX_PLAYER_STATION_X_ZONE
+                    || Math.abs(driveBase.getDistanceToPose(flippedTargetPose)
+                        .getY()) > FieldConstants.MAX_PLAYER_STATION_Y_ZONE);
   }
 
   /**
