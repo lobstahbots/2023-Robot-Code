@@ -1,10 +1,9 @@
 
-package frc.robot.commands.arm;
+package frc.robot.subsystems.arm;
 
 import edu.wpi.first.wpilibj2.command.ParallelRaceGroup;
 import edu.wpi.first.wpilibj2.command.WaitUntilCommand;
 import frc.robot.ArmPose;
-import frc.robot.subsystems.Arm;
 
 public class ArmToPoseWithRetractionCommand extends ParallelRaceGroup {
   private final Arm arm;

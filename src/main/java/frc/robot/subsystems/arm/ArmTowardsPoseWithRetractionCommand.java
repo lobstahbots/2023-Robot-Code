@@ -1,10 +1,9 @@
 
-package frc.robot.commands.arm;
+package frc.robot.subsystems.arm;
 
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import frc.robot.ArmPose;
 import frc.robot.Constants.ArmConstants;
-import frc.robot.subsystems.Arm;
 
 public class ArmTowardsPoseWithRetractionCommand extends SequentialCommandGroup {
   Arm arm;

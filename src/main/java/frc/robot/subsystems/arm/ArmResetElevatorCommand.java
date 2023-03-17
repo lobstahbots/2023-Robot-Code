@@ -1,12 +1,11 @@
 
-package frc.robot.commands.arm;
+package frc.robot.subsystems.arm;
 
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.Constants.ArmConstants.ElevatorConstants;
-import frc.robot.subsystems.Arm;
 
-public class ResetElevatorCommand extends CommandBase {
+public class ArmResetElevatorCommand extends CommandBase {
   private boolean needsToExtend;
   private final Arm arm;
 
@@ -17,7 +16,7 @@ public class ResetElevatorCommand extends CommandBase {
    * 
    * @param arm The {@link Arm} to control
    */
-  public ResetElevatorCommand(Arm arm) {
+  public ArmResetElevatorCommand(Arm arm) {
     this.arm = arm;
     addRequirements(arm);
   }

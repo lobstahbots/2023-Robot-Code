@@ -2,7 +2,7 @@
 // Open Source Software; you can modify and/or share it under the terms of
 // the WPILib BSD license file in the root directory of this project.
 
-package frc.robot.commands.arm;
+package frc.robot.subsystems.arm;
 
 import java.util.function.Supplier;
 
@@ -11,7 +11,6 @@ import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.ArmPose;
 import frc.robot.Constants.ArmConstants.ElevatorConstants;
 import frc.robot.Constants.ArmConstants.PivotConstants;
-import frc.robot.subsystems.Arm;
 
 public class ArmTowardsPoseCommand extends CommandBase {
   private final Arm arm;
