@@ -2,7 +2,7 @@
 // Open Source Software; you can modify and/or share it under the terms of
 // the WPILib BSD license file in the root directory of this project.
 
-package frc.robot.commands.arm;
+package frc.robot.subsystems.arm;
 
 import java.util.function.Supplier;
 
@@ -11,7 +11,6 @@ import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.ArmPose;
 import frc.robot.Constants.ArmConstants.ElevatorConstants;
 import frc.robot.Constants.ArmConstants.PivotConstants;
-import frc.robot.subsystems.Arm;
 
 public class ArmTowardsPoseCommand extends CommandBase {
   private final Arm arm;
@@ -41,8 +40,8 @@ public class ArmTowardsPoseCommand extends CommandBase {
 
   @Override
   public void initialize() {
-    arm.getElevator().resetPID();
-    arm.getPivot().resetPID();
+    arm.resetElevatorPID();
+    arm.resetPivotPID();
   }
 
   @Override
@@ -50,19 +49,19 @@ public class ArmTowardsPoseCommand extends CommandBase {
     ArmPose currentPose = pose.get();
     double clampedExtension = MathUtil.clamp(currentPose.getExtension(), ElevatorConstants.MIN_EXTENSION_INCHES,
         ElevatorConstants.MAX_EXTENSION_INCHES);
-    arm.getElevator().setPIDGoal(clampedExtension);
-    arm.getElevator().feedPID();
+    arm.setElevatorPIDGoal(clampedExtension);
+    arm.feedElevatorPID();
 
     double clampedAngle =
         MathUtil.clamp(currentPose.getAngle().getDegrees(), PivotConstants.MIN_ROTATION_DEG,
             PivotConstants.MAX_ROTATION_DEG);
-    arm.getPivot().setPIDGoal(clampedAngle);
-    arm.getPivot().feedPID();
+    arm.setPivotPIDGoal(clampedAngle);
+    arm.feedPivotPID();
   }
 
   @Override
   public void end(boolean interrupted) {
-    arm.getElevator().move(0);
-    arm.getPivot().setRotationSpeed(0);
+    arm.setElevatorSpeed(0);
+    arm.setPivotSpeed(0);
   }
 }
