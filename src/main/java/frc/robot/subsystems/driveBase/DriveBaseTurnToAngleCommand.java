@@ -1,13 +1,12 @@
 
-package frc.robot.commands.drive;
+package frc.robot.subsystems.driveBase;
 
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.Constants.PathConstants;
-import frc.robot.subsystems.DriveBase;
 
-public class TurnToAngleCommand extends CommandBase {
+public class DriveBaseTurnToAngleCommand extends CommandBase {
   private final DriveBase driveBase;
   private final Rotation2d targetAngle;
   private double turnOutput;
@@ -15,7 +14,7 @@ public class TurnToAngleCommand extends CommandBase {
       new PIDController(PathConstants.TURN_P, PathConstants.TURN_I, PathConstants.TURN_D);
 
 
-  public TurnToAngleCommand(DriveBase driveBase, Rotation2d targetAngle, double angleTolerance) {
+  public DriveBaseTurnToAngleCommand(DriveBase driveBase, Rotation2d targetAngle, double angleTolerance) {
     this.driveBase = driveBase;
     this.targetAngle = targetAngle;
     pidController.enableContinuousInput(0, 360);

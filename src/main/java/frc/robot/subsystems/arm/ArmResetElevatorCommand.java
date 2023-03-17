@@ -1,15 +1,13 @@
 
-package frc.robot.commands.arm;
+package frc.robot.subsystems.arm;
 
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.Constants.ArmConstants.ElevatorConstants;
-import frc.robot.subsystems.Arm;
-import frc.robot.subsystems.arm.Elevator;
 
-public class ResetElevatorCommand extends CommandBase {
+public class ArmResetElevatorCommand extends CommandBase {
   private boolean needsToExtend;
-  private final Elevator elevator;
+  private final Arm arm;
 
   /**
    * Creates a command that fully retracts the {@link Arm.Elevator} until the limit switch is flipped. If the limit
@@ -18,44 +16,44 @@ public class ResetElevatorCommand extends CommandBase {
    * 
    * @param arm The {@link Arm} to control
    */
-  public ResetElevatorCommand(Arm arm) {
-    this.elevator = arm.getElevator();
+  public ArmResetElevatorCommand(Arm arm) {
+    this.arm = arm;
     addRequirements(arm);
   }
 
   @Override
   public void initialize() {
-    this.needsToExtend = elevator.isRetracted();
-    SmartDashboard.putBoolean("Is Retracted Already", elevator.isRetracted());
+    this.needsToExtend = arm.isElevatorRetracted();
+    SmartDashboard.putBoolean("Is Retracted Already", arm.isElevatorRetracted());
   }
 
   @Override
   public void execute() {
     if (this.needsToExtend) {
-      if (elevator.isRetracted()) {
-        elevator.move(ElevatorConstants.HOME_SPEED);
+      if (arm.isElevatorRetracted()) {
+        arm.setElevatorSpeed(ElevatorConstants.HOME_SPEED);
       } else {
         this.needsToExtend = false;
       }
     } else {
-      if (!elevator.isRetracted()) {
-        elevator.moveToLimitSwitch();
+      if (!arm.isElevatorRetracted()) {
+        arm.moveElevatorToLimitSwitch();
       } else {
-        elevator.move(0);
+        arm.setElevatorSpeed(0);
       }
     }
   }
 
   @Override
   public boolean isFinished() {
-    return !this.needsToExtend && elevator.isRetracted();
+    return !this.needsToExtend && arm.isElevatorRetracted();
   }
 
   @Override
   public void end(boolean interrupted) {
     if (interrupted == false) {
-      elevator.resetEncoder();
+      arm.resetElevatorEncoder();
     }
-    elevator.move(0);
+    arm.setElevatorSpeed(0);
   }
 }
