@@ -265,7 +265,7 @@ public class AutonGenerator {
 
     return new SequentialCommandGroup(
         new TimedCommand(AutonConstants.DRIVE_BACK_TIME,
-            new StraightDriveCommand(driveBase, AutonConstants.DRIVE_BACK_SPEED, false)),
+            new DriveBaseStraightCommand(driveBase, AutonConstants.DRIVE_BACK_SPEED, false)),
         new ConstructLaterCommand(() -> getPathToTargetCommand(driveBase, () -> crossingPose)),
         new ConstructLaterCommand(() -> getPathToTargetCommand(driveBase, () -> finalPose)));
   }
@@ -345,12 +345,13 @@ public class AutonGenerator {
       return new DriveBasePathFollowCommand(driveBase, driveBase.generatePath(targetPose));
     }
 
-    return new PathFollowCommand(driveBase, driveBase.generatePath(waypoints))
-        .andThen(new TurnToAngleCommand(driveBase, targetPose.getRotation(), PathConstants.TURN_ANGLE_DEADBAND))
+    return new DriveBasePathFollowCommand(driveBase, driveBase.generatePath(waypoints))
+        .andThen(
+            new DriveBaseTurnToAngleCommand(driveBase, targetPose.getRotation(), PathConstants.TURN_ANGLE_DEADBAND))
         // .andThen(new WaitCommand(0.25))
         .andThen(
             new ConstructLaterCommand(
-                () -> new PathFollowCommand(driveBase, driveBase.generatePath(false, 1.5, 1, targetPose))));
+                () -> new DriveBasePathFollowCommand(driveBase, driveBase.generatePath(false, 1.5, 1, targetPose))));
   }
 
 }
