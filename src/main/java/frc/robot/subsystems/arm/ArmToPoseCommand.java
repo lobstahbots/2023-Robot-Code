@@ -1,12 +1,11 @@
 
-package frc.robot.commands.arm;
+package frc.robot.subsystems.arm;
 
 import java.util.function.Supplier;
 
 import edu.wpi.first.wpilibj2.command.ParallelRaceGroup;
 import edu.wpi.first.wpilibj2.command.WaitUntilCommand;
 import frc.robot.ArmPose;
-import frc.robot.subsystems.Arm;
 
 public class ArmToPoseCommand extends ParallelRaceGroup {
   private final Arm arm;
