@@ -247,6 +247,7 @@ public class AutonGenerator {
   public Command getPathFollowCommand(int initialPosition, int crossingPosition, int finalPosition) {
     if (DriverStation.getAlliance() == Alliance.Red) {
       initialPosition = 8 - initialPosition;
+      finalPosition = FieldConstants.ENDING_AUTON_POSES.length - finalPosition;
     }
 
     if (initialPosition <= 2) {
@@ -257,10 +258,13 @@ public class AutonGenerator {
     Pose2d crossingPose =
         driveBase.flipWaypointBasedOnAlliance(FieldConstants.CROSSING_WAYPOINTS[crossingPosition], true);
 
+    Pose2d finalPose = driveBase.flipWaypointBasedOnAlliance(FieldConstants.ENDING_AUTON_POSES[finalPosition], true);
+
     return new SequentialCommandGroup(
         new TimedCommand(AutonConstants.DRIVE_BACK_TIME,
             new StraightDriveCommand(driveBase, AutonConstants.DRIVE_BACK_SPEED, false)),
-        new ConstructLaterCommand(() -> getPathToTargetCommand(driveBase, () -> crossingPose)));
+        new ConstructLaterCommand(() -> getPathToTargetCommand(driveBase, () -> crossingPose)),
+        new ConstructLaterCommand(() -> getPathToTargetCommand(driveBase, () -> finalPose)));
   }
 
   /**
