@@ -2,7 +2,7 @@
 // Open Source Software; you can modify and/or share it under the terms of
 // the WPILib BSD license file in the root directory of this project.
 
-package frc.robot.commands.drive;
+package frc.robot.subsystems.driveBase;
 
 import com.pathplanner.lib.PathPlannerTrajectory;
 import com.pathplanner.lib.commands.PPRamseteCommand;
@@ -11,17 +11,16 @@ import edu.wpi.first.math.controller.RamseteController;
 import edu.wpi.first.math.controller.SimpleMotorFeedforward;
 import frc.robot.Constants.DriveConstants;
 import frc.robot.Constants.PathConstants;
-import frc.robot.subsystems.DriveBase;
 
 /**
  * Makes an {@link DriveBase} follow a given PathPlannerTrajectory using a Ramsete Controller.
  */
-public class PathFollowCommand extends PPRamseteCommand {
+public class DriveBasePathFollowCommand extends PPRamseteCommand {
 
   /**
    * Drives an {@link DriveBase} through the provided PathPlannerTrajectory using a Ramsete Controller.
    */
-  public PathFollowCommand(DriveBase driveBase, PathPlannerTrajectory trajectory) {
+  public DriveBasePathFollowCommand(DriveBase driveBase, PathPlannerTrajectory trajectory) {
     super(
         trajectory,
         driveBase::getPose,

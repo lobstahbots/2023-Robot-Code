@@ -2,17 +2,14 @@
 // Open Source Software; you can modify and/or share it under the terms of
 // the WPILib BSD license file in the root directory of this project.
 
-package frc.robot.commands.drive;
+package frc.robot.subsystems.driveBase;
 
 import java.util.function.DoubleSupplier;
-
-import frc.robot.subsystems.DriveBase;
 
 /**
  * Drives a {@link DriveBase} in a (roughly) straight line.
  */
-public class StraightDriveCommand extends TankDriveCommand {
-
+public class DriveBaseStraightCommand extends DriveBaseTankCommand {
   /**
    * Drives the driveBase in a (roughly) straight line.
    *
@@ -20,7 +17,7 @@ public class StraightDriveCommand extends TankDriveCommand {
    * @param speedSupplier Supplier for speed
    * @param squaredInputs Whether to drive with squared inputs
    */
-  public StraightDriveCommand(DriveBase driveBase,
+  public DriveBaseStraightCommand(DriveBase driveBase,
       DoubleSupplier speedSupplier, boolean squaredInputs) {
     super(driveBase, speedSupplier, speedSupplier, squaredInputs);
   }
@@ -33,7 +30,7 @@ public class StraightDriveCommand extends TankDriveCommand {
    * @param rightSpeed The right speed
    * @param squaredInputs Whether to drive with squared inputs
    */
-  public StraightDriveCommand(DriveBase driveBase, double speed, boolean squaredInputs) {
+  public DriveBaseStraightCommand(DriveBase driveBase, double speed, boolean squaredInputs) {
     this(driveBase, () -> speed, squaredInputs);
   }
 }

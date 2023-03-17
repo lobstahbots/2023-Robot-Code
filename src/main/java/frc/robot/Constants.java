@@ -29,7 +29,7 @@ public final class Constants {
    */
   public static final class PathConstants {
     public static final double MAX_DRIVE_SPEED = 0.6;
-    public static final double MAX_ACCELERATION = 0.8;
+    public static final double MAX_ACCELERATION = 0.4;
     public static final double RAMSETE_B = 2.0;
     public static final double RAMSETE_ZETA = 0.7;
     public static final double kS = 0.032478;
@@ -38,9 +38,9 @@ public final class Constants {
     public static final double kP = 1.2264;
     public static final double kI = 0;
     public static final double KD = 0;
-    public static final double TURN_P = 0.025;
+    public static final double TURN_P = 0.035;
     public static final double TURN_I = 0;
-    public static final double TURN_D = 0.015;
+    public static final double TURN_D = 0.02;
     public static final double TURN_ANGLE_DEADBAND = 2;
     public static final double POSE_DISTANCE_METERS_FILTER = 10;
   }
@@ -284,7 +284,7 @@ public final class Constants {
    * Stores preset poses for the arm.
    */
   public static final class ArmPresets {
-    public static final ArmPose STOWED = ArmPose.fromAngleExtension(Rotation2d.fromDegrees(35), -0.1);
+    public static final ArmPose STOWED = ArmPose.fromAngleExtension(Rotation2d.fromDegrees(36), -0.1);
     public static final ArmPose GROUND_PICKUP = ArmPose.fromXY(16.4, 10.2);
     public static final ArmPose MID_GOAL_SCORING = ArmPose.fromXY(25, 47); // before dropping
     public static final ArmPose LOW_GOAL_SCORING = ArmPose.fromXY(15, 14);

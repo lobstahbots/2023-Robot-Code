@@ -1,5 +1,5 @@
 
-package frc.robot.subsystems;
+package frc.robot.subsystems.driveBase;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -30,12 +30,12 @@ import edu.wpi.first.wpilibj.motorcontrol.MotorControllerGroup;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.DriveConstants;
-import frc.robot.Constants.FieldConstants;
 import frc.robot.Constants.PathConstants;
 import frc.robot.Constants.VisionConstants;
 import lobstah.stl.math.LobstahMath;
 import lobstah.stl.motorcontrol.LobstahDifferentialDrive;
-import frc.robot.photonvision.EstimatedRobotPose;
+import frc.robot.subsystems.photonvision.EstimatedRobotPose;
+import frc.robot.subsystems.photonvision.PhotonVision;
 
 /**
  * A subsystem that controls the drive train (aka chassis) on a robot.
@@ -172,7 +172,7 @@ public class DriveBase extends SubsystemBase {
       SmartDashboard.putString("PhotonVision Pose", estimatedVisionPose.estimatedPose.toString());
       if (estimatedVisionPose.targetArea > VisionConstants.MIN_TARGET_AREA) {
         if (!hasSeenTag) {
-          setGyroOffset(estimatedVisionPose.estimatedPose.getRotation().minus(getGyroAngle()));
+          setGyroOffset(estimatedVisionPose.estimatedPose.getRotation().plus(getGyroAngle()));
           hasSeenTag = true;
         }
         poseEstimator.addVisionMeasurement(estimatedVisionPose.estimatedPose,
@@ -293,11 +293,14 @@ public class DriveBase extends SubsystemBase {
       poseEstimator.resetPosition(poseEstimator.getEstimatedPosition().getRotation(), 0, 0,
           poseEstimator.getEstimatedPosition());
       hasSeenTag = true;
+      SmartDashboard.putBoolean("Has Seen Tag", true);
       resetEncoders();
     } else {
       zeroGyro();
       setGyroOffset(defaultPose.getRotation());
       poseEstimator.resetPosition(getGyroAngle180(), 0, 0, defaultPose);
+      SmartDashboard.putBoolean("Has Seen Tag", false);
+      hasSeenTag = false;
     }
   }
 
@@ -376,31 +379,61 @@ public class DriveBase extends SubsystemBase {
   }
 
   /**
-   * Generates a trajectory through a list of provided waypoints from the robot's position.
+   * Generates a trajectory through a list of provided waypoints from the robot's position, assumed driving forwards.
    * 
    * @return A PathPlannerTrajectory to follow to the target position.
    */
   public PathPlannerTrajectory generatePath(List<Pose2d> waypoints) {
+    return generatePath(false, waypoints);
+  }
+
+
+  /**
+   * Generates a trajectory through a list of provided waypoints from the robot's position, assumed driving forwards.
+   * 
+   * @return A PathPlannerTrajectory to follow to the target position.
+   */
+  public PathPlannerTrajectory generatePath(Pose2d... waypoints) {
+    return generatePath(false, waypoints);
+  }
+
+  /**
+   * Generates a trajectory through a list of provided waypoints from the robot's position.
+   * 
+   * @param isReversed Whether the trajectory should be driven backwards.
+   * @param waypoints A list of waypoints to generate a trajectory through.
+   * 
+   * @return A PathPlannerTrajectory to follow to the target position.
+   */
+  public PathPlannerTrajectory generatePath(boolean isReversed, List<Pose2d> waypoints) {
     ArrayList<PathPoint> pathPoints = new ArrayList<>();
     pathPoints.add(new PathPoint(this.getPose().getTranslation(), this.getPose().getRotation()));
     for (Pose2d waypoint : waypoints) {
       pathPoints.add(new PathPoint(waypoint.getTranslation(), waypoint.getRotation()));
     }
     return PathPlanner
-        .generatePath(new PathConstraints(PathConstants.MAX_DRIVE_SPEED, PathConstants.MAX_ACCELERATION), pathPoints);
+        .generatePath(new PathConstraints(PathConstants.MAX_DRIVE_SPEED, PathConstants.MAX_ACCELERATION), isReversed,
+            pathPoints);
   }
 
   /**
-   * Generates a trajectory from the robot's position to the given target Pose.
+   * Generates a trajectory through the provided waypoints from the robot's position to the target pose.
+   * 
+   * @param isReversed Whether the trajectory should be driven backwards.
+   * @param waypoints The waypoints to generate a trajectory through.
    * 
    * @return A PathPlannerTrajectory to follow to the target position.
    */
-  public PathPlannerTrajectory generatePath(Pose2d finalPose) {
+  public PathPlannerTrajectory generatePath(boolean isReversed, Pose2d... waypoints) {
     ArrayList<PathPoint> pathPoints = new ArrayList<>();
     pathPoints.add(new PathPoint(this.getPose().getTranslation(), this.getPose().getRotation()));
-    pathPoints.add(new PathPoint(finalPose.getTranslation(), finalPose.getRotation()));
+    for (Pose2d pose : waypoints) {
+      pathPoints.add(new PathPoint(pose.getTranslation(), pose.getRotation()));
+    }
     return PathPlanner
-        .generatePath(new PathConstraints(PathConstants.MAX_DRIVE_SPEED, PathConstants.MAX_ACCELERATION), pathPoints);
+        .generatePath(new PathConstraints(PathConstants.MAX_DRIVE_SPEED, PathConstants.MAX_ACCELERATION),
+            isReversed,
+            pathPoints);
   }
 
   /**
@@ -444,7 +477,7 @@ public class DriveBase extends SubsystemBase {
       SmartDashboard.putString("PhotonVision Pose", estimatedVisionPose.estimatedPose.toString());
       if (estimatedVisionPose.targetArea > VisionConstants.MIN_TARGET_AREA) {
         if (!hasSeenTag) {
-          setGyroOffset(estimatedVisionPose.estimatedPose.getRotation().minus(getGyroAngle()));
+          setGyroOffset(estimatedVisionPose.estimatedPose.getRotation().plus(getGyroAngle()));
           hasSeenTag = true;
         }
         poseEstimator.addVisionMeasurement(estimatedVisionPose.estimatedPose,
@@ -454,8 +487,11 @@ public class DriveBase extends SubsystemBase {
 
     SmartDashboard.putNumber("Gyro", this.getGyroAngle180().getDegrees());
     SmartDashboard.putNumber("Gyro 180", this.getGyroAngle180().getDegrees());
+    SmartDashboard.putNumber("Gyro Offset", getGyroOffset().getDegrees());
     SmartDashboard.putString("Pose", this.getPose().toString());
     SmartDashboard.putNumber("Number of Tags Visible In Front", this.photonVision.getFrontTargets().size());
     SmartDashboard.putNumber("Number of Tags Visible In Rear", this.photonVision.getRearTargets().size());
+
+    SmartDashboard.putBoolean("Has seen tag", hasSeenTag);
   }
 }

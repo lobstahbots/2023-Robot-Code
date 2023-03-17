@@ -251,6 +251,32 @@
               "imageWidth": -1,
               "imageHeight": -1
             }
+          },
+          "10,0": {
+            "size": [
+              1,
+              1
+            ],
+            "content": {
+              "_type": "Text View",
+              "_source0": "network_table:///SmartDashboard/Gyro 180",
+              "_title": "Gyro 180",
+              "_glyph": 148,
+              "_showGlyph": false
+            }
+          },
+          "11,0": {
+            "size": [
+              1,
+              1
+            ],
+            "content": {
+              "_type": "Text View",
+              "_source0": "network_table:///SmartDashboard/Gyro offset",
+              "_title": "Gyro offset",
+              "_glyph": 148,
+              "_showGlyph": false
+            }
           }
         }
       }
