@@ -6,7 +6,6 @@ package frc.robot;
 
 import edu.wpi.first.util.sendable.Sendable;
 import edu.wpi.first.util.sendable.SendableBuilder;
-import lobstah.stl.math.LobstahMath;
 
 /**
  * Selects a target column and row in teleop. Can select column and row in two modes: incrementally changing row and
