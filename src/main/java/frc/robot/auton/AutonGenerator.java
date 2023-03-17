@@ -80,7 +80,7 @@ public class AutonGenerator {
   public Command getScoreAndDriveCommand(int row, int initialPosition, int crossingPosition, int finalPosition) {
     return new SequentialCommandGroup(
         getScoreCommand(row),
-        getPathFollowCommand(initialPosition, crossingPosition, finalPosition));
+        getStage1AutonPathCommand(initialPosition, crossingPosition, finalPosition));
   }
 
   // public Command getGroundPickupCommand(int scorePiece) {
@@ -225,7 +225,7 @@ public class AutonGenerator {
    * @param crossingPosition Where the robot crosses out of the Community.
    * @param finalPosition Which game element the path ends at.
    */
-  public Command getPathFollowCommand(int initialPosition, int crossingPosition, int finalPosition) {
+  public Command getStage1AutonPathCommand(int initialPosition, int crossingPosition, int finalPosition) {
     if (DriverStation.getAlliance() == Alliance.Red) {
       initialPosition = 8 - initialPosition;
     }
@@ -239,7 +239,7 @@ public class AutonGenerator {
         driveBase.flipWaypointBasedOnAlliance(FieldConstants.CROSSING_WAYPOINTS[crossingPosition], true);
 
     return new SequentialCommandGroup(
-        new ConstructLaterCommand(() -> getPathToTargetCommand(driveBase, () -> crossingPose)),
+        new ConstructLaterCommand(() -> getPathToTargetCommand(driveBase, crossingPose)),
         new DriveBaseTurnToAngleCommand(driveBase, crossingPose.getRotation(),
             PathConstants.TURN_ANGLE_DEADBAND));
     // new ConstructLaterCommand(() -> getPathToTargetCommand(driveBase, () -> crossingPose)));
@@ -247,31 +247,7 @@ public class AutonGenerator {
     // driveBase.generatePath(FieldConstants.ENDING_AUTON_POSES[finalPosition]))));
   }
 
-  /**
-   * Constructs and returns a {@link PathPlannerTrajectory} to follow based on provided starting, crossing, and ending
-   * position.
-   * 
-   * @param initialPosition The starting position of the robot
-   * @param crossingPosition Where the robot crosses out of the Community.
-   * @param finalPosition Which game element the path ends at.
-   */
-  public ArrayList<PathPlannerTrajectory> getPath(int initialPosition, int crossingPosition, int finalPosition) {
-    ArrayList<PathPlannerTrajectory> pathGroup = new ArrayList<>();
-    String firstPathName = String.valueOf(initialPosition) + "-" + String.valueOf(crossingPosition);
-    String secondPathName = "_" + String.valueOf(crossingPosition) + "-" + String.valueOf(finalPosition);
-    PathPlannerTrajectory firstPath = PathPlanner.loadPath(firstPathName,
-        new PathConstraints(PathConstants.MAX_DRIVE_SPEED, PathConstants.MAX_ACCELERATION));
-    PathPlannerTrajectory secondPath = PathPlanner.loadPath(secondPathName,
-        new PathConstraints(PathConstants.MAX_DRIVE_SPEED, PathConstants.MAX_ACCELERATION));
-    pathGroup.add(firstPath);
-    pathGroup.add(secondPath);
-
-    return pathGroup;
-
-  }
-
-  public Command getPathToTargetCommand(DriveBase driveBase, Supplier<Pose2d> targetSupplier) {
-    Pose2d targetPose = targetSupplier.get();
+  public Command getPathToTargetCommand(DriveBase driveBase, Pose2d targetPose) {
     /* Finding the waypoint closest to the target. */
     int finalWaypointIndex = 0;
     for (int i = 0; i < FieldConstants.TRAVELING_WAYPOINTS.length; i++) {
