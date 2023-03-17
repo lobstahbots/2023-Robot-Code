@@ -27,20 +27,20 @@ public class ArmTowardsPoseWithRetractionCommand extends SequentialCommandGroup 
         new ArmToPoseCommand(
             arm,
             () -> ArmPose.fromAngleExtension(ArmConstants.BUMPER_AVOIDANCE_ANGLE,
-                arm.getElevator().getExtension()),
+                arm.getExtension()),
             ArmConstants.BUMPER_AVOIDANCE_ANGLE_PRECISION, ArmConstants.BUMPER_AVOIDANCE_EXTENSION_PRECISION)
                 .unless(() -> !arm.getPose()
                     .isInsideBumperZone()),
         // Retract elevator unless close enough to final angle to not need to retract before rotating.
         new ArmToPoseCommand(
             arm, () -> ArmPose.fromAngleExtension(
-                arm.getPivot().getRotation(), 0),
+                arm.getRotation(), 0),
             ArmConstants.BUMPER_AVOIDANCE_ANGLE_PRECISION, ArmConstants.BUMPER_AVOIDANCE_EXTENSION_PRECISION),
         // If target position is inside bumper collision zone, after retracting, rotate to safety angle and extend to
         // target extension sequentially.
         new SequentialCommandGroup(
             new ArmToPoseCommand(arm, () -> ArmPose.fromAngleExtension( // rotate
-                ArmConstants.BUMPER_AVOIDANCE_ANGLE, arm.getElevator().getExtension()),
+                ArmConstants.BUMPER_AVOIDANCE_ANGLE, arm.getExtension()),
                 ArmConstants.BUMPER_AVOIDANCE_ANGLE_PRECISION, ArmConstants.BUMPER_AVOIDANCE_EXTENSION_PRECISION),
             new ArmToPoseCommand(arm, () -> ArmPose.fromAngleExtension( //
                 ArmConstants.BUMPER_AVOIDANCE_ANGLE, pose.getExtension()),
@@ -48,7 +48,7 @@ public class ArmTowardsPoseWithRetractionCommand extends SequentialCommandGroup 
                     .unless(() -> !pose.isInsideBumperZone()),
         // Finally, completely rotate and extend to target position.
         new ArmToPoseCommand(arm,
-            () -> ArmPose.fromAngleExtension(pose.getAngle(), arm.getElevator().getExtension()),
+            () -> ArmPose.fromAngleExtension(pose.getAngle(), arm.getExtension()),
             ArmConstants.SWITCH_TO_PARALLEL_ANGLE_PRECISION, ArmConstants.BUMPER_AVOIDANCE_EXTENSION_PRECISION),
         new ArmTowardsPoseCommand(arm, pose));
   }

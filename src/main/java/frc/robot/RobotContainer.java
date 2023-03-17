@@ -39,8 +39,6 @@ import frc.robot.commands.intake.SpinIntakeCommand;
 import frc.robot.subsystems.Arm;
 import frc.robot.subsystems.DriveBase;
 import frc.robot.subsystems.Intake;
-import frc.robot.subsystems.arm.Elevator;
-import frc.robot.subsystems.arm.Pivot;
 import lobstah.stl.oi.LobstahGamepad;
 
 /**
@@ -55,11 +53,9 @@ public class RobotContainer {
       DriveMotorCANIDs.RIGHT_FRONT,
       DriveMotorCANIDs.RIGHT_BACK);
 
-  private final Arm arm = new Arm(
-      new Pivot(PivotConstants.LEFT_MOTOR_ID, PivotConstants.RIGHT_MOTOR_ID,
-          PivotConstants.ENCODER_CHANNEL),
-      new Elevator(ElevatorConstants.ELEVATOR_MOTOR_ID, ElevatorConstants.ENCODER_CHANNEL_A,
-          ElevatorConstants.ENCODER_CHANNEL_B, ElevatorConstants.LIMIT_SWITCH_CHANNEL));
+  private final Arm arm = new Arm(PivotConstants.LEFT_MOTOR_ID, PivotConstants.RIGHT_MOTOR_ID,
+      PivotConstants.ENCODER_CHANNEL, ElevatorConstants.ELEVATOR_MOTOR_ID, ElevatorConstants.ENCODER_CHANNEL_A,
+      ElevatorConstants.ENCODER_CHANNEL_B, ElevatorConstants.LIMIT_SWITCH_CHANNEL);
 
   private final Intake intake =
       new Intake(Constants.IntakeConstants.LEFT_MOTOR_ID, Constants.IntakeConstants.RIGHT_MOTOR_ID);
@@ -283,8 +279,7 @@ public class RobotContainer {
   public void setTeleopDefaultCommands() {
     CommandScheduler.getInstance().schedule(new ResetElevatorCommand(arm));
     driveBase.setNeutralMode(NeutralMode.Brake);
-    arm.getPivot().setIdleMode(IdleMode.kBrake);
-    arm.getElevator().setIdleMode(IdleMode.kBrake);
+    arm.setIdleMode(IdleMode.kBrake);
     driveBase.setDefaultCommand(
         new TankDriveCommand(
             driveBase,
@@ -304,8 +299,7 @@ public class RobotContainer {
    */
   public void setAutonDefaultCommands() {
     driveBase.setNeutralMode(NeutralMode.Brake);
-    arm.getPivot().setIdleMode(IdleMode.kBrake);
-    arm.getElevator().setIdleMode(IdleMode.kBrake);
+    arm.setIdleMode(IdleMode.kBrake);
     intake.setDefaultCommand(new SpinIntakeCommand(intake, Constants.IntakeConstants.PASSIVE_INTAKE_VOLTAGE));
     arm.setDefaultCommand(
         new ArmTowardsPoseWithRetractionCommand(arm,
@@ -320,8 +314,7 @@ public class RobotContainer {
   public void setTestDefaultCommands() {
     driveBase.setNeutralMode(NeutralMode.Coast);
     driveBase.setDefaultCommand(new StopDriveCommand(driveBase));
-    arm.getPivot().setIdleMode(IdleMode.kCoast);
-    arm.getElevator().setIdleMode(IdleMode.kCoast);
+    arm.setIdleMode(IdleMode.kCoast);
   }
 
   /**
