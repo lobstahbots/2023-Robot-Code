@@ -78,12 +78,9 @@ public class AutonGenerator {
    * @param finalPosition Which game element the path ends at.
    */
   public Command getScoreAndDriveCommand(int row, int initialPosition, int crossingPosition, int finalPosition) {
-    return getScoreCommand(row).andThen(new WaitCommand(0.5))
-        .andThen(
-            getPathFollowCommand(initialPosition, crossingPosition, finalPosition));
-    // .andThen(new ConstructLaterCommand(() -> getGroundPickupCommand(1, 0, 0)))
-    // .andThen(new ArmToPoseWithRetractionCommand(arm, ArmPresets.STOWED, 1));
-    // .andThen(new ConstructLaterCommand(() -> getReturnCommand(1, 0)));
+    return new SequentialCommandGroup(
+        getScoreCommand(row),
+        getPathFollowCommand(initialPosition, crossingPosition, finalPosition));
   }
 
   public Command getGroundPickupCommand(int scorePiece, int finalPosition, int row) {
