@@ -12,6 +12,7 @@ import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.PowerDistribution;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -47,6 +48,8 @@ import lobstah.stl.oi.LobstahGamepad;
  * Instead, the structure of the robot (including subsystems, commands, and button mappings) should be declared here.
  */
 public class RobotContainer {
+  private final PowerDistribution powerDistribution = new PowerDistribution();
+
   private final DriveBase driveBase = new DriveBase(
       DriveMotorCANIDs.LEFT_FRONT,
       DriveMotorCANIDs.LEFT_BACK,
@@ -58,7 +61,8 @@ public class RobotContainer {
       ElevatorConstants.ENCODER_CHANNEL_B, ElevatorConstants.LIMIT_SWITCH_CHANNEL);
 
   private final Intake intake =
-      new Intake(Constants.IntakeConstants.LEFT_MOTOR_ID, Constants.IntakeConstants.RIGHT_MOTOR_ID);
+      new Intake(Constants.IntakeConstants.LEFT_MOTOR_ID, Constants.IntakeConstants.RIGHT_MOTOR_ID, powerDistribution,
+          Constants.IntakeConstants.LEFT_MOTOR_PD_CHANNEL, Constants.IntakeConstants.RIGHT_MOTOR_PD_CHANNEL);
 
   private final AutonGenerator autonGenerator = new AutonGenerator(driveBase, arm, intake);
   private final TargetSelector targetSelector = new TargetSelector();
