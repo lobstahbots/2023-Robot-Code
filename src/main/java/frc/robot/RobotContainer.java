@@ -204,9 +204,9 @@ public class RobotContainer {
     }
   }
 
-  private final SendableChooser<Command> autonChooser = new SendableChooser<>();
+  private final SendableChooser<AutonGenerator.Auton> autonChooser = new SendableChooser<>();
   private final SendableChooser<Integer> initialPosition = new SendableChooser<>();
-  private final SendableChooser<Integer> crossingPosition = new SendableChooser<>();
+  private final SendableChooser<AutonGenerator.CrossingPosition> crossingPosition = new SendableChooser<>();
   private final SendableChooser<Integer> endingPosition = new SendableChooser<>();
   private final SendableChooser<Integer> scoringPosition = new SendableChooser<>();
 
@@ -224,28 +224,22 @@ public class RobotContainer {
     initialPosition.addOption("7", 7);
     initialPosition.addOption("8", 8);
     initialPosition.setDefaultOption("0", 0);
-    crossingPosition.addOption("Right of Platform", 0);
-    crossingPosition.addOption("Left of Platform", 1);
-    crossingPosition.setDefaultOption("Left of Platform", 1);
-    endingPosition.addOption("Towards Player Station", 3);
-    endingPosition.addOption("Slightly Left", 2);
-    endingPosition.addOption("Slightly Right", 1);
-    endingPosition.addOption("Right Side", 0);
-    endingPosition.setDefaultOption("Slightly Left", 2);
+    crossingPosition.addOption("Right of Platform", AutonGenerator.CrossingPosition.RIGHT);
+    crossingPosition.addOption("Left of Platform", AutonGenerator.CrossingPosition.LEFT);
+    crossingPosition.setDefaultOption("Left of Platform", AutonGenerator.CrossingPosition.LEFT);
+    endingPosition.addOption("0", 0);
+    endingPosition.addOption("1", 1);
+    endingPosition.addOption("2", 2);
+    endingPosition.addOption("3", 3);
+    endingPosition.setDefaultOption("0", 0);
     scoringPosition.addOption("High Goal", 0);
     scoringPosition.addOption("Mid Goal", 1);
     scoringPosition.addOption("Low Goal", 2);
     scoringPosition.setDefaultOption("High Goal", 0);
-    autonChooser.addOption("Path Follow Auton",
-        autonGenerator.getStage1AutonPathCommand(initialPosition.getSelected(), crossingPosition.getSelected(),
-            endingPosition.getSelected()));
-    autonChooser.addOption("Simple Auton", autonGenerator.getSimpleAutonCommand());
-    autonChooser.addOption("Do Nothing Auton", new DriveBaseStopCommand(driveBase));
-    autonChooser.addOption("Score and Drive Auton",
-        autonGenerator.getScoreAndDriveCommand(scoringPosition.getSelected(), initialPosition.getSelected(),
-            crossingPosition.getSelected(), endingPosition.getSelected()));
-    autonChooser.addOption("Score Auton",
-        autonGenerator.getScoreCommand(scoringPosition.getSelected()));
+    autonChooser.addOption("Path Follow Auton", AutonGenerator.Auton.DRIVE);
+    autonChooser.addOption("Do Nothing Auton", AutonGenerator.Auton.DO_NOTHING);
+    autonChooser.addOption("Score and Drive Auton", AutonGenerator.Auton.SCORE_AND_DRIVE);
+    autonChooser.addOption("Score Auton", AutonGenerator.Auton.SCORE);
     SmartDashboard.putData("Auton Chooser", autonChooser);
     SmartDashboard.putData("Initial Position Chooser", initialPosition);
     SmartDashboard.putData("Crossing Position Chooser", crossingPosition);
@@ -260,9 +254,33 @@ public class RobotContainer {
    * @return the command to run in autonomous
    */
   public Command getAutonomousCommand() {
+    Command autonCommand;
+
+    switch (autonChooser.getSelected()) {
+      case DRIVE:
+        autonCommand =
+            autonGenerator.getPathFollowCommand(initialPosition.getSelected(), crossingPosition.getSelected(),
+                endingPosition.getSelected());
+        break;
+      case SCORE:
+        autonCommand = autonGenerator.getScoreCommand(scoringPosition.getSelected());
+        break;
+      case SCORE_AND_DRIVE:
+        autonCommand =
+            autonGenerator.getScoreAndDriveCommand(scoringPosition.getSelected(), initialPosition.getSelected(),
+                crossingPosition.getSelected(), endingPosition.getSelected());
+        break;
+      case DO_NOTHING:
+        autonCommand = new StopDriveCommand(driveBase);
+        break;
+      default:
+        autonCommand = new StopDriveCommand(driveBase);
+        break;
+    }
+
     return new SequentialCommandGroup(
-        new ArmResetElevatorCommand(arm),
-        autonChooser.getSelected());
+        new ResetElevatorCommand(arm),
+        autonCommand);
   }
 
   public void initOdometry() {
