@@ -4,10 +4,12 @@ package frc.robot.subsystems.arm;
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.CANSparkMax.IdleMode;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
+import edu.wpi.first.math.controller.ArmFeedforward;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
+import edu.wpi.first.math.trajectory.TrapezoidProfile.State;
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.DutyCycleEncoder;
 import edu.wpi.first.wpilibj.Encoder;
@@ -21,12 +23,12 @@ public class Arm extends SubsystemBase {
   private final CANSparkMax pivotMotor;
   private final CANSparkMax followerPivotMotor;
 
-  // private final ArmFeedforward feedforward =
-  // new ArmFeedforward(
-  // PivotConstants.S_VOLTS, PivotConstants.G_VOLTS,
-  // PivotConstants.V_VOLT_SECOND_PER_RAD, PivotConstants.A_VOLT_SECOND_SQUARED_PER_RAD);
+  private final ArmFeedforward armFeedforward =
+      new ArmFeedforward(
+          PivotConstants.S_VOLTS, PivotConstants.G_VOLTS,
+          PivotConstants.V_VOLT_SECOND_PER_RAD, PivotConstants.A_VOLT_SECOND_SQUARED_PER_RAD);
   private final ProfiledPIDController pivotPIDController =
-      new ProfiledPIDController(PivotConstants.P, 0, 0, new TrapezoidProfile.Constraints(
+      new ProfiledPIDController(PivotConstants.P, 0, PivotConstants.D, new TrapezoidProfile.Constraints(
           PivotConstants.MAX_VELOCITY_DEG_PER_SEC,
           PivotConstants.MAX_ACCELERATION_DEG_PER_SEC_SQUARED));
 
@@ -102,11 +104,21 @@ public class Arm extends SubsystemBase {
   /**
    * Gets PID setpoint of the pivot.
    * 
+   * @return The setpoint state of the pivot with position in degrees and velocity in degrees per second. 0 = Vertical
+   *         and pointing down. Positive -> towards front of robot.
+   */
+  public State getPivotSetpointState() {
+    return pivotPIDController.getGoal();
+  }
+
+  /**
+   * Gets PID setpoint of the pivot.
+   * 
    * @return The setpoint angle of the pivot in degrees. 0 = Vertical and pointing down. Positive -> towards front of
    *         robot.
    */
   public double getPivotSetpoint() {
-    return pivotPIDController.getSetpoint().position;
+    return getPivotSetpointState().position;
   }
 
   /**
@@ -123,6 +135,20 @@ public class Arm extends SubsystemBase {
     pivotMotor.set(speed);
   }
 
+
+  /**
+   * Sets spin voltage of the pivot motors. Includes stop to keep pivot from rotating beyond limits.
+   * 
+   * @param voltage The desired voltage
+   */
+  public void setPivotVoltage(double voltage) {
+    if (getAngle() < PivotConstants.MIN_ROTATION_DEG && pivotMotor.get() < 0
+        || getAngle() > PivotConstants.MAX_ROTATION_DEG && pivotMotor.get() > 0) {
+      pivotMotor.set(0);
+      return;
+    }
+    pivotMotor.set(voltage);
+  }
 
   /**
    * Resets PID controller error.
@@ -153,7 +179,16 @@ public class Arm extends SubsystemBase {
    * Feeds the PID input to the motors.
    */
   public void feedPivotPID() {
-    setPivotSpeed(pivotPIDController.calculate(getAngle()));
+    // setPivotSpeed(pivotPIDController.calculate(getAngle()));
+    useOutput(pivotPIDController.calculate(getAngle()), getPivotSetpointState());
+  }
+
+  /**
+   * Sets the voltage of the motors based on calculated output from PID controller and feedforward.
+   */
+  public void useOutput(double output, TrapezoidProfile.State setpoint) {
+    double feedforward = armFeedforward.calculate(Math.toRadians(setpoint.position), setpoint.velocity);
+    setPivotVoltage(output + feedforward);
   }
 
   /**
