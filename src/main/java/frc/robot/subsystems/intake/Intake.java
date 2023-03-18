@@ -59,23 +59,39 @@ public class Intake extends SubsystemBase {
   }
 
   /**
-   * Gets the maximum current in amperes of the two intake motors.
+   * Returns whether the left intake motor is stopped/stalled.
    */
-  public double getMaxCurrent() {
-    return Math.max(powerDistribution.getCurrent(leftIntakePdID), powerDistribution.getCurrent(rightIntakePdID));
+  public boolean getLeftStopped() {
+    return powerDistribution.getCurrent(leftIntakePdID) > IntakeConstants.STOPPED_CURRENT_THRESHOLD;
   }
 
   /**
-   * Returns whether the intake is stopped/stalled.
+   * Returns whether the right intake motor is stopped/stalled.
    */
-  public boolean getStopped() {
-    return getMaxCurrent() < IntakeConstants.STOPPED_CURRENT_THRESHOLD;
+  public boolean getRightStopped() {
+    return powerDistribution.getCurrent(rightIntakePdID) > IntakeConstants.STOPPED_CURRENT_THRESHOLD;
+  }
+
+  /**
+   * Returns whether both sides of the intake are stopped/stalled.
+   */
+  public boolean getBothStopped() {
+    return getLeftStopped() && getRightStopped();
+  }
+
+  /**
+   * Returns whether only one side of the intake is stopped/stalled.
+   */
+  public boolean getOnlyOneStopped() {
+    return getLeftStopped() ^ getRightStopped();
   }
 
   @Override
   public void periodic() {
-    SmartDashboard.putBoolean("Intake stopped", getStopped());
+    SmartDashboard.putBoolean("Has Game Piece", getBothStopped());
+    SmartDashboard.putBoolean("One Side Stopped", getOnlyOneStopped());
   }
+
   public void stopMotors() {
     intakeMotors.stopMotor();
   }
