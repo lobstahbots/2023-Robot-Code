@@ -2,17 +2,17 @@
 // Open Source Software; you can modify and/or share it under the terms of
 // the WPILib BSD license file in the root directory of this project.
 
-package frc.robot.commands.drive;
+package frc.robot.subsystems.driveBase;
 
 import java.util.function.DoubleSupplier;
 
-import frc.robot.subsystems.DriveBase;
+import edu.wpi.first.wpilibj2.command.CommandBase;
 
 /**
  * Drives a {@link DriveBase} using tank drive controls.
  */
-public class TankDriveCommand extends DriveCommand {
-
+public class DriveBaseTankCommand extends CommandBase {
+  protected final DriveBase driveBase;
   private final DoubleSupplier leftSpeedSupplier;
   private final DoubleSupplier rightSpeedSupplier;
   private final boolean squaredInputs;
@@ -25,9 +25,11 @@ public class TankDriveCommand extends DriveCommand {
    * @param rightSpeedSupplier Supplier for right speed
    * @param squaredInputs Whether to drive with squared inputs
    */
-  public TankDriveCommand(DriveBase driveBase, DoubleSupplier leftSpeedSupplier,
+  public DriveBaseTankCommand(DriveBase driveBase, DoubleSupplier leftSpeedSupplier,
       DoubleSupplier rightSpeedSupplier, boolean squaredInputs) {
-    super(driveBase);
+    this.driveBase = driveBase;
+    addRequirements(driveBase);
+
     this.leftSpeedSupplier = leftSpeedSupplier;
     this.rightSpeedSupplier = rightSpeedSupplier;
     this.squaredInputs = squaredInputs;
@@ -41,7 +43,7 @@ public class TankDriveCommand extends DriveCommand {
    * @param rightSpeed The right speed
    * @param squaredInputs Whether to drive with squared inputs
    */
-  public TankDriveCommand(DriveBase driveBase, double leftSpeed, double rightSpeed, boolean squaredInputs) {
+  public DriveBaseTankCommand(DriveBase driveBase, double leftSpeed, double rightSpeed, boolean squaredInputs) {
     this(driveBase, () -> leftSpeed, () -> rightSpeed, squaredInputs);
   }
 

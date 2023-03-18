@@ -29,7 +29,7 @@ public final class Constants {
    */
   public static final class PathConstants {
     public static final double MAX_DRIVE_SPEED = 0.6;
-    public static final double MAX_ACCELERATION = 0.8;
+    public static final double MAX_ACCELERATION = 0.4;
     public static final double RAMSETE_B = 2.0;
     public static final double RAMSETE_ZETA = 0.7;
     public static final double kS = 0.032478;
@@ -38,9 +38,9 @@ public final class Constants {
     public static final double kP = 1.2264;
     public static final double kI = 0;
     public static final double KD = 0;
-    public static final double TURN_P = 0.025;
+    public static final double TURN_P = 0.035;
     public static final double TURN_I = 0;
-    public static final double TURN_D = 0.015;
+    public static final double TURN_D = 0.02;
     public static final double TURN_ANGLE_DEADBAND = 2;
     public static final double POSE_DISTANCE_METERS_FILTER = 10;
   }
@@ -73,7 +73,8 @@ public final class Constants {
         new Pose2d(TRAVELING_WAYPOINTS_X, 3.3, new Rotation2d(0)),
         new Pose2d(TRAVELING_WAYPOINTS_X, 3.85, new Rotation2d(0)),
         new Pose2d(TRAVELING_WAYPOINTS_X, 4.35, new Rotation2d(0)),
-        new Pose2d(TRAVELING_WAYPOINTS_X, 4.7, new Rotation2d(0)),
+        new Pose2d(TRAVELING_WAYPOINTS_X, 4.65, new Rotation2d(0)),
+        new Pose2d(TRAVELING_WAYPOINTS_X, 4.85, new Rotation2d(0)),
         new Pose2d(TRAVELING_WAYPOINTS_X, 5, new Rotation2d(0))
     };
 
@@ -82,7 +83,7 @@ public final class Constants {
     // };
 
     public static final Pose2d[] CROSSING_WAYPOINTS = new Pose2d[] {
-        new Pose2d(5.85, 0.6, new Rotation2d(0)), new Pose2d(5.85, 4.85, new Rotation2d(0))
+        new Pose2d(5.85, 0.6, new Rotation2d(0)), new Pose2d(5.85, 5.00, new Rotation2d(0))
     };
 
     public static final Pose2d[] RETURNING_CROSSING_WAYPOINTS = new Pose2d[] {
@@ -93,10 +94,10 @@ public final class Constants {
         new Pose2d(2.95, 0.75, new Rotation2d(180)), new Pose2d(2.95, 5, new Rotation2d(180))
     };
 
-    // public static final Pose2d[] ENDING_AUTON_POSES = new Pose2d[] {
-    // new Pose2d(6.00, 0.93, new Rotation2d(0)), new Pose2d(6.00, 2.15, new Rotation2d(0)),
-    // new Pose2d(6.50, 6.00, new Rotation2d(0)), new Pose2d(7.60, 7.26, new Rotation2d(0))
-    // };
+    public static final Pose2d[] ENDING_AUTON_POSES = new Pose2d[] {
+        new Pose2d(6.00, 0.93, new Rotation2d(0)), new Pose2d(6.00, 2.15, new Rotation2d(0)),
+        new Pose2d(6.50, 6.00, new Rotation2d(0)), new Pose2d(7.60, 7.26, new Rotation2d(0))
+    };
 
     public static final Pose2d[] GROUND_PICKUP_POSES = new Pose2d[] {
         new Pose2d(7.40, 0.93, new Rotation2d(0)), new Pose2d(7.40, 2.15, new Rotation2d(0)),
@@ -123,8 +124,8 @@ public final class Constants {
     public static final double AUTON_SCORING_TOLERANCE = 2;
     public static final double OUTTAKE_RUNTIME = 1;
     public static final double BACK_OFF_SPEED = -0.1;
-    public static final double DRIVE_BACK_SPEED = -0.3;
-    public static final double DRIVE_BACK_TIME = 0.5;
+    public static final double DRIVE_BACK_SPEED = -0.2;
+    public static final double DRIVE_BACK_TIME = 0.7;
   }
 
   public static final class VisionConstants {
@@ -288,7 +289,7 @@ public final class Constants {
    * Stores preset poses for the arm.
    */
   public static final class ArmPresets {
-    public static final ArmPose STOWED = ArmPose.fromAngleExtension(Rotation2d.fromDegrees(35), -0.1);
+    public static final ArmPose STOWED = ArmPose.fromAngleExtension(Rotation2d.fromDegrees(36), -0.1);
     public static final ArmPose GROUND_PICKUP = ArmPose.fromXY(16.4, 10.2);
     public static final ArmPose MID_GOAL_SCORING = ArmPose.fromXY(25, 47); // before dropping
     public static final ArmPose LOW_GOAL_SCORING = ArmPose.fromXY(15, 14);
