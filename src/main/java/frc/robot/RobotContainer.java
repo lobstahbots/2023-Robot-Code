@@ -259,7 +259,7 @@ public class RobotContainer {
     switch (autonChooser.getSelected()) {
       case DRIVE:
         autonCommand =
-            autonGenerator.getPathFollowCommand(initialPosition.getSelected(), crossingPosition.getSelected(),
+            autonGenerator.getStage1AutonPathCommand(initialPosition.getSelected(), crossingPosition.getSelected(),
                 endingPosition.getSelected());
         break;
       case SCORE:
@@ -271,15 +271,15 @@ public class RobotContainer {
                 crossingPosition.getSelected(), endingPosition.getSelected());
         break;
       case DO_NOTHING:
-        autonCommand = new StopDriveCommand(driveBase);
+        autonCommand = new DriveBaseStopCommand(driveBase);
         break;
       default:
-        autonCommand = new StopDriveCommand(driveBase);
+        autonCommand = new DriveBaseStopCommand(driveBase);
         break;
     }
 
     return new SequentialCommandGroup(
-        new ResetElevatorCommand(arm),
+        new ArmResetElevatorCommand(arm),
         autonCommand);
   }
 

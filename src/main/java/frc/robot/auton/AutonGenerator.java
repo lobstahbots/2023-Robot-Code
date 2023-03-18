@@ -84,12 +84,12 @@ public class AutonGenerator {
    * @param initialPosition The starting position of the robot
    * @param crossingPosition Where the robot crosses out of the Community.
    * @param finalPosition Which game element the path ends at.
-   */    
+   */
   public Command getScoreAndDriveCommand(int row, int initialPosition, CrossingPosition crossingPosition,
       int finalPosition) {
-        return new SequentialCommandGroup(
-          getScoreCommand(row),
-          getStage1AutonPathCommand(initialPosition, crossingPosition, finalPosition));
+    return new SequentialCommandGroup(
+        getScoreCommand(row),
+        getStage1AutonPathCommand(initialPosition, crossingPosition, finalPosition));
     // .andThen(new ConstructLaterCommand(() -> getGroundPickupCommand(1, 0, 0)))
     // .andThen(new ArmToPoseWithRetractionCommand(arm, ArmPresets.STOWED, 1));
     // .andThen(new ConstructLaterCommand(() -> getReturnCommand(1, 0)));
@@ -270,8 +270,8 @@ public class AutonGenerator {
     return new SequentialCommandGroup(
         new TimedCommand(AutonConstants.DRIVE_BACK_TIME,
             new DriveBaseStraightCommand(driveBase, AutonConstants.DRIVE_BACK_SPEED, false)),
-        new ConstructLaterCommand(() -> getPathToTargetCommand(driveBase, () -> crossingPose)),
-        new ConstructLaterCommand(() -> getPathToTargetCommand(driveBase, () -> finalPose)));
+        new ConstructLaterCommand(() -> getPathToTargetCommand(driveBase, crossingPose)),
+        new ConstructLaterCommand(() -> getPathToTargetCommand(driveBase, finalPose)));
   }
 
   public Command getPathToTargetCommand(DriveBase driveBase, Pose2d targetPose) {
