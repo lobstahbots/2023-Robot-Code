@@ -50,6 +50,14 @@ public class AutonGenerator {
   private final Arm arm;
   private final Intake intake;
 
+  public enum Auton {
+    SCORE_AND_DRIVE, DRIVE, SCORE, DO_NOTHING
+  }
+
+  public enum CrossingPosition {
+    LEFT, RIGHT
+  }
+
   /**
    * Constructs an AutonGenerator with a {@link DriveBase}.
    *
@@ -74,7 +82,8 @@ public class AutonGenerator {
    * @param crossingPosition Where the robot crosses out of the Community.
    * @param finalPosition Which game element the path ends at.
    */
-  public Command getScoreAndDriveCommand(int row, int initialPosition, int crossingPosition, int finalPosition) {
+  public Command getScoreAndDriveCommand(int row, int initialPosition, CrossingPosition crossingPosition,
+      int finalPosition) {
     return getScoreCommand(row).andThen(new WaitCommand(0.5))
         .andThen(
             getPathFollowCommand(initialPosition, crossingPosition, finalPosition));
@@ -228,26 +237,41 @@ public class AutonGenerator {
    * @param crossingPosition Where the robot crosses out of the Community.
    * @param finalPosition Which game element the path ends at.
    */
-  public Command getPathFollowCommand(int initialPosition, int crossingPosition, int finalPosition) {
+  public Command getPathFollowCommand(int initialPosition, CrossingPosition crossingPosition, int finalPosition) {
     if (DriverStation.getAlliance() == Alliance.Red) {
       initialPosition = 8 - initialPosition;
+      finalPosition = FieldConstants.ENDING_AUTON_POSES.length - finalPosition;
     }
 
     if (initialPosition <= 2) {
-      crossingPosition = 0;
+      crossingPosition = CrossingPosition.RIGHT;
     } else if (initialPosition >= 6) {
-      crossingPosition = 1;
+      crossingPosition = CrossingPosition.LEFT;
     }
-    Pose2d crossingPose =
-        driveBase.flipWaypointBasedOnAlliance(FieldConstants.CROSSING_WAYPOINTS[crossingPosition], true);
+
+    Pose2d crossingPose;
+
+    if (DriverStation.getAlliance() == Alliance.Blue) {
+      if (crossingPosition == CrossingPosition.LEFT) {
+        crossingPose = driveBase.flipWaypointBasedOnAlliance(FieldConstants.CROSSING_WAYPOINTS[1], true);
+      } else {
+        crossingPose = driveBase.flipWaypointBasedOnAlliance(FieldConstants.CROSSING_WAYPOINTS[0], true);
+      }
+    } else {
+      if (crossingPosition == CrossingPosition.LEFT) {
+        crossingPose = driveBase.flipWaypointBasedOnAlliance(FieldConstants.CROSSING_WAYPOINTS[0], true);
+      } else {
+        crossingPose = driveBase.flipWaypointBasedOnAlliance(FieldConstants.CROSSING_WAYPOINTS[1], true);
+      }
+    }
+
+    Pose2d finalPose = driveBase.flipWaypointBasedOnAlliance(FieldConstants.ENDING_AUTON_POSES[finalPosition], true);
 
     return new SequentialCommandGroup(
+        new TimedCommand(AutonConstants.DRIVE_BACK_TIME,
+            new DriveBaseStraightCommand(driveBase, AutonConstants.DRIVE_BACK_SPEED, false)),
         new ConstructLaterCommand(() -> getPathToTargetCommand(driveBase, () -> crossingPose)),
-        new DriveBaseTurnToAngleCommand(driveBase, crossingPose.getRotation(),
-            PathConstants.TURN_ANGLE_DEADBAND));
-    // new ConstructLaterCommand(() -> getPathToTargetCommand(driveBase, () -> crossingPose)));
-    // new ConstructLaterCommand(() -> new PathFollowCommand(driveBase,
-    // driveBase.generatePath(FieldConstants.ENDING_AUTON_POSES[finalPosition]))));
+        new ConstructLaterCommand(() -> getPathToTargetCommand(driveBase, () -> finalPose)));
   }
 
   /**
@@ -308,7 +332,7 @@ public class AutonGenerator {
       }
     }
     if (finalWaypointIndex > index) { // Traverse indexes
-      index = MathUtil.clamp(index + 1, 0, FieldConstants.TRAVELING_WAYPOINTS.length - 1);
+      index = MathUtil.clamp(index, 0, FieldConstants.TRAVELING_WAYPOINTS.length - 1);
       for (int i = index; i < finalWaypointIndex; i++) {
         waypoints.add(driveBase.flipWaypointBasedOnAlliance(new Pose2d(FieldConstants.TRAVELING_WAYPOINTS[i].getX(),
             FieldConstants.TRAVELING_WAYPOINTS[i].getY(), Rotation2d.fromDegrees(90)), false));
@@ -328,12 +352,10 @@ public class AutonGenerator {
     return new DriveBasePathFollowCommand(driveBase, driveBase.generatePath(waypoints))
         .andThen(
             new DriveBaseTurnToAngleCommand(driveBase, targetPose.getRotation(), PathConstants.TURN_ANGLE_DEADBAND))
+        // .andThen(new WaitCommand(0.25))
         .andThen(
             new ConstructLaterCommand(
-                () -> new DriveBasePathFollowCommand(driveBase, driveBase.generatePath(targetPose)))
-                    .andThen(
-                        new DriveBaseTurnToAngleCommand(driveBase, targetPose.getRotation(),
-                            PathConstants.TURN_ANGLE_DEADBAND)));
+                () -> new DriveBasePathFollowCommand(driveBase, driveBase.generatePath(false, 1.5, 1, targetPose))));
   }
 
 }
