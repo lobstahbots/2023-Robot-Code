@@ -193,7 +193,9 @@ public class AutonGenerator {
    */
   public Command getDriveToPlayerStationCommand(Pose2d targetPose) {
     Pose2d waypoint = driveBase.flipWaypointBasedOnAlliance(
-        new Pose2d(targetPose.getX() - 0.7, targetPose.getY(), targetPose.getRotation()), true);
+        new Pose2d(targetPose.getX() - FieldConstants.PLAYER_STATION_PICKUP_ZONE, targetPose.getY(),
+            targetPose.getRotation()),
+        true);
 
     Pose2d flippedTargetPose = driveBase.flipWaypointBasedOnAlliance(targetPose, true);
     return new ParallelRaceGroup(new IntakeSpinCommand(intake, IntakeConstants.INTAKE_VOLTAGE),
