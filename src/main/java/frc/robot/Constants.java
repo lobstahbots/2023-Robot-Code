@@ -123,8 +123,8 @@ public final class Constants {
     public static final double AUTON_SCORING_TOLERANCE = 2;
     public static final double OUTTAKE_RUNTIME = 1;
     public static final double BACK_OFF_SPEED = -0.1;
-    public static final double DRIVE_BACK_SPEED = -0.3;
-    public static final double DRIVE_BACK_TIME = 0.5;
+    public static final double DRIVE_BACK_SPEED = -0.2;
+    public static final double DRIVE_BACK_TIME = 0.7;
   }
 
   public static final class VisionConstants {
