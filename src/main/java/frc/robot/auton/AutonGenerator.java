@@ -250,6 +250,7 @@ public class AutonGenerator {
   public Command getPathFollowCommand(int initialPosition, int crossingPosition, int finalPosition) {
     if (DriverStation.getAlliance() == Alliance.Red) {
       initialPosition = 8 - initialPosition;
+      finalPosition = FieldConstants.ENDING_AUTON_POSES.length - finalPosition;
     }
 
     if (initialPosition <= 2) {
@@ -260,13 +261,13 @@ public class AutonGenerator {
     Pose2d crossingPose =
         driveBase.flipWaypointBasedOnAlliance(FieldConstants.CROSSING_WAYPOINTS[crossingPosition], true);
 
+    Pose2d finalPose = driveBase.flipWaypointBasedOnAlliance(FieldConstants.ENDING_AUTON_POSES[finalPosition], true);
+
     return new SequentialCommandGroup(
+        new TimedCommand(AutonConstants.DRIVE_BACK_TIME,
+            new DriveBaseStraightCommand(driveBase, AutonConstants.DRIVE_BACK_SPEED, false)),
         new ConstructLaterCommand(() -> getPathToTargetCommand(driveBase, () -> crossingPose)),
-        new DriveBaseTurnToAngleCommand(driveBase, crossingPose.getRotation(),
-            PathConstants.TURN_ANGLE_DEADBAND));
-    // new ConstructLaterCommand(() -> getPathToTargetCommand(driveBase, () -> crossingPose)));
-    // new ConstructLaterCommand(() -> new PathFollowCommand(driveBase,
-    // driveBase.generatePath(FieldConstants.ENDING_AUTON_POSES[finalPosition]))));
+        new ConstructLaterCommand(() -> getPathToTargetCommand(driveBase, () -> finalPose)));
   }
 
   /**
@@ -327,7 +328,7 @@ public class AutonGenerator {
       }
     }
     if (finalWaypointIndex > index) { // Traverse indexes
-      index = MathUtil.clamp(index + 1, 0, FieldConstants.TRAVELING_WAYPOINTS.length - 1);
+      index = MathUtil.clamp(index, 0, FieldConstants.TRAVELING_WAYPOINTS.length - 1);
       for (int i = index; i < finalWaypointIndex; i++) {
         waypoints.add(driveBase.flipWaypointBasedOnAlliance(new Pose2d(FieldConstants.TRAVELING_WAYPOINTS[i].getX(),
             FieldConstants.TRAVELING_WAYPOINTS[i].getY(), Rotation2d.fromDegrees(90)), false));
@@ -347,12 +348,10 @@ public class AutonGenerator {
     return new DriveBasePathFollowCommand(driveBase, driveBase.generatePath(waypoints))
         .andThen(
             new DriveBaseTurnToAngleCommand(driveBase, targetPose.getRotation(), PathConstants.TURN_ANGLE_DEADBAND))
+        // .andThen(new WaitCommand(0.25))
         .andThen(
             new ConstructLaterCommand(
-                () -> new DriveBasePathFollowCommand(driveBase, driveBase.generatePath(targetPose)))
-                    .andThen(
-                        new DriveBaseTurnToAngleCommand(driveBase, targetPose.getRotation(),
-                            PathConstants.TURN_ANGLE_DEADBAND)));
+                () -> new DriveBasePathFollowCommand(driveBase, driveBase.generatePath(false, 1.5, 1, targetPose))));
   }
 
 }
