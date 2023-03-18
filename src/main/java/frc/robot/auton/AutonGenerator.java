@@ -84,68 +84,51 @@ public class AutonGenerator {
    */
   public Command getScoreAndDriveCommand(int row, int initialPosition, CrossingPosition crossingPosition,
       int finalPosition) {
-    return getScoreCommand(row).andThen(new WaitCommand(0.5))
-        .andThen(
-            getPathFollowCommand(initialPosition, crossingPosition, finalPosition));
+    return new SequentialCommandGroup(
+        getScoreCommand(row),
+        getStage1AutonPathCommand(initialPosition, crossingPosition, finalPosition));
     // .andThen(new ConstructLaterCommand(() -> getGroundPickupCommand(1, 0, 0)))
     // .andThen(new ArmToPoseWithRetractionCommand(arm, ArmPresets.STOWED, 1));
     // .andThen(new ConstructLaterCommand(() -> getReturnCommand(1, 0)));
   }
 
-  public Command getGroundPickupCommand(int scorePiece, int finalPosition, int row) {
-    return new ParallelRaceGroup(
-        new ConstructLaterCommand(
-            () -> new DriveBasePathFollowCommand(driveBase,
-                driveBase.generatePath(
-                    driveBase.flipWaypointBasedOnAlliance(FieldConstants.GROUND_PICKUP_POSES[scorePiece], true)))
-                        .andThen(new WaitCommand(0.5))),
-        new ArmTowardsPoseWithRetractionCommand(arm, ArmPresets.GROUND_PICKUP),
-        new IntakeSpinCommand(intake, IntakeConstants.INTAKE_VOLTAGE));
-  }
+  // public Command getGroundPickupCommand(int scorePiece) {
+  // return new ParallelRaceGroup(
+  // new ConstructLaterCommand(
+  // () -> new DriveBasePathFollowCommand(driveBase,
+  // driveBase.generatePath(
+  // driveBase.flipWaypointBasedOnAlliance(FieldConstants.GROUND_PICKUP_POSES[scorePiece], true)))
+  // .andThen(new WaitCommand(0.5))),
+  // new ArmTowardsPoseWithRetractionCommand(arm, ArmPresets.GROUND_PICKUP),
+  // new IntakeSpinCommand(intake, IntakeConstants.INTAKE_VOLTAGE));
+  // }
 
-  public Command getReturnCommand(int finalPosition, int row) {
-    return new TimedCommand(1,
-        new DriveBaseTurnToAngleCommand(driveBase,
-            driveBase.flipWaypointBasedOnAlliance(FieldConstants.SCORING_WAYPOINTS[finalPosition], true).getRotation(),
-            1)).andThen(
-                new ConstructLaterCommand(() -> new DriveBasePathFollowCommand(driveBase,
-                    driveBase.generatePath(
-                        driveBase.flipWaypointBasedOnAlliance(FieldConstants.RETURNING_CROSSING_WAYPOINTS[0], true)))))
-                .andThen(new TimedCommand(0.5,
-                    new DriveBaseTurnToAngleCommand(driveBase,
-                        FieldConstants.SCORING_WAYPOINTS[finalPosition].getRotation(),
-                        1)))
-                .andThen(new ConstructLaterCommand(() -> new DriveBasePathFollowCommand(driveBase,
-                    driveBase.generatePath(driveBase
-                        .flipWaypointBasedOnAlliance(FieldConstants.ENTERING_SCORING_ZONE_WAYPOINTS[0], true)))))
-                .andThen(new ConstructLaterCommand(
-                    () -> getPathToTargetCommand(driveBase,
-                        () -> driveBase.flipWaypointBasedOnAlliance(FieldConstants.SCORING_WAYPOINTS[finalPosition],
-                            true))))
-                .andThen(new TimedCommand(0.5,
-                    new DriveBaseTurnToAngleCommand(driveBase,
-                        driveBase.flipWaypointBasedOnAlliance(FieldConstants.SCORING_WAYPOINTS[finalPosition], true)
-                            .getRotation(),
-                        1)))
-                .andThen(getScoreCommand(row));
-  }
-
-  /**
-   * Creates and returns a simple autonomous routine to score a preload based on row number.
-   * 
-   * @param rowSupplier A supplier for the goal row. 0 -> high goal, 1 -> mid goal, 2 -> low goal
-   */
-  public Command getScoreCommand(Supplier<Integer> rowSupplier) {
-    if (rowSupplier.get() == 0) {
-      return getScoreCommand(ArmPresets.HIGH_GOAL_SCORING, true);
-    } else if (rowSupplier.get() == 1) {
-      return getScoreCommand(ArmPresets.MID_GOAL_SCORING, true);
-    } else if (rowSupplier.get() == 2) {
-      return getScoreCommand(ArmPresets.LOW_GOAL_SCORING, false);
-    } else {
-      return new InstantCommand();
-    }
-  }
+  // public Command getReturnCommand(int finalPosition, int row) {
+  // return new TimedCommand(1,
+  // new DriveBaseTurnToAngleCommand(driveBase,
+  // driveBase.flipWaypointBasedOnAlliance(FieldConstants.SCORING_WAYPOINTS[finalPosition], true).getRotation(),
+  // 1)).andThen(
+  // new ConstructLaterCommand(() -> new DriveBasePathFollowCommand(driveBase,
+  // driveBase.generatePath(
+  // driveBase.flipWaypointBasedOnAlliance(FieldConstants.RETURNING_CROSSING_WAYPOINTS[0], true)))))
+  // .andThen(new TimedCommand(0.5,
+  // new DriveBaseTurnToAngleCommand(driveBase,
+  // FieldConstants.SCORING_WAYPOINTS[finalPosition].getRotation(),
+  // 1)))
+  // .andThen(new ConstructLaterCommand(() -> new DriveBasePathFollowCommand(driveBase,
+  // driveBase.generatePath(driveBase
+  // .flipWaypointBasedOnAlliance(FieldConstants.ENTERING_SCORING_ZONE_WAYPOINTS[0], true)))))
+  // .andThen(new ConstructLaterCommand(
+  // () -> getPathToTargetCommand(driveBase,
+  // () -> driveBase.flipWaypointBasedOnAlliance(FieldConstants.SCORING_WAYPOINTS[finalPosition],
+  // true))))
+  // .andThen(new TimedCommand(0.5,
+  // new DriveBaseTurnToAngleCommand(driveBase,
+  // driveBase.flipWaypointBasedOnAlliance(FieldConstants.SCORING_WAYPOINTS[finalPosition], true)
+  // .getRotation(),
+  // 1)))
+  // .andThen(getScoreCommand(row));
+  // }
 
   /**
    * Creates and returns a simple autonomous routine to score a preload based on row number.
@@ -154,11 +137,11 @@ public class AutonGenerator {
    */
   public Command getScoreCommand(int row) {
     if (row == 0) {
-      return getScoreCommand(ArmPresets.HIGH_GOAL_SCORING, true);
+      return composeScoreCommandHelper(ArmPresets.HIGH_GOAL_SCORING, true);
     } else if (row == 1) {
-      return getScoreCommand(ArmPresets.MID_GOAL_SCORING, true);
+      return composeScoreCommandHelper(ArmPresets.MID_GOAL_SCORING, true);
     } else if (row == 2) {
-      return getScoreCommand(ArmPresets.LOW_GOAL_SCORING, false);
+      return composeScoreCommandHelper(ArmPresets.LOW_GOAL_SCORING, false);
     } else {
       return new InstantCommand();
     }
@@ -170,7 +153,7 @@ public class AutonGenerator {
    * @param position The ArmPose to score at.
    * @param placeDown Whether or not to move the arm downwards while scoring.
    */
-  public Command getScoreCommand(ArmPose position, boolean placeDown) {
+  private Command composeScoreCommandHelper(ArmPose position, boolean placeDown) {
     return new ArmToPoseWithRetractionCommand(arm, position,
         AutonConstants.AUTON_SCORING_TOLERANCE)
             .andThen(new ArmToPoseCommand(arm,
@@ -186,13 +169,11 @@ public class AutonGenerator {
    * Creates and returns a simple autonomous routine to score a preload and drive across the line.
    */
   public Command getSimpleAutonCommand() {
-    final Command simpleAutonCommand =
-        new TimedCommand(
-            AutonConstants.SIMPLE_AUTON_RUNTIME,
-            new DriveBaseStraightCommand(
-                driveBase,
-                AutonConstants.SIMPLE_AUTON_SPEED, false));
-    return simpleAutonCommand;
+    return new TimedCommand(
+        AutonConstants.SIMPLE_AUTON_RUNTIME,
+        new DriveBaseStraightCommand(
+            driveBase,
+            AutonConstants.SIMPLE_AUTON_SPEED));
   }
 
   /**
@@ -237,7 +218,7 @@ public class AutonGenerator {
    * @param crossingPosition Where the robot crosses out of the Community.
    * @param finalPosition Which game element the path ends at.
    */
-  public Command getPathFollowCommand(int initialPosition, CrossingPosition crossingPosition, int finalPosition) {
+  public Command getStage1AutonPathCommand(int initialPosition, CrossingPosition crossingPosition, int finalPosition) {
     if (DriverStation.getAlliance() == Alliance.Red) {
       initialPosition = 8 - initialPosition;
       finalPosition = FieldConstants.ENDING_AUTON_POSES.length - finalPosition;
@@ -270,35 +251,11 @@ public class AutonGenerator {
     return new SequentialCommandGroup(
         new TimedCommand(AutonConstants.DRIVE_BACK_TIME,
             new DriveBaseStraightCommand(driveBase, AutonConstants.DRIVE_BACK_SPEED, false)),
-        new ConstructLaterCommand(() -> getPathToTargetCommand(driveBase, () -> crossingPose)),
-        new ConstructLaterCommand(() -> getPathToTargetCommand(driveBase, () -> finalPose)));
+        new ConstructLaterCommand(() -> getPathToTargetCommand(driveBase, crossingPose)),
+        new ConstructLaterCommand(() -> getPathToTargetCommand(driveBase, finalPose)));
   }
 
-  /**
-   * Constructs and returns a {@link PathPlannerTrajectory} to follow based on provided starting, crossing, and ending
-   * position.
-   * 
-   * @param initialPosition The starting position of the robot
-   * @param crossingPosition Where the robot crosses out of the Community.
-   * @param finalPosition Which game element the path ends at.
-   */
-  public ArrayList<PathPlannerTrajectory> getPath(int initialPosition, int crossingPosition, int finalPosition) {
-    ArrayList<PathPlannerTrajectory> pathGroup = new ArrayList<>();
-    String firstPathName = String.valueOf(initialPosition) + "-" + String.valueOf(crossingPosition);
-    String secondPathName = "_" + String.valueOf(crossingPosition) + "-" + String.valueOf(finalPosition);
-    PathPlannerTrajectory firstPath = PathPlanner.loadPath(firstPathName,
-        new PathConstraints(PathConstants.MAX_DRIVE_SPEED, PathConstants.MAX_ACCELERATION));
-    PathPlannerTrajectory secondPath = PathPlanner.loadPath(secondPathName,
-        new PathConstraints(PathConstants.MAX_DRIVE_SPEED, PathConstants.MAX_ACCELERATION));
-    pathGroup.add(firstPath);
-    pathGroup.add(secondPath);
-
-    return pathGroup;
-
-  }
-
-  public Command getPathToTargetCommand(DriveBase driveBase, Supplier<Pose2d> targetSupplier) {
-    Pose2d targetPose = targetSupplier.get();
+  public Command getPathToTargetCommand(DriveBase driveBase, Pose2d targetPose) {
     /* Finding the waypoint closest to the target. */
     int finalWaypointIndex = 0;
     for (int i = 0; i < FieldConstants.TRAVELING_WAYPOINTS.length; i++) {

@@ -26,11 +26,33 @@ public class DriveBaseStraightCommand extends DriveBaseTankCommand {
    * Drives the driveBase in a (roughly) straight line.
    *
    * @param driveBase The {@link DriveBase} to drive
+   * @param speedSupplier Supplier for speed
+   */
+  public DriveBaseStraightCommand(DriveBase driveBase,
+      DoubleSupplier speedSupplier) {
+    super(driveBase, speedSupplier, speedSupplier, false);
+  }
+
+  /**
+   * Drives the driveBase in a (roughly) straight line.
+   *
+   * @param driveBase The {@link DriveBase} to drive
    * @param leftSpeed The left speed
    * @param rightSpeed The right speed
    * @param squaredInputs Whether to drive with squared inputs
    */
   public DriveBaseStraightCommand(DriveBase driveBase, double speed, boolean squaredInputs) {
     this(driveBase, () -> speed, squaredInputs);
+  }
+
+  /**
+   * Drives the driveBase in a (roughly) straight line.
+   *
+   * @param driveBase The {@link DriveBase} to drive
+   * @param leftSpeed The left speed
+   * @param rightSpeed The right speed
+   */
+  public DriveBaseStraightCommand(DriveBase driveBase, double speed) {
+    this(driveBase, () -> speed, false);
   }
 }
