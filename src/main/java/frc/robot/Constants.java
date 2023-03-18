@@ -228,7 +228,7 @@ public final class Constants {
       public static final double MIN_ROTATION_DEG = 35;
 
       // PID
-      public static final double P = 0.028;
+      public static final double P = 0.032;
       public static final double D = 0.00;
       public static final double S_VOLTS = 0.13944;
       public static final double G_VOLTS = 0;
