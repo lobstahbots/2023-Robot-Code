@@ -222,17 +222,18 @@ public final class Constants {
 
       // Limits
       public static final int CURRENT_LIMIT = 40;
-      public static final double MAX_VELOCITY_DEG_PER_SEC = 300;
-      public static final double MAX_ACCELERATION_DEG_PER_SEC_SQUARED = 400;
+      public static final double MAX_VELOCITY_DEG_PER_SEC = 1000;
+      public static final double MAX_ACCELERATION_DEG_PER_SEC_SQUARED = 900;
       public static final double MAX_ROTATION_DEG = 105;
       public static final double MIN_ROTATION_DEG = 35;
 
       // PID
-      public static final double P = 0.03;
-      public static final double S_VOLTS = 0;
+      public static final double P = 0.032;
+      public static final double D = 0.00;
+      public static final double S_VOLTS = 0.13944;
       public static final double G_VOLTS = 0;
-      public static final double A_VOLT_SECOND_SQUARED_PER_RAD = 0;
-      public static final double V_VOLT_SECOND_PER_RAD = 0;
+      public static final double A_VOLT_SECOND_SQUARED_PER_RAD = 3.0666;
+      public static final double V_VOLT_SECOND_PER_RAD = 1.25439;
       public static final double ROTATION_PID_TOLERANCE = 1;
     }
 
