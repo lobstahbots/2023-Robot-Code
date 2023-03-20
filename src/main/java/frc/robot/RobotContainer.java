@@ -85,7 +85,7 @@ public class RobotContainer {
    * Zeroes the gyro.
    */
   public void initGyro() {
-    driveBase.zeroGyro();
+    driveBase.resetGyro();
   }
 
   /**

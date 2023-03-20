@@ -2,6 +2,7 @@
 package frc.robot.subsystems.driveBase;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.function.Supplier;
 
@@ -155,7 +156,7 @@ public class DriveBase extends SubsystemBase {
       SmartDashboard.putString("PhotonVision Pose", estimatedVisionPose.estimatedPose.toString());
       if (estimatedVisionPose.targetArea > VisionConstants.MIN_TARGET_AREA) {
         if (!hasSeenTag) {
-          setGyroOffset(estimatedVisionPose.estimatedPose.getRotation());
+          resetGyro(estimatedVisionPose.estimatedPose.getRotation());
           hasSeenTag = true;
         }
         poseEstimator.addVisionMeasurement(estimatedVisionPose.estimatedPose,
@@ -202,8 +203,7 @@ public class DriveBase extends SubsystemBase {
    * @param rotation The gyro angle to use when creating a {@link Pose2d} to reset the odometry.
    */
   public void resetOdometry(Translation2d translation2d, Rotation2d rotation) {
-    zeroGyro();
-    setGyroOffset(rotation);
+    resetGyro(rotation);
     poseEstimator.resetPosition(getGyroAngle180(), 0, 0, new Pose2d(translation2d, rotation));
     resetEncoders();
   }
@@ -240,9 +240,15 @@ public class DriveBase extends SubsystemBase {
   }
 
   /** Zeroes the gyro value. */
-  public void zeroGyro() {
+  public void resetGyro() {
     gyro.setAngleAdjustment(0);
     gyro.reset();
+  }
+
+  public void resetGyro(Rotation2d angle) {
+    resetGyro();
+    gyro.setAngleAdjustment(angle.getDegrees());
+
   }
 
   /** Initializes the robot odometry based on Photonvision pose if available, or else uses assumed starting position. */
@@ -250,15 +256,13 @@ public class DriveBase extends SubsystemBase {
     EstimatedRobotPose estimatedVisionPose = photonVision.getCurrentPose();
     if (estimatedVisionPose != null) {
       SmartDashboard.putString("PhotonVision Pose", estimatedVisionPose.estimatedPose.toString());
-      zeroGyro();
-      setGyroOffset(estimatedVisionPose.estimatedPose.getRotation());
+      resetGyro(estimatedVisionPose.estimatedPose.getRotation());
       poseEstimator.resetPosition(poseEstimator.getEstimatedPosition().getRotation(), 0, 0,
           poseEstimator.getEstimatedPosition());
       hasSeenTag = true;
       resetEncoders();
     } else {
-      zeroGyro();
-      setGyroOffset(defaultPose.getRotation());
+      resetGyro(defaultPose.getRotation());
       poseEstimator.resetPosition(getGyroAngle180(), 0, 0, defaultPose);
       hasSeenTag = false;
     }
@@ -293,22 +297,6 @@ public class DriveBase extends SubsystemBase {
   }
 
   /**
-   * Set an amount with which to offset the value returned by {@link #getGyroAngle()}
-   */
-  public void setGyroOffset(Rotation2d offset) {
-    gyro.setAngleAdjustment(offset.getDegrees());
-  }
-
-  /**
-   * Returns the currently configured gyro offset.
-   * 
-   * @see {@link #setGyroOffset()}
-   */
-  public Rotation2d getGyroOffset() {
-    return Rotation2d.fromDegrees(gyro.getAngleAdjustment());
-  }
-
-  /**
    * Returns the turn rate of the robot.
    *
    * @return The turn rate of the robot, in degrees per second
@@ -320,22 +308,15 @@ public class DriveBase extends SubsystemBase {
   /**
    * Returns the distance in meters from the initial pose to the target Pose.
    */
-  public double getDistanceBetweenPoses(Pose2d initialPose, Pose2d targetPose) {
-    return initialPose.getTranslation().getDistance(targetPose.getTranslation());
-  }
-
-  /**
-   * Returns the distance in meters from the pose of the robot to the target Pose.
-   */
-  public double getDirectDistanceToPose(Pose2d targetPose) {
-    return getDistanceBetweenPoses(getPose(), targetPose);
+  public Transform2d getDistanceBetweenPoses(Pose2d initialPose, Pose2d targetPose) {
+    return initialPose.minus(targetPose);
   }
 
   /**
    * Returns the distance in meters from the pose of the robot to the target Pose.
    */
   public Transform2d getDistanceToPose(Pose2d targetPose) {
-    return getPose().minus(targetPose);
+    return getDistanceBetweenPoses(getPose(), targetPose);
   }
 
   /**
@@ -417,15 +398,7 @@ public class DriveBase extends SubsystemBase {
    */
   public PathPlannerTrajectory generatePath(boolean isReversed, double maxDriveSpeed, double maxAcceleration,
       Pose2d... waypoints) {
-    ArrayList<PathPoint> pathPoints = new ArrayList<>();
-    pathPoints.add(new PathPoint(this.getPose().getTranslation(), this.getPose().getRotation()));
-    for (Pose2d pose : waypoints) {
-      pathPoints.add(new PathPoint(pose.getTranslation(), pose.getRotation()));
-    }
-    return PathPlanner
-        .generatePath(new PathConstraints(maxDriveSpeed, maxAcceleration),
-            isReversed,
-            pathPoints);
+    return generatePath(isReversed, maxDriveSpeed, maxAcceleration, Arrays.asList(waypoints));
   }
 
   /**
@@ -469,7 +442,7 @@ public class DriveBase extends SubsystemBase {
       SmartDashboard.putString("PhotonVision Pose", estimatedVisionPose.estimatedPose.toString());
       if (estimatedVisionPose.targetArea > VisionConstants.MIN_TARGET_AREA) {
         if (!hasSeenTag) {
-          setGyroOffset(estimatedVisionPose.estimatedPose.getRotation());
+          resetGyro(estimatedVisionPose.estimatedPose.getRotation());
           hasSeenTag = true;
         }
         poseEstimator.addVisionMeasurement(estimatedVisionPose.estimatedPose,
@@ -479,7 +452,6 @@ public class DriveBase extends SubsystemBase {
 
     SmartDashboard.putNumber("Gyro", this.getGyroAngle180().getDegrees());
     SmartDashboard.putNumber("Gyro 180", this.getGyroAngle180().getDegrees());
-    SmartDashboard.putNumber("Gyro Offset", getGyroOffset().getDegrees());
     SmartDashboard.putString("Pose", this.getPose().toString());
     SmartDashboard.putNumber("Number of Tags Visible In Front", this.photonVision.getFrontTargets().size());
     SmartDashboard.putNumber("Number of Tags Visible In Rear", this.photonVision.getRearTargets().size());
