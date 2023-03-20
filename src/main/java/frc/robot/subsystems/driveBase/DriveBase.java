@@ -131,23 +131,6 @@ public class DriveBase extends SubsystemBase {
   }
 
   /**
-   * Toggles the {@link NeutralMode} between Coast and Brake.
-   */
-  public void toggleNeutralMode() {
-    switch (motorNeutralMode) {
-      case Brake:
-        setNeutralMode(NeutralMode.Coast);
-        return;
-      case Coast:
-        setNeutralMode(NeutralMode.Brake);
-        return;
-      default:
-        setNeutralMode(NeutralMode.Brake);
-        return;
-    }
-  }
-
-  /**
    * Sets the neutral mode to the given {@link NeutralMode}.
    *
    * @param mode The {@link NeutralMode} to set the motors to
@@ -193,27 +176,6 @@ public class DriveBase extends SubsystemBase {
       if (flipRotation) {
         return new Pose2d(16.5 - waypoint.getX(), waypoint.getY(),
             waypoint.getRotation().plus(Rotation2d.fromDegrees(180)));
-      } else {
-        return new Pose2d(16.5 - waypoint.getX(), waypoint.getY(),
-            waypoint.getRotation());
-      }
-    }
-    return waypoint;
-  }
-
-  /**
-   * Flips the given {@Pose2d} waypoint based on alliance color.
-   *
-   * @param waypointSupplier A supplier for the waypoint to flip
-   * @param flipRotation Whether or not to flip the pose rotation.
-   */
-  public Pose2d flipWaypointBasedOnAlliance(Supplier<Pose2d> waypointSupplier, boolean flipRotation) {
-    Pose2d waypoint = waypointSupplier.get();
-    if (DriverStation.getAlliance() == Alliance.Red) {
-      if (flipRotation) {
-        return new Pose2d(16.5 - waypoint.getX(), waypoint.getY(),
-            Rotation2d.fromDegrees(MathUtil
-                .inputModulus(waypoint.getRotation().plus(Rotation2d.fromDegrees(180)).getDegrees(), -180, 180)));
       } else {
         return new Pose2d(16.5 - waypoint.getX(), waypoint.getY(),
             waypoint.getRotation());
