@@ -221,7 +221,7 @@ public class AutonGenerator {
   public Command getStage1AutonPathCommand(int initialPosition, CrossingPosition crossingPosition, int finalPosition) {
     if (DriverStation.getAlliance() == Alliance.Red) {
       initialPosition = 8 - initialPosition;
-      finalPosition = FieldConstants.ENDING_AUTON_POSES.length - finalPosition;
+      // finalPosition = FieldConstants.ENDING_AUTON_POSES.length - finalPosition;
     }
 
     if (initialPosition <= 2) {
@@ -232,27 +232,27 @@ public class AutonGenerator {
 
     Pose2d crossingPose;
 
-    if (DriverStation.getAlliance() == Alliance.Blue) {
-      if (crossingPosition == CrossingPosition.LEFT) {
-        crossingPose = driveBase.flipWaypointBasedOnAlliance(FieldConstants.CROSSING_WAYPOINTS[1], true);
-      } else {
-        crossingPose = driveBase.flipWaypointBasedOnAlliance(FieldConstants.CROSSING_WAYPOINTS[0], true);
-      }
+    // if (DriverStation.getAlliance() == Alliance.Blue) {
+    if (crossingPosition == CrossingPosition.LEFT) {
+      crossingPose = driveBase.flipWaypointBasedOnAlliance(FieldConstants.CROSSING_WAYPOINTS[1], true);
     } else {
-      if (crossingPosition == CrossingPosition.LEFT) {
-        crossingPose = driveBase.flipWaypointBasedOnAlliance(FieldConstants.CROSSING_WAYPOINTS[0], true);
-      } else {
-        crossingPose = driveBase.flipWaypointBasedOnAlliance(FieldConstants.CROSSING_WAYPOINTS[1], true);
-      }
+      crossingPose = driveBase.flipWaypointBasedOnAlliance(FieldConstants.CROSSING_WAYPOINTS[0], true);
     }
+    // } else {
+    // if (crossingPosition == CrossingPosition.LEFT) {
+    // crossingPose = driveBase.flipWaypointBasedOnAlliance(FieldConstants.CROSSING_WAYPOINTS[0], true);
+    // } else {
+    // crossingPose = driveBase.flipWaypointBasedOnAlliance(FieldConstants.CROSSING_WAYPOINTS[1], true);
+    // }
+    // }
 
     Pose2d finalPose = driveBase.flipWaypointBasedOnAlliance(FieldConstants.ENDING_AUTON_POSES[finalPosition], true);
 
     return new SequentialCommandGroup(
         new TimedCommand(AutonConstants.DRIVE_BACK_TIME,
             new DriveBaseStraightCommand(driveBase, AutonConstants.DRIVE_BACK_SPEED, false)),
-        new ConstructLaterCommand(() -> getPathToTargetCommand(driveBase, crossingPose)),
-        new ConstructLaterCommand(() -> getPathToTargetCommand(driveBase, finalPose)));
+        new ConstructLaterCommand(() -> getPathToTargetCommand(driveBase, crossingPose)));
+    // new ConstructLaterCommand(() -> getPathToTargetCommand(driveBase, finalPose)));
   }
 
   public Command getPathToTargetCommand(DriveBase driveBase, Pose2d targetPose) {
@@ -303,7 +303,14 @@ public class AutonGenerator {
     }
 
     if (waypoints.size() <= 0) {
-      return new DriveBasePathFollowCommand(driveBase, driveBase.generatePath(targetPose));
+      if (index >= FieldConstants.TRAVELING_WAYPOINTS.length - 1) {
+        int secondToLast = FieldConstants.TRAVELING_WAYPOINTS.length - 1;
+        waypoints.add(
+            driveBase.flipWaypointBasedOnAlliance(new Pose2d(FieldConstants.TRAVELING_WAYPOINTS[secondToLast].getX(),
+                FieldConstants.TRAVELING_WAYPOINTS[secondToLast].getY(), Rotation2d.fromDegrees(90)), false));
+      } else {
+        return new DriveBasePathFollowCommand(driveBase, driveBase.generatePath(targetPose));
+      }
     }
 
     return new DriveBasePathFollowCommand(driveBase, driveBase.generatePath(waypoints))
