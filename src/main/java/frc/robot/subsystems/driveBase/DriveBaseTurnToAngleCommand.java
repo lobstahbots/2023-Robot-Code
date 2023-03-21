@@ -30,7 +30,7 @@ public class DriveBaseTurnToAngleCommand extends CommandBase {
   @Override
   public void execute() {
     turnOutput = pidController.calculate(driveBase.getGyroAngle().getDegrees());
-    driveBase.tankDrive(turnOutput, -turnOutput, false);
+    driveBase.tankDrive(-turnOutput, turnOutput, false);
   }
 
   @Override

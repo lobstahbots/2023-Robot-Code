@@ -242,8 +242,8 @@ public class DriveBase extends SubsystemBase {
   public void resetOdometry(Translation2d translation2d, Rotation2d rotation) {
     zeroGyro();
     setGyroOffset(rotation);
-    poseEstimator.resetPosition(getGyroAngle180(), 0, 0, new Pose2d(translation2d, rotation));
     resetEncoders();
+    poseEstimator.resetPosition(getGyroAngle180(), 0, 0, new Pose2d(translation2d, rotation));
   }
 
   /** Resets the drive encoders to currently read a position of 0. */
@@ -290,7 +290,7 @@ public class DriveBase extends SubsystemBase {
       SmartDashboard.putString("PhotonVision Pose", estimatedVisionPose.estimatedPose.toString());
       zeroGyro();
       setGyroOffset(estimatedVisionPose.estimatedPose.getRotation());
-      poseEstimator.resetPosition(poseEstimator.getEstimatedPosition().getRotation(), 0, 0,
+      poseEstimator.resetPosition(getGyroAngle180(), 0, 0,
           poseEstimator.getEstimatedPosition());
       hasSeenTag = true;
       resetEncoders();
@@ -327,7 +327,7 @@ public class DriveBase extends SubsystemBase {
    * @return the robot's angle from -180 to 180 as a Rotation2d.
    */
   public Rotation2d getGyroAngle180() {
-    return Rotation2d.fromRadians(-MathUtil.angleModulus(getGyroAngle().getRadians()));
+    return Rotation2d.fromRadians(MathUtil.angleModulus(getGyroAngle().getRadians()));
   }
 
   /**

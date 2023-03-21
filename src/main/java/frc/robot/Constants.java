@@ -75,7 +75,6 @@ public final class Constants {
         new Pose2d(TRAVELING_WAYPOINTS_X, 4.35, new Rotation2d(0)),
         new Pose2d(TRAVELING_WAYPOINTS_X, 4.65, new Rotation2d(0)),
         new Pose2d(TRAVELING_WAYPOINTS_X, 4.85, new Rotation2d(0)),
-        new Pose2d(TRAVELING_WAYPOINTS_X, 5, new Rotation2d(0))
     };
 
     // public static final Pose2d[] TURNING_WAYPOINTS = new Pose2d[] {
