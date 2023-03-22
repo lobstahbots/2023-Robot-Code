@@ -51,6 +51,7 @@ public final class Constants {
   public static final class FieldConstants {
     public static final double SCORING_WAYPOINTS_X = 1.8;
     public static final double TRAVELING_WAYPOINTS_X = 2.2;
+    public static final double GROUND_PICKUP_X = 6.5;
 
     public static final Pose2d[] SCORING_WAYPOINTS = new Pose2d[] {
         new Pose2d(SCORING_WAYPOINTS_X, 0.5, Rotation2d.fromDegrees(180)),
@@ -82,7 +83,7 @@ public final class Constants {
     // };
 
     public static final Pose2d[] CROSSING_WAYPOINTS = new Pose2d[] {
-        new Pose2d(5.85, 0.6, new Rotation2d(0)), new Pose2d(5.85, 5.00, new Rotation2d(0))
+        new Pose2d(5.65, 0.6, new Rotation2d(0)), new Pose2d(5.65, 4.85, new Rotation2d(0))
     };
 
     public static final Pose2d[] RETURNING_CROSSING_WAYPOINTS = new Pose2d[] {
@@ -99,8 +100,8 @@ public final class Constants {
     };
 
     public static final Pose2d[] GROUND_PICKUP_POSES = new Pose2d[] {
-        new Pose2d(7.40, 0.93, new Rotation2d(0)), new Pose2d(7.40, 2.15, new Rotation2d(0)),
-        new Pose2d(7.40, 3.37, new Rotation2d(0)), new Pose2d(7.40, 4.59, new Rotation2d(0))
+        new Pose2d(GROUND_PICKUP_X, 0.75, new Rotation2d(0)), new Pose2d(GROUND_PICKUP_X, 2.15, new Rotation2d(0)),
+        new Pose2d(GROUND_PICKUP_X, 3.37, new Rotation2d(0)), new Pose2d(GROUND_PICKUP_X, 4.59, new Rotation2d(0))
     };
 
     public static final Pose2d PLAYER_STATION_PICKUP_LEFT = new Pose2d(15.75, 7.35, new Rotation2d(0));
