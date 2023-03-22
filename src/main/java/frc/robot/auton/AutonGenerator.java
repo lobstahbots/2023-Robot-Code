@@ -102,21 +102,21 @@ public class AutonGenerator {
 
     if (DriverStation.getAlliance() == Alliance.Blue) {
       if (crossingPosition == CrossingPosition.LEFT) {
-        crossingOutPose = driveBase.flipWaypointBasedOnAlliance(FieldConstants.CROSSING_WAYPOINTS[1], true);
+        crossingOutPose = driveBase.flipWaypointBasedOnAlliance(FieldConstants.EXITING_CROSSING_WAYPOINTS[1], true);
         turnAroundPose = driveBase.flipWaypointBasedOnAlliance(FieldConstants.RETURNING_CROSSING_WAYPOINTS[1], false);
         crossingInPose = driveBase.flipWaypointBasedOnAlliance(FieldConstants.ENTERING_SCORING_ZONE_WAYPOINTS[1], true);
       } else {
-        crossingOutPose = driveBase.flipWaypointBasedOnAlliance(FieldConstants.CROSSING_WAYPOINTS[0], true);
+        crossingOutPose = driveBase.flipWaypointBasedOnAlliance(FieldConstants.EXITING_CROSSING_WAYPOINTS[0], true);
         turnAroundPose = driveBase.flipWaypointBasedOnAlliance(FieldConstants.RETURNING_CROSSING_WAYPOINTS[0], false);
         crossingInPose = driveBase.flipWaypointBasedOnAlliance(FieldConstants.ENTERING_SCORING_ZONE_WAYPOINTS[0], true);
       }
     } else {
       if (crossingPosition == CrossingPosition.LEFT) {
-        crossingOutPose = driveBase.flipWaypointBasedOnAlliance(FieldConstants.CROSSING_WAYPOINTS[0], true);
+        crossingOutPose = driveBase.flipWaypointBasedOnAlliance(FieldConstants.EXITING_CROSSING_WAYPOINTS[0], true);
         turnAroundPose = driveBase.flipWaypointBasedOnAlliance(FieldConstants.RETURNING_CROSSING_WAYPOINTS[0], false);
         crossingInPose = driveBase.flipWaypointBasedOnAlliance(FieldConstants.ENTERING_SCORING_ZONE_WAYPOINTS[0], true);
       } else {
-        crossingOutPose = driveBase.flipWaypointBasedOnAlliance(FieldConstants.CROSSING_WAYPOINTS[1], true);
+        crossingOutPose = driveBase.flipWaypointBasedOnAlliance(FieldConstants.EXITING_CROSSING_WAYPOINTS[1], true);
         turnAroundPose = driveBase.flipWaypointBasedOnAlliance(FieldConstants.RETURNING_CROSSING_WAYPOINTS[1], false);
         crossingInPose = driveBase.flipWaypointBasedOnAlliance(FieldConstants.ENTERING_SCORING_ZONE_WAYPOINTS[1], true);
       }
