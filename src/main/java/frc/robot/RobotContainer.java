@@ -211,8 +211,10 @@ public class RobotContainer {
   private final SendableChooser<AutonGenerator.Auton> autonChooser = new SendableChooser<>();
   private final SendableChooser<Integer> initialPosition = new SendableChooser<>();
   private final SendableChooser<AutonGenerator.CrossingPosition> crossingPosition = new SendableChooser<>();
-  private final SendableChooser<Integer> endingPosition = new SendableChooser<>();
+  private final SendableChooser<Integer> pickupPosition = new SendableChooser<>();
+  private final SendableChooser<Integer> preloadScoringRow = new SendableChooser<>();
   private final SendableChooser<Integer> scoringPosition = new SendableChooser<>();
+  private final SendableChooser<Integer> secondScoringRow = new SendableChooser<>();
 
   /**
    * Use this method to run tasks that configure sendables and other smartdashboard items.
@@ -231,15 +233,29 @@ public class RobotContainer {
     crossingPosition.addOption("Right of Platform", AutonGenerator.CrossingPosition.RIGHT);
     crossingPosition.addOption("Left of Platform", AutonGenerator.CrossingPosition.LEFT);
     crossingPosition.setDefaultOption("Left of Platform", AutonGenerator.CrossingPosition.LEFT);
-    endingPosition.addOption("0", 0);
-    endingPosition.addOption("1", 1);
-    endingPosition.addOption("2", 2);
-    endingPosition.addOption("3", 3);
-    endingPosition.setDefaultOption("0", 0);
-    scoringPosition.addOption("High Goal", 0);
-    scoringPosition.addOption("Mid Goal", 1);
-    scoringPosition.addOption("Low Goal", 2);
-    scoringPosition.setDefaultOption("High Goal", 0);
+    pickupPosition.addOption("0", 0);
+    pickupPosition.addOption("1", 1);
+    pickupPosition.addOption("2", 2);
+    pickupPosition.addOption("3", 3);
+    pickupPosition.setDefaultOption("0", 0);
+    preloadScoringRow.addOption("High Goal", 0);
+    preloadScoringRow.addOption("Mid Goal", 1);
+    preloadScoringRow.addOption("Low Goal", 2);
+    preloadScoringRow.setDefaultOption("High Goal", 0);
+    scoringPosition.addOption("0", 0);
+    scoringPosition.addOption("1", 1);
+    initialPosition.addOption("2", 2);
+    scoringPosition.addOption("3", 3);
+    scoringPosition.addOption("4", 4);
+    scoringPosition.addOption("5", 5);
+    scoringPosition.addOption("6", 6);
+    scoringPosition.addOption("7", 7);
+    scoringPosition.addOption("8", 8);
+    scoringPosition.setDefaultOption("0", 0);
+    secondScoringRow.addOption("High Goal", 0);
+    secondScoringRow.addOption("Mid Goal", 1);
+    secondScoringRow.addOption("Low Goal", 2);
+    secondScoringRow.setDefaultOption("High Goal", 0);
     autonChooser.addOption("Path Follow Auton", AutonGenerator.Auton.DRIVE);
     autonChooser.addOption("Do Nothing Auton", AutonGenerator.Auton.DO_NOTHING);
     autonChooser.addOption("Score and Drive Auton", AutonGenerator.Auton.SCORE_AND_DRIVE);
@@ -247,9 +263,11 @@ public class RobotContainer {
     SmartDashboard.putData("Auton Chooser", autonChooser);
     SmartDashboard.putData("Initial Position Chooser", initialPosition);
     SmartDashboard.putData("Crossing Position Chooser", crossingPosition);
-    SmartDashboard.putData("Ending Position Chooser", endingPosition);
+    SmartDashboard.putData("Pickup Item Chooser", pickupPosition);
     SmartDashboard.putData("Teleop Target Selector", targetSelector);
-    SmartDashboard.putData("Row Selector", scoringPosition);
+    SmartDashboard.putData("Preload Row Chooser", preloadScoringRow);
+    SmartDashboard.putData("Scoring Position", scoringPosition);
+    SmartDashboard.putData("Second Row Chooser", secondScoringRow);
   }
 
   /**
@@ -263,16 +281,16 @@ public class RobotContainer {
     switch (autonChooser.getSelected()) {
       case DRIVE:
         autonCommand =
-            autonGenerator.getStage1AutonPathCommand(initialPosition.getSelected(), crossingPosition.getSelected(),
-                endingPosition.getSelected());
+            autonGenerator.getExitCommunityCommand(initialPosition.getSelected(), crossingPosition.getSelected());
         break;
       case SCORE:
         autonCommand = autonGenerator.getScoreCommand(scoringPosition.getSelected());
         break;
       case SCORE_AND_DRIVE:
         autonCommand =
-            autonGenerator.getScoreAndDriveCommand(scoringPosition.getSelected(), initialPosition.getSelected(),
-                crossingPosition.getSelected(), endingPosition.getSelected());
+            autonGenerator.getScoreAndDriveCommand(preloadScoringRow.getSelected(), initialPosition.getSelected(),
+                crossingPosition.getSelected(), pickupPosition.getSelected(), scoringPosition.getSelected(),
+                secondScoringRow.getSelected());
         break;
       case DO_NOTHING:
         autonCommand = new DriveBaseStopCommand(driveBase);

@@ -83,6 +83,10 @@ public final class Constants {
     // };
 
     public static final Pose2d[] CROSSING_WAYPOINTS = new Pose2d[] {
+        new Pose2d(5.85, 0.6, new Rotation2d(0)), new Pose2d(5.85, 4.85, new Rotation2d(0))
+    };
+
+    public static final Pose2d[] EXITING_CROSSING_WAYPOINTS = new Pose2d[] {
         new Pose2d(5.65, 0.6, new Rotation2d(0)), new Pose2d(5.65, 4.85, new Rotation2d(0))
     };
 
@@ -94,10 +98,10 @@ public final class Constants {
         new Pose2d(2.95, 0.75, new Rotation2d(180)), new Pose2d(2.95, 5, new Rotation2d(180))
     };
 
-    public static final Pose2d[] ENDING_AUTON_POSES = new Pose2d[] {
-        new Pose2d(6.00, 0.93, new Rotation2d(0)), new Pose2d(6.00, 2.15, new Rotation2d(0)),
-        new Pose2d(6.50, 6.00, new Rotation2d(0)), new Pose2d(7.60, 7.26, new Rotation2d(0))
-    };
+    // public static final Pose2d[] ENDING_AUTON_POSES = new Pose2d[] {
+    // new Pose2d(6.00, 0.93, new Rotation2d(0)), new Pose2d(6.00, 2.15, new Rotation2d(0)),
+    // new Pose2d(6.50, 6.00, new Rotation2d(0)), new Pose2d(7.60, 7.26, new Rotation2d(0))
+    // };
 
     public static final Pose2d[] GROUND_PICKUP_POSES = new Pose2d[] {
         new Pose2d(GROUND_PICKUP_X, 0.75, new Rotation2d(0)), new Pose2d(GROUND_PICKUP_X, 2.15, new Rotation2d(0)),
