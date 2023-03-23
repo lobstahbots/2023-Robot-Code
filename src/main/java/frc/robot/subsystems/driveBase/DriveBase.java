@@ -169,7 +169,6 @@ public class DriveBase extends SubsystemBase {
     poseEstimator.update(getGyroAngle180(), getLeftEncoderDistanceMeters(), getRightEncoderDistanceMeters());
     EstimatedRobotPose estimatedVisionPose = this.photonVision.getCurrentPose();
     if (estimatedVisionPose != null) {
-      SmartDashboard.putString("PhotonVision Pose", estimatedVisionPose.estimatedPose.toString());
       if (estimatedVisionPose.targetArea > VisionConstants.MIN_TARGET_AREA) {
         if (!hasSeenTag) {
           setGyroOffset(estimatedVisionPose.estimatedPose.getRotation());
@@ -287,11 +286,10 @@ public class DriveBase extends SubsystemBase {
   public void initOdometry(Pose2d defaultPose) {
     EstimatedRobotPose estimatedVisionPose = photonVision.getCurrentPose();
     if (estimatedVisionPose != null) {
-      SmartDashboard.putString("PhotonVision Pose", estimatedVisionPose.estimatedPose.toString());
       zeroGyro();
       setGyroOffset(estimatedVisionPose.estimatedPose.getRotation());
       poseEstimator.resetPosition(getGyroAngle180(), 0, 0,
-          poseEstimator.getEstimatedPosition());
+          estimatedVisionPose.estimatedPose);
       hasSeenTag = true;
       resetEncoders();
     } else {
@@ -299,6 +297,7 @@ public class DriveBase extends SubsystemBase {
       setGyroOffset(defaultPose.getRotation());
       poseEstimator.resetPosition(getGyroAngle180(), 0, 0, defaultPose);
       hasSeenTag = false;
+      System.out.println("Reset pose");
     }
   }
 
@@ -503,8 +502,9 @@ public class DriveBase extends SubsystemBase {
   public void periodic() {
     poseEstimator.update(getGyroAngle180(), getLeftEncoderDistanceMeters(), getRightEncoderDistanceMeters());
     EstimatedRobotPose estimatedVisionPose = this.photonVision.getCurrentPose();
+    SmartDashboard.putString("PhotonVision Pose",
+        estimatedVisionPose == null ? "Null" : estimatedVisionPose.estimatedPose.toString());
     if (estimatedVisionPose != null) {
-      SmartDashboard.putString("PhotonVision Pose", estimatedVisionPose.estimatedPose.toString());
       if (estimatedVisionPose.targetArea > VisionConstants.MIN_TARGET_AREA) {
         if (!hasSeenTag) {
           setGyroOffset(estimatedVisionPose.estimatedPose.getRotation());

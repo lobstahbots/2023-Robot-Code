@@ -124,9 +124,9 @@ public class AutonGenerator {
 
     return new SequentialCommandGroup(
         getScoreCommand(row),
-        getStage1AutonPathCommand(crossingOutPose, pickupPosition),
-        getStage2AutonCommand(turnAroundPose, crossingInPose, secondElementPosition),
-        getScoreCommand(secondElementRow));
+        getStage1AutonPathCommand(crossingOutPose, pickupPosition));
+    // getStage2AutonCommand(turnAroundPose, crossingInPose, secondElementPosition),
+    // getScoreCommand(secondElementRow));
   }
 
   public Command getGroundPickupCommand(int scorePiece) {
