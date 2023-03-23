@@ -263,8 +263,9 @@ public class AutonGenerator {
         new TimedCommand(AutonConstants.DRIVE_BACK_TIME,
             new DriveBaseStraightCommand(driveBase, AutonConstants.DRIVE_BACK_SPEED, false)),
         new ConstructLaterCommand(() -> getPathToTargetCommand(driveBase, crossingPose)),
+        new ArmToPoseWithRetractionCommand(arm, ArmPresets.GROUND_PICKUP, 1),
         new ParallelRaceGroup(
-            new ArmTowardsPoseWithRetractionCommand(arm, ArmPresets.GROUND_PICKUP),
+            new ArmTowardsPoseCommand(arm, ArmPresets.GROUND_PICKUP),
             new ConstructLaterCommand(
                 () -> new DriveBasePathFollowCommand(driveBase,
                     driveBase.generatePath(
