@@ -91,6 +91,7 @@ public class Robot extends TimedRobot {
   @Override
   public void teleopPeriodic() {
     SmartDashboard.putBoolean("Can drive to target", m_robotContainer.canDriveToTarget());
+    SmartDashboard.putBoolean("Can pickup", m_robotContainer.canDriveToStation());
   }
 
   /** This function is called once each time the robot enters Test mode. */
