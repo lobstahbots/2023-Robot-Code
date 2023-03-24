@@ -105,8 +105,7 @@ public final class Constants {
     // };
 
     public static final Pose2d[] GROUND_PICKUP_POSES = new Pose2d[] {
-        new Pose2d(GROUND_PICKUP_X, 0.75, new Rotation2d(0)), new Pose2d(GROUND_PICKUP_X, 2.15, new Rotation2d(0)),
-        new Pose2d(GROUND_PICKUP_X, 3.37, new Rotation2d(0)), new Pose2d(GROUND_PICKUP_X, 4.59, new Rotation2d(0))
+        new Pose2d(GROUND_PICKUP_X, 0.75, new Rotation2d(0)), new Pose2d(GROUND_PICKUP_X, 4.59, new Rotation2d(0))
     };
 
     public static final Pose2d PLAYER_STATION_PICKUP_LEFT = new Pose2d(15.75, 7.35, new Rotation2d(0));
