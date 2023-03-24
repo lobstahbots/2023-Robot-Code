@@ -103,10 +103,10 @@ public final class Constants {
         new Pose2d(7.40, 3.37, new Rotation2d(0)), new Pose2d(7.40, 4.59, new Rotation2d(0))
     };
 
-    public static final Pose2d PLAYER_STATION_PICKUP_LEFT = new Pose2d(15.75, 7.35, new Rotation2d(0));
-    public static final Pose2d PLAYER_STATION_PICKUP_RIGHT = new Pose2d(15.75, 6.25, new Rotation2d(0));
+    public static final Pose2d PLAYER_STATION_PICKUP_LEFT = new Pose2d(15.75, 7.4, new Rotation2d(0));
+    public static final Pose2d PLAYER_STATION_PICKUP_RIGHT = new Pose2d(15.75, 6.1, new Rotation2d(0));
 
-    public static final double PLAYER_STATION_PICKUP_ZONE = 0.7;
+    public static final double PLAYER_STATION_PICKUP_ZONE = 0.5;
 
     public static final double MAX_AUTO_DISTANCE_METERS = 10;
     public static final double MAX_PLAYER_STATION_X_ZONE = 7;

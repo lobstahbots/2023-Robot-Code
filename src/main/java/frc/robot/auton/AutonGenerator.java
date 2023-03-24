@@ -191,7 +191,7 @@ public class AutonGenerator {
     return new ParallelRaceGroup(new IntakeSpinCommand(intake, IntakeConstants.INTAKE_VOLTAGE),
         new SequentialCommandGroup( // Drive to waypoint, then turn while raising arm
             new ConstructLaterCommand(
-                () -> new DriveBasePathFollowCommand(driveBase, driveBase.generatePath(waypoint))),
+                () -> new DriveBasePathFollowCommand(driveBase, driveBase.generatePath(false, 0.8, 0.8, waypoint))),
             new ArmToPoseCommand(arm, ArmPresets.PLAYER_STATION_PICKUP, 5),
             new ParallelRaceGroup( // Maintain arm angle and drive to target
                 new ConstructLaterCommand(
