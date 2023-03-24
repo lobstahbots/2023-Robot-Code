@@ -223,7 +223,8 @@ public class RobotContainer {
   private final SendableChooser<AutonGenerator.Auton> autonChooser = new SendableChooser<>();
   private final SendableChooser<Integer> initialPosition = new SendableChooser<>();
   private final SendableChooser<AutonGenerator.CrossingPosition> crossingPosition = new SendableChooser<>();
-  private final SendableChooser<Integer> endingPosition = new SendableChooser<>();
+  private final SendableChooser<Boolean> twoElement = new SendableChooser<>();
+  private final SendableChooser<Integer> preloadScoringRow = new SendableChooser<>();
   private final SendableChooser<Integer> scoringPosition = new SendableChooser<>();
 
   /**
@@ -243,15 +244,23 @@ public class RobotContainer {
     crossingPosition.addOption("Right of Platform", AutonGenerator.CrossingPosition.RIGHT);
     crossingPosition.addOption("Left of Platform", AutonGenerator.CrossingPosition.LEFT);
     crossingPosition.setDefaultOption("Left of Platform", AutonGenerator.CrossingPosition.LEFT);
-    endingPosition.addOption("0", 0);
-    endingPosition.addOption("1", 1);
-    endingPosition.addOption("2", 2);
-    endingPosition.addOption("3", 3);
-    endingPosition.setDefaultOption("0", 0);
-    scoringPosition.addOption("High Goal", 0);
-    scoringPosition.addOption("Mid Goal", 1);
-    scoringPosition.addOption("Low Goal", 2);
-    scoringPosition.setDefaultOption("High Goal", 0);
+    preloadScoringRow.addOption("High Goal", 0);
+    preloadScoringRow.addOption("Mid Goal", 1);
+    preloadScoringRow.addOption("Low Goal", 2);
+    preloadScoringRow.setDefaultOption("High Goal", 0);
+    scoringPosition.addOption("0", 0);
+    scoringPosition.addOption("1", 1);
+    scoringPosition.addOption("2", 2);
+    scoringPosition.addOption("3", 3);
+    scoringPosition.addOption("4", 4);
+    scoringPosition.addOption("5", 5);
+    scoringPosition.addOption("6", 6);
+    scoringPosition.addOption("7", 7);
+    scoringPosition.addOption("8", 8);
+    scoringPosition.setDefaultOption("0", 0);
+    twoElement.addOption("Run Two Element", true);
+    twoElement.addOption("Run One Element", false);
+    twoElement.setDefaultOption("Run One Element", false);
     autonChooser.addOption("Path Follow Auton", AutonGenerator.Auton.DRIVE);
     autonChooser.addOption("Do Nothing Auton", AutonGenerator.Auton.DO_NOTHING);
     autonChooser.addOption("Score and Drive Auton", AutonGenerator.Auton.SCORE_AND_DRIVE);
@@ -259,9 +268,10 @@ public class RobotContainer {
     SmartDashboard.putData("Auton Chooser", autonChooser);
     SmartDashboard.putData("Initial Position Chooser", initialPosition);
     SmartDashboard.putData("Crossing Position Chooser", crossingPosition);
-    SmartDashboard.putData("Ending Position Chooser", endingPosition);
     SmartDashboard.putData("Teleop Target Selector", targetSelector);
-    SmartDashboard.putData("Row Selector", scoringPosition);
+    SmartDashboard.putData("Number of Elements Chooser", twoElement);
+    SmartDashboard.putData("Scoring Row Chooser", preloadScoringRow);
+    SmartDashboard.putData("Scoring Position", scoringPosition);
   }
 
   /**
@@ -275,16 +285,15 @@ public class RobotContainer {
     switch (autonChooser.getSelected()) {
       case DRIVE:
         autonCommand =
-            autonGenerator.getStage1AutonPathCommand(initialPosition.getSelected(), crossingPosition.getSelected(),
-                endingPosition.getSelected());
+            autonGenerator.getExitCommunityCommand(initialPosition.getSelected(), crossingPosition.getSelected());
         break;
       case SCORE:
         autonCommand = autonGenerator.getScoreCommand(scoringPosition.getSelected());
         break;
       case SCORE_AND_DRIVE:
         autonCommand =
-            autonGenerator.getScoreAndDriveCommand(scoringPosition.getSelected(), initialPosition.getSelected(),
-                crossingPosition.getSelected(), endingPosition.getSelected());
+            autonGenerator.getScoreAndDriveCommand(preloadScoringRow.getSelected(), initialPosition.getSelected(),
+                crossingPosition.getSelected(), twoElement.getSelected(), scoringPosition.getSelected());
         break;
       case DO_NOTHING:
         autonCommand = new DriveBaseStopCommand(driveBase);

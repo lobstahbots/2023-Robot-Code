@@ -5,11 +5,7 @@
 package frc.robot.auton;
 
 import java.util.ArrayList;
-import java.util.function.Supplier;
 
-import com.pathplanner.lib.PathConstraints;
-import com.pathplanner.lib.PathPlanner;
-import com.pathplanner.lib.PathPlannerTrajectory;
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
@@ -30,7 +26,6 @@ import frc.robot.subsystems.arm.Arm;
 import frc.robot.subsystems.arm.ArmToPoseCommand;
 import frc.robot.subsystems.arm.ArmToPoseWithRetractionCommand;
 import frc.robot.subsystems.arm.ArmTowardsPoseCommand;
-import frc.robot.subsystems.arm.ArmTowardsPoseWithRetractionCommand;
 import frc.robot.subsystems.driveBase.DriveBase;
 import frc.robot.subsystems.driveBase.DriveBasePathFollowCommand;
 import frc.robot.subsystems.driveBase.DriveBaseStopCommand;
@@ -83,52 +78,82 @@ public class AutonGenerator {
    * @param finalPosition Which game element the path ends at.
    */
   public Command getScoreAndDriveCommand(int row, int initialPosition, CrossingPosition crossingPosition,
-      int finalPosition) {
+      boolean twoElement,
+      int secondElementPosition) {
+    if (initialPosition <= 2) {
+      crossingPosition = CrossingPosition.RIGHT;
+    } else if (initialPosition >= 6) {
+      crossingPosition = CrossingPosition.LEFT;
+    }
+
+    if (DriverStation.getAlliance() == Alliance.Red) {
+      secondElementPosition = 8 - secondElementPosition;
+    }
+
+    Pose2d crossingOutPose;
+    Pose2d crossingInPose;
+    Pose2d pickupPose;
+
+    if (DriverStation.getAlliance() == Alliance.Blue) {
+      if (crossingPosition == CrossingPosition.LEFT) {
+        crossingOutPose = driveBase.flipWaypointBasedOnAlliance(FieldConstants.EXITING_CROSSING_WAYPOINTS[1], true);
+        pickupPose = driveBase.flipWaypointBasedOnAlliance(FieldConstants.GROUND_PICKUP_POSES[1], true);
+        crossingInPose = driveBase.flipWaypointBasedOnAlliance(FieldConstants.ENTERING_SCORING_ZONE_WAYPOINTS[1], true);
+      } else {
+        crossingOutPose = driveBase.flipWaypointBasedOnAlliance(FieldConstants.EXITING_CROSSING_WAYPOINTS[0], true);
+        pickupPose = driveBase.flipWaypointBasedOnAlliance(FieldConstants.GROUND_PICKUP_POSES[0], true);
+        crossingInPose = driveBase.flipWaypointBasedOnAlliance(FieldConstants.ENTERING_SCORING_ZONE_WAYPOINTS[0], true);
+      }
+    } else {
+      if (crossingPosition == CrossingPosition.LEFT) {
+        crossingOutPose = driveBase.flipWaypointBasedOnAlliance(FieldConstants.EXITING_CROSSING_WAYPOINTS[0], true);
+        pickupPose = driveBase.flipWaypointBasedOnAlliance(FieldConstants.GROUND_PICKUP_POSES[0], true);
+        crossingInPose = driveBase.flipWaypointBasedOnAlliance(FieldConstants.ENTERING_SCORING_ZONE_WAYPOINTS[0], true);
+      } else {
+        crossingOutPose = driveBase.flipWaypointBasedOnAlliance(FieldConstants.EXITING_CROSSING_WAYPOINTS[1], true);
+        pickupPose = driveBase.flipWaypointBasedOnAlliance(FieldConstants.GROUND_PICKUP_POSES[1], true);
+        crossingInPose = driveBase.flipWaypointBasedOnAlliance(FieldConstants.ENTERING_SCORING_ZONE_WAYPOINTS[1], true);
+      }
+    }
+
+    if (twoElement) {
+      return new SequentialCommandGroup(
+          getScoreCommand(row),
+          getStage1AutonPathCommand(crossingOutPose));
+      // getGroundPickupCommand(pickupPose),
+      // getStage2AutonCommand(crossingInPose, secondElementPosition),
+      // getScoreCommand(row));
+    }
     return new SequentialCommandGroup(
         getScoreCommand(row),
-        getStage1AutonPathCommand(initialPosition, crossingPosition, finalPosition));
-    // .andThen(new ConstructLaterCommand(() -> getGroundPickupCommand(1, 0, 0)))
-    // .andThen(new ArmToPoseWithRetractionCommand(arm, ArmPresets.STOWED, 1));
-    // .andThen(new ConstructLaterCommand(() -> getReturnCommand(1, 0)));
+        getStage1AutonPathCommand(crossingOutPose));
+
   }
 
-  // public Command getGroundPickupCommand(int scorePiece) {
-  // return new ParallelRaceGroup(
-  // new ConstructLaterCommand(
-  // () -> new DriveBasePathFollowCommand(driveBase,
-  // driveBase.generatePath(
-  // driveBase.flipWaypointBasedOnAlliance(FieldConstants.GROUND_PICKUP_POSES[scorePiece], true)))
-  // .andThen(new WaitCommand(0.5))),
-  // new ArmTowardsPoseWithRetractionCommand(arm, ArmPresets.GROUND_PICKUP),
-  // new IntakeSpinCommand(intake, IntakeConstants.INTAKE_VOLTAGE));
-  // }
+  public Command getExitCommunityCommand(int initialPosition, CrossingPosition crossingOutPosition) {
+    if (initialPosition <= 2) {
+      crossingOutPosition = CrossingPosition.RIGHT;
+    } else if (initialPosition >= 6) {
+      crossingOutPosition = CrossingPosition.LEFT;
+    }
 
-  // public Command getReturnCommand(int finalPosition, int row) {
-  // return new TimedCommand(1,
-  // new DriveBaseTurnToAngleCommand(driveBase,
-  // driveBase.flipWaypointBasedOnAlliance(FieldConstants.SCORING_WAYPOINTS[finalPosition], true).getRotation(),
-  // 1)).andThen(
-  // new ConstructLaterCommand(() -> new DriveBasePathFollowCommand(driveBase,
-  // driveBase.generatePath(
-  // driveBase.flipWaypointBasedOnAlliance(FieldConstants.RETURNING_CROSSING_WAYPOINTS[0], true)))))
-  // .andThen(new TimedCommand(0.5,
-  // new DriveBaseTurnToAngleCommand(driveBase,
-  // FieldConstants.SCORING_WAYPOINTS[finalPosition].getRotation(),
-  // 1)))
-  // .andThen(new ConstructLaterCommand(() -> new DriveBasePathFollowCommand(driveBase,
-  // driveBase.generatePath(driveBase
-  // .flipWaypointBasedOnAlliance(FieldConstants.ENTERING_SCORING_ZONE_WAYPOINTS[0], true)))))
-  // .andThen(new ConstructLaterCommand(
-  // () -> getPathToTargetCommand(driveBase,
-  // () -> driveBase.flipWaypointBasedOnAlliance(FieldConstants.SCORING_WAYPOINTS[finalPosition],
-  // true))))
-  // .andThen(new TimedCommand(0.5,
-  // new DriveBaseTurnToAngleCommand(driveBase,
-  // driveBase.flipWaypointBasedOnAlliance(FieldConstants.SCORING_WAYPOINTS[finalPosition], true)
-  // .getRotation(),
-  // 1)))
-  // .andThen(getScoreCommand(row));
-  // }
+    Pose2d crossingOutPose;
+
+    if (DriverStation.getAlliance() == Alliance.Blue) {
+      if (crossingOutPosition == CrossingPosition.LEFT) {
+        crossingOutPose = driveBase.flipWaypointBasedOnAlliance(FieldConstants.CROSSING_WAYPOINTS[1], true);
+      } else {
+        crossingOutPose = driveBase.flipWaypointBasedOnAlliance(FieldConstants.CROSSING_WAYPOINTS[0], true);
+      }
+    } else {
+      if (crossingOutPosition == CrossingPosition.LEFT) {
+        crossingOutPose = driveBase.flipWaypointBasedOnAlliance(FieldConstants.CROSSING_WAYPOINTS[0], true);
+      } else {
+        crossingOutPose = driveBase.flipWaypointBasedOnAlliance(FieldConstants.CROSSING_WAYPOINTS[1], true);
+      }
+    }
+    return getStage1AutonPathCommand(crossingOutPose);
+  }
 
   /**
    * Creates and returns a simple autonomous routine to score a preload based on row number.
@@ -155,7 +180,7 @@ public class AutonGenerator {
    */
   private Command composeScoreCommandHelper(ArmPose position, boolean placeDown) {
     return new ArmToPoseWithRetractionCommand(arm, position,
-        AutonConstants.AUTON_SCORING_TOLERANCE)
+        2 * AutonConstants.AUTON_SCORING_TOLERANCE)
             .andThen(new ArmToPoseCommand(arm,
                 position.translateBy(ArmPresets.CONE_SCORING_DROPDOWN),
                 AutonConstants.AUTON_SCORING_TOLERANCE).unless(() -> !placeDown))
@@ -195,7 +220,8 @@ public class AutonGenerator {
             new ArmToPoseCommand(arm, ArmPresets.PLAYER_STATION_PICKUP, 5),
             new ParallelRaceGroup( // Maintain arm angle and drive to target
                 new ConstructLaterCommand(
-                    () -> new DriveBasePathFollowCommand(driveBase, driveBase.generatePath(flippedTargetPose))),
+                    () -> new DriveBasePathFollowCommand(driveBase,
+                        driveBase.generatePath(false, 1, 1, flippedTargetPose))),
                 new ArmTowardsPoseCommand(arm, ArmPresets.PLAYER_STATION_PICKUP)),
             new ParallelRaceGroup(new TimedCommand(0.25, new DriveBaseStopCommand(driveBase)), // Hold for a second
                 new ArmTowardsPoseCommand(arm, ArmPresets.PLAYER_STATION_PICKUP)),
@@ -212,47 +238,50 @@ public class AutonGenerator {
   }
 
   /**
-   * Returns a command to follow a path.
+   * Returns a command to follow a path out of the Community.
    * 
-   * @param initialPosition The starting position of the robot
-   * @param crossingPosition Where the robot crosses out of the Community.
-   * @param finalPosition Which game element the path ends at.
+   * @param crossingPose Where the Stage 1 auton ends
    */
-  public Command getStage1AutonPathCommand(int initialPosition, CrossingPosition crossingPosition, int finalPosition) {
-    if (DriverStation.getAlliance() == Alliance.Red) {
-      initialPosition = 8 - initialPosition;
-      // finalPosition = FieldConstants.ENDING_AUTON_POSES.length - finalPosition;
-    }
-
-    if (initialPosition <= 2) {
-      crossingPosition = CrossingPosition.RIGHT;
-    } else if (initialPosition >= 6) {
-      crossingPosition = CrossingPosition.LEFT;
-    }
-
-    Pose2d crossingPose;
-
-    // if (DriverStation.getAlliance() == Alliance.Blue) {
-    if (crossingPosition == CrossingPosition.LEFT) {
-      crossingPose = driveBase.flipWaypointBasedOnAlliance(FieldConstants.CROSSING_WAYPOINTS[1], true);
-    } else {
-      crossingPose = driveBase.flipWaypointBasedOnAlliance(FieldConstants.CROSSING_WAYPOINTS[0], true);
-    }
-    // } else {
-    // if (crossingPosition == CrossingPosition.LEFT) {
-    // crossingPose = driveBase.flipWaypointBasedOnAlliance(FieldConstants.CROSSING_WAYPOINTS[0], true);
-    // } else {
-    // crossingPose = driveBase.flipWaypointBasedOnAlliance(FieldConstants.CROSSING_WAYPOINTS[1], true);
-    // }
-    // }
-
-    Pose2d finalPose = driveBase.flipWaypointBasedOnAlliance(FieldConstants.ENDING_AUTON_POSES[finalPosition], true);
-
+  public Command getStage1AutonPathCommand(Pose2d crossingPose) {
     return new SequentialCommandGroup(
         new TimedCommand(AutonConstants.DRIVE_BACK_TIME,
             new DriveBaseStraightCommand(driveBase, AutonConstants.DRIVE_BACK_SPEED, false)),
         new ConstructLaterCommand(() -> getPathToTargetCommand(driveBase, crossingPose)));
-    // new ConstructLaterCommand(() -> getPathToTargetCommand(driveBase, finalPose)));
+    // getGroundPickupCommand(crossingPose)
+  }
+
+  /**
+   * Returns a command to drive to a ground game piece and pick it up.
+   * 
+   * @param pickupPose The position to pick up the game piece from
+   */
+  public Command getGroundPickupCommand(Pose2d pickupPose) {
+    return new SequentialCommandGroup(new ArmToPoseWithRetractionCommand(arm, ArmPresets.GROUND_PICKUP, 1),
+        new ParallelRaceGroup(
+            new ArmTowardsPoseCommand(arm, ArmPresets.GROUND_PICKUP),
+            new ConstructLaterCommand(
+                () -> new DriveBasePathFollowCommand(driveBase,
+                    driveBase.generatePath(
+                        driveBase.flipWaypointBasedOnAlliance(pickupPose, true)))
+                            .andThen(new WaitCommand(0.5))),
+            new IntakeSpinCommand(intake, IntakeConstants.INTAKE_VOLTAGE).asProxy()),
+        new ArmToPoseWithRetractionCommand(arm, ArmPresets.STOWED, 1));
+  }
+
+  /**
+   * Returns a command to drive back into the Community and score a game piece
+   * 
+   * @param crossingInPose Where the robot re-enters the Community
+   * @param scoringPosition Which column the robot scores its game piece at
+   */
+  public Command getStage2AutonCommand(Pose2d crossingInPose, int scoringPosition) {
+    Pose2d scoringPose = driveBase.flipWaypointBasedOnAlliance(FieldConstants.SCORING_WAYPOINTS[scoringPosition], true);
+    return new SequentialCommandGroup(
+        new DriveBaseTurnToAngleCommand(driveBase, scoringPose.getRotation(), 1),
+        new ConstructLaterCommand(
+            () -> new DriveBasePathFollowCommand(driveBase, driveBase.generatePath(crossingInPose))),
+        new ConstructLaterCommand(() -> getPathToTargetCommand(driveBase, scoringPose)));
+
   }
 
   public Command getPathToTargetCommand(DriveBase driveBase, Pose2d targetPose) {

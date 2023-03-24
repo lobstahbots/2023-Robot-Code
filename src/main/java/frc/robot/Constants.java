@@ -32,10 +32,11 @@ public final class Constants {
     public static final double MAX_ACCELERATION = 0.4;
     public static final double RAMSETE_B = 2.0;
     public static final double RAMSETE_ZETA = 0.7;
-    public static final double kS = 0.032478;
-    public static final double kV = 5.3084;
-    public static final double kA = 1.9328;
-    public static final double kP = 1.2264;
+    public static final double kS = 0.057555;
+    public static final double kV = 6.1755;
+    public static final double kA = 1.2607;
+    public static final double LEFT_kP = 1.1085;
+    public static final double RIGHT_kP = 1.4327;
     public static final double kI = 0;
     public static final double KD = 0;
     public static final double TURN_P = 0.035;
@@ -51,6 +52,7 @@ public final class Constants {
   public static final class FieldConstants {
     public static final double SCORING_WAYPOINTS_X = 1.8;
     public static final double TRAVELING_WAYPOINTS_X = 2.2;
+    public static final double GROUND_PICKUP_X = 6.5;
 
     public static final Pose2d[] SCORING_WAYPOINTS = new Pose2d[] {
         new Pose2d(SCORING_WAYPOINTS_X, 0.5, Rotation2d.fromDegrees(180)),
@@ -82,25 +84,28 @@ public final class Constants {
     // };
 
     public static final Pose2d[] CROSSING_WAYPOINTS = new Pose2d[] {
-        new Pose2d(5.85, 0.6, new Rotation2d(0)), new Pose2d(5.85, 5.00, new Rotation2d(0))
+        new Pose2d(5.85, 0.6, new Rotation2d(0)), new Pose2d(5.85, 4.85, new Rotation2d(0))
+    };
+
+    public static final Pose2d[] EXITING_CROSSING_WAYPOINTS = new Pose2d[] {
+        new Pose2d(5.65, 0.6, new Rotation2d(0)), new Pose2d(5.65, 4.85, new Rotation2d(0))
     };
 
     public static final Pose2d[] RETURNING_CROSSING_WAYPOINTS = new Pose2d[] {
-        new Pose2d(5.50, 0.75, new Rotation2d(90)), new Pose2d(4.75, 5, new Rotation2d(-90))
+        new Pose2d(5.50, 0.75, new Rotation2d(180)), new Pose2d(4.75, 5, new Rotation2d(180))
     };
 
     public static final Pose2d[] ENTERING_SCORING_ZONE_WAYPOINTS = new Pose2d[] {
         new Pose2d(2.95, 0.75, new Rotation2d(180)), new Pose2d(2.95, 5, new Rotation2d(180))
     };
 
-    public static final Pose2d[] ENDING_AUTON_POSES = new Pose2d[] {
-        new Pose2d(6.00, 0.93, new Rotation2d(0)), new Pose2d(6.00, 2.15, new Rotation2d(0)),
-        new Pose2d(6.50, 6.00, new Rotation2d(0)), new Pose2d(7.60, 7.26, new Rotation2d(0))
-    };
+    // public static final Pose2d[] ENDING_AUTON_POSES = new Pose2d[] {
+    // new Pose2d(6.00, 0.93, new Rotation2d(0)), new Pose2d(6.00, 2.15, new Rotation2d(0)),
+    // new Pose2d(6.50, 6.00, new Rotation2d(0)), new Pose2d(7.60, 7.26, new Rotation2d(0))
+    // };
 
     public static final Pose2d[] GROUND_PICKUP_POSES = new Pose2d[] {
-        new Pose2d(7.40, 0.93, new Rotation2d(0)), new Pose2d(7.40, 2.15, new Rotation2d(0)),
-        new Pose2d(7.40, 3.37, new Rotation2d(0)), new Pose2d(7.40, 4.59, new Rotation2d(0))
+        new Pose2d(GROUND_PICKUP_X, 0.75, new Rotation2d(0)), new Pose2d(GROUND_PICKUP_X, 4.59, new Rotation2d(0))
     };
 
     public static final Pose2d PLAYER_STATION_PICKUP_LEFT = new Pose2d(15.75, 7.4, new Rotation2d(0));
@@ -201,6 +206,7 @@ public final class Constants {
     public static final Rotation2d BUMPER_AVOIDANCE_ANGLE = Rotation2d.fromDegrees(52);
     public static final double BUMPER_AVOIDANCE_X = 0;
     public static final double BUMPER_AVOIDANCE_EXTENSION_PRECISION = 0.5;
+    public static final double BUMPER_AVOIDANCE_DEADBAND_EXTENSION = 2;
     public static final double BUMPER_AVOIDANCE_ANGLE_PRECISION = 3;
     public static final double SWITCH_TO_PARALLEL_ANGLE_PRECISION = 7;
     public static final double MIN_Y_POSITION = 6;

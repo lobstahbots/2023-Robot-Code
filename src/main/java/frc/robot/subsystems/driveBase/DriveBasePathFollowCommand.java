@@ -28,8 +28,8 @@ public class DriveBasePathFollowCommand extends PPRamseteCommand {
         new SimpleMotorFeedforward(PathConstants.kS, PathConstants.kV, PathConstants.kA),
         DriveConstants.KINEMATICS,
         driveBase::getWheelSpeeds,
-        new PIDController(PathConstants.kP, PathConstants.kI, PathConstants.KD),
-        new PIDController(PathConstants.kP, PathConstants.kI, PathConstants.KD),
+        new PIDController(PathConstants.LEFT_kP, PathConstants.kI, PathConstants.KD),
+        new PIDController(PathConstants.RIGHT_kP, PathConstants.kI, PathConstants.KD),
         driveBase::tankDriveVoltage,
         false,
         driveBase);
