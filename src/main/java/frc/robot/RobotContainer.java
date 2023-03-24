@@ -100,6 +100,18 @@ public class RobotContainer {
   }
 
   /**
+   * @return Whether the robot is within the pickup zone.
+   */
+  public boolean canDriveToStation() {
+    Pose2d flippedTargetPose = driveBase.flipWaypointBasedOnAlliance(FieldConstants.PLAYER_STATION_PICKUP_LEFT, false);
+    return Math.abs(
+        driveBase.getDistanceToPose(flippedTargetPose)
+            .getX()) > FieldConstants.MAX_PLAYER_STATION_X_ZONE
+        || Math.abs(driveBase.getDistanceToPose(flippedTargetPose)
+            .getY()) > FieldConstants.MAX_PLAYER_STATION_Y_ZONE;
+  }
+
+  /**
    * Use this method to define your button->command mappings.
    */
   private void configureButtonBindings() {
