@@ -50,19 +50,6 @@
               "_showGlyph": false
             }
           },
-          "8,3": {
-            "size": [
-              1,
-              1
-            ],
-            "content": {
-              "_type": "ComboBox Chooser",
-              "_source0": "network_table:///SmartDashboard/Ending Position Chooser",
-              "_title": "Ending Position Chooser",
-              "_glyph": 148,
-              "_showGlyph": false
-            }
-          },
           "0,2": {
             "size": [
               4,
@@ -390,6 +377,84 @@
               "_type": "ComboBox Chooser",
               "_source0": "network_table:///SmartDashboard/Scoring Row Chooser",
               "_title": "Scoring Row Chooser",
+              "_glyph": 148,
+              "_showGlyph": false
+            }
+          },
+          "10,0": {
+            "size": [
+              1,
+              1
+            ],
+            "content": {
+              "_type": "Text View",
+              "_source0": "network_table:///SmartDashboard/Teleop Target Selector/Column Selected",
+              "_title": "Teleop Target Selector/Column Selected",
+              "_glyph": 148,
+              "_showGlyph": false
+            }
+          },
+          "6,1": {
+            "size": [
+              1,
+              1
+            ],
+            "content": {
+              "_type": "Text View",
+              "_source0": "network_table:///SmartDashboard/Number of Tags Visible In Front",
+              "_title": "Number of Tags Visible In Front",
+              "_glyph": 148,
+              "_showGlyph": false
+            }
+          },
+          "10,1": {
+            "size": [
+              1,
+              1
+            ],
+            "content": {
+              "_type": "Text View",
+              "_source0": "network_table:///SmartDashboard/Number of Tags Visible In Rear",
+              "_title": "Number of Tags Visible In Rear",
+              "_glyph": 148,
+              "_showGlyph": false
+            }
+          },
+          "7,4": {
+            "size": [
+              1,
+              1
+            ],
+            "content": {
+              "_type": "Text View",
+              "_source0": "network_table:///SmartDashboard/Teleop Target Selector/Row Selected",
+              "_title": "Teleop Target Selector/Row Selected",
+              "_glyph": 148,
+              "_showGlyph": false
+            }
+          },
+          "9,3": {
+            "size": [
+              1,
+              1
+            ],
+            "content": {
+              "_type": "Text View",
+              "_source0": "network_table:///SmartDashboard/Gyro 180",
+              "_title": "Gyro 180",
+              "_glyph": 148,
+              "_showGlyph": false
+            }
+          },
+          "10,3": {
+            "size": [
+              1,
+              1
+            ],
+            "content": {
+              "_type": "Text View",
+              "_source0": "network_table:///SmartDashboard/PPRamseteCommand/xErrorMeters",
+              "_title": "PPRamseteCommand/xErrorMeters",
               "_glyph": 148,
               "_showGlyph": false
             }
