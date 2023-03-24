@@ -244,7 +244,7 @@ public class RobotContainer {
     preloadScoringRow.setDefaultOption("High Goal", 0);
     scoringPosition.addOption("0", 0);
     scoringPosition.addOption("1", 1);
-    initialPosition.addOption("2", 2);
+    scoringPosition.addOption("2", 2);
     scoringPosition.addOption("3", 3);
     scoringPosition.addOption("4", 4);
     scoringPosition.addOption("5", 5);

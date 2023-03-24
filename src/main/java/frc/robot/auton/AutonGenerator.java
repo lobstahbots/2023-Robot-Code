@@ -125,7 +125,7 @@ public class AutonGenerator {
     return new SequentialCommandGroup(
         getScoreCommand(row),
         getStage1AutonPathCommand(crossingOutPose, pickupPosition));
-    // getStage2AutonCommand(turnAroundPose, crossingInPose, secondElementPosition),
+    // getStage2AutonCommand(turnAroundPose, crossingInPose, secondElementPosition));
     // getScoreCommand(secondElementRow));
   }
 
@@ -165,7 +165,7 @@ public class AutonGenerator {
    */
   private Command composeScoreCommandHelper(ArmPose position, boolean placeDown) {
     return new ArmToPoseWithRetractionCommand(arm, position,
-        AutonConstants.AUTON_SCORING_TOLERANCE)
+        2 * AutonConstants.AUTON_SCORING_TOLERANCE)
             .andThen(new ArmToPoseCommand(arm,
                 position.translateBy(ArmPresets.CONE_SCORING_DROPDOWN),
                 AutonConstants.AUTON_SCORING_TOLERANCE).unless(() -> !placeDown))
@@ -262,25 +262,25 @@ public class AutonGenerator {
     return new SequentialCommandGroup(
         new TimedCommand(AutonConstants.DRIVE_BACK_TIME,
             new DriveBaseStraightCommand(driveBase, AutonConstants.DRIVE_BACK_SPEED, false)),
-        new ConstructLaterCommand(() -> getPathToTargetCommand(driveBase, crossingPose)),
-        new ArmToPoseWithRetractionCommand(arm, ArmPresets.GROUND_PICKUP, 1),
-        new ParallelRaceGroup(
-            new ArmTowardsPoseCommand(arm, ArmPresets.GROUND_PICKUP),
-            new ConstructLaterCommand(
-                () -> new DriveBasePathFollowCommand(driveBase,
-                    driveBase.generatePath(
-                        driveBase.flipWaypointBasedOnAlliance(FieldConstants.GROUND_PICKUP_POSES[finalPosition], true)))
-                            .andThen(new WaitCommand(0.5))),
-            new IntakeSpinCommand(intake, IntakeConstants.INTAKE_VOLTAGE).asProxy()),
-        new ArmToPoseWithRetractionCommand(arm, ArmPresets.STOWED, 1));
+        new ConstructLaterCommand(() -> getPathToTargetCommand(driveBase, crossingPose)));
+    // new ArmToPoseWithRetractionCommand(arm, ArmPresets.GROUND_PICKUP, 1),
+    // new ParallelRaceGroup(
+    // new ArmTowardsPoseCommand(arm, ArmPresets.GROUND_PICKUP),
+    // new ConstructLaterCommand(
+    // () -> new DriveBasePathFollowCommand(driveBase,
+    // driveBase.generatePath(
+    // driveBase.flipWaypointBasedOnAlliance(FieldConstants.GROUND_PICKUP_POSES[finalPosition], true)))
+    // .andThen(new WaitCommand(0.5))),
+    // new IntakeSpinCommand(intake, IntakeConstants.INTAKE_VOLTAGE).asProxy()),
+    // new ArmToPoseWithRetractionCommand(arm, ArmPresets.STOWED, 1));
   }
 
   public Command getStage2AutonCommand(Pose2d turnAroundPose, Pose2d crossingInPose, int scoringPosition) {
     Pose2d scoringPose = driveBase.flipWaypointBasedOnAlliance(FieldConstants.SCORING_WAYPOINTS[scoringPosition], true);
     return new SequentialCommandGroup(
         new DriveBaseTurnToAngleCommand(driveBase, scoringPose.getRotation(), 1),
-        new ConstructLaterCommand(
-            () -> new DriveBasePathFollowCommand(driveBase, driveBase.generatePath(turnAroundPose))),
+        // new ConstructLaterCommand(
+        // () -> new DriveBasePathFollowCommand(driveBase, driveBase.generatePath(turnAroundPose))),
         new ConstructLaterCommand(
             () -> new DriveBasePathFollowCommand(driveBase, driveBase.generatePath(crossingInPose))),
         new ConstructLaterCommand(() -> getPathToTargetCommand(driveBase, scoringPose)));
