@@ -104,11 +104,11 @@ public class RobotContainer {
    */
   public boolean canDriveToStation() {
     Pose2d flippedTargetPose = driveBase.flipWaypointBasedOnAlliance(FieldConstants.PLAYER_STATION_PICKUP_LEFT, false);
-    return Math.abs(
+    return !(Math.abs(
         driveBase.getDistanceToPose(flippedTargetPose)
             .getX()) > FieldConstants.MAX_PLAYER_STATION_X_ZONE
         || Math.abs(driveBase.getDistanceToPose(flippedTargetPose)
-            .getY()) > FieldConstants.MAX_PLAYER_STATION_Y_ZONE;
+            .getY()) > FieldConstants.MAX_PLAYER_STATION_Y_ZONE);
   }
 
   /**
