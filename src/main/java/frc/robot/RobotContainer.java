@@ -86,6 +86,7 @@ public class RobotContainer {
    */
   public void initGyro() {
     driveBase.zeroGyro();
+    driveBase.getInitialGyro();
   }
 
   /**

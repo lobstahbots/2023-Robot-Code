@@ -54,6 +54,8 @@ public class DriveBase extends SubsystemBase {
   private final PhotonVision photonVision;
   private final AHRS gyro = new AHRS();
   private boolean hasSeenTag = false;
+  private Rotation2d initialGyroAngle;
+  private boolean gyroInitialized = false;
 
   /**
    * Constructs a DriveBase with a {@link TalonFX} at each of the given CAN IDs.
@@ -126,7 +128,6 @@ public class DriveBase extends SubsystemBase {
     resetEncoders();
     poseEstimator =
         new DifferentialDrivePoseEstimator(DriveConstants.KINEMATICS, getGyroAngle180(), 0, 0, new Pose2d());
-
     this.photonVision = new PhotonVision();
   }
 
@@ -282,6 +283,10 @@ public class DriveBase extends SubsystemBase {
     gyro.reset();
   }
 
+  public void getInitialGyro() {
+    initialGyroAngle = getGyroAngle();
+  }
+
   /** Initializes the robot odometry based on Photonvision pose if available, or else uses assumed starting position. */
   public void initOdometry(Pose2d defaultPose) {
     EstimatedRobotPose estimatedVisionPose = photonVision.getCurrentPose();
@@ -383,7 +388,6 @@ public class DriveBase extends SubsystemBase {
   public PathPlannerTrajectory generatePath(List<Pose2d> waypoints) {
     return generatePath(false, waypoints);
   }
-
 
   /**
    * Generates a trajectory through a list of provided waypoints from the robot's position, assumed driving forwards.
@@ -515,6 +519,11 @@ public class DriveBase extends SubsystemBase {
       }
     }
 
+    if (initialGyroAngle != getGyroAngle()) {
+      gyroInitialized = true;
+    }
+
+    SmartDashboard.putBoolean("Gyro Initialized", gyroInitialized);
     SmartDashboard.putNumber("Gyro", this.getGyroAngle180().getDegrees());
     SmartDashboard.putNumber("Gyro 180", this.getGyroAngle180().getDegrees());
     SmartDashboard.putNumber("Gyro Offset", getGyroOffset().getDegrees());
