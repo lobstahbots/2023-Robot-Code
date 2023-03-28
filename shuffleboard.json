@@ -5,7 +5,7 @@
       "autoPopulate": true,
       "autoPopulatePrefix": "SmartDashboard/",
       "widgetPane": {
-        "gridSize": 128.0,
+        "gridSize": 140.0,
         "showGrid": true,
         "hgap": 16.0,
         "vgap": 16.0,
@@ -39,7 +39,7 @@
           },
           "4,0": {
             "size": [
-              2,
+              1,
               1
             ],
             "content": {
@@ -52,7 +52,7 @@
           },
           "0,2": {
             "size": [
-              4,
+              3,
               1
             ],
             "content": {
@@ -76,7 +76,7 @@
               "_showGlyph": false
             }
           },
-          "3,3": {
+          "2,3": {
             "size": [
               1,
               1
@@ -104,7 +104,7 @@
           },
           "1,3": {
             "size": [
-              2,
+              1,
               2
             ],
             "content": {
@@ -119,7 +119,7 @@
               "Visuals/Counter clockwise": false
             }
           },
-          "4,2": {
+          "3,2": {
             "size": [
               3,
               3
@@ -140,7 +140,7 @@
               "imageHeight": -1
             }
           },
-          "7,0": {
+          "6,0": {
             "size": [
               3,
               3
@@ -161,7 +161,7 @@
               "imageHeight": -1
             }
           },
-          "11,0": {
+          "10,0": {
             "size": [
               1,
               1
@@ -174,7 +174,7 @@
               "_showGlyph": false
             }
           },
-          "12,0": {
+          "11,0": {
             "size": [
               1,
               1
@@ -200,7 +200,7 @@
               "_showGlyph": false
             }
           },
-          "11,1": {
+          "10,1": {
             "size": [
               1,
               1
@@ -215,7 +215,7 @@
               "Colors/Color when false": "#8B0000FF"
             }
           },
-          "12,1": {
+          "11,1": {
             "size": [
               1,
               1
@@ -228,7 +228,7 @@
               "_showGlyph": false
             }
           },
-          "10,2": {
+          "9,2": {
             "size": [
               1,
               1
@@ -243,7 +243,7 @@
               "Colors/Color when false": "#8B0000FF"
             }
           },
-          "11,2": {
+          "10,2": {
             "size": [
               1,
               1
@@ -258,7 +258,7 @@
               "Colors/Color when false": "#8B0000FF"
             }
           },
-          "12,2": {
+          "11,2": {
             "size": [
               1,
               1
@@ -273,7 +273,7 @@
               "Colors/Color when false": "#8B0000FF"
             }
           },
-          "11,3": {
+          "10,3": {
             "size": [
               1,
               1
@@ -286,7 +286,7 @@
               "_showGlyph": false
             }
           },
-          "12,3": {
+          "11,3": {
             "size": [
               1,
               1
@@ -329,7 +329,7 @@
               "Colors/Color when false": "#8B0000FF"
             }
           },
-          "11,4": {
+          "10,4": {
             "size": [
               1,
               1
@@ -342,7 +342,7 @@
               "_showGlyph": false
             }
           },
-          "12,4": {
+          "11,4": {
             "size": [
               1,
               1
@@ -357,7 +357,7 @@
           },
           "4,1": {
             "size": [
-              2,
+              1,
               1
             ],
             "content": {
@@ -368,7 +368,7 @@
               "_showGlyph": false
             }
           },
-          "6,0": {
+          "5,0": {
             "size": [
               1,
               1
@@ -381,7 +381,7 @@
               "_showGlyph": false
             }
           },
-          "10,0": {
+          "9,0": {
             "size": [
               1,
               1
@@ -394,7 +394,7 @@
               "_showGlyph": false
             }
           },
-          "6,1": {
+          "5,1": {
             "size": [
               1,
               1
@@ -407,7 +407,7 @@
               "_showGlyph": false
             }
           },
-          "10,1": {
+          "9,1": {
             "size": [
               1,
               1
@@ -433,7 +433,7 @@
               "_showGlyph": false
             }
           },
-          "9,3": {
+          "8,3": {
             "size": [
               1,
               1
@@ -446,7 +446,7 @@
               "_showGlyph": false
             }
           },
-          "10,3": {
+          "9,3": {
             "size": [
               1,
               1
@@ -457,6 +457,21 @@
               "_title": "PPRamseteCommand/xErrorMeters",
               "_glyph": 148,
               "_showGlyph": false
+            }
+          },
+          "7,3": {
+            "size": [
+              1,
+              1
+            ],
+            "content": {
+              "_type": "Boolean Box",
+              "_source0": "network_table:///SmartDashboard/Can pickup",
+              "_title": "Can pickup",
+              "_glyph": 148,
+              "_showGlyph": false,
+              "Colors/Color when true": "#7CFC00FF",
+              "Colors/Color when false": "#8B0000FF"
             }
           }
         }
@@ -778,6 +793,170 @@
               "_type": "PID Controller",
               "_source0": "network_table:///LiveWindow/Ungrouped/PIDController[2]",
               "_title": "Ungrouped/PIDController[2]",
+              "_glyph": 148,
+              "_showGlyph": false
+            }
+          }
+        }
+      }
+    },
+    {
+      "title": "Dashboard",
+      "autoPopulate": false,
+      "autoPopulatePrefix": "",
+      "widgetPane": {
+        "gridSize": 130.0,
+        "showGrid": false,
+        "hgap": 16.0,
+        "vgap": 16.0,
+        "titleType": 0,
+        "tiles": {
+          "0,0": {
+            "size": [
+              6,
+              4
+            ],
+            "content": {
+              "_type": "Camera Stream",
+              "_source0": "camera_server://photonvision-front-left_Port_1181_MJPEG_Server",
+              "_title": "photonvision-front-left_Port_1181_MJPEG_Server",
+              "_glyph": 148,
+              "_showGlyph": false,
+              "Crosshair/Show crosshair": true,
+              "Crosshair/Crosshair color": "#FFFFFFFF",
+              "Controls/Show controls": true,
+              "Controls/Rotation": "NONE",
+              "compression": -1.0,
+              "fps": -1,
+              "imageWidth": -1,
+              "imageHeight": -1
+            }
+          },
+          "5,0": {
+            "size": [
+              5,
+              4
+            ],
+            "content": {
+              "_type": "Camera Stream",
+              "_source0": "camera_server://photonvision-front-right_Port_1181_MJPEG_Server",
+              "_title": "photonvision-front-right_Port_1181_MJPEG_Server",
+              "_glyph": 148,
+              "_showGlyph": false,
+              "Crosshair/Show crosshair": true,
+              "Crosshair/Crosshair color": "#FFFFFFFF",
+              "Controls/Show controls": true,
+              "Controls/Rotation": "NONE",
+              "compression": 32.0,
+              "fps": -1,
+              "imageWidth": 0,
+              "imageHeight": 0
+            }
+          },
+          "7,4": {
+            "size": [
+              2,
+              1
+            ],
+            "content": {
+              "_type": "Boolean Box",
+              "_source0": "network_table:///SmartDashboard/Has Game Piece",
+              "_title": "SmartDashboard/Has Game Piece",
+              "_glyph": 148,
+              "_showGlyph": false,
+              "Colors/Color when true": "#7CFC00FF",
+              "Colors/Color when false": "#8B0000FF"
+            }
+          },
+          "9,4": {
+            "size": [
+              1,
+              1
+            ],
+            "content": {
+              "_type": "Boolean Box",
+              "_source0": "network_table:///SmartDashboard/One Side Stopped",
+              "_title": "SmartDashboard/One Side Stopped",
+              "_glyph": 148,
+              "_showGlyph": false,
+              "Colors/Color when true": "#7CFC00FF",
+              "Colors/Color when false": "#8B0000FF"
+            }
+          },
+          "5,4": {
+            "size": [
+              1,
+              1
+            ],
+            "content": {
+              "_type": "Text View",
+              "_source0": "network_table:///SmartDashboard/Gyro",
+              "_title": "SmartDashboard/Gyro",
+              "_glyph": 148,
+              "_showGlyph": false
+            }
+          },
+          "1,4": {
+            "size": [
+              1,
+              1
+            ],
+            "content": {
+              "_type": "ComboBox Chooser",
+              "_source0": "network_table:///SmartDashboard/Initial Position Chooser",
+              "_title": "SmartDashboard/Initial Position Chooser",
+              "_glyph": 148,
+              "_showGlyph": false
+            }
+          },
+          "2,4": {
+            "size": [
+              1,
+              1
+            ],
+            "content": {
+              "_type": "ComboBox Chooser",
+              "_source0": "network_table:///SmartDashboard/Crossing Position Chooser",
+              "_title": "SmartDashboard/Crossing Position Chooser",
+              "_glyph": 148,
+              "_showGlyph": false
+            }
+          },
+          "3,4": {
+            "size": [
+              1,
+              1
+            ],
+            "content": {
+              "_type": "ComboBox Chooser",
+              "_source0": "network_table:///SmartDashboard/Scoring Row Chooser",
+              "_title": "SmartDashboard/Scoring Row Chooser",
+              "_glyph": 148,
+              "_showGlyph": false
+            }
+          },
+          "0,4": {
+            "size": [
+              1,
+              1
+            ],
+            "content": {
+              "_type": "ComboBox Chooser",
+              "_source0": "network_table:///SmartDashboard/Auton Chooser",
+              "_title": "SmartDashboard/Auton Chooser",
+              "_glyph": 148,
+              "_showGlyph": false
+            }
+          },
+          "4,4": {
+            "size": [
+              1,
+              1
+            ],
+            "content": {
+              "_type": "ComboBox Chooser",
+              "_source0": "network_table:///SmartDashboard/Number of Elements Chooser",
+              "_title": "SmartDashboard/Number of Elements Chooser",
               "_glyph": 148,
               "_showGlyph": false
             }

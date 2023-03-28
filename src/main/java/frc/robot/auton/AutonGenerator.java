@@ -119,10 +119,10 @@ public class AutonGenerator {
     if (twoElement) {
       return new SequentialCommandGroup(
           getScoreCommand(row),
-          getStage1AutonPathCommand(crossingOutPose));
-      // getGroundPickupCommand(pickupPose),
-      // getStage2AutonCommand(crossingInPose, secondElementPosition),
-      // getScoreCommand(row));
+          getStage1AutonPathCommand(crossingOutPose),
+          getGroundPickupCommand(pickupPose),
+          getStage2AutonCommand(crossingInPose, secondElementPosition),
+          getScoreCommand(row));
     }
     return new SequentialCommandGroup(
         getScoreCommand(row),
