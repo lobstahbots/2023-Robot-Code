@@ -290,7 +290,7 @@ public final class Constants {
     public static final double INTAKE_VOLTAGE = -5;
     public static final double PASSIVE_INTAKE_VOLTAGE = -1.6;
 
-    public static final double STOPPED_CURRENT_THRESHOLD = 1;
+    public static final double STOPPED_CURRENT_THRESHOLD = 2;
   }
 
   /**
