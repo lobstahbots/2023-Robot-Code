@@ -54,7 +54,6 @@ public class DriveBase extends SubsystemBase {
   private final PhotonVision photonVision;
   private final AHRS gyro = new AHRS();
   private boolean hasSeenTag = false;
-  private Rotation2d initialGyroAngle;
   private boolean gyroInitialized = false;
 
   /**
@@ -281,10 +280,6 @@ public class DriveBase extends SubsystemBase {
   public void zeroGyro() {
     gyro.setAngleAdjustment(0);
     gyro.reset();
-  }
-
-  public void getInitialGyro() {
-    initialGyroAngle = getGyroAngle();
   }
 
   /** Initializes the robot odometry based on Photonvision pose if available, or else uses assumed starting position. */
@@ -519,8 +514,10 @@ public class DriveBase extends SubsystemBase {
       }
     }
 
-    if (initialGyroAngle != getGyroAngle()) {
-      gyroInitialized = true;
+    if (!gyro.isCalibrating() && !gyroInitialized) {
+      if (gyro.getVelocityZ() != 0) {
+        gyroInitialized = true;
+      }
     }
 
     SmartDashboard.putBoolean("Gyro Initialized", gyroInitialized);
