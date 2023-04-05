@@ -4,6 +4,7 @@ package frc.robot.subsystems.arm;
 import edu.wpi.first.wpilibj2.command.ParallelRaceGroup;
 import edu.wpi.first.wpilibj2.command.WaitUntilCommand;
 import frc.robot.ArmPose;
+import lobstah.stl.command.ConstructLaterCommand;
 
 public class ArmToPoseWithRetractionCommand extends ParallelRaceGroup {
   private final Arm arm;
@@ -26,7 +27,7 @@ public class ArmToPoseWithRetractionCommand extends ParallelRaceGroup {
     this.pose = pose;
     this.cartesianThreshold = cartesianThreshold;
 
-    this.addCommands(new ArmTowardsPoseWithRetractionCommand(arm, pose),
+    this.addCommands(new ConstructLaterCommand(() -> new ArmTowardsPoseWithRetractionCommand(arm, pose)),
         new WaitUntilCommand(this::isAtPose));
   }
 
@@ -47,7 +48,7 @@ public class ArmToPoseWithRetractionCommand extends ParallelRaceGroup {
     this.angleThreshold = angleThreshold;
     this.extensionThreshold = extensionThreshold;
 
-    this.addCommands(new ArmTowardsPoseWithRetractionCommand(arm, pose),
+    this.addCommands(new ConstructLaterCommand(() -> new ArmTowardsPoseWithRetractionCommand(arm, pose)),
         new WaitUntilCommand(this::isAtPose));
   }
 

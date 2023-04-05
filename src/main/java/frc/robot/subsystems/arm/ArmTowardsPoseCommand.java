@@ -15,6 +15,7 @@ import frc.robot.Constants.ArmConstants.PivotConstants;
 public class ArmTowardsPoseCommand extends CommandBase {
   private final Arm arm;
   private final Supplier<ArmPose> pose;
+  private final boolean resetPID;
 
   /**
    * Creates a command that moves the {@link Arm} towards a given pose.
@@ -30,18 +31,43 @@ public class ArmTowardsPoseCommand extends CommandBase {
    * Creates a command that moves the {@link Arm} towards a given pose.
    *
    * @param arm The {@link Arm} to control
+   * @param pose The pose to move towards
+   * @param resetPID Whether or not to reset the PID (Should only be false if using known sequential PID commands)
+   */
+  public ArmTowardsPoseCommand(Arm arm, ArmPose pose, boolean resetPID) {
+    this(arm, () -> pose, resetPID);
+  }
+
+  /**
+   * Creates a command that moves the {@link Arm} towards a given pose.
+   *
+   * @param arm The {@link Arm} to control
    * @param pose A supplier for the pose to move towards
    */
   public ArmTowardsPoseCommand(Arm arm, Supplier<ArmPose> pose) {
+    this(arm, pose, true);
+  }
+
+  /**
+   * Creates a command that moves the {@link Arm} towards a given pose.
+   *
+   * @param arm The {@link Arm} to control
+   * @param pose A supplier for the pose to move towards
+   * @param resetPID Whether or not to reset the PID (Should only be false if using known sequential PID commands)
+   */
+  public ArmTowardsPoseCommand(Arm arm, Supplier<ArmPose> pose, boolean resetPID) {
     this.arm = arm;
     this.pose = pose;
+    this.resetPID = resetPID;
     addRequirements(arm);
   }
 
   @Override
   public void initialize() {
-    arm.resetElevatorPID();
-    arm.resetPivotPID();
+    if (resetPID) {
+      arm.resetElevatorPID();
+      arm.resetPivotPID();
+    }
   }
 
   @Override
