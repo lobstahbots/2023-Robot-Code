@@ -349,9 +349,8 @@ public class RobotContainer {
     driveBase.setNeutralMode(NeutralMode.Brake);
     arm.setIdleMode(IdleMode.kBrake);
     intake.setDefaultCommand(new IntakeSpinCommand(intake, Constants.IntakeConstants.PASSIVE_INTAKE_VOLTAGE));
-    arm.setDefaultCommand(
-        new ArmTowardsPoseWithRetractionCommand(arm,
-            ArmPresets.STOWED));
+    arm.setDefaultCommand(new ConstructLaterCommand(() -> new ArmTowardsPoseWithRetractionCommand(arm,
+        ArmPresets.STOWED)));
     driveBase.setDefaultCommand(new DriveBaseStopCommand(driveBase));
   }
 

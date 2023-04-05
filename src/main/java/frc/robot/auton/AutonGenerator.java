@@ -124,18 +124,18 @@ public class AutonGenerator {
           getScoreCommand(row),
           new ParallelDeadlineGroup(
               getStage1AutonPathCommand(crossingOutPose),
-              new ArmTowardsPoseWithRetractionCommand(arm, ArmPresets.STOWED)),
+              new ConstructLaterCommand(() -> new ArmTowardsPoseWithRetractionCommand(arm, ArmPresets.STOWED))),
           getGroundPickupCommand(pickupPose),
           new ParallelDeadlineGroup(
               getStage2AutonCommand(crossingInPose, secondElementPosition),
-              new ArmTowardsPoseWithRetractionCommand(arm, ArmPresets.STOWED)),
+              new ConstructLaterCommand(() -> new ArmTowardsPoseWithRetractionCommand(arm, ArmPresets.STOWED))),
           getScoreCommand(row));
     }
     return new SequentialCommandGroup(
         getScoreCommand(row),
         new ParallelDeadlineGroup(
             getStage1AutonPathCommand(crossingOutPose),
-            new ArmTowardsPoseWithRetractionCommand(arm, ArmPresets.STOWED)));
+            new ConstructLaterCommand(() -> new ArmTowardsPoseWithRetractionCommand(arm, ArmPresets.STOWED))));
 
   }
 
@@ -162,7 +162,7 @@ public class AutonGenerator {
       }
     }
     return new ParallelDeadlineGroup(getStage1AutonPathCommand(crossingOutPose),
-        new ArmTowardsPoseWithRetractionCommand(arm, ArmPresets.STOWED));
+        new ConstructLaterCommand(() -> new ArmTowardsPoseWithRetractionCommand(arm, ArmPresets.STOWED)));
   }
 
   /**
@@ -207,7 +207,7 @@ public class AutonGenerator {
     return new TimedCommand(
         AutonConstants.SIMPLE_AUTON_RUNTIME,
         new ParallelCommandGroup(
-            new ArmTowardsPoseWithRetractionCommand(arm, ArmPresets.STOWED),
+            new ConstructLaterCommand(() -> new ArmTowardsPoseWithRetractionCommand(arm, ArmPresets.STOWED)),
             new DriveBaseStraightCommand(
                 driveBase,
                 AutonConstants.SIMPLE_AUTON_SPEED)));
@@ -230,7 +230,7 @@ public class AutonGenerator {
             new ParallelDeadlineGroup(
                 new ConstructLaterCommand(
                     () -> new DriveBasePathFollowCommand(driveBase, driveBase.generatePath(false, 0.8, 0.8, waypoint))),
-                new ArmTowardsPoseWithRetractionCommand(arm, ArmPresets.STOWED)),
+                new ConstructLaterCommand(() -> new ArmTowardsPoseWithRetractionCommand(arm, ArmPresets.STOWED))),
             new ArmToPoseCommand(arm, ArmPresets.PLAYER_STATION_PICKUP, 5),
             new ParallelDeadlineGroup( // Maintain arm angle and...
                 new SequentialCommandGroup(
