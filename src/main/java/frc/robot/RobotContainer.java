@@ -40,6 +40,7 @@ import frc.robot.subsystems.driveBase.DriveBaseTankCommand;
 import frc.robot.subsystems.intake.Intake;
 import frc.robot.subsystems.intake.IntakeSpinCommand;
 import frc.robot.subsystems.arm.ArmResetElevatorCommand;
+import lobstah.stl.command.ConstructLaterCommand;
 import lobstah.stl.oi.LobstahGamepad;
 
 /**
@@ -161,18 +162,23 @@ public class RobotContainer {
     // Pickup
     operatorJoystick.button(OperatorConstants.GROUND_PICKUP_BTN)
         .whileTrue(new IntakeSpinCommand(intake, IntakeConstants.INTAKE_VOLTAGE)
-            .alongWith(new ArmTowardsPoseWithRetractionCommand(arm, ArmPresets.GROUND_PICKUP)));
+            .alongWith(new ConstructLaterCommand(
+                () -> new ArmTowardsPoseWithRetractionCommand(arm, ArmPresets.GROUND_PICKUP))));
 
     // Legacy operator controls
 
     operatorJoystick.pov(OperatorConstants.LOW_GOAL_POV)
-        .whileTrue(new ArmTowardsPoseWithRetractionCommand(arm, ArmPresets.GROUND_PICKUP));
+        .whileTrue(
+            new ConstructLaterCommand(() -> new ArmTowardsPoseWithRetractionCommand(arm, ArmPresets.GROUND_PICKUP)));
     operatorJoystick.pov(OperatorConstants.MID_GOAL_POV)
-        .whileTrue(new ArmTowardsPoseWithRetractionCommand(arm, ArmPresets.MID_GOAL_SCORING));
+        .whileTrue(
+            new ConstructLaterCommand(() -> new ArmTowardsPoseWithRetractionCommand(arm, ArmPresets.MID_GOAL_SCORING)));
     operatorJoystick.pov(OperatorConstants.HIGH_GOAL_POV)
-        .whileTrue(new ArmTowardsPoseWithRetractionCommand(arm, ArmPresets.HIGH_GOAL_SCORING));
+        .whileTrue(new ConstructLaterCommand(
+            () -> new ArmTowardsPoseWithRetractionCommand(arm, ArmPresets.HIGH_GOAL_SCORING)));
     operatorJoystick.pov(OperatorConstants.PLAYER_STATION_POV)
-        .whileTrue(new ArmTowardsPoseWithRetractionCommand(arm, ArmPresets.PLAYER_STATION_PICKUP));
+        .whileTrue(new ConstructLaterCommand(
+            () -> new ArmTowardsPoseWithRetractionCommand(arm, ArmPresets.PLAYER_STATION_PICKUP)));
 
     operatorJoystick.button(OperatorConstants.INTAKE_BTN)
         .whileTrue(new IntakeSpinCommand(intake, IntakeConstants.INTAKE_VOLTAGE));
@@ -329,9 +335,8 @@ public class RobotContainer {
             () -> -driverJoystick.getRawAxis(DriverConstants.LEFT_AXIS),
             () -> -driverJoystick.getRawAxis(DriverConstants.RIGHT_AXIS),
             DriverConstants.SQUARED_INPUTS));
-    arm.setDefaultCommand(
-        new ArmTowardsPoseWithRetractionCommand(arm,
-            ArmPresets.STOWED));
+    arm.setDefaultCommand(new ConstructLaterCommand(() -> new ArmTowardsPoseWithRetractionCommand(arm,
+        ArmPresets.STOWED)));
     intake.setDefaultCommand(new IntakeSpinCommand(intake, Constants.IntakeConstants.PASSIVE_INTAKE_VOLTAGE));
   }
 
@@ -344,9 +349,8 @@ public class RobotContainer {
     driveBase.setNeutralMode(NeutralMode.Brake);
     arm.setIdleMode(IdleMode.kBrake);
     intake.setDefaultCommand(new IntakeSpinCommand(intake, Constants.IntakeConstants.PASSIVE_INTAKE_VOLTAGE));
-    arm.setDefaultCommand(
-        new ArmTowardsPoseWithRetractionCommand(arm,
-            ArmPresets.STOWED));
+    arm.setDefaultCommand(new ConstructLaterCommand(() -> new ArmTowardsPoseWithRetractionCommand(arm,
+        ArmPresets.STOWED)));
     driveBase.setDefaultCommand(new DriveBaseStopCommand(driveBase));
   }
 

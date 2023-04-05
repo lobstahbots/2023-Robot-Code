@@ -13,6 +13,8 @@ import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
+import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
+import edu.wpi.first.wpilibj2.command.ParallelDeadlineGroup;
 import edu.wpi.first.wpilibj2.command.ParallelRaceGroup;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
@@ -26,6 +28,7 @@ import frc.robot.subsystems.arm.Arm;
 import frc.robot.subsystems.arm.ArmToPoseCommand;
 import frc.robot.subsystems.arm.ArmToPoseWithRetractionCommand;
 import frc.robot.subsystems.arm.ArmTowardsPoseCommand;
+import frc.robot.subsystems.arm.ArmTowardsPoseWithRetractionCommand;
 import frc.robot.subsystems.driveBase.DriveBase;
 import frc.robot.subsystems.driveBase.DriveBasePathFollowCommand;
 import frc.robot.subsystems.driveBase.DriveBaseStopCommand;
@@ -119,14 +122,20 @@ public class AutonGenerator {
     if (twoElement) {
       return new SequentialCommandGroup(
           getScoreCommand(row),
-          getStage1AutonPathCommand(crossingOutPose),
+          new ParallelDeadlineGroup(
+              getStage1AutonPathCommand(crossingOutPose),
+              new ConstructLaterCommand(() -> new ArmTowardsPoseWithRetractionCommand(arm, ArmPresets.STOWED))),
           getGroundPickupCommand(pickupPose),
-          getStage2AutonCommand(crossingInPose, secondElementPosition),
+          new ParallelDeadlineGroup(
+              getStage2AutonCommand(crossingInPose, secondElementPosition),
+              new ConstructLaterCommand(() -> new ArmTowardsPoseWithRetractionCommand(arm, ArmPresets.STOWED))),
           getScoreCommand(row));
     }
     return new SequentialCommandGroup(
         getScoreCommand(row),
-        getStage1AutonPathCommand(crossingOutPose));
+        new ParallelDeadlineGroup(
+            getStage1AutonPathCommand(crossingOutPose),
+            new ConstructLaterCommand(() -> new ArmTowardsPoseWithRetractionCommand(arm, ArmPresets.STOWED))));
 
   }
 
@@ -152,7 +161,8 @@ public class AutonGenerator {
         crossingOutPose = driveBase.flipWaypointBasedOnAlliance(FieldConstants.CROSSING_WAYPOINTS[1], true);
       }
     }
-    return getStage1AutonPathCommand(crossingOutPose);
+    return new ParallelDeadlineGroup(getStage1AutonPathCommand(crossingOutPose),
+        new ConstructLaterCommand(() -> new ArmTowardsPoseWithRetractionCommand(arm, ArmPresets.STOWED)));
   }
 
   /**
@@ -196,9 +206,11 @@ public class AutonGenerator {
   public Command getSimpleAutonCommand() {
     return new TimedCommand(
         AutonConstants.SIMPLE_AUTON_RUNTIME,
-        new DriveBaseStraightCommand(
-            driveBase,
-            AutonConstants.SIMPLE_AUTON_SPEED));
+        new ParallelCommandGroup(
+            new ConstructLaterCommand(() -> new ArmTowardsPoseWithRetractionCommand(arm, ArmPresets.STOWED)),
+            new DriveBaseStraightCommand(
+                driveBase,
+                AutonConstants.SIMPLE_AUTON_SPEED)));
   }
 
   /**
@@ -215,20 +227,20 @@ public class AutonGenerator {
     Pose2d flippedTargetPose = driveBase.flipWaypointBasedOnAlliance(targetPose, true);
     return new ParallelRaceGroup(new IntakeSpinCommand(intake, IntakeConstants.INTAKE_VOLTAGE),
         new SequentialCommandGroup( // Drive to waypoint, then turn while raising arm
-            new ConstructLaterCommand(
-                () -> new DriveBasePathFollowCommand(driveBase, driveBase.generatePath(false, 0.8, 0.8, waypoint))),
-            new ArmToPoseCommand(arm, ArmPresets.PLAYER_STATION_PICKUP, 5),
-            new ParallelRaceGroup( // Maintain arm angle and drive to target
+            new ParallelDeadlineGroup(
                 new ConstructLaterCommand(
-                    () -> new DriveBasePathFollowCommand(driveBase,
-                        driveBase.generatePath(false, 1, 1, flippedTargetPose))),
+                    () -> new DriveBasePathFollowCommand(driveBase, driveBase.generatePath(false, 0.8, 0.8, waypoint))),
+                new ConstructLaterCommand(() -> new ArmTowardsPoseWithRetractionCommand(arm, ArmPresets.STOWED))),
+            new ArmToPoseCommand(arm, ArmPresets.PLAYER_STATION_PICKUP, 5),
+            new ParallelDeadlineGroup( // Maintain arm angle and...
+                new SequentialCommandGroup(
+                    new ConstructLaterCommand( // Drive to target
+                        () -> new DriveBasePathFollowCommand(driveBase,
+                            driveBase.generatePath(false, 1, 1, flippedTargetPose))),
+                    new TimedCommand(0.25, new DriveBaseStopCommand(driveBase)), // Hold for a second
+                    new TimedCommand(1, // Drive away
+                        new DriveBaseStraightCommand(driveBase, AutonConstants.DRIVE_BACK_SPEED, false))),
                 new ArmTowardsPoseCommand(arm, ArmPresets.PLAYER_STATION_PICKUP)),
-            new ParallelRaceGroup(new TimedCommand(0.25, new DriveBaseStopCommand(driveBase)), // Hold for a second
-                new ArmTowardsPoseCommand(arm, ArmPresets.PLAYER_STATION_PICKUP)),
-            new ParallelRaceGroup( // Drive away with arm raised still
-                new ArmTowardsPoseCommand(arm, ArmPresets.PLAYER_STATION_PICKUP),
-                new TimedCommand(1,
-                    new DriveBaseStraightCommand(driveBase, AutonConstants.DRIVE_BACK_SPEED, false))),
             new ArmToPoseCommand(arm, ArmPresets.STOWED, 1)))
                 .unless(() -> Math.abs(
                     driveBase.getDistanceToPose(flippedTargetPose)
