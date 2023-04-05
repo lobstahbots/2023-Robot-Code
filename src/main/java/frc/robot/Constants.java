@@ -201,14 +201,15 @@ public final class Constants {
    */
   public static final class ArmConstants {
     public static final Translation2d ROBOT_TO_SCORING_ORIGIN = new Translation2d(0, 0); // TODO
-    public static final double RETRACT_BEFORE_ROTATING_ANGLE = 5;
-    public static final double RETRACT_BEFORE_ROTATING_PRECISION = 5;
-    public static final Rotation2d BUMPER_AVOIDANCE_ANGLE = Rotation2d.fromDegrees(52);
+    public static final Rotation2d BUMPER_AVOIDANCE_ANGLE = Rotation2d.fromDegrees(53);
     public static final double BUMPER_AVOIDANCE_X = 0;
-    public static final double BUMPER_AVOIDANCE_EXTENSION_PRECISION = 0.5;
-    public static final double BUMPER_AVOIDANCE_DEADBAND_EXTENSION = 2;
-    public static final double BUMPER_AVOIDANCE_ANGLE_PRECISION = 3;
-    public static final double SWITCH_TO_PARALLEL_ANGLE_PRECISION = 7;
+    public static final double BUMPER_AVOIDANCE_R_PRECISION = 0.5;
+    public static final double EXTENDING_ANGLE_PRECISION = 3;
+    public static final double RETRACTING_ANGLE_PRECISION = 3;
+    public static final double RETRACTING_R_PRECISION = 0.5;
+    public static final double EXTENDING_R_PRECISION = 2;
+    public static final double RETRACTING_SWITCH_TO_PARALLEL_ANGLE_PRECISION = 7;
+    public static final double EXTENDING_SWITCH_TO_PARALLEL_ANGLE_PRECISION = 12;
     public static final double MIN_Y_POSITION = 6;
 
     /**

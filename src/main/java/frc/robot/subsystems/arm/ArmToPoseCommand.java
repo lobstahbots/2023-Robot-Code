@@ -21,15 +21,36 @@ public class ArmToPoseCommand extends ParallelRaceGroup {
    * @param pose A supplier for the pose to move to
    * @param cartesianThreshold The Cartesian threshold (distance in inches) for the system to be considered at the
    *          correct pose
+   * @param resetPID Whether or not to reset the PID (Should only be false if using known sequential PID commands)
    */
   public ArmToPoseCommand(Arm arm, Supplier<ArmPose> pose,
-      double cartesianThreshold) {
+      double cartesianThreshold, boolean resetPID) {
     this.arm = arm;
     this.pose = pose;
     this.cartesianThreshold = cartesianThreshold;
-
-    this.addCommands(new ArmTowardsPoseCommand(arm, pose),
+    this.addCommands(new ArmTowardsPoseCommand(arm, pose, resetPID),
         new WaitUntilCommand(this::isAtPosition));
+  }
+
+  /**
+   * Creates a command that moves the {@link Arm} to a given pose, then finishes.
+   *
+   * @param arm The {@link Arm} to control
+   * @param pose A supplier for the pose to move to
+   * @param angleThreshold The threshold in degrees for the pivot angle for the system to be considered at the correct
+   *          pose
+   * @param extensionThreshold The threshold in inches for the elevator extension for the system to be considered at the
+   *          correct pose
+   * @param resetPID Whether or not to reset the PID (Should only be false if using known sequential PID commands)
+   */
+  public ArmToPoseCommand(Arm arm, Supplier<ArmPose> pose,
+      double angleThreshold, double extensionThreshold, boolean resetPID) {
+    this.arm = arm;
+    this.pose = pose;
+    this.angleThreshold = angleThreshold;
+    this.extensionThreshold = extensionThreshold;
+    this.addCommands(new ArmTowardsPoseCommand(arm, pose, resetPID), new WaitUntilCommand(this::isAtPosition));
+
   }
 
   /**
@@ -44,13 +65,35 @@ public class ArmToPoseCommand extends ParallelRaceGroup {
    */
   public ArmToPoseCommand(Arm arm, Supplier<ArmPose> pose,
       double angleThreshold, double extensionThreshold) {
-    this.arm = arm;
-    this.pose = pose;
-    this.angleThreshold = angleThreshold;
-    this.extensionThreshold = extensionThreshold;
+    this(arm, pose, angleThreshold, extensionThreshold, true);
+  }
 
-    this.addCommands(new ArmTowardsPoseCommand(arm, pose), new WaitUntilCommand(this::isAtPosition));
+  /**
+   * Creates a command that moves the {@link Arm} to a given pose, then finishes.
+   *
+   * @param arm The {@link Arm} to control
+   * @param pose A supplier for the pose to move to
+   * @param cartesianThreshold The Cartesian threshold (distance in inches) for the system to be considered at the
+   *          correct pose
+   */
+  public ArmToPoseCommand(Arm arm, Supplier<ArmPose> pose,
+      double cartesianThreshold) {
+    this(arm, pose, cartesianThreshold, true);
+  }
 
+  /**
+   * Creates a command that moves the {@link Arm} to a given pose, then finishes.
+   *
+   * @param arm The {@link Arm} to control
+   * @param pose The pose to move to
+   * @param angleThreshold The threshold in degrees for the pivot angle for the system to be considered at the correct
+   *          pose
+   * @param extensionThreshold The threshold in inches for the elevator extension for the system to be considered at the
+   *          correct pose
+   * @param resetPID Whether or not to reset the PID (Should only be false if using known sequential PID commands)
+   */
+  public ArmToPoseCommand(Arm arm, ArmPose pose, double angleThreshold, double extensionThreshold, boolean resetPID) {
+    this(arm, () -> pose, angleThreshold, extensionThreshold, resetPID);
   }
 
   /**
@@ -65,6 +108,19 @@ public class ArmToPoseCommand extends ParallelRaceGroup {
    */
   public ArmToPoseCommand(Arm arm, ArmPose pose, double angleThreshold, double extensionThreshold) {
     this(arm, () -> pose, angleThreshold, extensionThreshold);
+  }
+
+  /**
+   * Creates a command that moves the {@link Arm} to a given position, then finishes.
+   *
+   * @param arm The {@link Arm} to control
+   * @param pose The pose to move to
+   * @param cartesianThreshold The Cartesian threshold (distance in inches) for the system to be considered at the
+   *          correct pose
+   * @param resetPID Whether or not to reset the PID (Should only be false if using known sequential PID commands)
+   */
+  public ArmToPoseCommand(Arm arm, ArmPose pose, double cartesianThreshold, boolean resetPID) {
+    this(arm, () -> pose, cartesianThreshold, resetPID);
   }
 
   /**
