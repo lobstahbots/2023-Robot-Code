@@ -61,7 +61,7 @@ public class ArmTowardsPoseWithRetractionCommand extends SequentialCommandGroup 
         // Finally, completely rotate and extend to target position.
         new ArmToPoseCommand(arm,
             () -> ArmPose.fromAngleExtension(pose.getAngle(), 0),
-            parallelAnglePrecision, ArmConstants.BUMPER_AVOIDANCE_EXTENSION_PRECISION, false),
+            parallelAnglePrecision, ArmConstants.BUMPER_AVOIDANCE_R_PRECISION, false),
         new ArmTowardsPoseCommand(arm, pose, false));
   }
 }
