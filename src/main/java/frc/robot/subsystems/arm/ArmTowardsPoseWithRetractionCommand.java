@@ -50,14 +50,14 @@ public class ArmTowardsPoseWithRetractionCommand extends SequentialCommandGroup 
             anglePrecision, extensionPrecision * 6, false),
         // If target position is inside bumper collision zone, after retracting, rotate to safety angle and extend to
         // target extension sequentially.
-        new SequentialCommandGroup(
-            new ArmToPoseCommand(arm, () -> ArmPose.fromAngleExtension( // rotate
-                ArmConstants.BUMPER_AVOIDANCE_ANGLE, arm.getExtension()),
-                anglePrecision, extensionPrecision, false),
-            new ArmToPoseCommand(arm, () -> ArmPose.fromAngleExtension( //
-                ArmConstants.BUMPER_AVOIDANCE_ANGLE, pose.getExtension()),
-                anglePrecision, extensionPrecision, false))
-                    .unless(() -> !pose.isInsideBumperZone()),
+        // new SequentialCommandGroup(
+        // new ArmToPoseCommand(arm, () -> ArmPose.fromAngleExtension( // rotate
+        // ArmConstants.BUMPER_AVOIDANCE_ANGLE, arm.getExtension()),
+        // anglePrecision, extensionPrecision, false),
+        // new ArmToPoseCommand(arm, () -> ArmPose.fromAngleExtension( //
+        // ArmConstants.BUMPER_AVOIDANCE_ANGLE, pose.getExtension()),
+        // anglePrecision, extensionPrecision, false))
+        // .unless(() -> !pose.isInsideBumperZone()),
         // Finally, completely rotate and extend to target position.
         new ArmToPoseCommand(arm,
             () -> ArmPose.fromAngleExtension(pose.getAngle(), 0),
