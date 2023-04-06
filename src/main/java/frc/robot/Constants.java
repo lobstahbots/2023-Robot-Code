@@ -32,11 +32,11 @@ public final class Constants {
     public static final double MAX_ACCELERATION = 0.4;
     public static final double RAMSETE_B = 2.0;
     public static final double RAMSETE_ZETA = 0.7;
-    public static final double kS = 0.057555;
-    public static final double kV = 6.1755;
-    public static final double kA = 1.2607;
-    public static final double LEFT_kP = 1.1085;
-    public static final double RIGHT_kP = 1.4327;
+    public static final double kS = 0.21559;
+    public static final double kV = 1.9096;
+    public static final double kA = 0.14653;
+    public static final double LEFT_kP = 2.071;
+    public static final double RIGHT_kP = 1.1376;
     public static final double kI = 0;
     public static final double KD = 0;
     public static final double TURN_P = 0.035;
