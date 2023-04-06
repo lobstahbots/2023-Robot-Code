@@ -446,19 +446,6 @@
               "_showGlyph": false
             }
           },
-          "9,3": {
-            "size": [
-              1,
-              1
-            ],
-            "content": {
-              "_type": "Text View",
-              "_source0": "network_table:///SmartDashboard/PPRamseteCommand/xErrorMeters",
-              "_title": "PPRamseteCommand/xErrorMeters",
-              "_glyph": 148,
-              "_showGlyph": false
-            }
-          },
           "7,3": {
             "size": [
               1,
@@ -468,6 +455,36 @@
               "_type": "Boolean Box",
               "_source0": "network_table:///SmartDashboard/Can pickup",
               "_title": "Can pickup",
+              "_glyph": 148,
+              "_showGlyph": false,
+              "Colors/Color when true": "#7CFC00FF",
+              "Colors/Color when false": "#8B0000FF"
+            }
+          },
+          "6,3": {
+            "size": [
+              1,
+              1
+            ],
+            "content": {
+              "_type": "Boolean Box",
+              "_source0": "network_table:///SmartDashboard/Gyro Initialized",
+              "_title": "Gyro Initialized",
+              "_glyph": 148,
+              "_showGlyph": false,
+              "Colors/Color when true": "#7CFC00FF",
+              "Colors/Color when false": "#8B0000FF"
+            }
+          },
+          "9,3": {
+            "size": [
+              1,
+              1
+            ],
+            "content": {
+              "_type": "Boolean Box",
+              "_source0": "network_table:///SmartDashboard/SysIdOverflow",
+              "_title": "SysIdOverflow",
               "_glyph": 148,
               "_showGlyph": false,
               "Colors/Color when true": "#7CFC00FF",
