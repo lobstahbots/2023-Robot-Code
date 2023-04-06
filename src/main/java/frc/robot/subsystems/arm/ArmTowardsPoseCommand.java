@@ -87,7 +87,9 @@ public class ArmTowardsPoseCommand extends CommandBase {
 
   @Override
   public void end(boolean interrupted) {
-    arm.setElevatorSpeed(0);
-    arm.setPivotSpeed(0);
+    if (resetPID) {
+      arm.setElevatorSpeed(0);
+      arm.setPivotSpeed(0);
+    }
   }
 }

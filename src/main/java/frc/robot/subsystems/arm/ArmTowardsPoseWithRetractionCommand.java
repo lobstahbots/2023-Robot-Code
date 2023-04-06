@@ -9,7 +9,6 @@ public class ArmTowardsPoseWithRetractionCommand extends SequentialCommandGroup 
   Arm arm;
   ArmPose pose;
   boolean extending;
-  double anglePrecision = ArmConstants.RETRACTING_ANGLE_PRECISION;
   double extensionPrecision = ArmConstants.RETRACTING_R_PRECISION;
   double parallelAnglePrecision = ArmConstants.RETRACTING_SWITCH_TO_PARALLEL_ANGLE_PRECISION;
 
@@ -27,9 +26,8 @@ public class ArmTowardsPoseWithRetractionCommand extends SequentialCommandGroup 
 
     this.extending = pose.getX() > arm.getPose().getX() && !pose.isInsideBumperZone();
     if (extending) {
-      anglePrecision = ArmConstants.EXTENDING_ANGLE_PRECISION;
       extensionPrecision = ArmConstants.EXTENDING_R_PRECISION;
-      parallelAnglePrecision = ArmConstants.EXTENDING_SWITCH_TO_PARALLEL_ANGLE_PRECISION;
+      parallelAnglePrecision = ArmConstants.EXTENDING_PARALLEL_ANGLE_PRECISION;
     }
 
     addRequirements(arm);
@@ -40,14 +38,14 @@ public class ArmTowardsPoseWithRetractionCommand extends SequentialCommandGroup 
             arm,
             () -> ArmPose.fromAngleExtension(ArmConstants.BUMPER_AVOIDANCE_ANGLE,
                 arm.getExtension()),
-            anglePrecision, extensionPrecision)
+            ArmConstants.BUMPER_AVOIDANCE_THETA_PRECISION, ArmConstants.BUMPER_AVOIDANCE_R_PRECISION)
                 .unless(() -> !arm.getPose()
                     .isInsideBumperZone()),
         // Retract elevator unless close enough to final angle to not need to retract before rotating.
         new ArmToPoseCommand(
             arm, () -> ArmPose.fromAngleExtension(
                 arm.getRotation(), 0),
-            anglePrecision, extensionPrecision * 6, false),
+            parallelAnglePrecision, extensionPrecision, false),
         // If target position is inside bumper collision zone, after retracting, rotate to safety angle and extend to
         // target extension sequentially.
         // new SequentialCommandGroup(

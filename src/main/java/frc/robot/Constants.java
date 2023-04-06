@@ -204,12 +204,11 @@ public final class Constants {
     public static final Rotation2d BUMPER_AVOIDANCE_ANGLE = Rotation2d.fromDegrees(53);
     public static final double BUMPER_AVOIDANCE_X = 0;
     public static final double BUMPER_AVOIDANCE_R_PRECISION = 0.5;
-    public static final double EXTENDING_ANGLE_PRECISION = 3;
-    public static final double RETRACTING_ANGLE_PRECISION = 3;
-    public static final double RETRACTING_R_PRECISION = 0.5;
+    public static final double BUMPER_AVOIDANCE_THETA_PRECISION = 3;
+    public static final double RETRACTING_R_PRECISION = 16;
     public static final double EXTENDING_R_PRECISION = 2;
     public static final double RETRACTING_SWITCH_TO_PARALLEL_ANGLE_PRECISION = 7;
-    public static final double EXTENDING_SWITCH_TO_PARALLEL_ANGLE_PRECISION = 12;
+    public static final double EXTENDING_PARALLEL_ANGLE_PRECISION = 12;
     public static final double MIN_Y_POSITION = 6;
 
     /**
