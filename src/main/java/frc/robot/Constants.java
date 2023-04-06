@@ -32,9 +32,9 @@ public final class Constants {
     public static final double MAX_ACCELERATION = 0.4;
     public static final double RAMSETE_B = 2.0;
     public static final double RAMSETE_ZETA = 0.7;
-    public static final double kS = 0.21559;
-    public static final double kV = 2.9096;
-    public static final double kA = 0.14653;
+    public static final double kS = 0.19717;
+    public static final double kV = 4.5;
+    public static final double kA = 1.3914;
     public static final double LEFT_kP = 2.071;
     public static final double RIGHT_kP = 1.1376;
     public static final double kI = 0;
@@ -42,7 +42,7 @@ public final class Constants {
     public static final double TURN_P = 0.035;
     public static final double TURN_I = 0;
     public static final double TURN_D = 0.02;
-    public static final double TURN_ANGLE_DEADBAND = 2;
+    public static final double TURN_ANGLE_DEADBAND = 8;
     public static final double POSE_DISTANCE_METERS_FILTER = 10;
   }
 
