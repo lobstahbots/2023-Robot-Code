@@ -205,11 +205,10 @@ public final class Constants {
     public static final double BUMPER_AVOIDANCE_X = 0;
     public static final double BUMPER_AVOIDANCE_R_PRECISION = 0.5;
     public static final double BUMPER_AVOIDANCE_THETA_PRECISION = 3;
-    public static final double RETRACTING_R_PRECISION = 16;
-    public static final double EXTENDING_R_PRECISION = 2;
-    public static final double RETRACTING_SWITCH_TO_PARALLEL_ANGLE_PRECISION = 7;
-    public static final double EXTENDING_PARALLEL_ANGLE_PRECISION = 12;
+    public static final double EXTENDING_R_PRECISION = 16;
+    public static final double EXTENDING_PARALLEL_ANGLE_PRECISION = 15;
     public static final double MIN_Y_POSITION = 6;
+    public static final double BUMPER_AVOIDANCE_HEIGHT = 20;
 
     /**
      * Stores constants related to pivot.
@@ -261,8 +260,8 @@ public final class Constants {
       public static final int CURRENT_LIMIT = 20;
       public static final double MAX_EXTENSION_INCHES = 29;
       public static final double MIN_EXTENSION_INCHES = -0.1;
-      public static final double MAX_VELOCITY_INCHES_PER_SEC = 10;
-      public static final double MAX_ACCELERATION_INCHES_PER_SEC_SQUARED = 5;
+      public static final double MAX_VELOCITY_INCHES_PER_SEC = 20;
+      public static final double MAX_ACCELERATION_INCHES_PER_SEC_SQUARED = 40;
 
       // PID
       public static final double S = 0.32321;

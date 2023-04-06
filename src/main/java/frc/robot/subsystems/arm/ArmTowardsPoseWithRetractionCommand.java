@@ -8,10 +8,8 @@ import frc.robot.Constants.ArmConstants;
 public class ArmTowardsPoseWithRetractionCommand extends SequentialCommandGroup {
   Arm arm;
   ArmPose pose;
-  boolean extending;
-  double extensionPrecision = ArmConstants.RETRACTING_R_PRECISION;
-  double parallelAnglePrecision = ArmConstants.RETRACTING_SWITCH_TO_PARALLEL_ANGLE_PRECISION;
-
+  double anglePrecision = ArmConstants.EXTENDING_PARALLEL_ANGLE_PRECISION;
+  double extendingPrecision = ArmConstants.EXTENDING_R_PRECISION;
 
   /**
    * Creates a command that moves the {@link Arm} towards a given pose, retracting before rotating if the difference in
@@ -24,10 +22,12 @@ public class ArmTowardsPoseWithRetractionCommand extends SequentialCommandGroup 
     this.arm = arm;
     this.pose = pose;
 
-    this.extending = pose.getX() > arm.getPose().getX() && !pose.isInsideBumperZone();
-    if (extending) {
-      extensionPrecision = ArmConstants.EXTENDING_R_PRECISION;
-      parallelAnglePrecision = ArmConstants.EXTENDING_PARALLEL_ANGLE_PRECISION;
+    boolean needsToAvoidBumpers = pose.getY() < ArmConstants.BUMPER_AVOIDANCE_HEIGHT
+        && arm.getPose().getY() < ArmConstants.BUMPER_AVOIDANCE_HEIGHT;
+
+    if (needsToAvoidBumpers) {
+      anglePrecision = 5;
+      extendingPrecision = 1;
     }
 
     addRequirements(arm);
@@ -45,7 +45,7 @@ public class ArmTowardsPoseWithRetractionCommand extends SequentialCommandGroup 
         new ArmToPoseCommand(
             arm, () -> ArmPose.fromAngleExtension(
                 arm.getRotation(), 0),
-            parallelAnglePrecision, extensionPrecision, false),
+            anglePrecision, extendingPrecision, false),
         // If target position is inside bumper collision zone, after retracting, rotate to safety angle and extend to
         // target extension sequentially.
         // new SequentialCommandGroup(
@@ -59,7 +59,7 @@ public class ArmTowardsPoseWithRetractionCommand extends SequentialCommandGroup 
         // Finally, completely rotate and extend to target position.
         new ArmToPoseCommand(arm,
             () -> ArmPose.fromAngleExtension(pose.getAngle(), 0),
-            parallelAnglePrecision, ArmConstants.BUMPER_AVOIDANCE_R_PRECISION, false),
+            anglePrecision, ArmConstants.BUMPER_AVOIDANCE_R_PRECISION, false),
         new ArmTowardsPoseCommand(arm, pose, false));
   }
 }
