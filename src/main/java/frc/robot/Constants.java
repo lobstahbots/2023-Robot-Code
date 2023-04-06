@@ -33,7 +33,7 @@ public final class Constants {
     public static final double RAMSETE_B = 2.0;
     public static final double RAMSETE_ZETA = 0.7;
     public static final double kS = 0.21559;
-    public static final double kV = 1.9096;
+    public static final double kV = 2.9096;
     public static final double kA = 0.14653;
     public static final double LEFT_kP = 2.071;
     public static final double RIGHT_kP = 1.1376;

@@ -256,9 +256,10 @@ public class AutonGenerator {
    * @param pickupPose The position to pick up the game piece from
    */
   public Command getGroundPickupCommand(Pose2d pickupPose) {
-    return new SequentialCommandGroup(new ArmToPoseWithRetractionCommand(arm, ArmPresets.GROUND_PICKUP, 1),
+    return new SequentialCommandGroup(
+        new ConstructLaterCommand(() -> new ArmToPoseWithRetractionCommand(arm, ArmPresets.GROUND_PICKUP, 4)),
         new ParallelRaceGroup(
-            new ArmTowardsPoseCommand(arm, ArmPresets.GROUND_PICKUP),
+            new ConstructLaterCommand(() -> new ArmTowardsPoseCommand(arm, ArmPresets.GROUND_PICKUP)),
             new ConstructLaterCommand(
                 () -> new DriveBasePathFollowCommand(driveBase,
                     driveBase.generatePath(
