@@ -29,55 +29,100 @@ import edu.wpi.first.math.util.Units;
 public final class Constants {
 
   /**
-   * Stores constants related to the robot.
-   */
-  public static final class RobotConstants {
-    public static final int COUNTS_PER_REV = 2048;
-    public static final double SENSOR_GEAR_RATIO = 10.71;
-    public static final double WHEEL_DIAMETER_INCHES = 6;
-    public static final double TRACK_WIDTH = 27.0;
-  }
-
-  /**
    * Stores constants related to path following.
    */
   public static final class PathConstants {
-    public static final double MAX_DRIVE_SPEED = 1;
-    public static final double MAX_ACCELERATION = 1;
+    public static final double MAX_DRIVE_SPEED = 0.6;
+    public static final double MAX_ACCELERATION = 0.4;
     public static final double RAMSETE_B = 2.0;
     public static final double RAMSETE_ZETA = 0.7;
-    public static final double kS = 0.56859;
-    public static final double kV = 2.4414;
-    public static final double kA = 0.24643;
-    public static final double kP = 0.00000094597;
+    public static final double kS = 0.057555;
+    public static final double kV = 6.1755;
+    public static final double kA = 1.2607;
+    public static final double LEFT_kP = 1.1085;
+    public static final double RIGHT_kP = 1.4327;
     public static final double kI = 0;
     public static final double KD = 0;
+    public static final double TURN_P = 0.035;
+    public static final double TURN_I = 0;
+    public static final double TURN_D = 0.02;
+    public static final double TURN_ANGLE_DEADBAND = 2;
+    public static final double POSE_DISTANCE_METERS_FILTER = 10;
   }
 
   /**
    * Stores constants related to this year's playing field.
    */
   public static final class FieldConstants {
+    public static final double SCORING_WAYPOINTS_X = 1.8;
+    public static final double TRAVELING_WAYPOINTS_X = 2.2;
+    public static final double GROUND_PICKUP_X = 6.5;
+
     public static final Pose2d[] SCORING_WAYPOINTS = new Pose2d[] {
-        new Pose2d(1.57, 0.43, new Rotation2d(Math.toRadians(180))),
-        new Pose2d(1.57, 1, new Rotation2d(Math.toRadians(180))),
-        new Pose2d(1.57, 1.6, new Rotation2d(Math.toRadians(180))),
-        new Pose2d(1.57, 2.2, new Rotation2d(Math.toRadians(180))),
-        new Pose2d(1.57, 2.7, new Rotation2d(Math.toRadians(180))),
-        new Pose2d(1.57, 3.3, new Rotation2d(Math.toRadians(180))),
-        new Pose2d(1.57, 3.85, new Rotation2d(Math.toRadians(180))),
-        new Pose2d(1.57, 4.4, new Rotation2d(Math.toRadians(180))),
-        new Pose2d(1.57, 5, new Rotation2d(Math.toRadians(180)))
+        new Pose2d(SCORING_WAYPOINTS_X, 0.5, Rotation2d.fromDegrees(180)),
+        new Pose2d(SCORING_WAYPOINTS_X, 1, Rotation2d.fromDegrees(180)),
+        new Pose2d(SCORING_WAYPOINTS_X, 1.6, Rotation2d.fromDegrees(180)),
+        new Pose2d(SCORING_WAYPOINTS_X, 2.2, Rotation2d.fromDegrees(180)),
+        new Pose2d(SCORING_WAYPOINTS_X, 2.7, Rotation2d.fromDegrees(180)),
+        new Pose2d(SCORING_WAYPOINTS_X, 3.3, Rotation2d.fromDegrees(180)),
+        new Pose2d(SCORING_WAYPOINTS_X, 3.85, Rotation2d.fromDegrees(180)),
+        new Pose2d(SCORING_WAYPOINTS_X, 4.4, Rotation2d.fromDegrees(180)),
+        new Pose2d(SCORING_WAYPOINTS_X, 5, Rotation2d.fromDegrees(180))
     };
     public static final Pose2d[] TRAVELING_WAYPOINTS = new Pose2d[] {
-        new Pose2d(2.75, 0.43, new Rotation2d(0)), new Pose2d(2.75, 1, new Rotation2d(0)),
-        new Pose2d(2.75, 1.6, new Rotation2d(0)), new Pose2d(2.75, 2.2, new Rotation2d(0)),
-        new Pose2d(2.75, 2.7, new Rotation2d(0)), new Pose2d(2.75, 3.3, new Rotation2d(0)),
-        new Pose2d(2.75, 3.85, new Rotation2d(0)), new Pose2d(2.75, 4.4, new Rotation2d(0)),
-        new Pose2d(2.75, 5, new Rotation2d(0))
+        new Pose2d(TRAVELING_WAYPOINTS_X, 0.5, new Rotation2d(0)),
+        new Pose2d(TRAVELING_WAYPOINTS_X, 0.75, new Rotation2d(0)),
+        new Pose2d(TRAVELING_WAYPOINTS_X, 1, new Rotation2d(0)),
+        new Pose2d(TRAVELING_WAYPOINTS_X, 1.6, new Rotation2d(0)),
+        new Pose2d(TRAVELING_WAYPOINTS_X, 2.2, new Rotation2d(0)),
+        new Pose2d(TRAVELING_WAYPOINTS_X, 2.7, new Rotation2d(0)),
+        new Pose2d(TRAVELING_WAYPOINTS_X, 3.3, new Rotation2d(0)),
+        new Pose2d(TRAVELING_WAYPOINTS_X, 3.85, new Rotation2d(0)),
+        new Pose2d(TRAVELING_WAYPOINTS_X, 4.35, new Rotation2d(0)),
+        new Pose2d(TRAVELING_WAYPOINTS_X, 4.65, new Rotation2d(0)),
+        new Pose2d(TRAVELING_WAYPOINTS_X, 4.85, new Rotation2d(0)),
     };
+
+    // public static final Pose2d[] TURNING_WAYPOINTS = new Pose2d[] {
+    // new Pose2d(2.5, 0.77, new Rotation2d(0)), new Pose2d(2.70, 5, new Rotation2d(0))
+    // };
+
+    public static final Pose2d[] CROSSING_WAYPOINTS = new Pose2d[] {
+        new Pose2d(5.85, 0.6, new Rotation2d(0)), new Pose2d(5.85, 4.85, new Rotation2d(0))
+    };
+
+    public static final Pose2d[] EXITING_CROSSING_WAYPOINTS = new Pose2d[] {
+        new Pose2d(5.65, 0.6, new Rotation2d(0)), new Pose2d(5.65, 4.85, new Rotation2d(0))
+    };
+
+    public static final Pose2d[] RETURNING_CROSSING_WAYPOINTS = new Pose2d[] {
+        new Pose2d(5.50, 0.75, new Rotation2d(180)), new Pose2d(4.75, 5, new Rotation2d(180))
+    };
+
+    public static final Pose2d[] ENTERING_SCORING_ZONE_WAYPOINTS = new Pose2d[] {
+        new Pose2d(2.95, 0.75, new Rotation2d(180)), new Pose2d(2.95, 5, new Rotation2d(180))
+    };
+
+    // public static final Pose2d[] ENDING_AUTON_POSES = new Pose2d[] {
+    // new Pose2d(6.00, 0.93, new Rotation2d(0)), new Pose2d(6.00, 2.15, new Rotation2d(0)),
+    // new Pose2d(6.50, 6.00, new Rotation2d(0)), new Pose2d(7.60, 7.26, new Rotation2d(0))
+    // };
+
+    public static final Pose2d[] GROUND_PICKUP_POSES = new Pose2d[] {
+        new Pose2d(GROUND_PICKUP_X, 0.75, new Rotation2d(0)), new Pose2d(GROUND_PICKUP_X, 4.59, new Rotation2d(0))
+    };
+
+    public static final Pose2d PLAYER_STATION_PICKUP_LEFT = new Pose2d(15.75, 7.4, new Rotation2d(0));
+    public static final Pose2d PLAYER_STATION_PICKUP_RIGHT = new Pose2d(15.75, 6.1, new Rotation2d(0));
+
+    public static final double PLAYER_STATION_PICKUP_ZONE = 0.6;
+
     public static final double MAX_AUTO_DISTANCE_METERS = 10;
+    public static final double MAX_PLAYER_STATION_X_ZONE = 7;
+    public static final double MAX_PLAYER_STATION_Y_ZONE = 5.5;
     public static final double SCORING_ZONE_DEADBAND = 0.5;
+    public static final double SCORING_ZONE_X = 3.5;
+    public static final double FIELD_LENGTH = 16.5;
   }
 
   /**
@@ -86,6 +131,11 @@ public final class Constants {
   public static final class AutonConstants {
     public static final double SIMPLE_AUTON_SPEED = 0.3;
     public static final double SIMPLE_AUTON_RUNTIME = 3.25;
+    public static final double AUTON_SCORING_TOLERANCE = 2;
+    public static final double OUTTAKE_RUNTIME = 1;
+    public static final double BACK_OFF_SPEED = -0.1;
+    public static final double DRIVE_BACK_SPEED = -0.2;
+    public static final double DRIVE_BACK_TIME = 0.7;
   }
 
   public static final class VisionConstants {
@@ -99,134 +149,178 @@ public final class Constants {
             new Rotation3d());
     public static final Transform3d ROBOT_TO_REAR_CAMERA =
         new Transform3d(new Translation3d(-Units.inchesToMeters(12.1585), 0.07, Units.inchesToMeters(20.749)),
-            new Rotation3d(0, 0, Math.PI));
+            new Rotation3d(-Math.PI / 2, 0, Math.PI));
     public static final double MAINTAIN_CAMERA_CONFIDENCE_THRESHOLD = 0.7;
+    public static final double MIN_TARGET_AREA = 0.3;
   }
 
   /**
-   * Stores constants related to driver controls, SmartDashboard and other user interface elements.
+   * Stores constants related to driver controls, SmartDashboard and other operator interface elements.
    */
-  public static final class UIConstants {
+  public static final class OIConstants {
     public static final class DriverConstants {
-      public static final int DRIVER_JOYSTICK_INDEX = 0;
+      public static final int DRIVER_USB_INDEX = 0;
       public static final boolean SQUARED_INPUTS = true;
       public static final int LEFT_AXIS = 1;
       public static final int RIGHT_AXIS = 5;
-      public static final int SLOWDOWN_BUTTON_INDEX = 2;
-      public static final double SLOWDOWN_PERCENT = 0.5;
+      public static final int SLOWDOWN_BTN = 5;
+      public static final double SLOWDOWN_FACTOR = 0.5;
+      public static final int TARGET_BTN = 1;
     }
 
     public static final class OperatorConstants {
-      public static final int OPERATOR_JOYSTICK_INDEX = 1;
+      public static final int OPERATOR_USB_INDEX = 1;
       public static final double JOYSTICK_DEADBAND = 0.05;
-      public static final int ELEVATOR_AXIS = 1;
-      public static final int ARM_AXIS = 5;
 
-      public static final int MANUAL_CONTROL_BUTTON_INDEX = 7;
-      public static final int INTAKE_BUTTON_INDEX = 5;
-      public static final int OUTTAKE_BUTTON_INDEX = 6;
+      public static final int INTAKE_BTN = 5;
+      public static final int OUTTAKE_BTN = 6;
 
-      public static final int LOW_GOAL_BTN_INDEX = 2;
-      public static final int MID_GOAL_BTN_INDEX = 1;
-      public static final int HIGH_GOAL_BTN_INDEX = 4;
-      // public static final int PLACE_CONE_BTN_INDEX = 3;
-      public static final int STATION_PICKUP_BTN_INDEX = 3;
-      // public static final int CONE_PICKUP_BTN_INDEX = 0;
+      public static final int MANUAL_CONTROL_BTN = 8;
+      public static final double MANUAL_CONTROL_SPEED = 1.3;
+      public static final int MANUAL_X_JOYSTICK_AXIS = 1;
+      public static final int MANUAL_Y_JOYSTICK_AXIS = 5;
+
+      // public static final int LEFT_PICKUP_POV = 270;
+      // public static final int RIGHT_PICKUP_POV = 90;
+      // public static final int GROUND_PICKUP_POV = 180;
+
+      public static final int LOW_GOAL_POV = 180;
+      public static final int MID_GOAL_POV = 90;
+      public static final int HIGH_GOAL_POV = 0;
+      public static final int PLAYER_STATION_POV = 270;
+
+      public static final int LEFT_PICKUP_BTN = 1;
+      public static final int RIGHT_PICKUP_BTN = 3;
+      public static final int GROUND_PICKUP_BTN = 2;
+
+      // public static final int LOW_GOAL_BTN = 2;
+      // public static final int MID_GOAL_BTN = 3;
+      // public static final int HIGH_GOAL_BTN = 4;
+      // public static final int PLACE_DOWN_BTN = 1;
     }
   }
 
   /**
-   * Stores constants related to the arm.
+   * Stores constants related the arm (pivot and elevator).
    */
   public static final class ArmConstants {
-    public static final int ENCODER_CHANNEL = 3;
-    public static final int LEFT_MOTOR_ID = 21; // TODO: figure out which is left and which is right
-    public static final int RIGHT_MOTOR_ID = 22;
-    public static final int CURRENT_LIMIT = 40;
+    public static final Translation2d ROBOT_TO_SCORING_ORIGIN = new Translation2d(0, 0); // TODO
+    public static final double RETRACT_BEFORE_ROTATING_ANGLE = 5;
+    public static final double RETRACT_BEFORE_ROTATING_PRECISION = 5;
+    public static final Rotation2d BUMPER_AVOIDANCE_ANGLE = Rotation2d.fromDegrees(52);
+    public static final double BUMPER_AVOIDANCE_X = 0;
+    public static final double BUMPER_AVOIDANCE_EXTENSION_PRECISION = 0.5;
+    public static final double BUMPER_AVOIDANCE_DEADBAND_EXTENSION = 2;
+    public static final double BUMPER_AVOIDANCE_ANGLE_PRECISION = 3;
+    public static final double SWITCH_TO_PARALLEL_ANGLE_PRECISION = 7;
+    public static final double MIN_Y_POSITION = 6;
 
-    public static final double PIVOT_HEIGHT_FROM_GROUND = 51.428;
-    public static final double PIVOT_SETBACK = -27.521;
-    public static final double ARM_OFFSET_DEG = 285;
-    public static final Rotation2d ZERO_ARM_OFFSET = new Rotation2d(Units.degreesToRadians(60));
-    public static final Rotation2d ANGLE_AT_ARM_ZERO = new Rotation2d(Units.degreesToRadians(22));
-    public static final double ARM_DEGREES_PER_ROTATION = 360;
+    /**
+     * Stores constants related to pivot.
+     */
+    public static final class PivotConstants {
+      // Geometry
+      public static final Translation2d ORIGIN_TO_PIVOT = new Translation2d(-24.343, 50);
+      public static final double PIVOT_OFFSET_DEG = 319;
 
-    public static final double MAX_VELOCITY_DEG_PER_SEC = 300;
-    public static final double MAX_ACCELERATION_DEG_PER_SEC_SQUARED = 1000;
-    public static final double MAX_ROTATION_DEG = 75;
-    public static final double MIN_ROTATION_DEG = 0;
+      // IO
+      public static final int ENCODER_CHANNEL = 3;
+      public static final double PIVOT_DEGREES_PER_ROTATION = 360;
+      public static final int LEFT_MOTOR_ID = 21; // TODO: figure out which is left and which is right
+      public static final int RIGHT_MOTOR_ID = 22;
 
-    public static final double ROTATION_ERROR_DEADBAND = 1;
-    public static final double SEQUENTIAL_ROTATION_ERROR_DEADBAND = 5;
-    public static final double RETRACT_BEFORE_MOVING_DEADBAND = 5;
+      // Limits
+      public static final int CURRENT_LIMIT = 40;
+      public static final double MAX_VELOCITY_DEG_PER_SEC = 1000;
+      public static final double MAX_ACCELERATION_DEG_PER_SEC_SQUARED = 900;
+      public static final double MAX_ROTATION_DEG = 105;
+      public static final double MIN_ROTATION_DEG = 35;
 
-    public static final double kP = 0.03;
-    public static final double kSVolts = 0;
-    public static final double kGVolts = 0;
-    public static final double kAVoltSecondSquaredPerRad = 0;
-    public static final double kVVoltSecondPerRad = 0;
-  }
+      // PID
+      public static final double P = 0.032;
+      public static final double D = 0.00;
+      public static final double S_VOLTS = 0.13944;
+      public static final double G_VOLTS = 0;
+      public static final double A_VOLT_SECOND_SQUARED_PER_RAD = 3.0666;
+      public static final double V_VOLT_SECOND_PER_RAD = 1.25439;
+      public static final double ROTATION_PID_TOLERANCE = 1;
+    }
 
-  /**
-   * Stores positions for the arm.
-   */
-  public static final class ArmPositionConstants {
-    public static final Translation2d GROUND_PICKUP = new Translation2d(10, 5);
-    public static final Translation2d GROUND_SCORING = new Translation2d(15, 5);
-    public static final Translation2d MID_GOAL_SCORING = new Translation2d(22.75, 38);
-    public static final Translation2d HIGH_GOAL_SCORING = new Translation2d(39.75, 50);
-    public static final Translation2d CONE_SCORING_OFFSET = new Translation2d(0, -4);
-    public static final Translation2d PLAYER_STATION_PICKUP = new Translation2d(10, 44.375);
-    public static final Translation2d OUTSIDE_BUMPERS = new Translation2d(0, 0);
-  }
+    /**
+     * Stores constants related to the elevator.
+     */
+    public static final class ElevatorConstants {
+      public static final double LENGTH_FULLY_RETRACTED = 38;
+      public static final double HOME_SPEED = 0.65;
 
-  /**
-   * Stores constants related to the elevator.
-   */
-  public static final class ElevatorConstants {
-    public static final int ENCODER_CHANNEL_A = 0;
-    public static final int ENCODER_CHANNEL_B = 1;
-    public static final int LIMIT_SWITCH_CHANNEL = 2;
-    public static final int ELEVATOR_MOTOR_ID = 31;
-    public static final int CURRENT_LIMIT = 20;
+      // IO
+      public static final int ENCODER_CHANNEL_A = 0;
+      public static final int ENCODER_CHANNEL_B = 1;
+      public static final double DISTANCE_PER_PULSE = 5.5 / 2048; // 5.5 inches for a 22 tooth-sprocket with 1/4" chain
+                                                                  // links
+      public static final int LIMIT_SWITCH_CHANNEL = 2;
+      public static final int ELEVATOR_MOTOR_ID = 31;
 
-    public static final double LENGTH_FULLY_RETRACTED = 42.25;
-    public static final double LENGTH_RETRACTED_BEFORE_ROTATING = 0.5;
-    public static final double MAX_EXTENSION_INCHES = 29;
-    public static final double MIN_EXTENSION_INCHES = -0.1;
-    public static final double HOME_SPEED = 0.18;
-    public static final double MAX_VELOCITY_INCHES_PER_SEC = 10;
-    public static final double MAX_ACCELERATION_INCHES_PER_SEC_SQUARED = 5;
-    public static final double DISTANCE_PER_PULSE = 5.5 / 2048; // 5.5 inches for a 22 tooth-sprocket with 1/4" chain
-                                                                // links
-    public static final double kS = 0.32321;
-    public static final double kV = 0.123766;
-    public static final double kA = 0.0853;
-    public static final double kG = -0.11681;
-    public static final double kP = 0.16023;
+      // Limits
+      public static final int CURRENT_LIMIT = 20;
+      public static final double MAX_EXTENSION_INCHES = 29;
+      public static final double MIN_EXTENSION_INCHES = -0.1;
+      public static final double MAX_VELOCITY_INCHES_PER_SEC = 10;
+      public static final double MAX_ACCELERATION_INCHES_PER_SEC_SQUARED = 5;
+
+      // PID
+      public static final double S = 0.32321;
+      public static final double V = 0.123766;
+      public static final double A = 0.0853;
+      public static final double G = -0.11681;
+      public static final double P = 0.16023;
+    }
   }
 
   /**
    * Stores constants related to the intake.
    */
   public static final class IntakeConstants {
+    public static final Translation2d INTAKE_OFFSET = new Translation2d(4.281, 6.37);
+
+    // IO
     public static final int LEFT_MOTOR_ID = 0;
     public static final int RIGHT_MOTOR_ID = 1;
+    public static final int LEFT_MOTOR_PD_CHANNEL = 7;
+    public static final int RIGHT_MOTOR_PD_CHANNEL = 9;
 
-    public static final double INTAKE_HEIGHT = 6.37;
-
-    public static final double OUTTAKE_VOLTAGE = 2.4;
+    // Speeds
+    public static final double OUTTAKE_VOLTAGE = 1.8;
     public static final double INTAKE_VOLTAGE = -5;
     public static final double PASSIVE_INTAKE_VOLTAGE = -1.6;
+
+    public static final double STOPPED_CURRENT_THRESHOLD = 2;
   }
+
+  /**
+   * Stores preset poses for the arm.
+   */
+  public static final class ArmPresets {
+    public static final ArmPose STOWED = ArmPose.fromAngleExtension(Rotation2d.fromDegrees(36), -0.1);
+    public static final ArmPose GROUND_PICKUP = ArmPose.fromXY(16.4, 10.2);
+    public static final ArmPose MID_GOAL_SCORING = ArmPose.fromXY(25, 47); // before dropping
+    public static final ArmPose LOW_GOAL_SCORING = ArmPose.fromXY(15, 14);
+    public static final ArmPose HIGH_GOAL_SCORING = ArmPose.fromXY(42, 59);
+    public static final Translation2d CONE_SCORING_DROPDOWN = new Translation2d(0, -10);
+    public static final Translation2d CONE_SCORING_BACKOFF = new Translation2d(-4, -7);
+    public static final Translation2d CONE_SCORING_BACK_UP = new Translation2d(-4, 0);
+    public static final ArmPose PLAYER_STATION_PICKUP = ArmPose.fromXY(18, 46);
+  }
+
 
   /**
    * Stores constants related to the DriveBase.
    */
   public static final class DriveConstants {
-    public static final double ACCELERATION_RATE_LIMIT = 1.5;
-    public static final DifferentialDriveKinematics KINEMATICS =
-        new DifferentialDriveKinematics(Units.inchesToMeters(RobotConstants.TRACK_WIDTH));
+    public static final int COUNTS_PER_REV = 2048;
+    public static final double SENSOR_GEAR_RATIO = 8.458646;
+    public static final double WHEEL_RADIUS_INCHES = 2.97262;
+    public static final double TRACK_WIDTH = 18.75;
 
     public static final class DriveMotorCANIDs {
       public static final int RIGHT_FRONT = 14;
@@ -235,11 +329,11 @@ public final class Constants {
       public static final int LEFT_BACK = 11;
     }
 
-    public static final int STATOR_CURRENT_LIMIT = 50;
+    public static final int STATOR_CURRENT_LIMIT = 80;
     public static final int SUPPLY_CURRENT_LIMIT = 80;
-    public static final int STATOR_TRIGGER_THRESHOLD = 60;
-    public static final double STATOR_TRIGGER_THRESHOLD_TIME = 0.1;
-    public static final int SUPPLY_TRIGGER_THRESHOLD = 90;
+    public static final int STATOR_TRIGGER_THRESHOLD = 100;
+    public static final double STATOR_TRIGGER_THRESHOLD_TIME = 0.5;
+    public static final int SUPPLY_TRIGGER_THRESHOLD = 100;
     public static final double SUPPLY_TRIGGER_THRESHOLD_TIME = 0.5;
 
     public static final LinearSystem<N2, N2, N2> kDrivetrainPlant =
@@ -251,5 +345,10 @@ public final class Constants {
 
     public static final DCMotor kDriveGearbox = DCMotor.getFalcon500(2);
     public static final double kDriveGearing = 8.75;
+    public static final double SLEW_RATE_LIMIT = 1.8;
+
+    public static final double ACCELERATION_RATE_LIMIT = 1.5;
+    public static final DifferentialDriveKinematics KINEMATICS =
+        new DifferentialDriveKinematics(Units.inchesToMeters(TRACK_WIDTH));
   }
 }

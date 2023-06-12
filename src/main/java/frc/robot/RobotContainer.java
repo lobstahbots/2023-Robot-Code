@@ -4,39 +4,43 @@
 
 package frc.robot;
 
+import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.pathplanner.lib.server.PathPlannerServer;
+import com.revrobotics.CANSparkMax.IdleMode;
+import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.geometry.Translation2d;
+import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.PowerDistribution;
+import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
+import edu.wpi.first.wpilibj2.command.Command.InterruptionBehavior;
+import edu.wpi.first.wpilibj2.command.CommandScheduler;
+import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
-import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import frc.robot.Constants.ArmConstants;
-import frc.robot.Constants.ArmPositionConstants;
+import frc.robot.Constants.ArmConstants.ElevatorConstants;
+import frc.robot.Constants.ArmConstants.PivotConstants;
+import frc.robot.Constants.ArmPresets;
 import frc.robot.Constants.DriveConstants.DriveMotorCANIDs;
-import frc.robot.Constants.ElevatorConstants;
 import frc.robot.Constants.FieldConstants;
 import frc.robot.Constants.IntakeConstants;
-import frc.robot.Constants.UIConstants.DriverConstants;
-import frc.robot.Constants.UIConstants.OperatorConstants;
+import frc.robot.Constants.OIConstants.DriverConstants;
+import frc.robot.Constants.OIConstants.OperatorConstants;
 import frc.robot.auton.AutonGenerator;
-import frc.robot.commands.arm.MaintainArmAngleCommand;
-import frc.robot.commands.arm.MoveArmToPositionCommand;
-import frc.robot.commands.arm.RotateArmCommand;
-import frc.robot.commands.arm.RotateArmToAngleCommand;
-import frc.robot.commands.arm.elevator.ResetElevatorCommand;
-import frc.robot.commands.arm.elevator.RunElevatorCommand;
-import frc.robot.commands.arm.elevator.RunElevatorToLengthCommand;
-import frc.robot.commands.drive.StopDriveCommand;
-import frc.robot.commands.drive.TankDriveCommand;
-import frc.robot.commands.intake.SpinIntakeCommand;
-import frc.robot.subsystems.Arm;
-import frc.robot.subsystems.DriveBase;
-import frc.robot.subsystems.Elevator;
-import frc.robot.subsystems.Intake;
-import lobstah.stl.command.PeriodicConditionalCommand;
-import lobstah.stl.io.LobstahGamepad;
+import frc.robot.subsystems.arm.Arm;
+import frc.robot.subsystems.arm.ArmTowardsPoseCommand;
+import frc.robot.subsystems.arm.ArmTowardsPoseWithRetractionCommand;
+import frc.robot.subsystems.driveBase.DriveBase;
+import frc.robot.subsystems.driveBase.DriveBaseStopCommand;
+import frc.robot.subsystems.driveBase.DriveBaseTankCommand;
+import frc.robot.subsystems.intake.Intake;
+import frc.robot.subsystems.intake.IntakeSpinCommand;
+import frc.robot.subsystems.arm.ArmResetElevatorCommand;
+import lobstah.stl.oi.LobstahGamepad;
 
 /**
  * This class is where the bulk of the robot should be declared. Since Command-based is a "declarative" paradigm, very
@@ -44,34 +48,29 @@ import lobstah.stl.io.LobstahGamepad;
  * Instead, the structure of the robot (including subsystems, commands, and button mappings) should be declared here.
  */
 public class RobotContainer {
+  private final PowerDistribution powerDistribution = new PowerDistribution();
+
   private final DriveBase driveBase = new DriveBase(
       DriveMotorCANIDs.LEFT_FRONT,
       DriveMotorCANIDs.LEFT_BACK,
       DriveMotorCANIDs.RIGHT_FRONT,
       DriveMotorCANIDs.RIGHT_BACK);
 
-  private final Arm arm = new Arm(ArmConstants.LEFT_MOTOR_ID, ArmConstants.RIGHT_MOTOR_ID,
-      ArmConstants.ENCODER_CHANNEL);
-  private final Elevator elevator =
-      new Elevator(ElevatorConstants.ELEVATOR_MOTOR_ID, ElevatorConstants.ENCODER_CHANNEL_A,
-          ElevatorConstants.ENCODER_CHANNEL_B, ElevatorConstants.LIMIT_SWITCH_CHANNEL);
-  private final Intake intake = new Intake(IntakeConstants.LEFT_MOTOR_ID, IntakeConstants.RIGHT_MOTOR_ID);
+  private final Arm arm = new Arm(PivotConstants.LEFT_MOTOR_ID, PivotConstants.RIGHT_MOTOR_ID,
+      PivotConstants.ENCODER_CHANNEL, ElevatorConstants.ELEVATOR_MOTOR_ID, ElevatorConstants.ENCODER_CHANNEL_A,
+      ElevatorConstants.ENCODER_CHANNEL_B, ElevatorConstants.LIMIT_SWITCH_CHANNEL);
 
-  private final AutonGenerator autonGenerator = new AutonGenerator(driveBase);
+  private final Intake intake =
+      new Intake(Constants.IntakeConstants.LEFT_MOTOR_ID, Constants.IntakeConstants.RIGHT_MOTOR_ID, powerDistribution,
+          Constants.IntakeConstants.LEFT_MOTOR_PD_CHANNEL, Constants.IntakeConstants.RIGHT_MOTOR_PD_CHANNEL);
 
-  private final LobstahGamepad driverJoystick = new LobstahGamepad(DriverConstants.DRIVER_JOYSTICK_INDEX);
-  private final JoystickButton slowdownButton = driverJoystick.button(DriverConstants.SLOWDOWN_BUTTON_INDEX);
+  private final AutonGenerator autonGenerator = new AutonGenerator(driveBase, arm, intake);
+  private final TargetSelector targetSelector = new TargetSelector();
 
-  private final LobstahGamepad operatorJoystick = new LobstahGamepad(OperatorConstants.OPERATOR_JOYSTICK_INDEX);
-  private final JoystickButton intakeButton = operatorJoystick.button(OperatorConstants.INTAKE_BUTTON_INDEX);
-  private final JoystickButton outtakeButton = operatorJoystick.button(OperatorConstants.OUTTAKE_BUTTON_INDEX);
-  private final JoystickButton manualControlButton =
-      operatorJoystick.button(OperatorConstants.MANUAL_CONTROL_BUTTON_INDEX);
-  private final JoystickButton lowGoalButton = operatorJoystick.button(OperatorConstants.LOW_GOAL_BTN_INDEX);
-  private final JoystickButton midGoalButton = operatorJoystick.button(OperatorConstants.MID_GOAL_BTN_INDEX);
-  private final JoystickButton highGoalButton = operatorJoystick.button(OperatorConstants.HIGH_GOAL_BTN_INDEX);
-  private final JoystickButton playerStationButton =
-      operatorJoystick.button(OperatorConstants.STATION_PICKUP_BTN_INDEX);
+  private final LobstahGamepad driverJoystick = new LobstahGamepad(DriverConstants.DRIVER_USB_INDEX);
+  private final LobstahGamepad operatorJoystick = new LobstahGamepad(OperatorConstants.OPERATOR_USB_INDEX);
+
+  private ArmPose manualTarget;
 
   /**
    * The container for the robot. Contains subsystems, OI devices, and commands.
@@ -83,81 +82,196 @@ public class RobotContainer {
   }
 
   /**
+   * Zeroes the gyro.
+   */
+  public void initGyro() {
+    driveBase.zeroGyro();
+  }
+
+  /**
+   * @return Whether the robot is within the scoring zone.
+   */
+  public boolean canDriveToTarget() {
+    if (DriverStation.getAlliance() == Alliance.Red) {
+      return driveBase.getPose().getX() >= FieldConstants.FIELD_LENGTH - FieldConstants.SCORING_ZONE_X;
+    } else {
+      return driveBase.getPose().getX() <= FieldConstants.SCORING_ZONE_X;
+    }
+  }
+
+  /**
+   * @return Whether the robot is within the pickup zone.
+   */
+  public boolean canDriveToStation() {
+    Pose2d flippedTargetPose = driveBase.flipWaypointBasedOnAlliance(FieldConstants.PLAYER_STATION_PICKUP_LEFT, false);
+    return !(Math.abs(
+        driveBase.getDistanceToPose(flippedTargetPose)
+            .getX()) > FieldConstants.MAX_PLAYER_STATION_X_ZONE
+        || Math.abs(driveBase.getDistanceToPose(flippedTargetPose)
+            .getY()) > FieldConstants.MAX_PLAYER_STATION_Y_ZONE);
+  }
+
+  /**
    * Use this method to define your button->command mappings.
    */
   private void configureButtonBindings() {
-    intakeButton.whileTrue(new SpinIntakeCommand(intake, IntakeConstants.INTAKE_VOLTAGE));
-    outtakeButton.whileTrue(new SpinIntakeCommand(intake, IntakeConstants.OUTTAKE_VOLTAGE));
-    manualControlButton
-        .whileTrue(new ParallelCommandGroup(
-            new RunElevatorCommand(elevator, () -> -operatorJoystick.getRawAxis(OperatorConstants.ELEVATOR_AXIS)),
-            new PeriodicConditionalCommand(
-                new RotateArmCommand(arm, () -> -operatorJoystick.getRawAxis(OperatorConstants.ARM_AXIS)),
-                new MaintainArmAngleCommand(arm),
-                () -> Math.abs(operatorJoystick
-                    .getRawAxis(OperatorConstants.ARM_AXIS)) > OperatorConstants.JOYSTICK_DEADBAND)));
-    highGoalButton.whileTrue(new MoveArmToPositionCommand(arm, elevator, ArmPositionConstants.HIGH_GOAL_SCORING));
-    midGoalButton.whileTrue(new MoveArmToPositionCommand(arm, elevator, ArmPositionConstants.MID_GOAL_SCORING));
-    lowGoalButton.whileTrue(new MoveArmToPositionCommand(arm, elevator, ArmPositionConstants.GROUND_SCORING));
-    playerStationButton
-        .whileTrue(new MoveArmToPositionCommand(arm, elevator, ArmPositionConstants.PLAYER_STATION_PICKUP));
-
-    slowdownButton.whileTrue(new TankDriveCommand(driveBase,
-        () -> DriverConstants.SLOWDOWN_PERCENT * driverJoystick.getRawAxis(DriverConstants.LEFT_AXIS),
-        () -> DriverConstants.SLOWDOWN_PERCENT * driverJoystick.getRawAxis(DriverConstants.RIGHT_AXIS),
+    // Drive slowdown
+    driverJoystick.button(DriverConstants.SLOWDOWN_BTN).whileTrue(new DriveBaseTankCommand(driveBase,
+        () -> DriverConstants.SLOWDOWN_FACTOR * driverJoystick.getRawAxis(DriverConstants.LEFT_AXIS),
+        () -> DriverConstants.SLOWDOWN_FACTOR * driverJoystick.getRawAxis(DriverConstants.RIGHT_AXIS),
         DriverConstants.SQUARED_INPUTS));
+
+    // operatorJoystick.button(OperatorConstants.PLACE_DOWN_BTN).onTrue(
+    // new ArmToPoseCommand(arm, () -> arm.getSetpointPose().translateBy(ArmPresets.CONE_SCORING_DROPDOWN), 2)
+    // .andThen(new SpinIntakeCommand(intake, IntakeConstants.OUTTAKE_VOLTAGE)
+    // .alongWith(Commands.waitSeconds(1).andThen(new ArmToPoseCommand(arm,
+    // () -> arm.getSetpointPose().translateBy(ArmPresets.CONE_SCORING_DROPDOWN.unaryMinus()), 2)))));
+
+    // Manual adjustment
+    // TODO: Shouldn't need to cache manual control target
+    operatorJoystick.button(OperatorConstants.MANUAL_CONTROL_BTN)
+        .whileTrue(new InstantCommand(() -> manualTarget = arm.getSetpointPose()).andThen(new ArmTowardsPoseCommand(arm,
+            () -> {
+              if (manualTarget.isInsideStowedZone()) {
+                manualTarget = ArmPose.fromAngleExtension(manualTarget.getAngle().plus(
+                    Rotation2d.fromDegrees(MathUtil
+                        .applyDeadband(-operatorJoystick.getRawAxis(OperatorConstants.MANUAL_Y_JOYSTICK_AXIS),
+                            OperatorConstants.JOYSTICK_DEADBAND)
+                        * OperatorConstants.MANUAL_CONTROL_SPEED)),
+                    0);
+              }
+              if (manualTarget.getY() < ArmConstants.MIN_Y_POSITION) {
+                manualTarget = manualTarget.translateBy(new Translation2d(
+                    MathUtil.applyDeadband(-operatorJoystick.getRawAxis(OperatorConstants.MANUAL_X_JOYSTICK_AXIS),
+                        OperatorConstants.JOYSTICK_DEADBAND) * OperatorConstants.MANUAL_CONTROL_SPEED,
+                    MathUtil.clamp(MathUtil.applyDeadband(
+                        -operatorJoystick.getRawAxis(OperatorConstants.MANUAL_Y_JOYSTICK_AXIS),
+                        OperatorConstants.JOYSTICK_DEADBAND) * OperatorConstants.MANUAL_CONTROL_SPEED, 0, 10)));
+              }
+              manualTarget = manualTarget.translateBy(new Translation2d(
+                  MathUtil.applyDeadband(-operatorJoystick.getRawAxis(OperatorConstants.MANUAL_X_JOYSTICK_AXIS),
+                      OperatorConstants.JOYSTICK_DEADBAND) * OperatorConstants.MANUAL_CONTROL_SPEED,
+                  MathUtil.applyDeadband(-operatorJoystick.getRawAxis(OperatorConstants.MANUAL_Y_JOYSTICK_AXIS),
+                      OperatorConstants.JOYSTICK_DEADBAND) * OperatorConstants.MANUAL_CONTROL_SPEED));
+              return manualTarget;
+            })
+                .withInterruptBehavior(InterruptionBehavior.kCancelIncoming)));
+
+
+    // Pickup
+    operatorJoystick.button(OperatorConstants.GROUND_PICKUP_BTN)
+        .whileTrue(new IntakeSpinCommand(intake, IntakeConstants.INTAKE_VOLTAGE)
+            .alongWith(new ArmTowardsPoseWithRetractionCommand(arm, ArmPresets.GROUND_PICKUP)));
+
+    // Legacy operator controls
+
+    operatorJoystick.pov(OperatorConstants.LOW_GOAL_POV)
+        .whileTrue(new ArmTowardsPoseWithRetractionCommand(arm, ArmPresets.GROUND_PICKUP));
+    operatorJoystick.pov(OperatorConstants.MID_GOAL_POV)
+        .whileTrue(new ArmTowardsPoseWithRetractionCommand(arm, ArmPresets.MID_GOAL_SCORING));
+    operatorJoystick.pov(OperatorConstants.HIGH_GOAL_POV)
+        .whileTrue(new ArmTowardsPoseWithRetractionCommand(arm, ArmPresets.HIGH_GOAL_SCORING));
+    operatorJoystick.pov(OperatorConstants.PLAYER_STATION_POV)
+        .whileTrue(new ArmTowardsPoseWithRetractionCommand(arm, ArmPresets.PLAYER_STATION_PICKUP));
+
+    operatorJoystick.button(OperatorConstants.INTAKE_BTN)
+        .whileTrue(new IntakeSpinCommand(intake, IntakeConstants.INTAKE_VOLTAGE));
+    operatorJoystick.button(OperatorConstants.OUTTAKE_BTN)
+        .whileTrue(new IntakeSpinCommand(intake, IntakeConstants.OUTTAKE_VOLTAGE));
   }
 
-  private final SendableChooser<Command> autonChooser = new SendableChooser<>();
+  /**
+   * Configures "left" and "right" Player station buttons depending on alliance color.
+   */
+  public void configurePlayerStationButtons() {
+    if (DriverStation.getAlliance() == Alliance.Blue) {
+      operatorJoystick.button(OperatorConstants.LEFT_PICKUP_BTN)
+          .whileTrue(autonGenerator.getDriveToPlayerStationCommand(FieldConstants.PLAYER_STATION_PICKUP_LEFT));
+      operatorJoystick.button(OperatorConstants.RIGHT_PICKUP_BTN)
+          .whileTrue(autonGenerator.getDriveToPlayerStationCommand(FieldConstants.PLAYER_STATION_PICKUP_RIGHT));
+    } else {
+      operatorJoystick.button(OperatorConstants.LEFT_PICKUP_BTN)
+          .whileTrue(autonGenerator.getDriveToPlayerStationCommand(FieldConstants.PLAYER_STATION_PICKUP_RIGHT));
+      operatorJoystick.button(OperatorConstants.RIGHT_PICKUP_BTN)
+          .whileTrue(autonGenerator.getDriveToPlayerStationCommand(FieldConstants.PLAYER_STATION_PICKUP_LEFT));
+    }
+  }
+
+  /**
+   * @return The target pose based on the selected color alliance.
+   */
+  public Pose2d getScoreColumn() {
+    return driveBase.flipWaypointBasedOnAlliance(
+        FieldConstants.SCORING_WAYPOINTS[flipColumnBasedOnAlliance(targetSelector.getColumn())], true);
+  }
+
+  /**
+   * Flips the selected column based on alliance color.
+   */
+
+  public int flipColumnBasedOnAlliance(int column) {
+    if (column > 8 || column < 0) {
+      return 0;
+    }
+    if (DriverStation.getAlliance() == Alliance.Red) {
+      return 8 - column;
+    } else {
+      return column;
+    }
+  }
+
+  private final SendableChooser<AutonGenerator.Auton> autonChooser = new SendableChooser<>();
   private final SendableChooser<Integer> initialPosition = new SendableChooser<>();
-  private final SendableChooser<Integer> crossingPosition = new SendableChooser<>();
-  private final SendableChooser<Integer> endingPosition = new SendableChooser<>();
-  private final SendableChooser<Integer> targetPosition = new SendableChooser<>();
+  private final SendableChooser<AutonGenerator.CrossingPosition> crossingPosition = new SendableChooser<>();
+  private final SendableChooser<Boolean> twoElement = new SendableChooser<>();
+  private final SendableChooser<Integer> preloadScoringRow = new SendableChooser<>();
+  private final SendableChooser<Integer> scoringPosition = new SendableChooser<>();
 
   /**
    * Use this method to run tasks that configure sendables and other smartdashboard items.
    */
   public void configureSmartDash() {
-    initialPosition.addOption("Furthest Down", 0);
-    initialPosition.addOption("Middle", 1);
-    initialPosition.addOption("Furthest Up", 2);
-    initialPosition.setDefaultOption("Furthest Up", 1);
-    crossingPosition.addOption("Below Platform", 0);
-    crossingPosition.addOption("Middle", 1);
-    crossingPosition.addOption("Above Platform", 2);
-    crossingPosition.setDefaultOption("Middle", 1);
-    endingPosition.addOption("Towards Player Station", 3);
-    endingPosition.addOption("Slightly Up", 2);
-    endingPosition.addOption("Slightly Down", 1);
-    endingPosition.addOption("Bottom Corner", 0);
-    endingPosition.setDefaultOption("Slightly Up", 2);
-    autonChooser.addOption("Path Follow Auton",
-        autonGenerator.getPathFollowCommand(initialPosition.getSelected(), crossingPosition.getSelected(),
-            endingPosition.getSelected()));
-    autonChooser.addOption("Simple Auton", autonGenerator.getSimpleAutonCommand());
-    autonChooser.addOption("Do Nothing Auton", new StopDriveCommand(driveBase));
-    targetPosition.addOption("0", 0);
-    targetPosition.addOption("1", 1);
-    targetPosition.addOption("2", 2);
-    targetPosition.addOption("3", 3);
-    targetPosition.addOption("4", 4);
-    targetPosition.addOption("5", 5);
-    targetPosition.addOption("6", 6);
-    targetPosition.addOption("7", 7);
-    targetPosition.addOption("8", 8);
-    targetPosition.setDefaultOption("0", 0);
+    initialPosition.addOption("0", 0);
+    initialPosition.addOption("1", 1);
+    initialPosition.addOption("2", 2);
+    initialPosition.addOption("3", 3);
+    initialPosition.addOption("4", 4);
+    initialPosition.addOption("5", 5);
+    initialPosition.addOption("6", 6);
+    initialPosition.addOption("7", 7);
+    initialPosition.addOption("8", 8);
+    initialPosition.setDefaultOption("0", 0);
+    crossingPosition.addOption("Right of Platform", AutonGenerator.CrossingPosition.RIGHT);
+    crossingPosition.addOption("Left of Platform", AutonGenerator.CrossingPosition.LEFT);
+    crossingPosition.setDefaultOption("Left of Platform", AutonGenerator.CrossingPosition.LEFT);
+    preloadScoringRow.addOption("High Goal", 0);
+    preloadScoringRow.addOption("Mid Goal", 1);
+    preloadScoringRow.addOption("Low Goal", 2);
+    preloadScoringRow.setDefaultOption("High Goal", 0);
+    scoringPosition.addOption("0", 0);
+    scoringPosition.addOption("1", 1);
+    scoringPosition.addOption("2", 2);
+    scoringPosition.addOption("3", 3);
+    scoringPosition.addOption("4", 4);
+    scoringPosition.addOption("5", 5);
+    scoringPosition.addOption("6", 6);
+    scoringPosition.addOption("7", 7);
+    scoringPosition.addOption("8", 8);
+    scoringPosition.setDefaultOption("0", 0);
+    twoElement.addOption("Run Two Element", true);
+    twoElement.addOption("Run One Element", false);
+    twoElement.setDefaultOption("Run One Element", false);
+    autonChooser.addOption("Path Follow Auton", AutonGenerator.Auton.DRIVE);
+    autonChooser.addOption("Do Nothing Auton", AutonGenerator.Auton.DO_NOTHING);
+    autonChooser.addOption("Score and Drive Auton", AutonGenerator.Auton.SCORE_AND_DRIVE);
+    autonChooser.addOption("Score Auton", AutonGenerator.Auton.SCORE);
     SmartDashboard.putData("Auton Chooser", autonChooser);
     SmartDashboard.putData("Initial Position Chooser", initialPosition);
     SmartDashboard.putData("Crossing Position Chooser", crossingPosition);
-    SmartDashboard.putData("Ending Position Chooser", endingPosition);
-    SmartDashboard.putData("Teleop Target", targetPosition);
-  }
-
-  /**
-   * Updates the robot target for teleop with input from Shuffleboard.
-   */
-  public Pose2d updateTarget() {
-    return FieldConstants.SCORING_WAYPOINTS[targetPosition.getSelected()];
+    SmartDashboard.putData("Teleop Target Selector", targetSelector);
+    SmartDashboard.putData("Number of Elements Chooser", twoElement);
+    SmartDashboard.putData("Scoring Row Chooser", preloadScoringRow);
+    SmartDashboard.putData("Scoring Position", scoringPosition);
   }
 
   /**
@@ -166,7 +280,38 @@ public class RobotContainer {
    * @return the command to run in autonomous
    */
   public Command getAutonomousCommand() {
-    return autonChooser.getSelected();
+    Command autonCommand;
+
+    switch (autonChooser.getSelected()) {
+      case DRIVE:
+        autonCommand =
+            autonGenerator.getExitCommunityCommand(initialPosition.getSelected(), crossingPosition.getSelected());
+        break;
+      case SCORE:
+        autonCommand = autonGenerator.getScoreCommand(scoringPosition.getSelected());
+        break;
+      case SCORE_AND_DRIVE:
+        autonCommand =
+            autonGenerator.getScoreAndDriveCommand(preloadScoringRow.getSelected(), initialPosition.getSelected(),
+                crossingPosition.getSelected(), twoElement.getSelected(), scoringPosition.getSelected());
+        break;
+      case DO_NOTHING:
+        autonCommand = new DriveBaseStopCommand(driveBase);
+        break;
+      default:
+        autonCommand = new DriveBaseStopCommand(driveBase);
+        break;
+    }
+
+    return new SequentialCommandGroup(
+        new ArmResetElevatorCommand(arm),
+        autonCommand);
+  }
+
+  public void initOdometry() {
+    driveBase.initOdometry(
+        driveBase.flipWaypointBasedOnAlliance(
+            FieldConstants.SCORING_WAYPOINTS[flipColumnBasedOnAlliance(initialPosition.getSelected())], true));
   }
 
   /**
@@ -175,19 +320,19 @@ public class RobotContainer {
    * setAutonDefaultCommands().
    */
   public void setTeleopDefaultCommands() {
+    CommandScheduler.getInstance().schedule(new ArmResetElevatorCommand(arm));
+    driveBase.setNeutralMode(NeutralMode.Brake);
+    arm.setIdleMode(IdleMode.kBrake);
     driveBase.setDefaultCommand(
-        new TankDriveCommand(
+        new DriveBaseTankCommand(
             driveBase,
             () -> -driverJoystick.getRawAxis(DriverConstants.LEFT_AXIS),
             () -> -driverJoystick.getRawAxis(DriverConstants.RIGHT_AXIS),
             DriverConstants.SQUARED_INPUTS));
-
     arm.setDefaultCommand(
-        new PeriodicConditionalCommand(new MaintainArmAngleCommand(arm), new RotateArmToAngleCommand(arm, 0),
-            () -> elevator.getExtension() > ElevatorConstants.LENGTH_RETRACTED_BEFORE_ROTATING));
-    elevator
-        .setDefaultCommand(new RunElevatorToLengthCommand(elevator, 0));
-    intake.setDefaultCommand(new SpinIntakeCommand(intake, IntakeConstants.PASSIVE_INTAKE_VOLTAGE));
+        new ArmTowardsPoseWithRetractionCommand(arm,
+            ArmPresets.STOWED));
+    intake.setDefaultCommand(new IntakeSpinCommand(intake, Constants.IntakeConstants.PASSIVE_INTAKE_VOLTAGE));
   }
 
   /**
@@ -196,7 +341,13 @@ public class RobotContainer {
    * setTeleopDefaultCommands().
    */
   public void setAutonDefaultCommands() {
-    driveBase.setDefaultCommand(new StopDriveCommand(driveBase));
+    driveBase.setNeutralMode(NeutralMode.Brake);
+    arm.setIdleMode(IdleMode.kBrake);
+    intake.setDefaultCommand(new IntakeSpinCommand(intake, Constants.IntakeConstants.PASSIVE_INTAKE_VOLTAGE));
+    arm.setDefaultCommand(
+        new ArmTowardsPoseWithRetractionCommand(arm,
+            ArmPresets.STOWED));
+    driveBase.setDefaultCommand(new DriveBaseStopCommand(driveBase));
   }
 
   /**
@@ -204,7 +355,9 @@ public class RobotContainer {
    * subsystems while in test mode.
    */
   public void setTestDefaultCommands() {
-    driveBase.setDefaultCommand(new StopDriveCommand(driveBase));
+    driveBase.setNeutralMode(NeutralMode.Coast);
+    driveBase.setDefaultCommand(new DriveBaseStopCommand(driveBase));
+    arm.setIdleMode(IdleMode.kCoast);
   }
 
   /**
@@ -212,6 +365,6 @@ public class RobotContainer {
    * commands for subsystems while running a simulation.
    */
   public void setSimDefaultCommands() {
-    driveBase.setDefaultCommand(new StopDriveCommand(driveBase));
+    driveBase.setDefaultCommand(new DriveBaseStopCommand(driveBase));
   }
 }

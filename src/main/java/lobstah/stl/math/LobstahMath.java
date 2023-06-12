@@ -32,6 +32,15 @@ public class LobstahMath {
     return ((x - inputMin) / inputRange * outputRange) + outputMin;
   }
 
+  /**
+   * Clamps and scales a number to a range of values to a corresponding value on a different range
+   * 
+   * @param x The number to scale.
+   * @param inputMin The original range's lower bound
+   * @param inputMax The original range's upper bound
+   * @param outputMin The new range's lower bound
+   * @param outputMax The new range's upper bound
+   */
   public static double scaleNumberToClampedRange(double x, double inputMin, double inputMax, double outputMin,
       double outputMax) {
     x = MathUtil.clamp(x, inputMin, outputMax);
@@ -45,9 +54,9 @@ public class LobstahMath {
    */
   public static int distanceToNativeUnits(double positionMeters) {
     double wheelRotations =
-        positionMeters / (2 * Math.PI * Units.inchesToMeters(Constants.RobotConstants.WHEEL_DIAMETER_INCHES));
-    double motorRotations = wheelRotations * Constants.RobotConstants.SENSOR_GEAR_RATIO;
-    int sensorCounts = (int) (motorRotations * Constants.RobotConstants.COUNTS_PER_REV);
+        positionMeters / (2 * Math.PI * Units.inchesToMeters(Constants.DriveConstants.WHEEL_RADIUS_INCHES));
+    double motorRotations = wheelRotations * Constants.DriveConstants.SENSOR_GEAR_RATIO;
+    int sensorCounts = (int) (motorRotations * Constants.DriveConstants.COUNTS_PER_REV);
     return sensorCounts;
   }
 
@@ -57,11 +66,11 @@ public class LobstahMath {
    * @param nativeVelocity The native velocity to convert to meters per second.
    */
   public static double nativeUnitsToVelocityMetersPerSecond(double nativeVelocity) {
-    double motorRotationsPer100ms = nativeVelocity / Constants.RobotConstants.COUNTS_PER_REV;
+    double motorRotationsPer100ms = nativeVelocity / Constants.DriveConstants.COUNTS_PER_REV;
     double motorRotationsPerSecond = motorRotationsPer100ms * 10;
-    double wheelRotationsPerSecond = motorRotationsPerSecond / Constants.RobotConstants.SENSOR_GEAR_RATIO;
+    double wheelRotationsPerSecond = motorRotationsPerSecond / Constants.DriveConstants.SENSOR_GEAR_RATIO;
     double velocityMetersPerSecond =
-        wheelRotationsPerSecond * (2 * Math.PI * Units.inchesToMeters(Constants.RobotConstants.WHEEL_DIAMETER_INCHES));
+        wheelRotationsPerSecond * (2 * Math.PI * Units.inchesToMeters(Constants.DriveConstants.WHEEL_RADIUS_INCHES));
     return velocityMetersPerSecond;
   }
 
@@ -71,10 +80,10 @@ public class LobstahMath {
    * @param positionMeters The number of sensor counts to convert to meters.
    */
   public static double nativeUnitsToDistanceMeters(double sensorCounts) {
-    double motorRotations = (double) sensorCounts / Constants.RobotConstants.COUNTS_PER_REV;
-    double wheelRotations = motorRotations / Constants.RobotConstants.SENSOR_GEAR_RATIO;
+    double motorRotations = (double) sensorCounts / Constants.DriveConstants.COUNTS_PER_REV;
+    double wheelRotations = motorRotations / Constants.DriveConstants.SENSOR_GEAR_RATIO;
     double positionMeters =
-        wheelRotations * (2 * Math.PI * Units.inchesToMeters(Constants.RobotConstants.WHEEL_DIAMETER_INCHES));
+        wheelRotations * (2 * Math.PI * Units.inchesToMeters(Constants.DriveConstants.WHEEL_RADIUS_INCHES));
     return positionMeters;
   }
 
