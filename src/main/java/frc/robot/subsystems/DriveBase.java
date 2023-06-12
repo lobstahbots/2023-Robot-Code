@@ -202,9 +202,9 @@ public class DriveBase extends SubsystemBase {
         leftMotors.get() * RobotController.getBatteryVoltage(),
         -rightMotors.get() * RobotController.getBatteryVoltage());
     drivetrainSimulator.update(0.020);
-    System.out.println(RobotController.getBatteryVoltage());
-    System.out.println(getLeftEncoderDistanceMeters());
-    System.out.println(getRightEncoderDistanceMeters());
+    // System.out.println(RobotController.getBatteryVoltage());
+    // System.out.println(getLeftEncoderDistanceMeters());
+    // System.out.println(getRightEncoderDistanceMeters());
     simLeftFrontMotor.setIntegratedSensorRawPosition(
         (int) LobstahMath.distanceToNativeUnits(drivetrainSimulator.getLeftPositionMeters()));
     // System.out.println(m_drivetrainSimulator.getLeftVelocityMetersPerSecond());
@@ -226,6 +226,13 @@ public class DriveBase extends SubsystemBase {
         -(int) LobstahMath.metersPerSecondToFalcon500Velocity(drivetrainSimulator.getRightVelocityMetersPerSecond(),
             Units.inchesToMeters(3)));
     gyroAngle.set(-drivetrainSimulator.getHeading().getDegrees());
+
+    fieldSim.setRobotPose(getPose());
+
+    SmartDashboard.putNumber("Gyro", this.getHeading().getDegrees());
+    SmartDashboard.putData("Field", fieldSim);
+    SmartDashboard.putNumber("Number of Tags Visible In Front", this.photonVision.getFrontTargets().size());
+    SmartDashboard.putNumber("Number of Tags Visible In Rear", this.photonVision.getRearTargets().size());
   }
 
   @Override
@@ -235,7 +242,6 @@ public class DriveBase extends SubsystemBase {
    */
   public void periodic() {
     poseEstimator.update(getHeading(), getLeftEncoderDistanceMeters(), getRightEncoderDistanceMeters());
-    fieldSim.setRobotPose(getPose());
     // try {
     // EstimatedRobotPose estimatedVisionPose = this.photonVision.getCurrentPose();
     // SmartDashboard.putString("PhotonVision Pose", estimatedVisionPose.estimatedPose.toString());
