@@ -16,6 +16,9 @@
       "/SmartDashboard/Ending Position Chooser": "String Chooser",
       "/SmartDashboard/Field": "Field2d",
       "/SmartDashboard/Initial Position Chooser": "String Chooser",
+      "/SmartDashboard/Number of Elements Chooser": "String Chooser",
+      "/SmartDashboard/Scoring Position": "String Chooser",
+      "/SmartDashboard/Scoring Row Chooser": "String Chooser",
       "/SmartDashboard/Teleop Target": "String Chooser"
     },
     "windows": {
@@ -29,6 +32,22 @@
           "visible": true
         }
       }
+    }
+  },
+  "NetworkTables": {
+    "Persistent Values": {
+      "open": false
+    },
+    "Retained Values": {
+      "open": false
+    }
+  },
+  "NetworkTables Info": {
+    "Clients": {
+      "open": true
+    },
+    "Connections": {
+      "open": true
     }
   }
 }

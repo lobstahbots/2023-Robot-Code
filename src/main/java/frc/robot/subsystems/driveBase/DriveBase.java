@@ -1,6 +1,7 @@
 
 package frc.robot.subsystems.driveBase;
 
+import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Supplier;
@@ -33,17 +34,21 @@ import edu.wpi.first.wpilibj.RobotController;
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.estimator.DifferentialDrivePoseEstimator;
 import edu.wpi.first.math.kinematics.DifferentialDriveWheelSpeeds;
+import edu.wpi.first.wpilibj.AnalogGyro;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.motorcontrol.MotorControllerGroup;
 import edu.wpi.first.wpilibj.simulation.ADXRS450_GyroSim;
+import edu.wpi.first.wpilibj.simulation.AnalogGyroSim;
 import edu.wpi.first.wpilibj.simulation.DifferentialDrivetrainSim;
+import edu.wpi.first.wpilibj.simulation.DifferentialDrivetrainSim.KitbotGearing;
+import edu.wpi.first.wpilibj.simulation.DifferentialDrivetrainSim.KitbotMotor;
+import edu.wpi.first.wpilibj.simulation.DifferentialDrivetrainSim.KitbotWheelSize;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.DriveConstants;
 import frc.robot.Constants.PathConstants;
-import frc.robot.Constants.RobotConstants;
 import frc.robot.Constants.VisionConstants;
 import lobstah.stl.math.LobstahMath;
 import lobstah.stl.motorcontrol.LobstahDifferentialDrive;
@@ -160,14 +165,20 @@ public class DriveBase extends SubsystemBase {
 
     if (RobotBase.isSimulation()) { // If our robot is simulated
       // This class simulates our drivetrain's motion around the field.
-      drivetrainSimulator =
-          new DifferentialDrivetrainSim(
-              DriveConstants.kDrivetrainPlant,
-              DriveConstants.kDriveGearbox,
-              DriveConstants.kDriveGearing,
-              Units.inchesToMeters(RobotConstants.TRACK_WIDTH),
-              Units.inchesToMeters(RobotConstants.WHEEL_DIAMETER_INCHES / 2.0),
-              VecBuilder.fill(0, 0, 0.0001, 0.1, 0.1, 0.005, 0.005));
+      // drivetrainSimulator =
+      // new DifferentialDrivetrainSim(
+      // DriveConstants.kDrivetrainPlant,
+      // DriveConstants.kDriveGearbox,
+      // DriveConstants.kDriveGearing,
+      // Units.inchesToMeters(DriveConstants.TRACK_WIDTH),
+      // Units.inchesToMeters(DriveConstants.WHEEL_RADIUS_INCHES),
+      // VecBuilder.fill(0, 0, 0.0001, 0.1, 0.1, 0.005, 0.005));
+      drivetrainSimulator = DifferentialDrivetrainSim.createKitbotSim(
+          KitbotMotor.kDualCIMPerSide, // 2 CIMs per side.
+          KitbotGearing.k10p71, // 10.71:1
+          KitbotWheelSize.kSixInch, // 6" diameter wheels.
+          null // No measurement noise.
+      );
 
       simLeftBackMotor = new TalonFXSimCollection(leftBackMotor);
       simRightBackMotor = new TalonFXSimCollection(rightBackMotor);
@@ -210,7 +221,7 @@ public class DriveBase extends SubsystemBase {
     // move forward.
     drivetrainSimulator.setInputs(
         leftMotors.get() * RobotController.getBatteryVoltage(),
-        -rightMotors.get() * RobotController.getBatteryVoltage());
+        rightMotors.get() * RobotController.getBatteryVoltage());
     drivetrainSimulator.update(0.020);
     // System.out.println(RobotController.getBatteryVoltage());
     // System.out.println(getLeftEncoderDistanceMeters());
@@ -236,37 +247,17 @@ public class DriveBase extends SubsystemBase {
         -(int) LobstahMath.metersPerSecondToFalcon500Velocity(drivetrainSimulator.getRightVelocityMetersPerSecond(),
             Units.inchesToMeters(3)));
     gyroAngle.set(-drivetrainSimulator.getHeading().getDegrees());
+    // gyroAngle.set(getGyroAngle180().getDegrees());
 
-    fieldSim.setRobotPose(getPose());
+    poseEstimator.update(Rotation2d.fromDegrees(gyroAngle.get()), getLeftEncoderDistanceMeters(),
+        getRightEncoderDistanceMeters());
 
-    SmartDashboard.putNumber("Gyro", this.getHeading().getDegrees());
+
+    SmartDashboard.putNumber("Gyro", this.getGyroAngle180().getDegrees());
     SmartDashboard.putData("Field", fieldSim);
     SmartDashboard.putNumber("Number of Tags Visible In Front", this.photonVision.getFrontTargets().size());
     SmartDashboard.putNumber("Number of Tags Visible In Rear", this.photonVision.getRearTargets().size());
   }
-
-  @Override
-  /**
-   * Updates the Pose Estimator with measurements from Photonvision and odometry and writes relevant values to the
-   * Shuffleboard.
-   */
-  public void periodic() {
-    poseEstimator.update(getHeading(), getLeftEncoderDistanceMeters(), getRightEncoderDistanceMeters());
-    // try {
-    // EstimatedRobotPose estimatedVisionPose = this.photonVision.getCurrentPose();
-    // SmartDashboard.putString("PhotonVision Pose", estimatedVisionPose.estimatedPose.toString());
-    // poseEstimator.addVisionMeasurement(estimatedVisionPose.estimatedPose,
-    // estimatedVisionPose.timestampSeconds);
-    // } catch (NullPointerException npe) {
-
-    // }
-
-    SmartDashboard.putNumber("Gyro", this.getHeading().getDegrees());
-    SmartDashboard.putString("Pose", this.getPose().toString());
-    SmartDashboard.putNumber("Number of Tags Visible In Front", this.photonVision.getFrontTargets().size());
-    SmartDashboard.putNumber("Number of Tags Visible In Rear", this.photonVision.getRearTargets().size());
-  }
-
 
   /**
    * Returns the current being drawn by the drivetrain. This works in SIMULATION ONLY! If you want it to work elsewhere,
@@ -448,6 +439,8 @@ public class DriveBase extends SubsystemBase {
       hasSeenTag = false;
       System.out.println("Reset pose");
     }
+
+    drivetrainSimulator.setPose(defaultPose);
   }
 
   /**
@@ -649,6 +642,7 @@ public class DriveBase extends SubsystemBase {
    */
   public void periodic() {
     poseEstimator.update(getGyroAngle180(), getLeftEncoderDistanceMeters(), getRightEncoderDistanceMeters());
+    fieldSim.setRobotPose(getPose());
     EstimatedRobotPose estimatedVisionPose = this.photonVision.getCurrentPose();
     SmartDashboard.putString("PhotonVision Pose",
         estimatedVisionPose == null ? "Null" : estimatedVisionPose.estimatedPose.toString());
@@ -663,11 +657,11 @@ public class DriveBase extends SubsystemBase {
       }
     }
 
-    if (!gyro.isCalibrating() && !gyroInitialized) {
-      if (gyro.getVelocityZ() != 0) {
-        gyroInitialized = true;
-      }
-    }
+    // if (!gyro.isCalibrating() && !gyroInitialized) {
+    // if (gyro.getVelocityZ() != 0) {
+    // gyroInitialized = true;
+    // }
+    // }
 
     SmartDashboard.putBoolean("Gyro Initialized", gyroInitialized);
     SmartDashboard.putNumber("Gyro", this.getGyroAngle180().getDegrees());

@@ -162,7 +162,7 @@ public final class Constants {
       public static final int DRIVER_USB_INDEX = 0;
       public static final boolean SQUARED_INPUTS = true;
       public static final int LEFT_AXIS = 1;
-      public static final int RIGHT_AXIS = 5;
+      public static final int RIGHT_AXIS = 0;
       public static final int SLOWDOWN_BTN = 5;
       public static final double SLOWDOWN_FACTOR = 0.5;
       public static final int TARGET_BTN = 1;
