@@ -231,47 +231,48 @@ public class RobotContainer {
    * Use this method to run tasks that configure sendables and other smartdashboard items.
    */
   public void configureSmartDash() {
-    // initialPosition.addOption("0", 0);
-    // initialPosition.addOption("1", 1);
-    // initialPosition.addOption("2", 2);
-    // initialPosition.addOption("3", 3);
-    // initialPosition.addOption("4", 4);
-    // initialPosition.addOption("5", 5);
-    // initialPosition.addOption("6", 6);
-    // initialPosition.addOption("7", 7);
-    // initialPosition.addOption("8", 8);
-    // initialPosition.setDefaultOption("0", 0);
-    // crossingPosition.addOption("Right of Platform", AutonGenerator.CrossingPosition.RIGHT);
-    // crossingPosition.addOption("Left of Platform", AutonGenerator.CrossingPosition.LEFT);
-    // crossingPosition.setDefaultOption("Left of Platform", AutonGenerator.CrossingPosition.LEFT);
-    // preloadScoringRow.addOption("High Goal", 0);
-    // preloadScoringRow.addOption("Mid Goal", 1);
-    // preloadScoringRow.addOption("Low Goal", 2);
-    // preloadScoringRow.setDefaultOption("High Goal", 0);
-    // scoringPosition.addOption("0", 0);
-    // scoringPosition.addOption("1", 1);
-    // scoringPosition.addOption("2", 2);
-    // scoringPosition.addOption("3", 3);
-    // scoringPosition.addOption("4", 4);
-    // scoringPosition.addOption("5", 5);
-    // scoringPosition.addOption("6", 6);
-    // scoringPosition.addOption("7", 7);
-    // scoringPosition.addOption("8", 8);
-    // scoringPosition.setDefaultOption("0", 0);
-    // twoElement.addOption("Run Two Element", true);
-    // twoElement.addOption("Run One Element", false);
-    // twoElement.setDefaultOption("Run One Element", false);
-    // autonChooser.addOption("Path Follow Auton", AutonGenerator.Auton.DRIVE);
-    // autonChooser.addOption("Do Nothing Auton", AutonGenerator.Auton.DO_NOTHING);
-    // autonChooser.addOption("Score and Drive Auton", AutonGenerator.Auton.SCORE_AND_DRIVE);
-    // autonChooser.addOption("Score Auton", AutonGenerator.Auton.SCORE);
-    // SmartDashboard.putData("Auton Chooser", autonChooser);
-    // SmartDashboard.putData("Initial Position Chooser", initialPosition);
-    // SmartDashboard.putData("Crossing Position Chooser", crossingPosition);
-    // SmartDashboard.putData("Teleop Target Selector", targetSelector);
-    // SmartDashboard.putData("Number of Elements Chooser", twoElement);
-    // SmartDashboard.putData("Scoring Row Chooser", preloadScoringRow);
-    // SmartDashboard.putData("Scoring Position", scoringPosition);
+    initialPosition.addOption("0", 0);
+    initialPosition.addOption("1", 1);
+    initialPosition.addOption("2", 2);
+    initialPosition.addOption("3", 3);
+    initialPosition.addOption("4", 4);
+    initialPosition.addOption("5", 5);
+    initialPosition.addOption("6", 6);
+    initialPosition.addOption("7", 7);
+    initialPosition.addOption("8", 8);
+    initialPosition.setDefaultOption("0", 0);
+    crossingPosition.addOption("Right of Platform", AutonGenerator.CrossingPosition.RIGHT);
+    crossingPosition.addOption("Left of Platform", AutonGenerator.CrossingPosition.LEFT);
+    crossingPosition.setDefaultOption("Left of Platform", AutonGenerator.CrossingPosition.LEFT);
+    preloadScoringRow.addOption("High Goal", 0);
+    preloadScoringRow.addOption("Mid Goal", 1);
+    preloadScoringRow.addOption("Low Goal", 2);
+    preloadScoringRow.setDefaultOption("High Goal", 0);
+    scoringPosition.addOption("0", 0);
+    scoringPosition.addOption("1", 1);
+    scoringPosition.addOption("2", 2);
+    scoringPosition.addOption("3", 3);
+    scoringPosition.addOption("4", 4);
+    scoringPosition.addOption("5", 5);
+    scoringPosition.addOption("6", 6);
+    scoringPosition.addOption("7", 7);
+    scoringPosition.addOption("8", 8);
+    scoringPosition.setDefaultOption("0", 0);
+    twoElement.addOption("Run Two Element", true);
+    twoElement.addOption("Run One Element", false);
+    twoElement.setDefaultOption("Run One Element", false);
+    autonChooser.addOption("Path Follow Auton", AutonGenerator.Auton.DRIVE);
+    autonChooser.addOption("Do Nothing Auton", AutonGenerator.Auton.DO_NOTHING);
+    autonChooser.addOption("Score and Drive Auton", AutonGenerator.Auton.SCORE_AND_DRIVE);
+    autonChooser.addOption("Score Auton", AutonGenerator.Auton.SCORE);
+    autonChooser.setDefaultOption("Path Follow Auton", AutonGenerator.Auton.DRIVE);
+    SmartDashboard.putData("Auton Chooser", autonChooser);
+    SmartDashboard.putData("Initial Position Chooser", initialPosition);
+    SmartDashboard.putData("Crossing Position Chooser", crossingPosition);
+    SmartDashboard.putData("Teleop Target Selector", targetSelector);
+    SmartDashboard.putData("Number of Elements Chooser", twoElement);
+    SmartDashboard.putData("Scoring Row Chooser", preloadScoringRow);
+    SmartDashboard.putData("Scoring Position", scoringPosition);
   }
 
   /**
@@ -282,31 +283,32 @@ public class RobotContainer {
   public Command getAutonomousCommand() {
     Command autonCommand;
 
-    // switch (autonChooser.getSelected()) {
-    // case DRIVE:
-    // autonCommand =
-    // autonGenerator.getExitCommunityCommand(initialPosition.getSelected(), crossingPosition.getSelected());
-    // break;
-    // case SCORE:
-    // autonCommand = autonGenerator.getScoreCommand(scoringPosition.getSelected());
-    // break;
-    // case SCORE_AND_DRIVE:
-    // autonCommand =
-    // autonGenerator.getScoreAndDriveCommand(preloadScoringRow.getSelected(), initialPosition.getSelected(),
-    // crossingPosition.getSelected(), twoElement.getSelected(), scoringPosition.getSelected());
-    // break;
-    // case DO_NOTHING:
-    // autonCommand = new DriveBaseStopCommand(driveBase);
-    // break;
-    // default:
-    // autonCommand = new DriveBaseStopCommand(driveBase);
-    // break;
-    // }
+    switch (autonChooser.getSelected()) {
+      case DRIVE:
+        autonCommand =
+            autonGenerator.getExitCommunityCommand(initialPosition.getSelected(), crossingPosition.getSelected());
+        break;
+      case SCORE:
+        autonCommand = autonGenerator.getScoreCommand(scoringPosition.getSelected());
+        break;
+      case SCORE_AND_DRIVE:
+        autonCommand =
+            autonGenerator.getScoreAndDriveCommand(preloadScoringRow.getSelected(), initialPosition.getSelected(),
+                crossingPosition.getSelected(), twoElement.getSelected(), scoringPosition.getSelected());
+        break;
+      case DO_NOTHING:
+        autonCommand = new DriveBaseStopCommand(driveBase);
+        break;
+      default:
+        autonCommand = new DriveBaseStopCommand(driveBase);
+        break;
+    }
 
     // return new SequentialCommandGroup(
     // new ArmResetElevatorCommand(arm),
     // autonCommand);
-    return autonGenerator.getSimpleAutonCommand();
+    return autonCommand;
+    // return autonGenerator.getSimpleAutonCommand();
   }
 
   public void initOdometry() {

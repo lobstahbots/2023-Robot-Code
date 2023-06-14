@@ -40,6 +40,17 @@
     },
     "Retained Values": {
       "open": false
+    },
+    "transitory": {
+      "Shuffleboard": {
+        "open": true
+      },
+      "SmartDashboard": {
+        "Initial Position Chooser": {
+          "open": true
+        },
+        "open": true
+      }
     }
   },
   "NetworkTables Info": {
