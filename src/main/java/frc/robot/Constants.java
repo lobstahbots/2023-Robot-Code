@@ -148,6 +148,16 @@ public final class Constants {
             new Rotation3d(-Math.PI / 2, 0, Math.PI));
     public static final double MAINTAIN_CAMERA_CONFIDENCE_THRESHOLD = 0.7;
     public static final double MIN_TARGET_AREA = 0.3;
+
+    public static final double MIN_TURN = -0.3;
+    public static final double MAX_TURN = 0.3;
+    public static final double MIN_YAW_ERROR = -25;
+    public static final double MAX_YAW_ERROR = 25;
+
+    public static final double MAX_DRIVE_SPEED = 0.4;
+    public static final double MIN_DRIVE_SPEED = 0.1;
+    public static final double MAX_TAG_AREA = 20;
+    public static final double MIN_TAG_AREA = 2;
   }
 
   /**

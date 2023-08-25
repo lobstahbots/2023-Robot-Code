@@ -29,6 +29,7 @@ public class LobstahMath {
       throw new IllegalArgumentException("Input range cannot be 0");
 
     return ((x - inputMin) / inputRange * outputRange) + outputMin;
+
   }
 
   /**

@@ -99,6 +99,15 @@ public class PhotonVision extends SubsystemBase {
   }
 
   /**
+   * Returns a List of the visible AprilTags from all cameras.
+   */
+  public List<PhotonTrackedTarget> getTargets() {
+    List<PhotonTrackedTarget> targets = this.getFrontTargets();
+    targets.addAll(getRearTargets());
+    return targets;
+  }
+
+  /**
    * Returns a List of the IDs of the visible AprilTags.
    */
   public List<Integer> getFiducialIDs() {
@@ -110,6 +119,14 @@ public class PhotonVision extends SubsystemBase {
       ids.add(target.getFiducialId());
     }
     return ids;
+  }
+
+  /**
+   * Returns whether any of the cameras currently see an April Tag.
+   */
+  public boolean hasTargets() {
+    return getFrontLeftLatestResult().hasTargets() || getFrontRightLatestResult().hasTargets()
+        || getRearLatestResult().hasTargets();
   }
 
   /**
@@ -125,6 +142,30 @@ public class PhotonVision extends SubsystemBase {
       }
     }
     return poses;
+  }
+
+  /**
+   * Returns the lowest ambiguity {@PhotonTrackedTarget}
+   */
+  public Optional<PhotonTrackedTarget> getLowestAmbiguityTarget(List<PhotonTrackedTarget> targetList) {
+    PhotonTrackedTarget lowestAmbiguityTarget = null;
+
+    double lowestAmbiguityScore = 10;
+    for (PhotonTrackedTarget target : targetList) {
+      double targetPoseAmbiguity = target.getPoseAmbiguity();
+      // Make sure the target is a Fiducial target.
+      if (targetPoseAmbiguity != -1 && targetPoseAmbiguity < lowestAmbiguityScore) {
+        lowestAmbiguityScore = targetPoseAmbiguity;
+        lowestAmbiguityTarget = target;
+      }
+    }
+
+    // Although there are confirmed to be targets, none of them may be fiducial
+    // targets.
+    if (lowestAmbiguityTarget == null)
+      return Optional.empty();
+
+    return Optional.of(lowestAmbiguityTarget);
   }
 
   /**
