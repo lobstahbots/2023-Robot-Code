@@ -20,32 +20,37 @@ public class DriveBaseFollowTargetCommand extends CommandBase {
   public DriveBaseFollowTargetCommand(DriveBase driveBase, PhotonVision photonVision) {
     this.driveBase = driveBase;
     this.photonVision = photonVision;
+    addRequirements(driveBase);
   }
 
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    Optional<PhotonTrackedTarget> target = photonVision.getLowestAmbiguityTarget(photonVision.getTargets());
+    Optional<PhotonTrackedTarget> target = photonVision.getLowestAmbiguityTarget(photonVision.getRearTargets());
     if (target.isPresent()) {
       double area = target.get().getArea();
       double speed = 0;
       if (area >= VisionConstants.MAX_TAG_AREA) {
-        speed = -VisionConstants.MIN_DRIVE_SPEED;
+        speed = -0.1;
       } else if (area <= VisionConstants.MIN_TAG_AREA) {
-        speed = LobstahMath.scaleNumberToRange(area, VisionConstants.MIN_TAG_AREA, VisionConstants.MAX_TAG_AREA,
-            VisionConstants.MIN_DRIVE_SPEED, VisionConstants.MAX_DRIVE_SPEED);
+        speed = LobstahMath.scaleNumberToRange(area, 0, VisionConstants.MAX_TAG_AREA,
+            VisionConstants.MAX_DRIVE_SPEED, VisionConstants.MIN_DRIVE_SPEED);
+      } else {
+        speed = 0;
       }
 
       double turn = LobstahMath.scaleNumberToRange(target.get().getYaw(), VisionConstants.MIN_YAW_ERROR,
           VisionConstants.MAX_YAW_ERROR, VisionConstants.MIN_TURN, VisionConstants.MAX_TURN);
 
-      driveBase.arcadeDrive(speed, turn, false);
+      System.out.println(target.get().getYaw());
+
+      System.out.println("turn" + turn);
+
+      driveBase.arcadeDrive(-speed, -turn, false);
 
     } else {
       driveBase.arcadeDrive(0, 0, false);
     }
-
-
   }
 
   // Returns true when the command should end.

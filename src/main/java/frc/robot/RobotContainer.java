@@ -35,10 +35,12 @@ import frc.robot.subsystems.arm.Arm;
 import frc.robot.subsystems.arm.ArmTowardsPoseCommand;
 import frc.robot.subsystems.arm.ArmTowardsPoseWithRetractionCommand;
 import frc.robot.subsystems.driveBase.DriveBase;
+import frc.robot.subsystems.driveBase.DriveBaseFollowTargetCommand;
 import frc.robot.subsystems.driveBase.DriveBaseStopCommand;
 import frc.robot.subsystems.driveBase.DriveBaseTankCommand;
 import frc.robot.subsystems.intake.Intake;
 import frc.robot.subsystems.intake.IntakeSpinCommand;
+import frc.robot.subsystems.photonvision.PhotonVision;
 import frc.robot.subsystems.arm.ArmResetElevatorCommand;
 import lobstah.stl.oi.LobstahGamepad;
 
@@ -71,6 +73,8 @@ public class RobotContainer {
   private final LobstahGamepad operatorJoystick = new LobstahGamepad(OperatorConstants.OPERATOR_USB_INDEX);
 
   private ArmPose manualTarget;
+
+  private PhotonVision photonVision = new PhotonVision();
 
   /**
    * The container for the robot. Contains subsystems, OI devices, and commands.
@@ -282,26 +286,28 @@ public class RobotContainer {
   public Command getAutonomousCommand() {
     Command autonCommand;
 
-    switch (autonChooser.getSelected()) {
-      case DRIVE:
-        autonCommand =
-            autonGenerator.getExitCommunityCommand(initialPosition.getSelected(), crossingPosition.getSelected());
-        break;
-      case SCORE:
-        autonCommand = autonGenerator.getScoreCommand(scoringPosition.getSelected());
-        break;
-      case SCORE_AND_DRIVE:
-        autonCommand =
-            autonGenerator.getScoreAndDriveCommand(preloadScoringRow.getSelected(), initialPosition.getSelected(),
-                crossingPosition.getSelected(), twoElement.getSelected(), scoringPosition.getSelected());
-        break;
-      case DO_NOTHING:
-        autonCommand = new DriveBaseStopCommand(driveBase);
-        break;
-      default:
-        autonCommand = new DriveBaseStopCommand(driveBase);
-        break;
-    }
+    // switch (autonChooser.getSelected()) {
+    // case DRIVE:
+    // autonCommand =
+    // autonGenerator.getExitCommunityCommand(initialPosition.getSelected(), crossingPosition.getSelected());
+    // break;
+    // case SCORE:
+    // autonCommand = autonGenerator.getScoreCommand(scoringPosition.getSelected());
+    // break;
+    // case SCORE_AND_DRIVE:
+    // autonCommand =
+    // autonGenerator.getScoreAndDriveCommand(preloadScoringRow.getSelected(), initialPosition.getSelected(),
+    // crossingPosition.getSelected(), twoElement.getSelected(), scoringPosition.getSelected());
+    // break;
+    // case DO_NOTHING:
+    // autonCommand = new DriveBaseStopCommand(driveBase);
+    // break;
+    // default:
+    // autonCommand = new DriveBaseStopCommand(driveBase);
+    // break;
+    // }
+
+    autonCommand = new DriveBaseFollowTargetCommand(driveBase, photonVision);
 
     return new SequentialCommandGroup(
         new ArmResetElevatorCommand(arm),
