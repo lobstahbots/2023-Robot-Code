@@ -118,8 +118,14 @@ public class RobotContainer {
   private void configureButtonBindings() {
     // Drive slowdown
     driverJoystick.button(DriverConstants.SLOWDOWN_BTN).whileTrue(new DriveBaseTankCommand(driveBase,
-        () -> DriverConstants.SLOWDOWN_FACTOR * driverJoystick.getRawAxis(DriverConstants.LEFT_AXIS),
-        () -> DriverConstants.SLOWDOWN_FACTOR * driverJoystick.getRawAxis(DriverConstants.RIGHT_AXIS),
+        () -> DriverConstants.SLOWDOWN_FACTOR * -driverJoystick.getRawAxis(DriverConstants.LEFT_AXIS),
+        () -> DriverConstants.SLOWDOWN_FACTOR * -driverJoystick.getRawAxis(DriverConstants.RIGHT_AXIS),
+        DriverConstants.SQUARED_INPUTS));
+
+    // Drive reverse
+    driverJoystick.button(DriverConstants.REVERSE_BTN).whileTrue(new DriveBaseTankCommand(driveBase,
+        () -> DriverConstants.REVERSE_FACTOR * -driverJoystick.getRawAxis(DriverConstants.LEFT_AXIS),
+        () -> DriverConstants.REVERSE_FACTOR * -driverJoystick.getRawAxis(DriverConstants.RIGHT_AXIS),
         DriverConstants.SQUARED_INPUTS));
 
     // operatorJoystick.button(OperatorConstants.PLACE_DOWN_BTN).onTrue(
